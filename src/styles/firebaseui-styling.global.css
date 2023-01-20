@@ -1,0 +1,48 @@
+.firebaseui-card-content {
+  padding: 0 !important;
+}
+
+.firebaseui-idp-button {
+  background-color: #fff !important;
+  max-width: 100% !important;
+  display: flex !important;
+  justify-content: flex-start !important;
+  align-items: center !important;
+}
+
+.firebaseui-idp-button:hover {
+  background-color: #f9fafc !important;
+  box-shadow: rgb(0 0 0 / 20%) 1px 1px 1px 5px 0 !important;
+  border: 1px solid black !important;
+  cursor: pointer;
+}
+
+.firebaseui-idp-button:hover .firebaseui-idp-text {
+  color: black !important;
+}
+
+.mdl-button--raised {
+  box-shadow: none !important;
+  border: 1px solid #333333 !important;
+  border-radius: 5px !important;
+}
+
+.firebaseui-idp-icon-wrapper {
+  transform: scale(1.2) !important;
+  transition: all 0.2s;
+}
+
+.firebaseui-idp-text {
+  color: #333333 !important;
+  font-size: 17px !important;
+  font-family: 'Rubik', sans-serif !important;
+  align-self: flex-end !important;
+  padding-left: 15% !important;
+  padding-bottom: 1px !important;
+}
+
+.firebaseui-info-bar {
+  position: static !important;
+  box-shadow: none !important;
+  border-radius: 5px !important;
+}

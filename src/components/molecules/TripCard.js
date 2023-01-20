@@ -1,0 +1,161 @@
+import React, { useEffect } from 'react'
+import {
+  Badge,
+  Box,
+  Card,
+  CardActionArea,
+  CardContent,
+  CardMedia,
+  IconButton,
+  Typography,
+  useTheme,
+} from '@mui/material'
+import makeStyles from '@mui/styles/makeStyles'
+import { Event, LocationOn, Notifications } from '@mui/icons-material'
+import { useHistory } from 'react-router-dom'
+import { isWithinInterval } from 'date-fns'
+
+import CustomAvatar from '../atoms/CustomAvatar'
+import { rCTFF } from '../../helper/functions'
+
+const useStyles = makeStyles(theme => ({
+  root: {
+    maxWidth: '100%',
+    position: 'relative',
+    boxShadow: '0px 4px 30px rgba(0, 0, 0, 0.04), 0px 2px 8px rgba(0, 0, 0, 0.03)',
+    borderRadius: '20px',
+    [theme.breakpoints.down('sm')]: {
+      marginBottom: '38px',
+      maxWidth: '300px',
+      minWidth: '300px',
+    },
+    '@media screen and (max-width: 350px)': {
+      maxWidth: '260px',
+      minWidth: '260px',
+    },
+  },
+  image: {
+    borderRadius: '10px',
+    width: 'calc(100% - 2rem)',
+    height: '184px',
+    margin: '1rem auto',
+    position: 'relative',
+  },
+  /*   button: {
+    borderRadius: '10px',
+    backgroundColor: theme.palette.primary.dark,
+    color: theme.palette.primary.contrastText,
+    fontSize: '2rem',
+    padding: '.75rem 1.25rem',
+    minWidth: 'max-content',
+    marginLeft: theme.spacing(1),
+  }, */
+  actionArea: {
+    height: '100%',
+    display: 'flex',
+    flexDirection: 'column',
+    justifyContent: 'stretch',
+  },
+  cardContent: {
+    flexGrow: '1',
+    width: '100%',
+  },
+  iconBtn: {
+    backgroundColor: 'white',
+    color: theme.palette.grey[400],
+    transform: 'rotate(-15deg)',
+    '&:hover': {
+      backgroundColor: 'white',
+    },
+  },
+  icons: {
+    color: theme.palette.grey[400],
+    marginRight: theme.spacing(1),
+  },
+}))
+
+const TripCard = ({ bgImg, people, title, date, destination, tripId, startDate, endDate }) => {
+  const classes = useStyles()
+  const history = useHistory()
+  const theme = useTheme()
+
+  return (
+    <Card className={classes.root}>
+      <Box position="absolute" top="calc(4% + 1rem)" right="calc(4% + 1rem)" zIndex={10}>
+        <Badge badgeContent={0} color="secondary" overlap="circular">
+          <IconButton
+            className={classes.iconBtn}
+            size="large"
+            disabled
+            sx={{ backgroundColor: `${theme.palette.grey.bd}!important` }}
+          >
+            <Notifications />
+          </IconButton>
+        </Badge>
+      </Box>
+      <CardActionArea
+        onClick={() => history.push(`/tripPage/${tripId}`)}
+        className={classes.actionArea}
+      >
+        <CardMedia className={classes.image} image={bgImg}>
+          <Box position="absolute" bottom="8%" right="6%">
+            <CustomAvatar peopleIds={people} />
+          </Box>
+        </CardMedia>
+        <CardContent className={classes.cardContent}>
+          <Box display="flex" flexDirection="column" justifyContent="space-between" height="100%">
+            <Box display="flex" justifyContent="space-between" mb={2}>
+              <Typography variant="h5">{title}</Typography>
+            </Box>
+            <Box display="flex" justifyContent="space-between" alignItems="flex-end">
+              <Box>
+                <Box display="flex" alignItems="center">
+                  <Event className={classes.icons} />
+                  <Typography>{date}</Typography>
+                </Box>
+                <Box display="flex" alignItems="center">
+                  <LocationOn className={classes.icons} />
+                  <Typography>{destination}</Typography>
+                </Box>
+                {startDate !== '' &&
+                  endDate !== '' &&
+                  isWithinInterval(new Date(), {
+                    start: rCTFF(startDate),
+                    end: rCTFF(endDate),
+                  }) && (
+                    <Box
+                      sx={{
+                        backgroundColor: theme.palette.primary.main,
+                        display: 'flex',
+                        justifyContent: 'center',
+                        borderRadius: '10px',
+                        position: 'absolute',
+                        right: '16px',
+                        bottom: '16px',
+                        maxWidth: '130px',
+                        maxHeight: '60px',
+                      }}
+                      p={2}
+                    >
+                      <Typography
+                        sx={{
+                          color: 'white',
+                          fontSize: '22px',
+                          fontWeight: '700',
+                          lineHeight: '28px',
+                        }}
+                      >
+                        En cours
+                      </Typography>
+                    </Box>
+                  )}
+              </Box>
+            </Box>
+          </Box>
+        </CardContent>
+      </CardActionArea>
+    </Card>
+  )
+}
+
+export default TripCard

@@ -1,0 +1,60 @@
+{
+  "firestore": {
+    "rules": "./emulators.rules/firestore.rules",
+    "indexes": "./emulators.rules/firestore.indexes.json"
+  },
+  "database": {
+    "rules": "./emulators.rules/database.rules.json"
+  },
+  "storage": {
+    "rules": "./emulators.rules/storage.rules"
+  },
+  "functions": {
+    "source": "functions"
+  },
+  "hosting": {
+    "public": "build",
+    "ignore": ["firebase.json", "**/.*", "**/node_modules/**"],
+    "redirects": [
+      {
+        "source": "https://explomaker-3010b.web.app/",
+        "destination": "https://app.explomaker.fr",
+        "type": 301
+      },
+      {
+        "source": "https://explomaker-3010b.firebaseapp.com/",
+        "destination": "https://app.explomaker.fr",
+        "type": 301
+      }
+    ],
+    "rewrites": [
+      {
+        "source": "**",
+        "destination": "/index.html"
+      }
+    ]
+  },
+  "emulators": {
+    "functions": {
+      "port": 5001
+    },
+    "firestore": {
+      "port": 8080
+    },
+    "hosting": {
+      "port": 5002
+    },
+    "ui": {
+      "enabled": true
+    },
+    "auth": {
+      "port": 9099
+    },
+    "storage": {
+      "port": 9199
+    },
+    "database": {
+      "port": 9000
+    }
+  }
+}

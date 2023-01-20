@@ -1,0 +1,24 @@
+rules_version = '2';
+service firebase.storage {
+     match /b/{bucket}/o {
+    match /blog {
+      allow read: if true;
+      allow write: if false;
+    }
+    match /airlinesLogo {
+      allow read: if true;
+      allow write: if false;
+    }
+    match /googleMapsIcons {
+      allow read: if true;
+      allow write: if false;
+    }
+    match /avatars/{userId} {
+      allow read: if isLoggedIn();
+      allow write: if request.auth.uid == userId;
+    }
+    }
+  function isLoggedIn() {
+   return request.auth != null
+  }
+}

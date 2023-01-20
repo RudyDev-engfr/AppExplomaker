@@ -1,0 +1,21 @@
+{
+  "rules": {
+    ".read": true,
+    ".write": false,
+    "info": {
+      "connected": {
+        ".write": true
+      }
+    },
+    "status": {
+      "$uid": {
+        ".write": "$uid === auth.uid"
+      }
+    },
+    "content": {
+      "spots": {
+        ".indexOn": ["gps/google_place_id"]
+      }
+    }
+  }
+}
