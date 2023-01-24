@@ -1,16 +1,16 @@
 {
   "name": "avatars/AzUomcuTMNd542GmnqAFIN4kNWoY",
   "bucket": "explomaker-3010b.appspot.com",
-  "contentType": "image/jpeg",
   "metageneration": 1,
   "generation": 1639391987074,
+  "contentType": "image/jpeg",
   "storageClass": "STANDARD",
-  "etag": "someETag",
   "contentDisposition": "inline",
   "contentEncoding": "identity",
   "downloadTokens": [
     "70d17fb8-f377-441e-b41b-1729aa671ea7"
   ],
+  "etag": "someETag",
   "timeCreated": "2021-12-13T10:39:47.073Z",
   "updated": "2021-12-13T10:39:47.077Z",
   "size": 27312,

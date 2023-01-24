@@ -1,5 +1,5 @@
 import React from 'react'
-import { Box } from '@mui/material'
+import { Box, Typography } from '@mui/material'
 import { makeStyles } from '@mui/styles'
 
 const useStyles = makeStyles(theme => ({
@@ -14,7 +14,7 @@ const useStyles = makeStyles(theme => ({
   },
 }))
 
-const Loader = () => {
+const Loader = (user = '') => {
   const classes = useStyles()
 
   return (
@@ -43,6 +43,12 @@ const Loader = () => {
           fill="#FFFFFF"
         />
       </svg>
+      {user?.firstname && (
+        <Box>
+          <Typography>Bienvenue</Typography>
+          <Typography>{user.firstname}</Typography>
+        </Box>
+      )}
     </Box>
   )
 }
