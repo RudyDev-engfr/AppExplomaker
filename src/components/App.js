@@ -109,7 +109,7 @@ const App = () => {
       </>
     )
   }
-  return loadError ? <h2>{loadError}</h2> : <Loader user={user} />
+  return loadError ? <h2>{loadError}</h2> : <Loader />
 }
 
 export default App

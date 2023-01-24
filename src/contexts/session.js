@@ -7,12 +7,18 @@ const SessionContextProvider = ({ children }) => {
   const localUser = JSON.parse(localStorage.getItem('user'))
   const { firestore } = useContext(FirebaseContext)
   const [user, setUser] = useState(localUser || {})
+  const [firstname, setFirstname] = useState('')
   const [tripRoles, setTripRoles] = useState()
   const [needRedirectTo, setNeedRedirectTo] = useState()
   const [joinCallback, setJoinCallback] = useState(() => {})
 
   useEffect(() => {
+    console.log('le prénom', firstname)
+  }, [firstname])
+
+  useEffect(() => {
     localStorage.setItem('user', JSON.stringify(user))
+    setFirstname(user.firstname)
     if (user.isLoggedIn) {
       firestore
         .collection('users')
@@ -39,6 +45,7 @@ const SessionContextProvider = ({ children }) => {
         setNeedRedirectTo,
         joinCallback,
         setJoinCallback,
+        firstname,
       }}
     >
       {children}

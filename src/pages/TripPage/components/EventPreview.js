@@ -753,7 +753,9 @@ const EventPreview = ({
                   )}
                 </>
               )}
-              {(currentEventType === EVENT_TYPES[2] || currentEventType === EVENT_TYPES[4]) &&
+              {(currentEventType === EVENT_TYPES[0] ||
+                currentEventType === EVENT_TYPES[2] ||
+                currentEventType === EVENT_TYPES[4]) &&
                 currentEvent.description.length > 0 && (
                   <Box mt={2}>
                     <Box>

@@ -1,6 +1,7 @@
-import React from 'react'
+import React, { useContext, useEffect } from 'react'
 import { Box, Typography } from '@mui/material'
 import { makeStyles } from '@mui/styles'
+import { SessionContext } from '../contexts/session'
 
 const useStyles = makeStyles(theme => ({
   container: {
@@ -14,8 +15,9 @@ const useStyles = makeStyles(theme => ({
   },
 }))
 
-const Loader = (user = '') => {
+const Loader = ({ isJoinTrip = false }) => {
   const classes = useStyles()
+  const { firstname } = useContext(SessionContext)
 
   return (
     <Box className={classes.container}>
@@ -43,10 +45,23 @@ const Loader = (user = '') => {
           fill="#FFFFFF"
         />
       </svg>
-      {user?.firstname && (
-        <Box>
-          <Typography>Bienvenue</Typography>
-          <Typography>{user.firstname}</Typography>
+
+      {isJoinTrip && (
+        <Box sx={{ paddingLeft: '60px' }}>
+          <Typography
+            color="secondary.contrastText"
+            sx={{ fontSize: '54px', lineHeight: '64px', fontWeight: 700 }}
+          >
+            Bienvenue
+          </Typography>
+          {firstname && (
+            <Typography
+              color="secondary.contrastText"
+              sx={{ fontSize: '54px', lineHeight: '64px', fontWeight: 700 }}
+            >
+              {firstname} 🎉
+            </Typography>
+          )}
         </Box>
       )}
     </Box>
