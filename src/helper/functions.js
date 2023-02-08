@@ -311,12 +311,12 @@ export const buildNotifTimerAndState = (creationDate, state) => {
   notifBody.definitiveTimer = `il y a ${formatDuration(tempTimer, {
     format:
       tempTimer.days > 1
-        ? ['jours']
+        ? ['days']
         : tempTimer.hours > 1
-        ? ['heures']
+        ? ['hours']
         : tempTimer.minutes > 1
         ? ['minutes']
-        : tempTimer.seconds >= 1 && ['secondes'],
+        : tempTimer.seconds >= 1 && ['seconds'],
   })}`
   notifBody.state = state
   return notifBody
@@ -348,10 +348,41 @@ export const buildNotificationsOnTripForUser = (user, tripid) => {
             break
 
           case 'surveyCreate':
-            console.log('je passe par le surveyCreate')
+            console.log('je passe par le surveyCreate', event.propositions[0])
             singleNotif.content = owner?.firstname
-              ? `${owner.firstname} a créé un sondage sur la journée du ${event.date}`
-              : `Un sondage a été créé sur la journée du ${event.date} !`
+              ? `${owner.firstname} a créé un sondage sur la journée du ${
+                  event.propositions && rCTFF(event.propositions[0].date, 'dd/MM/yyyy')
+                }`
+              : `Un sondage a été créé sur la journée du ${rCTFF(event.date, 'dd/MM/yyyy')} !`
+            singleNotif.timer = notifBody.definitiveTimer
+            singleNotif.state = notifBody.state
+            break
+
+          case 'surveyClose':
+            console.log('je passe par le surveyClose')
+            singleNotif.content = owner?.firstname
+              ? `${owner.firstname} a clôturé un sondage sur la journée du ${
+                  event.date && rCTFF(event.startTime, 'dd/MM/yyyy')
+                }`
+              : `Un sondage a été clôturé sur la journée du ${rCTFF(
+                  event.startTime,
+                  'dd/MM/yyyy'
+                )} !`
+            singleNotif.timer = notifBody.definitiveTimer
+            singleNotif.state = notifBody.state
+            break
+
+          case 'propositionAdd':
+            console.log('je passe par le propositionAdd')
+            singleNotif.content = owner?.firstname
+              ? `${owner.firstname} a ajouté une proposition sur le sondage pour la journée du ${
+                  event.propositions &&
+                  rCTFF(event.propositions[event.propositions.length - 1].date, 'dd/MM/yyyy')
+                }`
+              : `Une proposition a été ajouté sur le sondage pour la journée du ${rCTFF(
+                  event.propositions[event.propositions.length - 1].date,
+                  'dd/MM/yyyy'
+                )} !`
             singleNotif.timer = notifBody.definitiveTimer
             singleNotif.state = notifBody.state
             break

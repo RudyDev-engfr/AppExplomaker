@@ -257,7 +257,7 @@ const SurveyPreview = ({
         .add({ ...rest })
     }
 
-    createNotificationsOnTrip(user, tripData, tripId, 'surveyClose', 2, currentEvent)
+    createNotificationsOnTrip(user, tripData, tripId, 'surveyClose', 2, event)
     setCurrentView('planning')
   }
 
