@@ -94,12 +94,12 @@ const CustomAvatar = ({
                     badgeContent={<FavoriteRounded fontSize="inherit" />}
                   >
                     <Avatar variant="circular" src={avatar} alt={firstname}>
-                      {firstname.substring(0, 1)}
+                      {firstname?.substring(0, 1)}
                     </Avatar>
                   </Badge>
                 ) : (
                   <Avatar variant="circular" src={avatar} alt={firstname}>
-                    {firstname.substring(0, 1)}
+                    {firstname?.substring(0, 1)}
                   </Avatar>
                 )}
               </Tooltip>

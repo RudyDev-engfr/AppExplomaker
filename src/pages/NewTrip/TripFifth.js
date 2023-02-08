@@ -99,7 +99,7 @@ const TripFifth = () => {
   const matchesXs = useMediaQuery(theme.breakpoints.down('sm'))
 
   const { newTrip, setNewTrip, cleanupNewTrip, newTripSpot } = useContext(NewTripContext)
-  const { firestore, timestampRef, dictionary } = useContext(FirebaseContext)
+  const { firestore, timestampRef, dictionary, createNotifications } = useContext(FirebaseContext)
   const { user, setUser } = useContext(SessionContext)
 
   const [wishes, setWishes] = useState(newTrip.wishes || [])
@@ -183,6 +183,9 @@ const TripFifth = () => {
           )
         })
         batch.commit()
+        console.log('utilisateur', user)
+        console.log('nouveauvoyage', newTrip)
+        createNotifications(user, newTrip, 'newTrip', 3)
         history.push('/newtrip/tripRecap')
       })
   }

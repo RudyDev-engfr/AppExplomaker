@@ -19,6 +19,7 @@ import {
 import makeStyles from '@mui/styles/makeStyles'
 import clsx from 'clsx'
 import FavoriteIcon from '@mui/icons-material/Favorite'
+import FeedIcon from '@mui/icons-material/Feed'
 
 import logoFull from '../../../images/icons/logoFull.svg'
 import planning from '../../../images/icons/planning.svg'
@@ -218,6 +219,20 @@ const TripPageNav = ({
           }
         >
           Planning
+        </Button>
+        <Button
+          className={clsx(classes.sidebarButton, {
+            [classes.activeTabStyle]: currentActiveTab === 'triplogs',
+          })}
+          onClick={() => setCurrentActiveTab('triplogs')}
+          startIcon={
+            <FeedIcon
+              color={currentActiveTab === 'triplogs' ? 'primary' : 'disabled'}
+              className={classes.icons}
+            />
+          }
+        >
+          Logs
         </Button>
         {/* <Button
               className={clsx(classes.sidebarButton, {

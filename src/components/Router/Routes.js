@@ -10,6 +10,7 @@ import SignupFourthStep from '../../pages/Signup/FourthStep'
 import SignupFifthStep from '../../pages/Signup/FifthStep'
 import PwdResetHandler from '../../pages/PwdResetHandler'
 import JoinTrip from '../../pages/JoinTrip'
+import WelcomeTrip from '../../pages/WelcomeTrip'
 import TripFirst from '../../pages/NewTrip/TripFirst'
 import TripSecond from '../../pages/NewTrip/TripSecond'
 import TripThird from '../../pages/NewTrip/TripThird'
@@ -79,6 +80,9 @@ const Routes = () => {
       </PrivateRoute>
       <PrivateRoute path="/tripPage/:tripid">
         <TripPage />
+      </PrivateRoute>
+      <PrivateRoute path="welcomeTrip">
+        <WelcomeTrip />
       </PrivateRoute>
       <PrivateRoute path="/profile">
         <Profile />

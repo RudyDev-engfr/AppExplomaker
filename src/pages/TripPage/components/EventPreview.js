@@ -412,13 +412,9 @@ const EventPreview = ({
                     </Typography>
                     <Typography>
                       {currentEventType === EVENT_TYPES[3] &&
-                        format(
-                          stringToDate(currentEvent.transports[0].startDateTime),
-                          'EEEE dd MMMM',
-                          {
-                            locale: frLocale,
-                          }
-                        )}
+                        format(stringToDate(currentEvent.transports[0].startTime), 'EEEE dd MMMM', {
+                          locale: frLocale,
+                        })}
                     </Typography>
                   </Box>
                   {currentEvent?.website && (
@@ -527,12 +523,12 @@ const EventPreview = ({
                       </Typography>
                       <Box mt={1}>
                         <Typography sx={{ fontWeight: 'bold' }}>
-                          {format(stringToDate(currentEvent.arrivalDateTime), 'EEEE dd MMMM', {
+                          {format(stringToDate(currentEvent.startTime), 'EEEE dd MMMM', {
                             locale: frLocale,
                           })}
                         </Typography>
                         <Typography>
-                          {format(stringToDate(currentEvent.arrivalDateTime), 'HH:mm', {
+                          {format(stringToDate(currentEvent.endTime), 'HH:mm', {
                             locale: frLocale,
                           })}
                         </Typography>
@@ -546,12 +542,12 @@ const EventPreview = ({
                         </Typography>
                         <Box mt={1}>
                           <Typography sx={{ fontWeight: 'bold' }}>
-                            {format(stringToDate(currentEvent.departureDateTime), 'EEE dd MMM', {
+                            {format(stringToDate(currentEvent.endTime), 'EEE dd MMM', {
                               locale: frLocale,
                             })}
                           </Typography>
                           <Typography>
-                            {format(stringToDate(currentEvent.departureDateTime), 'HH:mm', {
+                            {format(stringToDate(currentEvent.endTime), 'HH:mm', {
                               locale: frLocale,
                             })}
                           </Typography>
@@ -594,11 +590,8 @@ const EventPreview = ({
                 <>
                   {/* ------------------First Bus Line--------------- */}
                   {currentEvent.transports.map(
-                    (
-                      { start, end, startDateTime, endDateTime, description, icon },
-                      transportIndex
-                    ) => (
-                      <Fragment key={startDateTime}>
+                    ({ start, end, startTime, endTime, description, icon }, transportIndex) => (
+                      <Fragment key={startTime}>
                         <Box
                           className={classes.flightGrid}
                           m="1rem 0"
@@ -639,7 +632,7 @@ const EventPreview = ({
                           </Box>
                           <Box className={classes.fontRight}>
                             <Typography variant="h4" sx={{ fontWeight: 'bold' }}>
-                              {format(stringToDate(startDateTime), 'HH:mm', {
+                              {format(stringToDate(startTime), 'HH:mm', {
                                 locale: frLocale,
                               })}
                             </Typography>
@@ -647,8 +640,8 @@ const EventPreview = ({
                               Trajet :{' '}
                               {formatDuration(
                                 intervalToDuration({
-                                  start: stringToDate(startDateTime),
-                                  end: stringToDate(endDateTime),
+                                  start: stringToDate(startTime),
+                                  end: stringToDate(endTime),
                                 }),
                                 {
                                   format: ['days', 'hours', 'minutes'],
@@ -695,7 +688,7 @@ const EventPreview = ({
                           </Box>
                           <Box className={classes.fontRight}>
                             <Typography variant="h4" sx={{ fontWeight: 'bold' }}>
-                              {format(stringToDate(endDateTime), 'HH:mm', {
+                              {format(stringToDate(endTime), 'HH:mm', {
                                 locale: frLocale,
                               })}
                             </Typography>
@@ -728,9 +721,9 @@ const EventPreview = ({
                                 Correspondance :{' '}
                                 {formatDuration(
                                   intervalToDuration({
-                                    start: stringToDate(endDateTime),
+                                    start: stringToDate(endTime),
                                     end: stringToDate(
-                                      currentEvent.transports[transportIndex + 1].startDateTime
+                                      currentEvent.transports[transportIndex + 1].startTime
                                     ),
                                   }),
                                   {

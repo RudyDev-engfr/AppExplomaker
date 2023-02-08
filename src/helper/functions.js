@@ -1,3 +1,5 @@
+import React from 'react'
+import { Box, Typography } from '@mui/material'
 import {
   addMinutes,
   addHours,
@@ -6,6 +8,7 @@ import {
   subMinutes,
   subHours,
   intervalToDuration,
+  formatDuration,
 } from 'date-fns'
 import frLocale from 'date-fns/locale/fr'
 import parse from 'date-fns/parse'
@@ -125,13 +128,13 @@ export function getEventStartDate(event) {
   // eslint-disable-next-line default-case
   switch (event.type) {
     case EVENT_TYPES[0]:
-      return stringToDate(event.arrivalDateTime, 'yyyy-MM-dd HH:mm')
+      return stringToDate(event.startTime, 'yyyy-MM-dd HH:mm')
     case EVENT_TYPES[1]:
       return stringToDate(event.flights[0].date, 'yyyy-MM-dd')
     case EVENT_TYPES[2]:
       return stringToDate(event.startTime, 'yyyy-MM-dd HH:mm')
     case EVENT_TYPES[3]:
-      return stringToDate(event.transports[0].startDateTime, 'yyyy-MM-dd HH:mm')
+      return stringToDate(event.transports[0].startTime, 'yyyy-MM-dd HH:mm')
     case EVENT_TYPES[4]:
       return stringToDate(event.startTime, 'yyyy-MM-dd HH:mm')
   }
@@ -241,6 +244,123 @@ export const renderStopoverTime = (departureTime, arrivalTime, legs) => {
     }
   }
   return stopoverTime
+}
+
+export const buildNotifications = user => {
+  const notifications = []
+  if (user.notifications) {
+    user.notifications.forEach(({ sejour, priority, state, type, creationDate }) => {
+      if (type === 'newTrip') {
+        const singleNotif = {}
+        console.log('je suis un newtrip')
+        singleNotif.content = `Votre nouveau voyage ${sejour?.title} a bien été créé !`
+        const tempTimer = intervalToDuration({
+          start: new Date(rCTFF(creationDate)),
+          end: new Date(),
+        })
+        singleNotif.timer = `il y a ${formatDuration(tempTimer, {
+          format:
+            tempTimer.days > 1
+              ? ['days']
+              : tempTimer.hours > 1
+              ? ['hours']
+              : tempTimer.minutes > 1
+              ? ['minutes']
+              : tempTimer.seconds >= 1 && ['seconds'],
+        })}`
+        singleNotif.state = state
+
+        notifications.push(singleNotif)
+      } else if (type === 'dateUpdate') {
+        const singleNotif = {}
+        console.log('je suis un updateDate')
+        singleNotif.content = `Les dates de votre voyage ont été modifiées, elles sont désormais du ${rCTFF(
+          sejour.dateRange[0],
+          'dd/MM/yyyy'
+        )} au ${rCTFF(sejour.dateRange[1], 'dd/MM/yyyy')} !`
+        const tempTimer = intervalToDuration({
+          start: new Date(rCTFF(creationDate)),
+          end: new Date(),
+        })
+        singleNotif.timer = `il y a ${formatDuration(tempTimer, {
+          format:
+            tempTimer.days > 1
+              ? ['days']
+              : tempTimer.hours > 1
+              ? ['hours']
+              : tempTimer.minutes > 1
+              ? ['minutes']
+              : tempTimer.seconds >= 1 && ['seconds'],
+        })}`
+        singleNotif.state = state
+
+        notifications.push(singleNotif)
+      }
+    })
+    return notifications
+  }
+}
+
+export const buildNotifTimerAndState = (creationDate, state) => {
+  const tempTimer = intervalToDuration({
+    start: new Date(rCTFF(creationDate)),
+    end: new Date(),
+  })
+  const notifBody = {}
+
+  notifBody.definitiveTimer = `il y a ${formatDuration(tempTimer, {
+    format:
+      tempTimer.days > 1
+        ? ['jours']
+        : tempTimer.hours > 1
+        ? ['heures']
+        : tempTimer.minutes > 1
+        ? ['minutes']
+        : tempTimer.seconds >= 1 && ['secondes'],
+  })}`
+  notifBody.state = state
+  return notifBody
+}
+
+export const buildNotificationsOnTripForUser = (user, tripid) => {
+  const notifications = []
+  if (user.notifications) {
+    user.notifications
+      .filter(notification => notification.tripId === tripid)
+      .forEach(({ sejour, priority, state, type, creationDate, owner, event }) => {
+        const singleNotif = {}
+        const notifBody = buildNotifTimerAndState(creationDate, state)
+        // eslint-disable-next-line default-case
+        switch (type) {
+          case 'dateUpdate':
+            console.log('je suis un dateUpdate')
+            singleNotif.content = owner?.firstname
+              ? `${owner.firstname} a modifié les dates du voyage. Elles sont désormais du ${rCTFF(
+                  sejour.dateRange[0],
+                  'dd/MM/yyyy'
+                )} au ${rCTFF(sejour.dateRange[1], 'dd/MM/yyyy')} !`
+              : `Les dates de votre voyage ont été modifiées, elles sont désormais du ${rCTFF(
+                  sejour.dateRange[0],
+                  'dd/MM/yyyy'
+                )} au ${rCTFF(sejour.dateRange[1], 'dd/MM/yyyy')} !`
+            singleNotif.timer = notifBody.definitiveTimer
+            singleNotif.state = notifBody.state
+            break
+
+          case 'surveyCreate':
+            console.log('je passe par le surveyCreate')
+            singleNotif.content = owner?.firstname
+              ? `${owner.firstname} a créé un sondage sur la journée du ${event.date}`
+              : `Un sondage a été créé sur la journée du ${event.date} !`
+            singleNotif.timer = notifBody.definitiveTimer
+            singleNotif.state = notifBody.state
+            break
+        }
+        notifications.push(singleNotif)
+      })
+    console.log('notifs qui sont construites', notifications)
+    return notifications
+  }
 }
 
 /*

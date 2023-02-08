@@ -128,7 +128,7 @@ const JoinTrip = () => {
         const tempDoc = doc.data()
         tempDoc.travelersDetails.forEach(traveler => {
           if (typeof traveler.id !== 'undefined' && traveler.id === user.id) {
-            history.push(`/tripPage/${tripid}`)
+            history.push(`/welcomeTrip`)
           }
         })
         setTripData(tempDoc)
@@ -208,7 +208,7 @@ const JoinTrip = () => {
   const handleTravelerSelection = (isTraveler = true) => {
     if (user.isLoggedIn) {
       updateTraveler(user.id, isTraveler)
-      history.push(`/tripPage/${tripid}`)
+      history.push(`/welcomeTrip`)
     } else {
       setOpenModal('login')
     }

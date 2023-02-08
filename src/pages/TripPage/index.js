@@ -82,6 +82,7 @@ import flat from '../../images/flag.png'
 import pencil from '../../images/icons/pencil-btn.svg'
 import arrow from '../../images/icons/arrow-grey.svg'
 import plusCircle from '../../images/icons/plusCircle.svg'
+import TripLogs from './TripLogs'
 
 const notifications = [
   {
@@ -531,10 +532,18 @@ const TripPage = () => {
   const location = useLocation()
   const classes = useStyles()
 
-  const { getSpotByDestination, genericSpot, testUniqueSpot } = useContext(FirebaseContext)
+  const {
+    getSpotByDestination,
+    genericSpot,
+    testUniqueSpot,
+    firestore,
+    dictionary,
+    timestampRef,
+    updateTrip,
+    getUserById,
+    createNotificationsOnTrip,
+  } = useContext(FirebaseContext)
   const { user } = useContext(SessionContext)
-  const { firestore, dictionary, timestampRef, updateTrip, getUserById } =
-    useContext(FirebaseContext)
 
   const [isLoading, setIsLoading] = useState(true)
   const [carouselImages, setCarouselImages] = useState([])
@@ -570,10 +579,6 @@ const TripPage = () => {
   useEffect(() => {
     testUniqueSpot(setTestSpot)
   }, [])
-
-  useEffect(() => {
-    console.log('test spot', { testSpot })
-  }, [testSpot])
 
   useEffect(() => {
     const currentImages = []
@@ -676,7 +681,7 @@ const TripPage = () => {
     const currentTabFromUrl = location.pathname.substring(location.pathname.lastIndexOf('/') + 1)
     let isUrlSameAsTab = currentTabFromUrl === currentActiveTab
     if (
-      !['documents', 'inspiration', 'envies', 'planning', 'photos', 'notes'].includes(
+      !['documents', 'inspiration', 'envies', 'planning', 'photos', 'notes', 'triplogs'].includes(
         currentTabFromUrl
       ) &&
       currentActiveTab === 'preview'
@@ -692,6 +697,7 @@ const TripPage = () => {
       ![
         /* 'documents', 'inspiration',  */ 'envies',
         'planning' /* , 'photos'  , 'notes' */,
+        'triplogs',
       ].includes(currentTabFromUrl)
     ) {
       setCurrentActiveTab('preview')
@@ -858,20 +864,13 @@ const TripPage = () => {
             case EVENT_TYPES[0]:
               if (currentDoc.isSurvey) {
                 currentDoc.propositions.some(currentProposition => {
-                  if (
-                    isNotInInterval([
-                      currentProposition.departureDateTime,
-                      currentProposition.arrivalDateTime,
-                    ])
-                  ) {
+                  if (isNotInInterval([currentProposition.endTime, currentProposition.startTime])) {
                     needUpdate = true
                     return true
                   }
                   return false
                 })
-              } else if (
-                isNotInInterval([currentDoc.departureDateTime, currentDoc.arrivalDateTime])
-              ) {
+              } else if (isNotInInterval([currentDoc.endTime, currentDoc.startTime])) {
                 needUpdate = true
               }
               break
@@ -914,7 +913,7 @@ const TripPage = () => {
               if (currentDoc.isSurvey) {
                 currentDoc.propositions.some(currentProposition =>
                   currentProposition.transports.some(transport => {
-                    if (isNotInInterval([transport.startDateTime, transport.endDateTime])) {
+                    if (isNotInInterval([transport.startTime, transport.endTime])) {
                       needUpdate = true
                       return true
                     }
@@ -923,7 +922,7 @@ const TripPage = () => {
                 )
               } else {
                 currentDoc.transports.some(transport => {
-                  if (isNotInInterval([transport.startDateTime, transport.endDateTime])) {
+                  if (isNotInInterval([transport.startTime, transport.endTime])) {
                     needUpdate = true
                     return true
                   }
@@ -1005,6 +1004,7 @@ const TripPage = () => {
                     dataNotifications={notifications}
                     canEdit={canEdit}
                     carouselImages={carouselImages}
+                    tripid={tripid}
                   />
                 </Box>
               )}
@@ -1022,6 +1022,7 @@ const TripPage = () => {
                   <Planning tripData={tripData} tripId={tripid} canEdit={canEdit} />
                 </PlanningContextProvider>
               )}
+              {currentActiveTab === 'triplogs' && <TripLogs tripData={tripData} />}
               {/* {currentActiveTab === 'photos' && <Photos tripId={tripid} />} */}
               {/* {currentActiveTab === 'documents' && <Documents />}
             {currentActiveTab === 'notes' && <Notes />}
@@ -1322,6 +1323,7 @@ const TripPage = () => {
           })
           updatePlanning()
           setOpenModal('general')
+          createNotificationsOnTrip(user, tripData, tripid, 'dateUpdate', 3)
         }}
         preventCloseOnSubmit
         contentMinHeight="470px"
@@ -1342,8 +1344,8 @@ const TripPage = () => {
             <Info color="secondary" />
           </Box>
           <Typography>
-            En modifiant tes dates de séjour, les explos dans ton planning qui n&apos;appartiennent
-            pas à la plage de ton voyage devront être replanifiés.
+            En modifiant tes dates de séjour, les évènements dans ton planning qui
+            n&apos;appartiennent pas à la plage de ton voyage devront être replanifiés.
           </Typography>
         </Box>
       </Modal>

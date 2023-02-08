@@ -208,12 +208,13 @@ const SurveyPreview = ({
   const theme = useTheme()
   const matchesXs = useMediaQuery(theme.breakpoints.down('sm'))
   const { user } = useContext(SessionContext)
-  const { firestore } = useContext(FirebaseContext)
+  const { firestore, createNotificationsOnTrip } = useContext(FirebaseContext)
 
   const [isLoading, setIsLoading] = useState(true)
   const [chooseMode, setChooseMode] = useState(false)
   const [selectedProposition, setSelectedProposition] = useState()
   const [isValidationDialogOpen, setIsValidationDialogOpen] = useState(false)
+  const [tripData, setTripData] = useState()
 
   const handleLike = index => {
     const tempPropositions = currentEvent.propositions
@@ -256,8 +257,19 @@ const SurveyPreview = ({
         .add({ ...rest })
     }
 
+    createNotificationsOnTrip(user, tripData, tripId, 'surveyClose', 2, currentEvent)
     setCurrentView('planning')
   }
+
+  useEffect(() => {
+    firestore
+      .collection('trips')
+      .doc(tripId)
+      .onSnapshot(doc => {
+        const tempDoc = doc.data()
+        setTripData(tempDoc)
+      })
+  }, [tripId])
 
   useEffect(() => {
     if (currentEvent?.type) {
@@ -410,19 +422,19 @@ const SurveyPreview = ({
               <Box>
                 <Typography color="primary">
                   {currentEvent.type === EVENT_TYPES[0]
-                    ? `${format(stringToDate(proposition.arrivalDateTime), 'dd MMMM')} - ${format(
-                        stringToDate(proposition.departureDateTime),
+                    ? `${format(stringToDate(proposition.startTime), 'dd MMMM')} - ${format(
+                        stringToDate(proposition.endTime),
                         'dd MMMM'
                       )}`
                     : currentEvent.type === EVENT_TYPES[1]
                     ? rCTFF(proposition.flights[0].date, 'dd MMMM')
                     : currentEvent.type === EVENT_TYPES[3]
                     ? `${format(
-                        stringToDate(proposition.transports[0].startDateTime),
+                        stringToDate(proposition.transports[0].startTime),
                         'dd MMMM'
                       )} - ${format(
                         stringToDate(
-                          proposition.transports[proposition.transports.length - 1].endDateTime
+                          proposition.transports[proposition.transports.length - 1].endTime
                         ),
                         'dd MMMM'
                       )}`
@@ -477,9 +489,9 @@ const SurveyPreview = ({
                       {proposition.transports.length > 1 && 's'} •{' '}
                       {formatDuration(
                         intervalToDuration({
-                          start: rCTFF(proposition.transports[0].startDateTime),
+                          start: rCTFF(proposition.transports[0].startTime),
                           end: rCTFF(
-                            proposition.transports[proposition.transports.length - 1].endDateTime
+                            proposition.transports[proposition.transports.length - 1].endTime
                           ),
                         }),
                         {
@@ -520,8 +532,8 @@ const SurveyPreview = ({
                           <Typography color="textPrimary">
                             {formatDuration(
                               intervalToDuration({
-                                start: rCTFF(transport.startDateTime),
-                                end: rCTFF(transport.endDateTime),
+                                start: rCTFF(transport.startTime),
+                                end: rCTFF(transport.endTime),
                               }),
                               {
                                 format: ['days', 'hours', 'minutes'],
@@ -543,8 +555,8 @@ const SurveyPreview = ({
                             </Box>
 
                             {isSameMinute(
-                              rCTFF(transport.endDateTime),
-                              rCTFF(currentArray[transportIndex + 1].startDateTime)
+                              rCTFF(transport.endTime),
+                              rCTFF(currentArray[transportIndex + 1].startTime)
                             ) ? (
                               <Typography color="secondary">
                                 Pas de temps de correspondance
@@ -553,8 +565,8 @@ const SurveyPreview = ({
                               <Typography color="textPrimary">
                                 {formatDuration(
                                   intervalToDuration({
-                                    start: rCTFF(transport.endDateTime),
-                                    end: rCTFF(currentArray[transportIndex + 1].startDateTime),
+                                    start: rCTFF(transport.endTime),
+                                    end: rCTFF(currentArray[transportIndex + 1].startTime),
                                   }),
                                   {
                                     format: ['days', 'hours', 'minutes'],

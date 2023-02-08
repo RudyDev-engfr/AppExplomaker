@@ -116,24 +116,11 @@ const TripWrapper = ({ latLng, currentStep, title, subtitle, backURL, handleSubm
 
   useEffect(() => {
     if (newTrip.destination.value?.place_id) {
-      console.log(newTrip)
       getSpotByDestination(newTrip.destination, setCurrentSpot)
     } else {
-      console.log('its no')
       setCurrentSpot(genericSpot)
     }
   }, [newTrip])
-
-  useEffect(() => {
-    if (typeof currentSpot !== 'undefined') {
-      setNewTripSpot(currentSpot)
-    }
-    console.log('spot actuel', currentSpot)
-  }, [currentSpot])
-
-  useEffect(() => {
-    console.log('newTripSpot', newTripSpot)
-  }, [newTripSpot])
 
   const wrapperSubmit = event => {
     event.preventDefault()
