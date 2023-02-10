@@ -394,7 +394,7 @@ const FirebaseContextProvider = ({ children }) => {
       type === 'dateUpdate' ||
       type === 'surveyCreate' ||
       type === 'surveyClose' ||
-      type === 'turnEventToSurvey' ||
+      type === 'turnEventIntoSurvey' ||
       type === 'surveyPropositionChange' ||
       type === 'propositionAdd' ||
       type === 'eventCreate' ||

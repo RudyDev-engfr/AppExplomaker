@@ -61,6 +61,9 @@ const commonSettings = createTheme({
     },
     h5: {
       fontFamily,
+      fontWeight: 700,
+      fontSize: '24px',
+      lineHeight: '28px',
     },
     h6: {
       fontFamily,

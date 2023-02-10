@@ -814,10 +814,10 @@ const EventCreator = ({
             setCurrentEvent(tempEvent)
             if (isSurvey) {
               setCurrentView('survey')
-              createNotificationsOnTrip(user, tripData, tripId, 'turnEventToSurvey', 2, tempEvent)
+              createNotificationsOnTrip(user, tripData, tripId, 'turnEventIntoSurvey', 2, tempEvent)
             } else {
               setCurrentView('preview')
-              createNotificationsOnTrip(user, tripData, tripId, 'eventUpdate', 2, tempEvent)
+              createNotificationsOnTrip(user, tripData, tripId, 'eventUpdate', 2, currentEvent)
             }
           })
       }

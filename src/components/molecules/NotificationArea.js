@@ -1,12 +1,15 @@
 import React, { useState } from 'react'
-import { Avatar, Box, IconButton, Menu, Paper, Typography } from '@mui/material'
+import { Avatar, Badge, Box, IconButton, Menu, Paper, Typography } from '@mui/material'
 import { makeStyles, useTheme } from '@mui/styles'
 import { Notifications } from '@mui/icons-material'
+import { useHistory } from 'react-router-dom'
+import findIcon from '../../helper/icons'
 
 const useStyles = makeStyles(theme => ({}))
-const NotificationArea = ({ tripData, currentNotifications }) => {
+const NotificationArea = ({ tripData, tripid, currentNotifications, setRefreshNotif }) => {
   const classes = useStyles()
   const theme = useTheme()
+  const history = useHistory()
   const [anchorElNotif, setAnchorElNotif] = useState(null)
 
   const openNotif = Boolean(anchorElNotif)
@@ -16,27 +19,37 @@ const NotificationArea = ({ tripData, currentNotifications }) => {
   }
   const handleClickNotif = event => {
     setAnchorElNotif(event.currentTarget)
+    setRefreshNotif(true)
 
     // setNotificationsToConsulted(tripData)
   }
 
   return (
     <>
-      <IconButton
-        aria-label="more"
-        id="notif-button"
-        aria-controls={openNotif ? 'notif-menu' : undefined}
-        aria-expanded={openNotif ? 'true' : undefined}
-        aria-haspopup="true"
-        onClick={handleClickNotif}
-        sx={{
-          backgroundColor:
-            tripData?.notifications?.filter(notification => notification.state === 1).length > 0 &&
-            theme.palette.primary.ultraLight,
-        }}
+      <Badge
+        badgeContent={
+          currentNotifications
+            .filter(notification => notification.tripid === tripid)
+            .filter(notification => notification.state === 1).length
+        }
+        color="secondary"
       >
-        <Notifications />
-      </IconButton>
+        <IconButton
+          aria-label="more"
+          id="notif-button"
+          aria-controls={openNotif ? 'notif-menu' : undefined}
+          aria-expanded={openNotif ? 'true' : undefined}
+          aria-haspopup="true"
+          onClick={handleClickNotif}
+          sx={{
+            backgroundColor:
+              tripData?.notifications?.filter(notification => notification.state === 1).length >
+                0 && theme.palette.primary.ultraLight,
+          }}
+        >
+          <Notifications />
+        </IconButton>
+      </Badge>
       <Menu
         anchorEl={anchorElNotif}
         id="notif-menu"
@@ -67,31 +80,73 @@ const NotificationArea = ({ tripData, currentNotifications }) => {
         transformOrigin={{ horizontal: 'right', vertical: 'top' }}
         anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
       >
-        <Paper sx={{ width: '470px', height: '740px', maxHeight: '740px', overflowY: 'auto' }}>
-          {currentNotifications?.map(notification => (
-            <Box
-              sx={{
-                width: '457px,',
-                height: '85px',
-                padding: '0 30px',
-                display: 'grid',
-                gridTemplate: '1fr / 110px 1fr',
-                alignItems: 'center',
-                marginBottom: '30px',
-                backgroundColor:
-                  notification.state === 1 ? theme.palette.primary.ultraLight : 'white',
-              }}
-              key={notification.content}
+        <Paper sx={{ width: '470px', height: '740px', maxHeight: '740px' }}>
+          <Box sx={{ padding: '30px' }}>
+            <Typography
+              component="h5"
+              variant="h5"
+              align="left"
+              sx={{ fontFamily: 'Vesper Libre' }}
             >
-              <Avatar sx={{ width: 80, height: 80 }} />
-              <Box>
-                <Typography sx={{ fontSize: '13px' }}>{notification.content}</Typography>
-                <Typography sx={{ fontSize: '13px', color: theme.palette.primary.main }}>
-                  {notification.timer}
-                </Typography>
-              </Box>
-            </Box>
-          ))}
+              Mes Notifications
+            </Typography>
+          </Box>
+          <Box sx={{ overflowY: 'auto', maxHeight: '630px' }}>
+            {currentNotifications
+              ?.slice(0)
+              .reverse()
+              .map(notification => (
+                <Box
+                  sx={{
+                    width: '457px,',
+                    height: '105px',
+                    padding: '0 30px',
+                    display: 'grid',
+                    gridTemplate: '1fr / 110px 1fr',
+                    alignItems: 'center',
+                    marginBottom: '10px',
+                    backgroundColor:
+                      notification.state === 1 ? theme.palette.primary.ultraLight : 'white',
+                    cursor: 'pointer',
+                  }}
+                  key={notification.content}
+                  onClick={() => history.push(notification.url)}
+                >
+                  <Box sx={{ position: 'relative' }}>
+                    <Avatar sx={{ width: 80, height: 80 }} />
+                    <Box
+                      sx={{
+                        position: 'absolute',
+                        bottom: '-5px ',
+                        right: '30px',
+                        padding: '6px',
+                        borderRadius: '50px',
+                        width: '32px',
+                        height: '32px',
+                        backgroundColor: theme.palette.primary.main,
+                      }}
+                    >
+                      <Box
+                        component="img"
+                        src={findIcon(notification.icon, notification.eventType)}
+                        sx={{
+                          filter:
+                            'brightness(0) saturate(100%) invert(92%) sepia(95%) saturate(0%) hue-rotate(332deg) brightness(114%) contrast(100%)',
+                          width: '20px',
+                          height: '20px',
+                        }}
+                      />
+                    </Box>
+                  </Box>
+                  <Box>
+                    <Typography sx={{ fontSize: '13px' }}>{notification.content}</Typography>
+                    <Typography sx={{ fontSize: '13px', color: theme.palette.primary.main }}>
+                      {notification.timer}
+                    </Typography>
+                  </Box>
+                </Box>
+              ))}
+          </Box>
         </Paper>
       </Menu>
     </>

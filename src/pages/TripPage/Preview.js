@@ -29,6 +29,7 @@ import location from '../../images/icons/location.svg'
 import person from '../../images/icons/person.svg'
 import NotificationArea from '../../components/molecules/NotificationArea'
 import { SessionContext } from '../../contexts/session'
+import MobileNotificationArea from '../../components/molecules/MobileNotificationArea'
 
 const useStyles = makeStyles(theme => ({
   slides: {
@@ -257,14 +258,16 @@ const Preview = ({
   const [currentDateRange, setCurrentDateRange] = useState(['', ''])
   const [generatedAvatars, setGeneratedAvatars] = useState([])
   const [currentNotifications, setCurrentNotifications] = useState([])
+  const [refreshNotif, setRefreshNotif] = useState(false)
 
   useEffect(() => {
-    if (tripData && user) {
+    if (tripData && user && refreshNotif) {
       const tempNotif = buildNotificationsOnTripForUser(user, tripid)
       setCurrentNotifications(tempNotif)
+      setRefreshNotif(false)
     }
     console.log('le voyage avec ses notifs', user.notifications)
-  }, [tripData, user])
+  }, [tripData, user, refreshNotif])
 
   useEffect(() => {
     console.log('les notifs que je veux afficher', currentNotifications)
@@ -317,7 +320,20 @@ const Preview = ({
       <Box className={classes.sliderBox}>
         <Box position="absolute" top="0" right="0">
           <Box position="absolute" top="20px" right="20px" zIndex="20">
-            <NotificationArea tripData={tripData} currentNotifications={currentNotifications} />
+            {matchesXs ? (
+              <MobileNotificationArea
+                tripData={tripData}
+                currentNotifications={currentNotifications}
+                setRefreshNotif={setRefreshNotif}
+              />
+            ) : (
+              <NotificationArea
+                tripData={tripData}
+                currentNotifications={currentNotifications}
+                setRefreshNotif={setRefreshNotif}
+                tripid={tripid}
+              />
+            )}
           </Box>
         </Box>
         {carouselImages?.length > 0 ? (
