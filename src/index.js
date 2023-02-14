@@ -1,7 +1,7 @@
 import React from 'react'
 import ReactDOM from 'react-dom'
-import * as Sentry from '@sentry/react'
-import { Integrations } from '@sentry/tracing'
+// import * as Sentry from '@sentry/react'
+// import { Integrations } from '@sentry/tracing'
 import { Router } from 'react-router-dom'
 import AdapterDateFns from '@mui/lab/AdapterDateFns'
 import LocalizationProvider from '@mui/lab/LocalizationProvider'
@@ -21,15 +21,15 @@ import './styles/global.css'
 import './styles/firebaseui-styling.global.css'
 import 'react-multi-carousel/lib/styles.css'
 
-Sentry.init({
-  dsn: 'https://55f990c86b454598b8ba7d6f1b22fae5@o1108965.ingest.sentry.io/6137015',
-  integrations: [new Integrations.BrowserTracing()],
+// Sentry.init({
+//   dsn: 'https://55f990c86b454598b8ba7d6f1b22fae5@o1108965.ingest.sentry.io/6137015',
+//   integrations: [new Integrations.BrowserTracing()],
 
-  // Set tracesSampleRate to 1.0 to capture 100%
-  // of transactions for performance monitoring.
-  // We recommend adjusting this value in production
-  tracesSampleRate: 1.0,
-})
+//   // Set tracesSampleRate to 1.0 to capture 100%
+//   // of transactions for performance monitoring.
+//   // We recommend adjusting this value in production
+//   tracesSampleRate: 1.0,
+// })
 
 // eslint-disable-next-line no-console
 console.log(`${process.env.REACT_APP_NAME} v${process.env.REACT_APP_VERSION}`)

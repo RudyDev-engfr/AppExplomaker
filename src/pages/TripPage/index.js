@@ -1004,7 +1004,7 @@ const TripPage = () => {
                     dataNotifications={notifications}
                     canEdit={canEdit}
                     carouselImages={carouselImages}
-                    tripid={tripid}
+                    tripId={tripid}
                   />
                 </Box>
               )}

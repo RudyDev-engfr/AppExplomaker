@@ -246,7 +246,7 @@ const Preview = ({
   dataNotifications,
   canEdit,
   carouselImages,
-  tripid,
+  tripId,
 }) => {
   const classes = useStyles()
   const theme = useTheme()
@@ -262,7 +262,7 @@ const Preview = ({
 
   useEffect(() => {
     if (tripData && user && refreshNotif) {
-      const tempNotif = buildNotificationsOnTripForUser(user, tripid)
+      const tempNotif = buildNotificationsOnTripForUser(user, tripId)
       setCurrentNotifications(tempNotif)
       setRefreshNotif(false)
     }
@@ -331,7 +331,7 @@ const Preview = ({
                 tripData={tripData}
                 currentNotifications={currentNotifications}
                 setRefreshNotif={setRefreshNotif}
-                tripid={tripid}
+                tripId={tripId}
               />
             )}
           </Box>

@@ -6,7 +6,7 @@ import { useHistory } from 'react-router-dom'
 import findIcon from '../../helper/icons'
 
 const useStyles = makeStyles(theme => ({}))
-const NotificationArea = ({ tripData, tripid, currentNotifications, setRefreshNotif }) => {
+const NotificationArea = ({ tripData, tripId, currentNotifications, setRefreshNotif }) => {
   const classes = useStyles()
   const theme = useTheme()
   const history = useHistory()
@@ -28,9 +28,9 @@ const NotificationArea = ({ tripData, tripid, currentNotifications, setRefreshNo
     <>
       <Badge
         badgeContent={
-          currentNotifications
-            .filter(notification => notification.tripid === tripid)
-            .filter(notification => notification.state === 1).length
+          currentNotifications.filter(
+            notification => notification?.tripId === tripId && notification?.state === 1
+          ).length
         }
         color="secondary"
       >

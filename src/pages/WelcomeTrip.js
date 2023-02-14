@@ -8,7 +8,7 @@ const WelcomeTrip = () => {
 
   setTimeout(() => {
     history.push(`/tripPage/${tripid}`)
-  }, 5000)
+  }, 3000)
 
   return <Loader joinTrip />
 }

@@ -128,7 +128,7 @@ const JoinTrip = () => {
         const tempDoc = doc.data()
         tempDoc.travelersDetails.forEach(traveler => {
           if (typeof traveler.id !== 'undefined' && traveler.id === user.id) {
-            history.push(`/welcomeTrip`)
+            history.push(`/tripPage/${tripid}`)
           }
         })
         setTripData(tempDoc)
