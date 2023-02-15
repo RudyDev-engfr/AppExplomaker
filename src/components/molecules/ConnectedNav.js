@@ -155,7 +155,7 @@ const ConnectedNav = () => {
   const theme = useTheme()
   const matchesXs = useMediaQuery(theme.breakpoints.down('sm'))
 
-  const { auth, database, setNotificationsToConsulted } = useContext(FirebaseContext)
+  const { auth, database, setNotificationsToNewState } = useContext(FirebaseContext)
   const { user, setUser } = useContext(SessionContext)
   const [currentNotifications, setCurrentNotifications] = useState([])
 
@@ -170,7 +170,7 @@ const ConnectedNav = () => {
   }
   const handleClickNotif = event => {
     setAnchorElNotif(event.currentTarget)
-    setNotificationsToConsulted(user)
+    setNotificationsToNewState(user, 2)
   }
   const handleCloseNotif = event => {
     setAnchorElNotif(null)

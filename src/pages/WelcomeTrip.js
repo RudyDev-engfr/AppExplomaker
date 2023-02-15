@@ -3,11 +3,11 @@ import { useHistory, useParams } from 'react-router-dom'
 import Loader from '../components/Loader'
 
 const WelcomeTrip = () => {
-  const { tripid } = useParams()
+  const { tripId } = useParams()
   const history = useHistory()
 
   setTimeout(() => {
-    history.push(`/tripPage/${tripid}`)
+    history.push(`/tripPage/${tripId}`)
   }, 3000)
 
   return <Loader joinTrip />

@@ -544,6 +544,247 @@ export const buildNotificationsOnTripForUser = (user, tripid) => {
   }
 }
 
+export const buildLogSejour = (tripId, tripData) => {
+  console.log('raconte moi où tas bobo', tripData.notifications)
+  const notifications = []
+  if (tripData?.notifications) {
+    tripData.notifications
+      .filter(notification => notification.tripId === tripId)
+      .forEach(({ sejour, priority, state, type, creationDate, owner, event }) => {
+        const singleNotif = {}
+        const notifBody = buildNotifTimerAndState(creationDate, state)
+        // eslint-disable-next-line default-case
+        switch (type) {
+          case 'dateUpdate':
+            console.log('je suis un dateUpdate')
+            singleNotif.content = owner?.firstname
+              ? `${owner.firstname} a modifié les dates du voyage. Elles sont désormais du ${rCTFF(
+                  sejour.dateRange[0],
+                  'dd/MM/yyyy'
+                )} au ${rCTFF(sejour.dateRange[1], 'dd/MM/yyyy')}.`
+              : `Les dates de votre voyage ont été modifiées, elles sont désormais du ${rCTFF(
+                  sejour.dateRange[0],
+                  'dd/MM/yyyy'
+                )} au ${rCTFF(sejour.dateRange[1], 'dd/MM/yyyy')}.`
+            singleNotif.timer = notifBody.definitiveTimer
+            singleNotif.state = notifBody.state
+            singleNotif.url = `/tripPage/${tripId}`
+            break
+
+          case 'surveyCreate':
+            console.log('je passe par le surveyCreate', event.propositions[0])
+            singleNotif.content = owner?.firstname
+              ? `${owner.firstname} a créé un sondage - ${
+                  event?.type === 'accommodation'
+                    ? 'Hébergement'
+                    : event?.type === 'flight'
+                    ? 'Vol'
+                    : event?.type === 'restaurant'
+                    ? 'Restaurant'
+                    : event?.type === 'explore'
+                    ? 'Exploration'
+                    : event?.type === 'transport' && 'Transport'
+                } -  sur la journée du ${
+                  event.propositions && rCTFF(event.propositions[0].date, 'dd/MM/yyyy')
+                }.`
+              : `Un sondage - ${
+                  event?.type === 'accommodation'
+                    ? 'Hébergement'
+                    : event?.type === 'flight'
+                    ? 'Vol'
+                    : event?.type === 'restaurant'
+                    ? 'Restaurant'
+                    : event?.type === 'explore'
+                    ? 'Exploration'
+                    : event?.type === 'transport' && 'Transport'
+                } - a été créé sur la journée du ${rCTFF(
+                  event.propositions[0].date,
+                  'dd/MM/yyyy'
+                )}.`
+            singleNotif.timer = notifBody.definitiveTimer
+            singleNotif.state = notifBody.state
+            singleNotif.icon = event.propositions[0].icon
+            singleNotif.eventType = event.type
+            singleNotif.url = `/tripPage/${tripId}/planning?survey=${event.id}`
+            singleNotif.logs = {
+              place: event.propositions[0].location.label,
+              date: rCTFF(event.propositions[0].date, 'dd/MM/yyyy'),
+              eventName: event.propositions[0].title,
+              participatingTravelers: event.propositions[0].participatingTravelers.map(
+                traveler => traveler.name
+              ),
+            }
+            break
+
+          case 'turnEventIntoSurvey':
+            console.log('je passe par le surveyCreate', event.propositions[0])
+            singleNotif.content = owner?.firstname
+              ? `${owner.firstname} a créé un sondage -
+              ${
+                event?.type === 'accommodation'
+                  ? 'Hébergement'
+                  : event?.type === 'flight'
+                  ? 'Vol'
+                  : event?.type === 'restaurant'
+                  ? 'Restaurant'
+                  : event?.type === 'explore'
+                  ? 'Exploration'
+                  : event?.type === 'transport' && 'Transport'
+              } - sur la journée du ${
+                  event.propositions && rCTFF(event.propositions[0].date, 'dd/MM/yyyy')
+                }.`
+              : `Un sondage a été créé sur la journée du ${rCTFF(event.date, 'dd/MM/yyyy')}.`
+            singleNotif.timer = notifBody.definitiveTimer
+            singleNotif.state = notifBody.state
+            singleNotif.icon = event.propositions[0].icon
+            singleNotif.eventType = event.type
+            singleNotif.url = `/tripPage/${tripId}/planning?survey=${event.id}`
+            break
+
+          case 'surveyClose':
+            console.log('je passe par le surveyClose')
+            singleNotif.content = owner?.firstname
+              ? `${owner.firstname} a clôturé un sondage - ${
+                  event?.type === 'accommodation'
+                    ? 'Hébergement'
+                    : event?.type === 'flight'
+                    ? 'Vol'
+                    : event?.type === 'restaurant'
+                    ? 'Restaurant'
+                    : event?.type === 'explore'
+                    ? 'Exploration'
+                    : event?.type === 'transport' && 'Transport'
+                } - sur la journée du ${event.date && rCTFF(event.date, 'dd/MM/yyyy')}.`
+              : `Un sondage - ${
+                  event?.type === 'accommodation'
+                    ? 'Hébergement'
+                    : event?.type === 'flight'
+                    ? 'Vol'
+                    : event?.type === 'restaurant'
+                    ? 'Restaurant'
+                    : event?.type === 'explore'
+                    ? 'Exploration'
+                    : event?.type === 'transport' && 'Transport'
+                } - a été clôturé sur la journée du ${rCTFF(event.date, 'dd/MM/yyyy')}.`
+            singleNotif.timer = notifBody.definitiveTimer
+            singleNotif.state = notifBody.state
+            singleNotif.icon = event.icon
+            singleNotif.eventType = event.type
+            singleNotif.url = `/tripPage/${tripId}/planning?event=${event.id}`
+            break
+
+          case 'surveyPropositionChange':
+            console.log('je passe par le surveyClose')
+            singleNotif.content = owner?.firstname
+              ? `${owner.firstname} a modifié un sondage sur la journée du ${
+                  event.date && rCTFF(event.date, 'dd/MM/yyyy')
+                }.`
+              : `Un sondage a été modifié sur la journée du ${rCTFF(event.date, 'dd/MM/yyyy')}.`
+            singleNotif.timer = notifBody.definitiveTimer
+            singleNotif.state = notifBody.state
+            singleNotif.icon = event.icon
+            singleNotif.eventType = event.type
+            singleNotif.url = `/tripPage/${tripId}/planning?survey=${event.id}`
+            break
+
+          case 'propositionAdd':
+            console.log('je passe par le propositionAdd')
+            singleNotif.content = owner?.firstname
+              ? `${owner.firstname} a ajouté une proposition sur le sondage - ${
+                  event.type
+                } - pour la journée du ${
+                  event.propositions &&
+                  rCTFF(event.propositions[event.propositions.length - 1].date, 'dd/MM/yyyy')
+                }.`
+              : `Une proposition a été ajouté sur le sondage pour la journée du ${rCTFF(
+                  event.propositions[event.propositions.length - 1].date,
+                  'dd/MM/yyyy'
+                )}.`
+            singleNotif.timer = notifBody.definitiveTimer
+            singleNotif.state = notifBody.state
+            singleNotif.icon = event.propositions[event.propositions.length - 1].icon
+            singleNotif.eventType = event.type
+            singleNotif.url = `/tripPage/${tripId}/planning?survey=${event.id}`
+            break
+
+          case 'eventCreate':
+            console.log('je passe par le eventCreate')
+            singleNotif.content = owner?.firstname
+              ? `${owner.firstname} a créé un évènement - ${
+                  event?.type === 'accommodation'
+                    ? 'Hébergement'
+                    : event?.type === 'flight'
+                    ? 'Vol'
+                    : event?.type === 'restaurant'
+                    ? 'Restaurant'
+                    : event?.type === 'explore'
+                    ? 'Exploration'
+                    : event?.type === 'transport' && 'Transport'
+                } - pour la journée du ${
+                  event.type === 'flight'
+                    ? rCTFF(event.flights[0].date, 'dd/MM/yyyy')
+                    : event.type === 'transport'
+                    ? rCTFF(event.transports[0].date, 'dd/MM/yyyy')
+                    : rCTFF(event.date, 'dd/MM/yyyy')
+                }.`
+              : `Un évènement a été créé sur la journée du ${
+                  event.type === 'flight'
+                    ? rCTFF(event.flights[0].date, 'dd/MM/yyyy')
+                    : event.type === 'transport'
+                    ? rCTFF(event.transports[0].date, 'dd/MM/yyyy')
+                    : rCTFF(event.date, 'dd/MM/yyyy')
+                }.`
+            singleNotif.timer = notifBody.definitiveTimer
+            singleNotif.state = notifBody.state
+            singleNotif.icon = event.icon
+            singleNotif.eventType = event.type
+            singleNotif.url = `/tripPage/${tripId}/planning?event=${event.id}`
+            singleNotif.logs = {
+              place: event.location.label,
+              date: rCTFF(event.date, 'dd/MM/yyyy'),
+              eventName: event.title,
+              participatingTravelers: event.participatingTravelers.map(traveler => traveler.name),
+            }
+            break
+
+          case 'eventUpdate':
+            console.log('je passe par le eventUpdate')
+            singleNotif.content = owner?.firstname
+              ? `${owner.firstname} a modifié un évènement - ${
+                  event?.type === 'accommodation'
+                    ? 'Hébergement'
+                    : event?.type === 'flight'
+                    ? 'Vol'
+                    : event?.type === 'restaurant'
+                    ? 'Restaurant'
+                    : event?.type === 'explore'
+                    ? 'Exploration'
+                    : event?.type === 'transport' && 'Transport'
+                } - pour la journée du ${
+                  event.type === 'flight'
+                    ? rCTFF(event.flights[0].date, 'dd/MM/yyyy')
+                    : rCTFF(event.date, 'dd/MM/yyyy')
+                }.`
+              : `Un évènement a été modifié sur la journée du ${
+                  event.type === 'flight'
+                    ? rCTFF(event.flights[0].date, 'dd/MM/yyyy')
+                    : rCTFF(event.date, 'dd/MM/yyyy')
+                }.`
+            singleNotif.timer = notifBody.definitiveTimer
+            singleNotif.state = notifBody.state
+            singleNotif.icon = event.icon
+            singleNotif.eventType = event.type
+            singleNotif.url = `/tripPage/${tripId}/planning?event=${event.id}`
+            break
+        }
+        console.log('cestfini la generation de notif')
+        notifications.push(singleNotif)
+      })
+    console.log('notifs qui sont construites', notifications)
+    return notifications
+  }
+}
+
 /*
 export const getLocationInfos = async location => {
   const tempLocation = { ...location }

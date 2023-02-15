@@ -1,15 +1,20 @@
-import React, { useState } from 'react'
+import React, { useContext, useState } from 'react'
 import { Avatar, Badge, Box, IconButton, Menu, Paper, Typography } from '@mui/material'
 import { makeStyles, useTheme } from '@mui/styles'
 import { Notifications } from '@mui/icons-material'
 import { useHistory } from 'react-router-dom'
 import findIcon from '../../helper/icons'
+import { SessionContext } from '../../contexts/session'
+import { FirebaseContext } from '../../contexts/firebase'
 
 const useStyles = makeStyles(theme => ({}))
 const NotificationArea = ({ tripData, tripId, currentNotifications, setRefreshNotif }) => {
   const classes = useStyles()
   const theme = useTheme()
   const history = useHistory()
+  const { setNotificationsToNewState, setNotificationsToNewStateOnTrip } =
+    useContext(FirebaseContext)
+  const { user } = useContext(SessionContext)
   const [anchorElNotif, setAnchorElNotif] = useState(null)
 
   const openNotif = Boolean(anchorElNotif)
@@ -20,8 +25,7 @@ const NotificationArea = ({ tripData, tripId, currentNotifications, setRefreshNo
   const handleClickNotif = event => {
     setAnchorElNotif(event.currentTarget)
     setRefreshNotif(true)
-
-    // setNotificationsToConsulted(tripData)
+    setNotificationsToNewState(user, tripId, 2)
   }
 
   return (
@@ -108,9 +112,13 @@ const NotificationArea = ({ tripData, tripId, currentNotifications, setRefreshNo
                     backgroundColor:
                       notification.state === 1 ? theme.palette.primary.ultraLight : 'white',
                     cursor: 'pointer',
+                    position: 'relative',
                   }}
                   key={notification.content}
-                  onClick={() => history.push(notification.url)}
+                  onClick={() => {
+                    setNotificationsToNewState(user, 3, notification.id)
+                    history.push(notification.url)
+                  }}
                 >
                   <Box sx={{ position: 'relative' }}>
                     <Avatar sx={{ width: 80, height: 80 }} />
@@ -138,12 +146,25 @@ const NotificationArea = ({ tripData, tripId, currentNotifications, setRefreshNo
                       />
                     </Box>
                   </Box>
-                  <Box>
+                  <Box sx={{ maxWdith: '280px' }}>
                     <Typography sx={{ fontSize: '13px' }}>{notification.content}</Typography>
                     <Typography sx={{ fontSize: '13px', color: theme.palette.primary.main }}>
                       {notification.timer}
                     </Typography>
                   </Box>
+                  {notification.state !== 3 && (
+                    <Box
+                      sx={{
+                        position: 'absolute',
+                        right: '20px',
+                        top: '50px',
+                        width: '12px',
+                        height: '12px',
+                        borderRadius: '50px',
+                        backgroundColor: theme.palette.primary.main,
+                      }}
+                    />
+                  )}
                 </Box>
               ))}
           </Box>

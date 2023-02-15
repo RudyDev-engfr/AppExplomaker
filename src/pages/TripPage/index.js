@@ -528,7 +528,7 @@ const TripPage = () => {
   const matches1300 = useMediaQuery('(max-width:1300px)')
   const matchesXs = useMediaQuery(theme.breakpoints.down('sm'))
   const history = useHistory()
-  const { tripid } = useParams()
+  const { tripId } = useParams()
   const location = useLocation()
   const classes = useStyles()
 
@@ -578,6 +578,10 @@ const TripPage = () => {
 
   useEffect(() => {
     testUniqueSpot(setTestSpot)
+  }, [])
+
+  useEffect(() => {
+    console.log('trip de la donnée', tripData)
   }, [])
 
   useEffect(() => {
@@ -644,7 +648,7 @@ const TripPage = () => {
   useEffect(() => {
     firestore
       .collection('trips')
-      .doc(tripid)
+      .doc(tripId)
       .onSnapshot(doc => {
         const tempDoc = doc.data()
         checkRoles(tempDoc)
@@ -652,7 +656,7 @@ const TripPage = () => {
       })
     firestore
       .collection('trips')
-      .doc(tripid)
+      .doc(tripId)
       .collection('wishes')
       .onSnapshot(docs => {
         const tempWishes = []
@@ -715,9 +719,9 @@ const TripPage = () => {
           currentActiveTab === 'notes' ||
           currentActiveTab === 'inspiration'
         ) {
-          history.push(`/tripPage/${tripid}`)
+          history.push(`/tripPage/${tripId}`)
         } else {
-          history.push(`/tripPage/${tripid}/${currentActiveTab}`)
+          history.push(`/tripPage/${tripId}/${currentActiveTab}`)
         }
       }
     }
@@ -785,12 +789,12 @@ const TripPage = () => {
         userWishes.likes.forEach(like => {
           firestore
             .collection('trips')
-            .doc(tripid)
+            .doc(tripId)
             .collection('wishes')
             .add({ ...like, userId: userWishes.userId })
         })
       })
-      firestore.collection('trips').doc(tripid).update({
+      firestore.collection('trips').doc(tripId).update({
         wishes: fieldValueRef.delete(),
       })
     }
@@ -818,7 +822,7 @@ const TripPage = () => {
   const handleUpdate = data => {
     firestore
       .collection('trips')
-      .doc(tripid)
+      .doc(tripId)
       .set(
         {
           ...data,
@@ -852,7 +856,7 @@ const TripPage = () => {
 
     firestore
       .collection('trips')
-      .doc(tripid)
+      .doc(tripId)
       .collection('planning')
       .get()
       .then(querySnapshot => {
@@ -949,12 +953,12 @@ const TripPage = () => {
       <TripPageNav
         currentActiveTab={currentActiveTab}
         setCurrentActiveTab={setCurrentActiveTab}
-        tripId={tripid}
+        tripId={tripId}
         tripData={tripData}
         currentDateRange={currentDateRange}
       />
       {canEdit && (
-        <Chat isChatOpen={isChatOpen} chats={chats} tripId={tripid} setIsChatOpen={setIsChatOpen} />
+        <Chat isChatOpen={isChatOpen} chats={chats} tripId={tripId} setIsChatOpen={setIsChatOpen} />
       )}
       <Box component="section" className={classes.content}>
         <Box
@@ -1004,13 +1008,13 @@ const TripPage = () => {
                     dataNotifications={notifications}
                     canEdit={canEdit}
                     carouselImages={carouselImages}
-                    tripId={tripid}
+                    tripId={tripId}
                   />
                 </Box>
               )}
               {currentActiveTab === 'envies' && (
                 <Envies
-                  tripId={tripid}
+                  tripId={tripId}
                   tripWishes={tripWishes}
                   recommendedWishes={recommendedWishes}
                   canEdit={canEdit}
@@ -1019,11 +1023,11 @@ const TripPage = () => {
               )}
               {currentActiveTab === 'planning' && (
                 <PlanningContextProvider>
-                  <Planning tripData={tripData} tripId={tripid} canEdit={canEdit} />
+                  <Planning tripData={tripData} tripId={tripId} canEdit={canEdit} />
                 </PlanningContextProvider>
               )}
-              {currentActiveTab === 'triplogs' && <TripLogs tripData={tripData} />}
-              {/* {currentActiveTab === 'photos' && <Photos tripId={tripid} />} */}
+              {currentActiveTab === 'triplogs' && <TripLogs tripData={tripData} tripId={tripId} />}
+              {/* {currentActiveTab === 'photos' && <Photos tripId={tripId} />} */}
               {/* {currentActiveTab === 'documents' && <Documents />}
             {currentActiveTab === 'notes' && <Notes />}
             {currentActiveTab === 'inspiration' && <Inspiration />} */}
@@ -1323,7 +1327,7 @@ const TripPage = () => {
           })
           updatePlanning()
           setOpenModal('general')
-          createNotificationsOnTrip(user, tripData, tripid, 'dateUpdate', 3)
+          createNotificationsOnTrip(user, tripData, tripId, 'dateUpdate', 3)
         }}
         preventCloseOnSubmit
         contentMinHeight="470px"
@@ -1444,7 +1448,7 @@ const TripPage = () => {
                                       }
                                       return tempTraveler
                                     })
-                                    updateTrip(tripid, { travelersDetails: tempTravelers })
+                                    updateTrip(tripId, { travelersDetails: tempTravelers })
                                   }}
                                   classes={{
                                     outlined: classes.travelerRoleOptionOutlined,
@@ -1482,7 +1486,7 @@ const TripPage = () => {
                                   const tempEditors = tripData.editors.filter(
                                     editorId => editorId !== travelerDetails.id
                                   )
-                                  updateTrip(tripid, {
+                                  updateTrip(tripId, {
                                     editors: tempEditors,
                                     travelersDetails: tempTravelers,
                                   })
@@ -1510,7 +1514,7 @@ const TripPage = () => {
                                 })
                                 const tempEditors = [...tripData.editors]
                                 tempEditors.push(travelerDetails.id)
-                                updateTrip(tripid, {
+                                updateTrip(tripId, {
                                   editors: tempEditors,
                                   travelersDetails: tempTravelers,
                                 })
@@ -1574,7 +1578,7 @@ const TripPage = () => {
                               }
                               return tempTraveler
                             })
-                            updateTrip(tripid, { travelersDetails: tempTravelers })
+                            updateTrip(tripId, { travelersDetails: tempTravelers })
                           }}
                         >
                           {modeOptions.map(option => (
@@ -1617,7 +1621,7 @@ const TripPage = () => {
                               const tempEditors = tripData.editors.filter(
                                 editorId => editorId !== travelerDetails.id
                               )
-                              updateTrip(tripid, {
+                              updateTrip(tripId, {
                                 editors: tempEditors,
                                 travelersDetails: tempTravelers,
                               })
@@ -1641,7 +1645,7 @@ const TripPage = () => {
                               })
                               const tempEditors = [...tripData.editors]
                               tempEditors.push(travelerDetails.id)
-                              updateTrip(tripid, {
+                              updateTrip(tripId, {
                                 editors: tempEditors,
                                 travelersDetails: tempTravelers,
                               })
@@ -1664,7 +1668,7 @@ const TripPage = () => {
                 sx={{ padding: '0', mr: 2 }}
                 onClick={() => {
                   navigator.clipboard.writeText(
-                    `https://${window.location.href.split('/')[2]}/join/${tripid}`
+                    `https://${window.location.href.split('/')[2]}/join/${tripId}`
                   )
                   toast.success('Lien copié !')
                 }}
@@ -1680,7 +1684,7 @@ const TripPage = () => {
               startIcon={<FileCopyRoundedIcon color="primary" />}
               onClick={() => {
                 navigator.clipboard.writeText(
-                  `https://${window.location.href.split('/')[2]}/join/${tripid}`
+                  `https://${window.location.href.split('/')[2]}/join/${tripId}`
                 )
                 toast.success('Lien copié !')
               }}
@@ -1692,7 +1696,7 @@ const TripPage = () => {
               ) : (
                 <Typography className={classes.typoCopyBtn}>{`https://${
                   window.location.href.split('/')[2]
-                }/join/${tripid}`}</Typography>
+                }/join/${tripId}`}</Typography>
               )}
             </Button>
             <Box

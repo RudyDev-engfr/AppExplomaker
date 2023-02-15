@@ -56,7 +56,7 @@ const Routes = () => {
       <Route path="/pwdreset">
         <PwdResetHandler />
       </Route>
-      <Route path="/join/:tripid">
+      <Route path="/join/:tripId">
         <JoinTrip />
       </Route>
 
@@ -78,10 +78,10 @@ const Routes = () => {
       <PrivateRoute path="/newtrip/tripRecap">
         <TripRecap />
       </PrivateRoute>
-      <PrivateRoute path="/tripPage/:tripid">
+      <PrivateRoute path="/tripPage/:tripId">
         <TripPage />
       </PrivateRoute>
-      <PrivateRoute path="welcomeTrip">
+      <PrivateRoute path="welcomeTrip/:tripId">
         <WelcomeTrip />
       </PrivateRoute>
       <PrivateRoute path="/profile">

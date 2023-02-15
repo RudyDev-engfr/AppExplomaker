@@ -6,6 +6,7 @@ import 'firebase/storage'
 import 'firebase/database'
 import 'firebase/analytics'
 import getTime from 'date-fns/getTime'
+import { v4 as uuidv4 } from 'uuid'
 
 import facebook from '../images/signIn/Facebook.svg'
 import google from '../images/signIn/Google.svg'
@@ -316,6 +317,7 @@ const FirebaseContextProvider = ({ children }) => {
     const tempNotifs = user.data().notifications || []
     const updateData = {}
     tempNotifs.push({
+      id: uuidv4(),
       sejour: tempTrip,
       type,
       priority,
@@ -331,19 +333,50 @@ const FirebaseContextProvider = ({ children }) => {
       .set({ ...updateData }, { merge: true })
   }
 
-  const setNotificationsToConsulted = (user, tripData) => {
+  const setNotificationsToNewState = (user, state, notifId) => {
     const updateData = {}
 
     if (user) {
       const tempNotifs = user.notifications || []
-      const consultedNotif = tempNotifs.map(singleNotif => {
+      const newStateNotif = tempNotifs.map(singleNotif => {
         const tempSingleNotif = singleNotif
-        if (tempSingleNotif.state === 1) {
-          tempSingleNotif.state = 2
+        if (tempSingleNotif.state < 3 && tempSingleNotif.state !== state && !notifId) {
+          tempSingleNotif.state = state
+        }
+        if (
+          notifId &&
+          tempSingleNotif.id === notifId &&
+          tempSingleNotif.state < 3 &&
+          tempSingleNotif.state !== state
+        ) {
+          tempSingleNotif.state = state
+        }
+        console.log('chaque notif modifiée', tempSingleNotif)
+        return tempSingleNotif
+      })
+      updateData.notifications = newStateNotif
+
+      firestore
+        .collection('users')
+        .doc(user.id)
+        .set({ ...updateData }, { merge: true })
+    }
+  }
+
+  const setNotificationsToNewStateOnTrip = (user, tripId, state) => {
+    const updateData = {}
+
+    if (user && tripId) {
+      const tempNotifs =
+        user.notifications.filter(notification => notification.tripId === tripId) || []
+      const newStateNotif = tempNotifs.map(singleNotif => {
+        const tempSingleNotif = singleNotif
+        if (tempSingleNotif.state !== state && tempSingleNotif.state < 3) {
+          tempSingleNotif.state = state
         }
         return tempSingleNotif
       })
-      updateData.notifications = consultedNotif
+      updateData.notifications = newStateNotif
 
       firestore
         .collection('users')
@@ -401,9 +434,11 @@ const FirebaseContextProvider = ({ children }) => {
       type === 'eventUpdate'
     ) {
       tempTripNotif.push({
+        id: uuidv4(),
         sejour: tempTrip,
         creationDate: new Date(),
         type,
+        tripId: tripid,
         state: 1,
         priority,
         owner: {
@@ -414,6 +449,7 @@ const FirebaseContextProvider = ({ children }) => {
       })
       tempUserGroupNotif.forEach(user =>
         user.notifications.push({
+          id: uuidv4(),
           creationDate: new Date(),
           tripId: tripid,
           sejour: tempTrip,
@@ -423,6 +459,7 @@ const FirebaseContextProvider = ({ children }) => {
         })
       )
       updateDataSingleNotif = {
+        id: uuidv4(),
         creationDate: new Date(),
         tripId: tripid,
         sejour: tempTrip,
@@ -475,7 +512,8 @@ const FirebaseContextProvider = ({ children }) => {
         genericSpot,
         testUniqueSpot,
         createNotifications,
-        setNotificationsToConsulted,
+        setNotificationsToNewState,
+        setNotificationsToNewStateOnTrip,
         createNotificationsOnTrip,
         handleUsersGroupInATrip,
       }}
