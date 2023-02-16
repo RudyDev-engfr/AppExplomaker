@@ -13,6 +13,7 @@ import { makeStyles, useTheme } from '@mui/styles'
 import React, { useContext, useEffect, useState } from 'react'
 import { useHistory } from 'react-router-dom'
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore'
+import { Launch } from '@mui/icons-material'
 
 import { SessionContext } from '../../contexts/session'
 import { buildLogSejour } from '../../helper/functions'
@@ -95,11 +96,14 @@ const TripLogs = ({ tripData, tripId }) => {
         <Box my={2} sx={{ display: 'flex', flexDirection: 'column' }}>
           {currentNotifications?.map((notification, index) =>
             notification.logs ? (
-              <Accordion>
+              <Accordion sx={{ marginBottom: '15px' }}>
                 <AccordionSummary
                   expandIcon={<ExpandMoreIcon />}
                   aria-controls="panel1a-content"
                   id="panel1a-header"
+                  sx={{
+                    backgroundColor: theme.palette.grey.f2,
+                  }}
                 >
                   <Typography sx={{ fontSize: '17px' }}>{notification.content}</Typography>
                   <Typography sx={{ fontSize: '17px', color: theme.palette.primary.main }}>
@@ -107,15 +111,34 @@ const TripLogs = ({ tripData, tripId }) => {
                   </Typography>
                 </AccordionSummary>
                 <AccordionDetails>
-                  <Typography>lieu : {notification.logs.place}</Typography>
-                  <Typography>date : {notification.logs.date}</Typography>
-                  <Typography>Nom : {notification.logs.eventName}</Typography>
-                  <Typography>
-                    participants :
-                    {notification.logs.participatingTravelers.map(
-                      participant => ` ${participant},`
-                    )}
-                  </Typography>
+                  <Box
+                    sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}
+                  >
+                    <Box>
+                      <Typography>lieu : {notification.logs.place}</Typography>
+                      <Typography>date : {notification.logs.date}</Typography>
+                      <Typography>Nom : {notification.logs.eventName}</Typography>
+                      <Typography>
+                        participants :
+                        {notification.logs.participatingTravelers.map(
+                          participant => ` ${participant},`
+                        )}
+                      </Typography>
+                    </Box>
+                    <IconButton
+                      sx={{
+                        backgroundColor: theme.palette.primary.main,
+                        color: 'white',
+                        '&:hover': {
+                          backgroundColor: theme.palette.primary.main,
+                          color: 'white',
+                        },
+                      }}
+                      onClick={() => history.push(notification.url)}
+                    >
+                      <Launch />
+                    </IconButton>
+                  </Box>
                 </AccordionDetails>
               </Accordion>
             ) : (
@@ -142,6 +165,9 @@ const TripLogs = ({ tripData, tripId }) => {
                     {notification.timer}
                   </Typography>
                 </Box>
+                <IconButton onClick={() => history.push(notification.url)}>
+                  <Launch />
+                </IconButton>
               </Box>
             )
           )}

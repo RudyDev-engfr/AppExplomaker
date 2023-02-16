@@ -362,7 +362,9 @@ export const buildNotificationsOnTripForUser = (user, tripid) => {
                     ? 'Exploration'
                     : event?.type === 'transport' && 'Transport'
                 } -  sur la journée du ${
-                  event.propositions && rCTFF(event.propositions[0].date, 'dd/MM/yyyy')
+                  event.propositions && event.type === 'flight'
+                    ? rCTFF(event.propositions[0].flights[0].date, 'dd/MM/yyyy')
+                    : rCTFF(event.propositions[0].date, 'dd/MM/yyyy')
                 }.`
               : `Un sondage - ${
                   event?.type === 'accommodation'
@@ -374,7 +376,11 @@ export const buildNotificationsOnTripForUser = (user, tripid) => {
                     : event?.type === 'explore'
                     ? 'Exploration'
                     : event?.type === 'transport' && 'Transport'
-                } - a été créé sur la journée du ${rCTFF(event.date, 'dd/MM/yyyy')}.`
+                } - a été créé sur la journée du ${
+                  event.propositions && event.type === 'flight'
+                    ? rCTFF(event.propositions[0].flights[0].date, 'dd/MM/yyyy')
+                    : rCTFF(event.propositions[0].date, 'dd/MM/yyyy')
+                }.`
             singleNotif.timer = notifBody.definitiveTimer
             singleNotif.state = notifBody.state
             singleNotif.icon = event.propositions[0].icon

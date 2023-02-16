@@ -37,6 +37,8 @@ const CustomAvatar = ({
   isVertical = false,
   propsClasses,
   isLike = false,
+  width = 44,
+  height = 44,
 }) => {
   const classes = useStyles()
   const { getUserById } = useContext(FirebaseContext)
@@ -53,6 +55,7 @@ const CustomAvatar = ({
         batchGetUsers.push(getUserById(peopleId))
       }
     })
+    console.log('batchgetusers', batchGetUsers)
     Promise.all(batchGetUsers).then(response => {
       if (response.length > 0) {
         const tempTravelers = response.map(({ firstname, avatar }) => ({ firstname, avatar }))
@@ -60,6 +63,10 @@ const CustomAvatar = ({
       }
     })
   }, [peopleIds])
+
+  useEffect(() => {
+    console.log('voyageurs temporaires', currentTravelers)
+  }, [currentTravelers])
 
   return (
     <Box className={propsClasses}>
@@ -98,7 +105,7 @@ const CustomAvatar = ({
                     </Avatar>
                   </Badge>
                 ) : (
-                  <Avatar variant="circular" src={avatar} alt={firstname}>
+                  <Avatar variant="circular" src={avatar} alt={firstname} sx={{ width, height }}>
                     {firstname?.substring(0, 1)}
                   </Avatar>
                 )}

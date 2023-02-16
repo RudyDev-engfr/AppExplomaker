@@ -368,7 +368,7 @@ const FirebaseContextProvider = ({ children }) => {
 
     if (user && tripId) {
       const tempNotifs =
-        user.notifications.filter(notification => notification.tripId === tripId) || []
+        user?.notifications?.filter(notification => notification.tripId === tripId) || []
       const newStateNotif = tempNotifs.map(singleNotif => {
         const tempSingleNotif = singleNotif
         if (tempSingleNotif.state !== state && tempSingleNotif.state < 3) {

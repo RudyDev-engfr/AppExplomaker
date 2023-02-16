@@ -6,6 +6,7 @@ import { useHistory } from 'react-router-dom'
 import findIcon from '../../helper/icons'
 import { SessionContext } from '../../contexts/session'
 import { FirebaseContext } from '../../contexts/firebase'
+import CustomAvatar from '../atoms/CustomAvatar'
 
 const useStyles = makeStyles(theme => ({}))
 const NotificationArea = ({ tripData, tripId, currentNotifications, setRefreshNotif }) => {
@@ -25,14 +26,14 @@ const NotificationArea = ({ tripData, tripId, currentNotifications, setRefreshNo
   const handleClickNotif = event => {
     setAnchorElNotif(event.currentTarget)
     setRefreshNotif(true)
-    setNotificationsToNewState(user, tripId, 2)
+    setNotificationsToNewStateOnTrip(user, tripId, 2)
   }
 
   return (
     <>
       <Badge
         badgeContent={
-          currentNotifications.filter(
+          currentNotifications?.filter(
             notification => notification?.tripId === tripId && notification?.state === 1
           ).length
         }
@@ -49,6 +50,11 @@ const NotificationArea = ({ tripData, tripId, currentNotifications, setRefreshNo
             backgroundColor:
               tripData?.notifications?.filter(notification => notification.state === 1).length >
                 0 && theme.palette.primary.ultraLight,
+            '&:hover': {
+              backgroundColor:
+                tripData?.notifications?.filter(notification => notification.state === 1).length >
+                  0 && theme.palette.primary.ultraLight,
+            },
           }}
         >
           <Notifications />
@@ -65,7 +71,7 @@ const NotificationArea = ({ tripData, tripId, currentNotifications, setRefreshNo
           elevation: 0,
           sx: {
             overflow: 'visible',
-            filter: 'drop-shadow(0px 2px 8px rgba(0,0,0,0.32))',
+            // filter: 'drop-shadow(0px 2px 8px rgba(0,0,0,0.32))',
             mt: 1.5,
             '&:before': {
               content: '""',
@@ -84,7 +90,13 @@ const NotificationArea = ({ tripData, tripId, currentNotifications, setRefreshNo
         transformOrigin={{ horizontal: 'right', vertical: 'top' }}
         anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
       >
-        <Paper sx={{ width: '470px', height: '740px', maxHeight: '740px' }}>
+        <Paper
+          sx={{
+            width: '470px',
+            height: currentNotifications?.length > 0 ? '740px' : 'fit-content',
+            maxHeight: currentNotifications?.length > 0 ? '740px' : 'fit-content',
+          }}
+        >
           <Box sx={{ padding: '30px' }}>
             <Typography
               component="h5"
@@ -95,78 +107,96 @@ const NotificationArea = ({ tripData, tripId, currentNotifications, setRefreshNo
               Mes Notifications
             </Typography>
           </Box>
-          <Box sx={{ overflowY: 'auto', maxHeight: '630px' }}>
-            {currentNotifications
-              ?.slice(0)
-              .reverse()
-              .map(notification => (
-                <Box
-                  sx={{
-                    width: '457px,',
-                    height: '105px',
-                    padding: '0 30px',
-                    display: 'grid',
-                    gridTemplate: '1fr / 110px 1fr',
-                    alignItems: 'center',
-                    marginBottom: '10px',
-                    backgroundColor:
-                      notification.state === 1 ? theme.palette.primary.ultraLight : 'white',
-                    cursor: 'pointer',
-                    position: 'relative',
-                  }}
-                  key={notification.content}
-                  onClick={() => {
-                    setNotificationsToNewState(user, 3, notification.id)
-                    history.push(notification.url)
-                  }}
-                >
-                  <Box sx={{ position: 'relative' }}>
-                    <Avatar sx={{ width: 80, height: 80 }} />
-                    <Box
-                      sx={{
-                        position: 'absolute',
-                        bottom: '-5px ',
-                        right: '30px',
-                        padding: '6px',
-                        borderRadius: '50px',
-                        width: '32px',
-                        height: '32px',
-                        backgroundColor: theme.palette.primary.main,
-                      }}
-                    >
+          <Box
+            sx={{
+              overflowY: currentNotifications?.length > 0 ? 'auto' : 'none',
+              maxHeight: '630px',
+            }}
+          >
+            {currentNotifications?.length > 0 ? (
+              currentNotifications
+                ?.slice(0)
+                .reverse()
+                .map(notification => (
+                  <Box
+                    sx={{
+                      width: '457px,',
+                      height: '105px',
+                      padding: '0 30px',
+                      display: 'grid',
+                      gridTemplate: '1fr / 110px 1fr',
+                      alignItems: 'center',
+                      marginBottom: '10px',
+                      backgroundColor:
+                        notification.state === 1 ? theme.palette.primary.ultraLight : 'white',
+                      cursor: 'pointer',
+                      position: 'relative',
+                    }}
+                    key={notification.content}
+                    onClick={() => {
+                      setNotificationsToNewState(user, 3, notification.id)
+                      history.push(notification.url)
+                    }}
+                  >
+                    <Box sx={{ position: 'relative' }}>
+                      <CustomAvatar width={80} height={80} peopleIds={[notification?.owner]} />
                       <Box
-                        component="img"
-                        src={findIcon(notification.icon, notification.eventType)}
                         sx={{
-                          filter:
-                            'brightness(0) saturate(100%) invert(92%) sepia(95%) saturate(0%) hue-rotate(332deg) brightness(114%) contrast(100%)',
-                          width: '20px',
-                          height: '20px',
+                          position: 'absolute',
+                          bottom: '-5px ',
+                          right: '30px',
+                          padding: '6px',
+                          borderRadius: '50px',
+                          width: '32px',
+                          height: '32px',
+                          backgroundColor: theme.palette.primary.main,
+                        }}
+                      >
+                        <Box
+                          component="img"
+                          src={findIcon(notification.icon, notification.eventType)}
+                          sx={{
+                            filter:
+                              'brightness(0) saturate(100%) invert(92%) sepia(95%) saturate(0%) hue-rotate(332deg) brightness(114%) contrast(100%)',
+                            width: '20px',
+                            height: '20px',
+                          }}
+                        />
+                      </Box>
+                    </Box>
+                    <Box sx={{ maxWdith: '280px' }}>
+                      <Typography sx={{ fontSize: '13px' }}>{notification.content}</Typography>
+                      <Typography sx={{ fontSize: '13px', color: theme.palette.primary.main }}>
+                        {notification.timer}
+                      </Typography>
+                    </Box>
+                    {notification.state !== 3 && (
+                      <Box
+                        sx={{
+                          position: 'absolute',
+                          right: '20px',
+                          top: '50px',
+                          width: '12px',
+                          height: '12px',
+                          borderRadius: '50px',
+                          backgroundColor: theme.palette.primary.main,
                         }}
                       />
-                    </Box>
+                    )}
                   </Box>
-                  <Box sx={{ maxWdith: '280px' }}>
-                    <Typography sx={{ fontSize: '13px' }}>{notification.content}</Typography>
-                    <Typography sx={{ fontSize: '13px', color: theme.palette.primary.main }}>
-                      {notification.timer}
-                    </Typography>
-                  </Box>
-                  {notification.state !== 3 && (
-                    <Box
-                      sx={{
-                        position: 'absolute',
-                        right: '20px',
-                        top: '50px',
-                        width: '12px',
-                        height: '12px',
-                        borderRadius: '50px',
-                        backgroundColor: theme.palette.primary.main,
-                      }}
-                    />
-                  )}
-                </Box>
-              ))}
+                ))
+            ) : (
+              <Box sx={{ width: '100%', display: 'flex', justifyContent: 'center' }}>
+                <Typography
+                  component="h5"
+                  variant="h5"
+                  align="left"
+                  sx={{ fontFamily: 'Vesper Libre' }}
+                >
+                  Pas de notification
+                </Typography>
+              </Box>
+            )}
           </Box>
         </Paper>
       </Menu>
