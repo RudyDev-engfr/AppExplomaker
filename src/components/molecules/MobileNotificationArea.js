@@ -3,6 +3,7 @@ import { Avatar, Badge, Box, IconButton, Modal, Paper, Typography } from '@mui/m
 import { makeStyles, useTheme } from '@mui/styles'
 import React, { useState } from 'react'
 import findIcon from '../../helper/icons'
+import CustomAvatar from '../atoms/CustomAvatar'
 
 const useStyles = makeStyles(theme => ({
   notificationTitle: {
@@ -75,7 +76,12 @@ const MobileNotificationArea = ({ tripData, currentNotifications, setRefreshNoti
               key={notification.content}
             >
               <Box sx={{ position: 'relative' }}>
-                <Avatar sx={{ width: 54, height: 54 }} />
+                <CustomAvatar
+                  width={54}
+                  height={54}
+                  peopleIds={[notification.owner]}
+                  isNotification
+                />
                 <Box
                   sx={{
                     position: 'absolute',

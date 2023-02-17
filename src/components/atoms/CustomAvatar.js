@@ -39,6 +39,7 @@ const CustomAvatar = ({
   isLike = false,
   width = 44,
   height = 44,
+  isNotification,
 }) => {
   const classes = useStyles()
   const { getUserById } = useContext(FirebaseContext)
@@ -105,7 +106,16 @@ const CustomAvatar = ({
                     </Avatar>
                   </Badge>
                 ) : (
-                  <Avatar variant="circular" src={avatar} alt={firstname} sx={{ width, height }}>
+                  <Avatar
+                    variant="circular"
+                    src={avatar}
+                    alt={firstname}
+                    sx={{
+                      width,
+                      height,
+                      border: isNotification && '1px solid lightgrey !important',
+                    }}
+                  >
                     {firstname?.substring(0, 1)}
                   </Avatar>
                 )}

@@ -249,11 +249,11 @@ export const renderStopoverTime = (departureTime, arrivalTime, legs) => {
 export const buildNotifications = user => {
   const notifications = []
   if (user.notifications) {
-    user.notifications.forEach(({ sejour, priority, state, type, creationDate }) => {
+    user.notifications.forEach(({ sejour, priority, state, type, creationDate, url, owner }) => {
       if (type === 'newTrip') {
         const singleNotif = {}
         console.log('je suis un newtrip')
-        singleNotif.content = `Votre nouveau voyage ${sejour?.title} a bien été créé`
+        singleNotif.content = `Votre nouveau voyage - ${sejour?.title} - a bien été créé`
         const tempTimer = intervalToDuration({
           start: new Date(rCTFF(creationDate)),
           end: new Date(),
@@ -293,6 +293,8 @@ export const buildNotifications = user => {
               : tempTimer.seconds >= 1 && ['seconds'],
         })}`
         singleNotif.state = state
+        singleNotif.url = url
+        singleNotif.owner = owner
 
         notifications.push(singleNotif)
       }
@@ -330,6 +332,7 @@ export const buildNotificationsOnTripForUser = (user, tripid) => {
       .forEach(({ sejour, priority, state, type, creationDate, owner, event }) => {
         const singleNotif = {}
         const notifBody = buildNotifTimerAndState(creationDate, state)
+        singleNotif.owner = owner
         // eslint-disable-next-line default-case
         switch (type) {
           case 'dateUpdate':
@@ -362,7 +365,7 @@ export const buildNotificationsOnTripForUser = (user, tripid) => {
                     ? 'Exploration'
                     : event?.type === 'transport' && 'Transport'
                 } -  sur la journée du ${
-                  event.propositions && event.type === 'flight'
+                  event.type === 'flight'
                     ? rCTFF(event.propositions[0].flights[0].date, 'dd/MM/yyyy')
                     : rCTFF(event.propositions[0].date, 'dd/MM/yyyy')
                 }.`
@@ -465,8 +468,12 @@ export const buildNotificationsOnTripForUser = (user, tripid) => {
               ? `${owner.firstname} a ajouté une proposition sur le sondage - ${
                   event.type
                 } - pour la journée du ${
-                  event.propositions &&
-                  rCTFF(event.propositions[event.propositions.length - 1].date, 'dd/MM/yyyy')
+                  event.type === 'flight'
+                    ? rCTFF(
+                        event.propositions[event.propositions.length - 1].flights[0].date,
+                        'dd/MM/yyyy'
+                      )
+                    : rCTFF(event.propositions[event.propositions.length - 1].date, 'dd/MM/yyyy')
                 }.`
               : `Une proposition a été ajouté sur le sondage pour la journée du ${rCTFF(
                   event.propositions[event.propositions.length - 1].date,

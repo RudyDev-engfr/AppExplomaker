@@ -6,6 +6,7 @@ import EventNoteIcon from '@mui/icons-material/EventNote'
 /* import PhotoCameraOutlinedIcon from '@mui/icons-material/PhotoCameraOutlined' */
 import ArrowBackRoundedIcon from '@mui/icons-material/ArrowBackRounded'
 import {
+  Badge,
   Box,
   Button,
   Dialog,
@@ -13,6 +14,7 @@ import {
   Slide,
   Tab,
   Tabs,
+  Typography,
   useMediaQuery,
   useTheme,
 } from '@mui/material'
@@ -130,7 +132,7 @@ const useStyles = makeStyles(theme => ({
     bottom: '0',
     width: '100%',
     height: '90px',
-    padding: `${theme.spacing(1.5)} ${theme.spacing(0.5)} ${theme.spacing(1.5)}`,
+    padding: `${theme.spacing(1.5)} ${theme.spacing(0.5)} ${theme.spacing(1.5)} !important`,
     zIndex: '10000',
   },
   spanNav: {
@@ -149,6 +151,7 @@ const TripPageNav = ({
   tripId,
   tripData,
   currentDateRange,
+  currentPlanningNotifications,
 }) => {
   const history = useHistory()
   const classes = useStyles()
@@ -217,8 +220,27 @@ const TripPageNav = ({
               className={classes.icons}
             />
           }
+          sx={{ position: 'relative' }}
         >
           Planning
+          <Box
+            sx={{
+              position: 'absolute',
+              backgroundColor: theme.palette.secondary.main,
+              width: '18px',
+              height: '18px',
+              borderRadius: '50px',
+              padding: '5px',
+              right: '25px',
+              zIndex: 1000000,
+              color: 'white',
+              fontSize: '9px',
+              fontWeight: 500,
+              lineHeight: '10.67px',
+            }}
+          >
+            {currentPlanningNotifications.length}
+          </Box>
         </Button>
         <Button
           className={clsx(classes.sidebarButton, {
@@ -312,7 +334,7 @@ const TripPageNav = ({
           centered
           variant="fullWidth"
           value={currentActiveTab}
-          sx={{ [theme.breakpoints.down('sm')]: { '& button': { minWidth: '20vw' } } }}
+          sx={{ [theme.breakpoints.down('sm')]: { '& button': { minWidth: '20vw !important' } } }}
           TabIndicatorProps={{ sx: { display: 'none' } }}
         >
           <Tab
@@ -336,29 +358,38 @@ const TripPageNav = ({
             onClick={() => handleMobileNavigation('preview')}
             value="preview"
           />
-          <Tab
-            icon={
-              <img
-                src={
-                  !isMobilePlusOpen && currentActiveTab === 'planning' ? planningGreen : planning
-                }
-                alt=""
-              />
-            }
-            label={
-              <Box
-                component="span"
-                className={clsx(classes.spanNav, {
-                  [classes.activeMobileTabStyle]:
-                    !isMobilePlusOpen && currentActiveTab === 'planning',
-                })}
-              >
-                Planning
-              </Box>
-            }
-            onClick={() => handleMobileNavigation('planning')}
-            value="planning"
-          />
+          <Badge
+            color="secondary"
+            overlap="circular"
+            component="div"
+            badgeContent={currentPlanningNotifications.length}
+            sx={{ color: 'unset !important', opacity: 100, bgcolor: 'unset' }}
+          >
+            <Tab
+              icon={
+                <img
+                  src={
+                    !isMobilePlusOpen && currentActiveTab === 'planning' ? planningGreen : planning
+                  }
+                  alt=""
+                />
+              }
+              label={
+                <Box
+                  component="span"
+                  className={clsx(classes.spanNav, {
+                    [classes.activeMobileTabStyle]:
+                      !isMobilePlusOpen && currentActiveTab === 'planning',
+                  })}
+                >
+                  Planning
+                </Box>
+              }
+              onClick={() => handleMobileNavigation('planning')}
+              value="planning"
+            />
+          </Badge>
+
           {/* <Tab
           icon={<img src={currentActiveTab === 'photos' ? photoGreen : photo} alt="" />}
           label={

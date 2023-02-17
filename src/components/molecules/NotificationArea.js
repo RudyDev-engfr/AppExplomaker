@@ -139,7 +139,12 @@ const NotificationArea = ({ tripData, tripId, currentNotifications, setRefreshNo
                     }}
                   >
                     <Box sx={{ position: 'relative' }}>
-                      <CustomAvatar width={80} height={80} peopleIds={[notification?.owner]} />
+                      <CustomAvatar
+                        isNotification
+                        width={60}
+                        height={60}
+                        peopleIds={[notification?.owner?.id]}
+                      />
                       <Box
                         sx={{
                           position: 'absolute',
@@ -187,14 +192,7 @@ const NotificationArea = ({ tripData, tripId, currentNotifications, setRefreshNo
                 ))
             ) : (
               <Box sx={{ width: '100%', display: 'flex', justifyContent: 'center' }}>
-                <Typography
-                  component="h5"
-                  variant="h5"
-                  align="left"
-                  sx={{ fontFamily: 'Vesper Libre' }}
-                >
-                  Pas de notification
-                </Typography>
+                <Typography>Pas de notification</Typography>
               </Box>
             )}
           </Box>

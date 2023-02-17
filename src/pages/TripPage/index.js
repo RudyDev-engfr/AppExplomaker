@@ -956,6 +956,9 @@ const TripPage = () => {
         tripId={tripId}
         tripData={tripData}
         currentDateRange={currentDateRange}
+        currentPlanningNotifications={user?.notifications.filter(
+          notification => notification.tripId === tripId
+        )}
       />
       {canEdit && (
         <Chat isChatOpen={isChatOpen} chats={chats} tripId={tripId} setIsChatOpen={setIsChatOpen} />
