@@ -223,24 +223,26 @@ const TripPageNav = ({
           sx={{ position: 'relative' }}
         >
           Planning
-          <Box
-            sx={{
-              position: 'absolute',
-              backgroundColor: theme.palette.secondary.main,
-              width: '18px',
-              height: '18px',
-              borderRadius: '50px',
-              padding: '5px',
-              right: '25px',
-              zIndex: 1000000,
-              color: 'white',
-              fontSize: '9px',
-              fontWeight: 500,
-              lineHeight: '10.67px',
-            }}
-          >
-            {currentPlanningNotifications.length}
-          </Box>
+          {currentPlanningNotifications.length > 0 && (
+            <Box
+              sx={{
+                position: 'absolute',
+                backgroundColor: theme.palette.secondary.main,
+                width: '18px',
+                height: '18px',
+                borderRadius: '50px',
+                padding: '5px',
+                right: '25px',
+                zIndex: 1000000,
+                color: 'white',
+                fontSize: '9px',
+                fontWeight: 500,
+                lineHeight: '10.67px',
+              }}
+            >
+              {currentPlanningNotifications.length}
+            </Box>
+          )}
         </Button>
         <Button
           className={clsx(classes.sidebarButton, {

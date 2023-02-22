@@ -117,7 +117,7 @@ const NotificationArea = ({ tripData, tripId, currentNotifications, setRefreshNo
               currentNotifications
                 ?.slice(0)
                 .reverse()
-                .map(notification => (
+                .map((notification, index) => (
                   <Box
                     sx={{
                       width: '457px,',
@@ -131,6 +131,8 @@ const NotificationArea = ({ tripData, tripId, currentNotifications, setRefreshNo
                         notification.state === 1 ? theme.palette.primary.ultraLight : 'white',
                       cursor: 'pointer',
                       position: 'relative',
+                      borderBottom: '1px solid lightgrey',
+                      borderTop: index === currentNotifications.length - 1 && '1px solid lightgrey',
                     }}
                     key={notification.content}
                     onClick={() => {

@@ -481,13 +481,26 @@ const useStyles = makeStyles(theme => ({
 
 const TravelerRow = ({ traveler, ageOptions, setModalTravelers, index }) => {
   const classes = useStyles()
+  const [currentTravelerName, setCurrentTravelerName] = useState(traveler.name)
+  const [currentTravelerAge, setCurrentTravelerAge] = useState(traveler.age)
   const handleChange = (event, target) => {
     setModalTravelers(prevState => {
-      const tempPrevState = [...prevState]
+      const tempPrevState = structuredClone(prevState)
       tempPrevState[index][target] = event.target.value
       return tempPrevState
     })
   }
+
+  useEffect(() => {
+    if (currentTravelerAge && currentTravelerName) {
+      setModalTravelers(prevState => {
+        const tempPrevState = structuredClone(prevState)
+        tempPrevState[index].name = currentTravelerName
+        tempPrevState[index].age = currentTravelerAge
+        return tempPrevState
+      })
+    }
+  }, [currentTravelerName, currentTravelerAge])
 
   return (
     <Box className={classes.gridTravelers}>
@@ -495,16 +508,16 @@ const TravelerRow = ({ traveler, ageOptions, setModalTravelers, index }) => {
         hiddenLabel
         type="text"
         variant="filled"
-        value={traveler.name}
-        onChange={event => handleChange(event, 'name')}
+        value={currentTravelerName}
+        onChange={event => setCurrentTravelerName(event.target.value)}
       />
       <FormControl fullWidth>
         <Select
           MenuProps={{ sx: { zIndex: '100000' } }}
           hiddenLabel
           variant="filled"
-          value={traveler.age}
-          onChange={event => handleChange(event, 'age')}
+          value={currentTravelerAge}
+          onChange={event => setCurrentTravelerAge(event.target.value)}
         >
           {ageOptions.map(option => (
             <MenuItem key={uuidv4()} value={option.value}>
@@ -581,8 +594,8 @@ const TripPage = () => {
   }, [])
 
   useEffect(() => {
-    console.log('trip de la donnée', tripData)
-  }, [])
+    console.log('voyageurs de la modal', modalTravelers)
+  }, [modalTravelers])
 
   useEffect(() => {
     const currentImages = []
@@ -801,7 +814,7 @@ const TripPage = () => {
   }, [tripData])
 
   useEffect(() => {
-    setModalTravelers(registeredTravelers)
+    setModalTravelers(registeredTravelers.filter(traveler => !traveler.isNotTraveler))
   }, [registeredTravelers, openModal])
 
   useEffect(() => {
@@ -1824,11 +1837,13 @@ const TripPage = () => {
         modalName="editTravelers"
         submitHandler={() =>
           handleUpdate({
-            travelersDetails: modalTravelers.map(traveler => {
-              const tempTraveler = traveler
-              const filteredTraveler = filterObjectByValue(tempTraveler, undefined, true)
-              return filteredTraveler
-            }),
+            travelersDetails: modalTravelers
+              .filter(traveler => !traveler.isNotTraveler)
+              .map(traveler => {
+                const tempTraveler = traveler
+                const filteredTraveler = filterObjectByValue(tempTraveler, undefined, true)
+                return filteredTraveler
+              }),
           })
         }
       >
