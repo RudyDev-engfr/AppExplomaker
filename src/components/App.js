@@ -46,7 +46,7 @@ const App = () => {
           tempUser.rangeType = data.rangeType
           tempUser.likes = data.likes
           tempUser.newsletter = data.newsletter
-          tempUser.notifications = data.notifications
+          tempUser.notifications = data.notifications || []
           setUser({ ...tempUser })
         }
       })
