@@ -1282,6 +1282,7 @@ const TripPage = () => {
             },
             noDestination: false,
           })
+          createNotificationsOnTrip(user, tripData, tripId, 'destinationUpdate', 3)
           setOpenModal('general')
         }}
         isValid={!!currentDestination?.value?.place_id}

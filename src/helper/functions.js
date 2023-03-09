@@ -1,5 +1,3 @@
-import React from 'react'
-import { Box, Typography } from '@mui/material'
 import {
   addMinutes,
   addHours,
@@ -248,56 +246,70 @@ export const renderStopoverTime = (departureTime, arrivalTime, legs) => {
 
 export const buildNotifications = user => {
   const notifications = []
+  const tripsIdArray = []
+  const tempNotificationContent = []
   if (user.notifications) {
-    user.notifications.forEach(({ sejour, priority, state, type, creationDate, url, owner }) => {
-      if (type === 'newTrip') {
-        const singleNotif = {}
-        console.log('je suis un newtrip')
-        singleNotif.content = `Votre nouveau voyage - ${sejour?.title} - a bien été créé`
-        const tempTimer = intervalToDuration({
-          start: new Date(rCTFF(creationDate)),
-          end: new Date(),
-        })
-        singleNotif.timer = `il y a ${formatDuration(tempTimer, {
-          format:
-            tempTimer.days > 1
-              ? ['days']
-              : tempTimer.hours > 1
-              ? ['hours']
-              : tempTimer.minutes > 1
-              ? ['minutes']
-              : tempTimer.seconds >= 1 && ['seconds'],
-        })}`
-        singleNotif.state = state
+    user.notifications.forEach(
+      ({ sejour, priority, state, type, creationDate, url, owner, tripId }) => {
+        if (!tripsIdArray.includes(tripId) && state === 1) {
+          tripsIdArray.push(tripId)
+          tempNotificationContent.push({ tripId, owner, sejour })
+        }
+        if (type === 'newTrip') {
+          const singleNotif = {}
+          console.log('je suis un newtrip')
+          singleNotif.content = `Votre nouveau voyage - ${sejour?.title} - a bien été créé`
+          const tempTimer = intervalToDuration({
+            start: new Date(rCTFF(creationDate)),
+            end: new Date(),
+          })
+          singleNotif.timer = `il y a ${formatDuration(tempTimer, {
+            format:
+              tempTimer.days > 1
+                ? ['days']
+                : tempTimer.hours > 1
+                ? ['hours']
+                : tempTimer.minutes > 1
+                ? ['minutes']
+                : tempTimer.seconds >= 1 && ['seconds'],
+          })}`
+          singleNotif.state = state
 
-        notifications.push(singleNotif)
-      } else if (type === 'dateUpdate') {
-        const singleNotif = {}
-        console.log('je suis un updateDate')
-        singleNotif.content = `Les dates de votre voyage ont été modifiées, elles sont désormais du ${rCTFF(
-          sejour.dateRange[0],
-          'dd/MM/yyyy'
-        )} au ${rCTFF(sejour.dateRange[1], 'dd/MM/yyyy')}`
-        const tempTimer = intervalToDuration({
-          start: new Date(rCTFF(creationDate)),
-          end: new Date(),
-        })
-        singleNotif.timer = `il y a ${formatDuration(tempTimer, {
-          format:
-            tempTimer.days > 1
-              ? ['days']
-              : tempTimer.hours > 1
-              ? ['hours']
-              : tempTimer.minutes > 1
-              ? ['minutes']
-              : tempTimer.seconds >= 1 && ['seconds'],
-        })}`
-        singleNotif.state = state
-        singleNotif.url = url
-        singleNotif.owner = owner
+          notifications.push(singleNotif)
+        } else if (type === 'dateUpdate') {
+          const singleNotif = {}
+          console.log('je suis un updateDate')
+          singleNotif.content = `Les dates de votre voyage ont été modifiées, elles sont désormais du ${rCTFF(
+            sejour.dateRange[0],
+            'dd/MM/yyyy'
+          )} au ${rCTFF(sejour.dateRange[1], 'dd/MM/yyyy')}`
+          const tempTimer = intervalToDuration({
+            start: new Date(rCTFF(creationDate)),
+            end: new Date(),
+          })
+          singleNotif.timer = `il y a ${formatDuration(tempTimer, {
+            format:
+              tempTimer.days > 1
+                ? ['days']
+                : tempTimer.hours > 1
+                ? ['hours']
+                : tempTimer.minutes > 1
+                ? ['minutes']
+                : tempTimer.seconds >= 1 && ['seconds'],
+          })}`
+          singleNotif.state = state
+          singleNotif.url = url
+          singleNotif.owner = owner
 
-        notifications.push(singleNotif)
+          notifications.push(singleNotif)
+        }
       }
+    )
+    tempNotificationContent.forEach(({ tripId, owner, sejour }) => {
+      const singleNotif = {}
+      singleNotif.content = `il y a du nouveau sur le voyage - ${sejour.title} -`
+      singleNotif.url = `/tripPage/${tripId}`
+      notifications.push(singleNotif)
     })
     return notifications
   }
@@ -324,11 +336,11 @@ export const buildNotifTimerAndState = (creationDate, state) => {
   return notifBody
 }
 
-export const buildNotificationsOnTripForUser = (user, tripid) => {
+export const buildNotificationsOnTripForUser = (user, tripId) => {
   const notifications = []
   if (user.notifications) {
     user.notifications
-      .filter(notification => notification.tripId === tripid)
+      .filter(notification => notification.tripId === tripId)
       .forEach(({ sejour, priority, state, type, creationDate, owner, event }) => {
         const singleNotif = {}
         const notifBody = buildNotifTimerAndState(creationDate, state)
@@ -348,7 +360,7 @@ export const buildNotificationsOnTripForUser = (user, tripid) => {
                 )} au ${rCTFF(sejour.dateRange[1], 'dd/MM/yyyy')}.`
             singleNotif.timer = notifBody.definitiveTimer
             singleNotif.state = notifBody.state
-            singleNotif.url = `/tripPage/${tripid}`
+            singleNotif.url = `/tripPage/${tripId}`
             break
 
           case 'surveyCreate':
@@ -388,7 +400,7 @@ export const buildNotificationsOnTripForUser = (user, tripid) => {
             singleNotif.state = notifBody.state
             singleNotif.icon = event.propositions[0].icon
             singleNotif.eventType = event.type
-            singleNotif.url = `/tripPage/${tripid}/planning?survey=${event.id}`
+            singleNotif.url = `/tripPage/${tripId}/planning?survey=${event.id}`
             break
 
           case 'turnEventIntoSurvey':
@@ -413,7 +425,7 @@ export const buildNotificationsOnTripForUser = (user, tripid) => {
             singleNotif.state = notifBody.state
             singleNotif.icon = event.propositions[0].icon
             singleNotif.eventType = event.type
-            singleNotif.url = `/tripPage/${tripid}/planning?survey=${event.id}`
+            singleNotif.url = `/tripPage/${tripId}/planning?survey=${event.id}`
             break
 
           case 'surveyClose':
@@ -445,7 +457,7 @@ export const buildNotificationsOnTripForUser = (user, tripid) => {
             singleNotif.state = notifBody.state
             singleNotif.icon = event.icon
             singleNotif.eventType = event.type
-            singleNotif.url = `/tripPage/${tripid}/planning?event=${event.id}`
+            singleNotif.url = `/tripPage/${tripId}/planning?event=${event.id}`
             break
 
           case 'surveyPropositionChange':
@@ -459,7 +471,7 @@ export const buildNotificationsOnTripForUser = (user, tripid) => {
             singleNotif.state = notifBody.state
             singleNotif.icon = event.icon
             singleNotif.eventType = event.type
-            singleNotif.url = `/tripPage/${tripid}/planning?survey=${event.id}`
+            singleNotif.url = `/tripPage/${tripId}/planning?survey=${event.id}`
             break
 
           case 'propositionAdd':
@@ -483,7 +495,7 @@ export const buildNotificationsOnTripForUser = (user, tripid) => {
             singleNotif.state = notifBody.state
             singleNotif.icon = event.propositions[event.propositions.length - 1].icon
             singleNotif.eventType = event.type
-            singleNotif.url = `/tripPage/${tripid}/planning?survey=${event.id}`
+            singleNotif.url = `/tripPage/${tripId}/planning?survey=${event.id}`
             break
 
           case 'eventCreate':
@@ -517,7 +529,7 @@ export const buildNotificationsOnTripForUser = (user, tripid) => {
             singleNotif.state = notifBody.state
             singleNotif.icon = event.icon
             singleNotif.eventType = event.type
-            singleNotif.url = `/tripPage/${tripid}/planning?event=${event.id}`
+            singleNotif.url = `/tripPage/${tripId}/planning?event=${event.id}`
             break
 
           case 'eventUpdate':
@@ -547,7 +559,23 @@ export const buildNotificationsOnTripForUser = (user, tripid) => {
             singleNotif.state = notifBody.state
             singleNotif.icon = event.icon
             singleNotif.eventType = event.type
-            singleNotif.url = `/tripPage/${tripid}/planning?event=${event.id}`
+            singleNotif.url = `/tripPage/${tripId}/planning?event=${event.id}`
+            break
+
+          case 'destinationUpdate':
+            console.log('je passe par le destinationUpdate')
+            singleNotif.content = owner?.firstname
+              ? `${owner.firstname} a modifié la destination du voyage qui est maintenant ${sejour.destination.label}.`
+              : `Un évènement a été modifié sur la journée du ${
+                  event.type === 'flight'
+                    ? rCTFF(event.flights[0].date, 'dd/MM/yyyy')
+                    : rCTFF(event.date, 'dd/MM/yyyy')
+                }.`
+            singleNotif.timer = notifBody.definitiveTimer
+            singleNotif.state = notifBody.state
+            singleNotif.icon = event.icon
+            singleNotif.eventType = event.type
+            singleNotif.url = `/tripPage/${tripId}/planning?event=${event.id}`
             break
         }
         notifications.push(singleNotif)
@@ -778,6 +806,22 @@ export const buildLogSejour = (tripId, tripData) => {
                     ? rCTFF(event.flights[0].date, 'dd/MM/yyyy')
                     : rCTFF(event.date, 'dd/MM/yyyy')
                 }.`
+              : `Un évènement a été modifié sur la journée du ${
+                  event.type === 'flight'
+                    ? rCTFF(event.flights[0].date, 'dd/MM/yyyy')
+                    : rCTFF(event.date, 'dd/MM/yyyy')
+                }.`
+            singleNotif.timer = notifBody.definitiveTimer
+            singleNotif.state = notifBody.state
+            singleNotif.icon = event.icon
+            singleNotif.eventType = event.type
+            singleNotif.url = `/tripPage/${tripId}/planning?event=${event.id}`
+            break
+
+          case 'destinationUpdate':
+            console.log('je passe par le destinationUpdate')
+            singleNotif.content = owner?.firstname
+              ? `${owner.firstname} a modifié la destination du voyage qui est maintenant ${tripData.destination.label}.`
               : `Un évènement a été modifié sur la journée du ${
                   event.type === 'flight'
                     ? rCTFF(event.flights[0].date, 'dd/MM/yyyy')

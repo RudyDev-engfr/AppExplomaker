@@ -431,7 +431,8 @@ const FirebaseContextProvider = ({ children }) => {
       type === 'surveyPropositionChange' ||
       type === 'propositionAdd' ||
       type === 'eventCreate' ||
-      type === 'eventUpdate'
+      type === 'eventUpdate' ||
+      type === 'destinationUpdate'
     ) {
       tempTripNotif.push({
         id: uuidv4(),

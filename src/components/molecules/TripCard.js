@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react'
+import React, { useContext, useEffect } from 'react'
 import {
   Badge,
   Box,
@@ -17,6 +17,7 @@ import { isWithinInterval } from 'date-fns'
 
 import CustomAvatar from '../atoms/CustomAvatar'
 import { rCTFF } from '../../helper/functions'
+import { SessionContext } from '../../contexts/session'
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -78,21 +79,64 @@ const TripCard = ({ bgImg, people, title, date, destination, tripId, startDate, 
   const classes = useStyles()
   const history = useHistory()
   const theme = useTheme()
+  const { user } = useContext(SessionContext)
+
+  useEffect(() => {
+    console.log(
+      'mdr',
+      user.notifications.filter(
+        notification => notification.tripId === tripId && notification.state === 1
+      )
+    )
+  }, [user])
 
   return (
     <Card className={classes.root}>
-      <Box position="absolute" top="calc(4% + 1rem)" right="calc(4% + 1rem)" zIndex={10}>
-        <Badge badgeContent={0} color="secondary" overlap="circular">
-          <IconButton
-            className={classes.iconBtn}
-            size="large"
-            disabled
-            sx={{ backgroundColor: `${theme.palette.grey.bd}!important` }}
+      {user.notifications.filter(
+        notification => notification.tripId === tripId && notification.state === 1
+      ).length > 0 && (
+        <Box position="absolute" top="calc(4% + 1rem)" right="calc(4% + 1rem)" zIndex={10}>
+          <Badge
+            badgeContent={
+              user.notifications.filter(
+                notification => notification.tripId === tripId && notification.state === 1
+              ).length
+            }
+            color="secondary"
+            overlap="circular"
           >
-            <Notifications />
-          </IconButton>
-        </Badge>
-      </Box>
+            <IconButton
+              className={classes.iconBtn}
+              size="large"
+              disabled={
+                user.notifications.filter(
+                  notification => notification.tripId === tripId && notification.state === 1
+                ).length === 0
+              }
+              sx={{
+                backgroundColor:
+                  user.notifications.filter(
+                    notification => notification.tripId === tripId && notification.state === 1
+                  ).length > 0
+                    ? `${theme.palette.primary.ultraLight} !important`
+                    : `${theme.palette.grey.bd}!important`,
+              }}
+            >
+              <Notifications
+                sx={{
+                  color:
+                    user.notifications.filter(
+                      notification => notification.tripId === tripId && notification.state === 1
+                    ).length > 0
+                      ? `${theme.palette.primary.main} !important`
+                      : `${theme.palette.grey.bd}!important`,
+                }}
+              />
+            </IconButton>
+          </Badge>
+        </Box>
+      )}
+
       <CardActionArea
         onClick={() => history.push(`/tripPage/${tripId}`)}
         className={classes.actionArea}

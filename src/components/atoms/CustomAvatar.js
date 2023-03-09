@@ -56,7 +56,6 @@ const CustomAvatar = ({
         batchGetUsers.push(getUserById(peopleId))
       }
     })
-    console.log('batchgetusers', batchGetUsers)
     Promise.all(batchGetUsers).then(response => {
       if (response.length > 0) {
         const tempTravelers = response.map(({ firstname, avatar }) => ({ firstname, avatar }))
@@ -64,10 +63,6 @@ const CustomAvatar = ({
       }
     })
   }, [peopleIds])
-
-  useEffect(() => {
-    console.log('voyageurs temporaires', currentTravelers)
-  }, [currentTravelers])
 
   return (
     <Box className={propsClasses}>
