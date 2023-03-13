@@ -433,7 +433,7 @@ const ConnectedNav = () => {
                 </Box>
               </Badge>
             </Box>
-            <Badge
+            {/* <Badge
               badgeContent={
                 user?.notifications?.filter(
                   notification => !notification.tripId && notification.state === 1
@@ -521,7 +521,8 @@ const ConnectedNav = () => {
                   </Box>
                 ))}
               </Paper>
-            </Menu>
+            </Menu> */}
+            {matchesXs ? <NotificationArea /> : <MobileNotificationArea />}
           </Box>
         </Box>
       </Box>
