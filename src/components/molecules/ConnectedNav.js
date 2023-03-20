@@ -39,6 +39,9 @@ import profil from '../../images/icons/profil.svg'
 import favorite from '../../images/icons/favorite.svg'
 import { buildNotifications } from '../../helper/functions'
 
+import NotificationArea from './NotificationArea'
+import MobileNotificationArea from './MobileNotificationArea'
+
 const useStyles = makeStyles(theme => ({
   header: {
     backgroundColor: '#fff',
@@ -161,6 +164,7 @@ const ConnectedNav = () => {
 
   const [anchorEl, setAnchorEl] = useState(null)
   const [anchorElNotif, setAnchorElNotif] = useState(null)
+  const [refreshNotif, setRefreshNotif] = useState(false)
   const [currentActiveTab, setCurrentActiveTab] = useState('home')
 
   const open = Boolean(anchorEl)
@@ -522,7 +526,17 @@ const ConnectedNav = () => {
                 ))}
               </Paper>
             </Menu> */}
-            {matchesXs ? <NotificationArea /> : <MobileNotificationArea />}
+            {!matchesXs ? (
+              <NotificationArea
+                currentNotifications={currentNotifications}
+                setRefreshNotif={setRefreshNotif}
+              />
+            ) : (
+              <MobileNotificationArea
+                currentNotifications={currentNotifications}
+                setRefreshNotif={setRefreshNotif}
+              />
+            )}
           </Box>
         </Box>
       </Box>

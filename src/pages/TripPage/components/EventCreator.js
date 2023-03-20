@@ -705,6 +705,7 @@ const EventCreator = ({
           currency,
           totalPriceMode,
           website,
+          date: tempFlights[0].date,
         }
         break
       case EVENT_TYPES[2]:
@@ -746,6 +747,7 @@ const EventCreator = ({
               : price,
           currency,
           website,
+          date: dateTimeToString(transports[0].startTime),
         }
         break
       case EVENT_TYPES[4]:

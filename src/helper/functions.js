@@ -251,7 +251,7 @@ export const buildNotifications = user => {
   if (user.notifications) {
     user.notifications.forEach(
       ({ sejour, priority, state, type, creationDate, url, owner, tripId }) => {
-        if (!tripsIdArray.includes(tripId) && state === 1) {
+        if (tripId && !tripsIdArray.includes(tripId) && state === 1) {
           tripsIdArray.push(tripId)
           tempNotificationContent.push({ tripId, owner, sejour })
         }
@@ -781,7 +781,12 @@ export const buildLogSejour = (tripId, tripData) => {
             singleNotif.eventType = event.type
             singleNotif.url = `/tripPage/${tripId}/planning?event=${event.id}`
             singleNotif.logs = {
-              place: event.location.label,
+              place:
+                event.type === 'flight'
+                  ? event.flights[0].data.airports[0].label
+                  : event.type === 'transport'
+                  ? event.transports[0].start.label
+                  : event.location.label,
               date: rCTFF(event.date, 'dd/MM/yyyy'),
               eventName: event.title,
               participatingTravelers: event.participatingTravelers.map(traveler => traveler.name),

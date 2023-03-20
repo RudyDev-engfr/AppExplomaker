@@ -115,8 +115,8 @@ const TripLogs = ({ tripData, tripId }) => {
                     sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}
                   >
                     <Box>
-                      <Typography>lieu : {notification.logs.place}</Typography>
-                      <Typography>date : {notification.logs.date}</Typography>
+                      <Typography>Lieu : {notification.logs.place}</Typography>
+                      <Typography>Date : {notification.logs.date}</Typography>
                       <Typography>Nom : {notification.logs.eventName}</Typography>
                       <Typography>
                         participants :

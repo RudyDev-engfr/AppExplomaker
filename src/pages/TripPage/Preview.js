@@ -322,7 +322,6 @@ const Preview = ({
           <Box position="absolute" top="20px" right="20px" zIndex="20">
             {matchesXs ? (
               <MobileNotificationArea
-                tripData={tripData}
                 currentNotifications={currentNotifications}
                 setRefreshNotif={setRefreshNotif}
               />

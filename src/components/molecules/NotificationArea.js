@@ -9,7 +9,7 @@ import { FirebaseContext } from '../../contexts/firebase'
 import CustomAvatar from '../atoms/CustomAvatar'
 
 const useStyles = makeStyles(theme => ({}))
-const NotificationArea = ({ tripData, tripId, currentNotifications, setRefreshNotif }) => {
+const NotificationArea = ({ tripId, currentNotifications, setRefreshNotif }) => {
   const classes = useStyles()
   const theme = useTheme()
   const history = useHistory()
@@ -48,12 +48,12 @@ const NotificationArea = ({ tripData, tripId, currentNotifications, setRefreshNo
           onClick={handleClickNotif}
           sx={{
             backgroundColor:
-              tripData?.notifications?.filter(notification => notification.state === 1).length >
-                0 && theme.palette.primary.ultraLight,
+              user?.notifications?.filter(notification => notification.state === 1).length > 0 &&
+              theme.palette.primary.ultraLight,
             '&:hover': {
               backgroundColor:
-                tripData?.notifications?.filter(notification => notification.state === 1).length >
-                  0 && theme.palette.primary.ultraLight,
+                user?.notifications?.filter(notification => notification.state === 1).length > 0 &&
+                theme.palette.primary.ultraLight,
             },
           }}
         >
@@ -132,7 +132,7 @@ const NotificationArea = ({ tripData, tripId, currentNotifications, setRefreshNo
                       cursor: 'pointer',
                       position: 'relative',
                       borderBottom: '1px solid lightgrey',
-                      borderTop: index === currentNotifications.length - 1 && '1px solid lightgrey',
+                      borderTop: index === 0 && '1px solid lightgrey',
                     }}
                     key={notification.content}
                     onClick={() => {

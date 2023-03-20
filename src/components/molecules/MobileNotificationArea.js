@@ -13,7 +13,7 @@ const useStyles = makeStyles(theme => ({
   },
 }))
 
-const MobileNotificationArea = ({ tripData, currentNotifications, setRefreshNotif }) => {
+const MobileNotificationArea = ({ currentNotifications, setRefreshNotif }) => {
   const classes = useStyles()
   const theme = useTheme()
 
