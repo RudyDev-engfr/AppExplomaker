@@ -7,9 +7,16 @@ import findIcon from '../../helper/icons'
 import { SessionContext } from '../../contexts/session'
 import { FirebaseContext } from '../../contexts/firebase'
 import CustomAvatar from '../atoms/CustomAvatar'
+import kenya1 from '../../images/inherit/Kenya 1.png'
 
-const useStyles = makeStyles(theme => ({}))
-const NotificationArea = ({ tripId, currentNotifications, setRefreshNotif }) => {
+const useStyles = makeStyles(theme => ({
+  notificationImage: {
+    width: '60px',
+    height: '60px',
+    borderRadius: '50px',
+  },
+}))
+const NotificationArea = ({ tripId, currentNotifications, isMyTrips = false, setRefreshNotif }) => {
   const classes = useStyles()
   const theme = useTheme()
   const history = useHistory()
@@ -33,9 +40,11 @@ const NotificationArea = ({ tripId, currentNotifications, setRefreshNotif }) => 
     <>
       <Badge
         badgeContent={
-          currentNotifications?.filter(
-            notification => notification?.tripId === tripId && notification?.state === 1
-          ).length
+          isMyTrips
+            ? currentNotifications.filter(notification => notification?.state === 1).length
+            : currentNotifications?.filter(
+                notification => notification?.tripId === tripId && notification?.state === 1
+              ).length
         }
         color="secondary"
       >
@@ -126,7 +135,6 @@ const NotificationArea = ({ tripId, currentNotifications, setRefreshNotif }) => 
                       display: 'grid',
                       gridTemplate: '1fr / 110px 1fr',
                       alignItems: 'center',
-                      marginBottom: '10px',
                       backgroundColor:
                         notification.state === 1 ? theme.palette.primary.ultraLight : 'white',
                       cursor: 'pointer',
@@ -140,37 +148,71 @@ const NotificationArea = ({ tripId, currentNotifications, setRefreshNotif }) => 
                       history.push(notification.url)
                     }}
                   >
-                    <Box sx={{ position: 'relative' }}>
-                      <CustomAvatar
-                        isNotification
-                        width={60}
-                        height={60}
-                        peopleIds={[notification?.owner?.id]}
-                      />
-                      <Box
-                        sx={{
-                          position: 'absolute',
-                          bottom: '-5px ',
-                          right: '30px',
-                          padding: '6px',
-                          borderRadius: '50px',
-                          width: '32px',
-                          height: '32px',
-                          backgroundColor: theme.palette.primary.main,
-                        }}
-                      >
-                        <Box
-                          component="img"
-                          src={findIcon(notification.icon, notification.eventType)}
-                          sx={{
-                            filter:
-                              'brightness(0) saturate(100%) invert(92%) sepia(95%) saturate(0%) hue-rotate(332deg) brightness(114%) contrast(100%)',
-                            width: '20px',
-                            height: '20px',
-                          }}
-                        />
+                    {isMyTrips ? (
+                      <Box sx={{ position: 'relative' }}>
+                        <Box sx={{ height: '60px', width: '60px' }}>
+                          <img
+                            src={notification.image ? `${notification?.image}` : kenya1}
+                            alt="trip main pic"
+                            className={classes.notificationImage}
+                          />
+                        </Box>
+                        {notification.notifArrayLength && (
+                          <Box
+                            sx={{
+                              position: 'absolute',
+                              bottom: '-5px ',
+                              right: '30px',
+                              padding: '6px',
+                              borderRadius: '50px',
+                              width: '32px',
+                              height: '32px',
+                              backgroundColor: theme.palette.secondary.main,
+                              display: 'flex',
+                              justifyContent: 'center',
+                              alignItems: 'center',
+                            }}
+                          >
+                            <Typography sx={{ fontSize: '20px', color: 'white' }}>
+                              {notification.notifArrayLength}
+                            </Typography>
+                          </Box>
+                        )}
                       </Box>
-                    </Box>
+                    ) : (
+                      <Box sx={{ position: 'relative' }}>
+                        <CustomAvatar
+                          isNotification
+                          width={60}
+                          height={60}
+                          peopleIds={[notification?.owner?.id]}
+                        />
+                        <Box
+                          sx={{
+                            position: 'absolute',
+                            bottom: '-5px ',
+                            right: '30px',
+                            padding: '6px',
+                            borderRadius: '50px',
+                            width: '32px',
+                            height: '32px',
+                            backgroundColor: theme.palette.primary.main,
+                          }}
+                        >
+                          <Box
+                            component="img"
+                            src={findIcon(notification.icon, notification.eventType)}
+                            sx={{
+                              filter:
+                                'brightness(0) saturate(100%) invert(92%) sepia(95%) saturate(0%) hue-rotate(332deg) brightness(114%) contrast(100%)',
+                              width: '20px',
+                              height: '20px',
+                            }}
+                          />
+                        </Box>
+                      </Box>
+                    )}
+
                     <Box sx={{ maxWdith: '280px' }}>
                       <Typography sx={{ fontSize: '13px' }}>{notification.content}</Typography>
                       <Typography sx={{ fontSize: '13px', color: theme.palette.primary.main }}>

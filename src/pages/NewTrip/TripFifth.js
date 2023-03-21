@@ -150,7 +150,7 @@ const TripFifth = () => {
 
     let tempMainPicture = ''
     if (newTripSpot?.picture_slider?.length > 0) {
-      tempMainPicture = arrayShuffle(newTripSpot.picture_slider)[0].src.original
+      tempMainPicture = newTripSpot.picture_slider[0].src.original
     }
 
     firestore

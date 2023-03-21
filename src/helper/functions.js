@@ -309,6 +309,11 @@ export const buildNotifications = user => {
       const singleNotif = {}
       singleNotif.content = `il y a du nouveau sur le voyage - ${sejour.title} -`
       singleNotif.url = `/tripPage/${tripId}`
+      singleNotif.state = 1
+      singleNotif.image = sejour.mainPicture ?? `../../images/inherit/Kenya 1.png`
+      singleNotif.notifArrayLength = user.notifications.filter(
+        notification => notification.tripId === tripId && notification.state === 1
+      ).length
       notifications.push(singleNotif)
     })
     return notifications
@@ -457,11 +462,11 @@ export const buildNotificationsOnTripForUser = (user, tripId) => {
             singleNotif.state = notifBody.state
             singleNotif.icon = event.icon
             singleNotif.eventType = event.type
-            singleNotif.url = `/tripPage/${tripId}/planning?event=${event.id}`
+            singleNotif.url = `/tripPage/${tripId}/planning`
             break
 
           case 'surveyPropositionChange':
-            console.log('je passe par le surveyClose')
+            console.log('je passe par le surveyPropositionChange')
             singleNotif.content = owner?.firstname
               ? `${owner.firstname} a modifié un sondage sur la journée du ${
                   event.date && rCTFF(event.date, 'dd/MM/yyyy')
@@ -573,9 +578,9 @@ export const buildNotificationsOnTripForUser = (user, tripId) => {
                 }.`
             singleNotif.timer = notifBody.definitiveTimer
             singleNotif.state = notifBody.state
-            singleNotif.icon = event.icon
-            singleNotif.eventType = event.type
-            singleNotif.url = `/tripPage/${tripId}/planning?event=${event.id}`
+            // singleNotif.icon = event.icon
+            // singleNotif.eventType = event.type
+            // singleNotif.url = `/tripPage/${tripId}/planning?event=${event.id}`
             break
         }
         notifications.push(singleNotif)
@@ -715,7 +720,7 @@ export const buildLogSejour = (tripId, tripData) => {
             break
 
           case 'surveyPropositionChange':
-            console.log('je passe par le surveyClose')
+            console.log('je passe par le surveyPropositionChange')
             singleNotif.content = owner?.firstname
               ? `${owner.firstname} a modifié un sondage sur la journée du ${
                   event.date && rCTFF(event.date, 'dd/MM/yyyy')
@@ -827,16 +832,10 @@ export const buildLogSejour = (tripId, tripData) => {
             console.log('je passe par le destinationUpdate')
             singleNotif.content = owner?.firstname
               ? `${owner.firstname} a modifié la destination du voyage qui est maintenant ${tripData.destination.label}.`
-              : `Un évènement a été modifié sur la journée du ${
-                  event.type === 'flight'
-                    ? rCTFF(event.flights[0].date, 'dd/MM/yyyy')
-                    : rCTFF(event.date, 'dd/MM/yyyy')
-                }.`
+              : `La destination du voyage a été modifiée, désormais vous partez pour ${tripData.destination.label}.`
             singleNotif.timer = notifBody.definitiveTimer
             singleNotif.state = notifBody.state
-            singleNotif.icon = event.icon
-            singleNotif.eventType = event.type
-            singleNotif.url = `/tripPage/${tripId}/planning?event=${event.id}`
+            singleNotif.url = `/tripPage/${tripId}`
             break
         }
         console.log('cestfini la generation de notif')
