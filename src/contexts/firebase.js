@@ -397,97 +397,85 @@ const FirebaseContextProvider = ({ children }) => {
     console.log('group duser temp', tempUserGroupNotif)
   }
 
-  const createNotificationsOnTrip = (currentUser, tripData, tripid, type, priority, event) => {
-    let tempEvent
-    const { notifications, ...tempTrip } = structuredClone(tripData)
-    if (event) {
-      tempEvent = structuredClone(event)
-    }
-    console.log('tripData', tripData)
-    console.log('tripid', tripid)
-    console.log('currentUser', currentUser)
-    console.log('tempEvent', tempEvent)
+  const createNotificationsOnTrip = async (
+    currentUser,
+    tripData,
+    tripId,
+    type,
+    priority,
+    event
+  ) => {
+    try {
+      const tempTrip = structuredClone(tripData)
+      const tempEvent = event ? structuredClone(event) : undefined
+      console.log('showmetempevent', tempEvent)
+      const tempUserGroup = tempTrip.travelersDetails
+        .filter(traveler => traveler.id !== currentUser.id)
+        .map(traveler => traveler.id)
+      const tempUserGroupNotif = tempUserGroup.map(user => ({ id: user, notifications: [] }))
+      const tempTripNotif = tripData.notifications || []
 
-    console.log(`je crée une notif de type ${type}`, tempTrip)
-    const tempTripNotif = tripData.notifications || []
-    const tempUserGroup = tempTrip.travelersDetails
-      .filter(traveler => traveler.id !== currentUser.id)
-      .map(traveler => traveler?.id)
-    console.log('tempUserGroup', tempUserGroup)
-    const tempUserGroupNotif = tempUserGroup.map(user => {
-      const tempUser = {}
-      tempUser.id = user
-      tempUser.notifications = []
-      return tempUser
-    })
+      if (
+        [
+          'dateUpdate',
+          'surveyCreate',
+          'surveyClose',
+          'turnEventIntoSurvey',
+          'surveyPropositionChange',
+          'propositionAdd',
+          'eventCreate',
+          'eventUpdate',
+          'destinationUpdate',
+        ].includes(type)
+      ) {
+        const id = uuidv4()
+        const creationDate = new Date()
+        const owner = { id: currentUser.id, firstname: currentUser.firstname }
 
-    let updateDataSingleNotif = {}
-    const updateDataTrip = {}
-    if (
-      type === 'dateUpdate' ||
-      type === 'surveyCreate' ||
-      type === 'surveyClose' ||
-      type === 'turnEventIntoSurvey' ||
-      type === 'surveyPropositionChange' ||
-      type === 'propositionAdd' ||
-      type === 'eventCreate' ||
-      type === 'eventUpdate' ||
-      type === 'destinationUpdate'
-    ) {
-      tempTripNotif.push({
-        id: uuidv4(),
-        sejour: tempTrip,
-        creationDate: new Date(),
-        type,
-        tripId: tripid,
-        state: 1,
-        priority,
-        owner: {
-          id: currentUser.id,
-          firstname: currentUser.firstname,
-        },
-        event,
-      })
-      tempUserGroupNotif.forEach(user =>
-        user.notifications.push({
-          id: uuidv4(),
-          creationDate: new Date(),
-          tripId: tripid,
+        const notification = {
+          id,
+          creationDate,
+          tripId,
           sejour: tempTrip,
           type,
           priority,
           state: 1,
+          owner,
+          event: tempEvent,
+        }
+
+        const userNotification = {
+          id,
+          creationDate,
+          tripId,
+          sejour: tempTrip,
+          type,
+          priority,
+          state: 1,
+          event: tempEvent,
+        }
+
+        tempTripNotif.push(notification)
+        tempUserGroupNotif.forEach(user => user.notifications.push(userNotification))
+
+        const updateDataSingleNotif = { ...notification }
+        // delete updateDataSingleNotif.sejour
+        // delete updateDataSingleNotif.event
+
+        const updateDataTrip = { notifications: tempTripNotif }
+        await firestore.collection('trips').doc(tripId).set(updateDataTrip, { merge: true })
+
+        tempUserGroup.forEach(singleUser => {
+          firestore
+            .collection('users')
+            .doc(singleUser)
+            .update({
+              notifications: firebase.firestore.FieldValue.arrayUnion(updateDataSingleNotif),
+            })
         })
-      )
-      updateDataSingleNotif = {
-        id: uuidv4(),
-        creationDate: new Date(),
-        tripId: tripid,
-        sejour: tempTrip,
-        type,
-        priority,
-        state: 1,
-        owner: {
-          id: currentUser.id,
-          firstname: currentUser.firstname,
-        },
-        event,
       }
-      console.log(tempUserGroupNotif, 'tout le monde a sa notif')
-      console.log(tempTripNotif)
-      updateDataTrip.notifications = tempTripNotif
-      firestore
-        .collection('trips')
-        .doc(tripid)
-        .set({ ...updateDataTrip }, { merge: true })
-      tempUserGroup.forEach(singleUser =>
-        firestore
-          .collection('users')
-          .doc(singleUser)
-          .update({
-            notifications: firebase.firestore.FieldValue.arrayUnion(updateDataSingleNotif),
-          })
-      )
+    } catch (error) {
+      console.log(error)
     }
   }
 

@@ -250,7 +250,7 @@ export const buildNotifications = user => {
   const tempNotificationContent = []
   if (user.notifications) {
     user.notifications.forEach(
-      ({ sejour, priority, state, type, creationDate, url, owner, tripId }) => {
+      ({ sejour, priority, state, type, creationDate, url, owner, tripId, image }) => {
         if (tripId && !tripsIdArray.includes(tripId) && state === 1) {
           tripsIdArray.push(tripId)
           tempNotificationContent.push({ tripId, owner, sejour })
@@ -274,6 +274,7 @@ export const buildNotifications = user => {
                 : tempTimer.seconds >= 1 && ['seconds'],
           })}`
           singleNotif.state = state
+          singleNotif.image = sejour?.mainPicture ?? ''
 
           notifications.push(singleNotif)
         } else if (type === 'dateUpdate') {
@@ -300,6 +301,7 @@ export const buildNotifications = user => {
           singleNotif.state = state
           singleNotif.url = url
           singleNotif.owner = owner
+          singleNotif.image = sejour.mainPicture ?? ''
 
           notifications.push(singleNotif)
         }
@@ -307,15 +309,16 @@ export const buildNotifications = user => {
     )
     tempNotificationContent.forEach(({ tripId, owner, sejour }) => {
       const singleNotif = {}
-      singleNotif.content = `il y a du nouveau sur le voyage - ${sejour.title} -`
+      singleNotif.content = `il y a du nouveau sur le voyage - ${sejour?.title} -`
       singleNotif.url = `/tripPage/${tripId}`
       singleNotif.state = 1
-      singleNotif.image = sejour.mainPicture ?? `../../images/inherit/Kenya 1.png`
+      singleNotif.image = sejour?.mainPicture ?? `../../images/inherit/Kenya 1.png`
       singleNotif.notifArrayLength = user.notifications.filter(
         notification => notification.tripId === tripId && notification.state === 1
       ).length
       notifications.push(singleNotif)
     })
+    console.log('le log des notifs', notifications)
     return notifications
   }
 }
@@ -571,16 +574,12 @@ export const buildNotificationsOnTripForUser = (user, tripId) => {
             console.log('je passe par le destinationUpdate')
             singleNotif.content = owner?.firstname
               ? `${owner.firstname} a modifié la destination du voyage qui est maintenant ${sejour.destination.label}.`
-              : `Un évènement a été modifié sur la journée du ${
-                  event.type === 'flight'
-                    ? rCTFF(event.flights[0].date, 'dd/MM/yyyy')
-                    : rCTFF(event.date, 'dd/MM/yyyy')
-                }.`
+              : `La destination du voyage a été modifiée, vous partez pour ${sejour.destination.label}.`
             singleNotif.timer = notifBody.definitiveTimer
             singleNotif.state = notifBody.state
             // singleNotif.icon = event.icon
             // singleNotif.eventType = event.type
-            // singleNotif.url = `/tripPage/${tripId}/planning?event=${event.id}`
+            singleNotif.url = `/tripPage/${tripId}`
             break
         }
         notifications.push(singleNotif)

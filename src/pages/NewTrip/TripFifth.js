@@ -98,7 +98,7 @@ const TripFifth = () => {
   const theme = useTheme()
   const matchesXs = useMediaQuery(theme.breakpoints.down('sm'))
 
-  const { newTrip, setNewTrip, cleanupNewTrip, newTripSpot } = useContext(NewTripContext)
+  const { newTrip, setNewTrip, cleanupNewTrip, currentSpot } = useContext(NewTripContext)
   const { firestore, timestampRef, dictionary, createNotifications } = useContext(FirebaseContext)
   const { user, setUser } = useContext(SessionContext)
 
@@ -149,8 +149,19 @@ const TripFifth = () => {
     delete newTrip.wishes
 
     let tempMainPicture = ''
-    if (newTripSpot?.picture_slider?.length > 0) {
-      tempMainPicture = newTripSpot.picture_slider[0].src.original
+    if (currentSpot?.picture_slider?.length > 0) {
+      tempMainPicture = currentSpot.picture_slider[0].src.original
+    }
+    const tempTrip = {
+      ...newTrip,
+      travelersDetails: tempTravelers,
+      ...tempDestination,
+      owner: user.id,
+      editors: [user.id],
+      currency: 'eur',
+      createdAt: new timestampRef.fromDate(new Date()),
+      title: newTrip.title.trim(),
+      mainPicture: tempMainPicture,
     }
 
     firestore
@@ -185,7 +196,7 @@ const TripFifth = () => {
         batch.commit()
         console.log('utilisateur', user)
         console.log('nouveauvoyage', newTrip)
-        createNotifications(user, newTrip, 'newTrip', 3)
+        createNotifications(user, tempTrip, 'newTrip', 3)
         history.push('/newtrip/tripRecap')
       })
   }
@@ -249,7 +260,7 @@ const TripFifth = () => {
           </Typography>
         </Box>
       </>
-      {newTripSpot?.meta_envies?.length > 0 && newTripSpot?.sub_type !== 'pays' && (
+      {currentSpot?.meta_envies?.length > 0 && currentSpot?.sub_type !== 'pays' && (
         <Box mb={5}>
           {!matchesXs && selectedValues.length < wishesOptions.length && (
             <Box mb={2}>
@@ -260,7 +271,7 @@ const TripFifth = () => {
             {wishesOptions
               .filter(
                 option =>
-                  newTripSpot.meta_envies.includes(parseInt(option.value, 10)) &&
+                  currentSpot.meta_envies.includes(parseInt(option.value, 10)) &&
                   !wishes.some(wish => wish.value === option.value)
               )
               .map(option => {
