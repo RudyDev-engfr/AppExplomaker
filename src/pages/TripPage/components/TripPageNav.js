@@ -223,7 +223,8 @@ const TripPageNav = ({
           sx={{ position: 'relative' }}
         >
           Planning
-          {currentPlanningNotifications.length > 0 && (
+          {currentPlanningNotifications.filter(notification => notification.state === 1).length >
+            0 && (
             <Box
               sx={{
                 position: 'absolute',
@@ -240,7 +241,7 @@ const TripPageNav = ({
                 lineHeight: '10.67px',
               }}
             >
-              {currentPlanningNotifications.length}
+              {currentPlanningNotifications.filter(notification => notification.state === 1).length}
             </Box>
           )}
         </Button>
@@ -364,7 +365,9 @@ const TripPageNav = ({
             color="secondary"
             overlap="circular"
             component="div"
-            badgeContent={currentPlanningNotifications.length}
+            badgeContent={
+              currentPlanningNotifications.filter(notification => notification.state === 1).length
+            }
             sx={{ color: 'unset !important', opacity: 100, bgcolor: 'unset' }}
           >
             <Tab

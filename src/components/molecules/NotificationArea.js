@@ -199,16 +199,20 @@ const NotificationArea = ({ tripId, currentNotifications, isMyTrips = false, set
                             backgroundColor: theme.palette.primary.main,
                           }}
                         >
-                          <Box
-                            component="img"
-                            src={findIcon(notification.icon, notification.eventType)}
-                            sx={{
-                              filter:
-                                'brightness(0) saturate(100%) invert(92%) sepia(95%) saturate(0%) hue-rotate(332deg) brightness(114%) contrast(100%)',
-                              width: '20px',
-                              height: '20px',
-                            }}
-                          />
+                          {notification.icon ? (
+                            <Box
+                              component="img"
+                              src={findIcon(notification.icon, notification.eventType)}
+                              sx={{
+                                filter:
+                                  'brightness(0) saturate(100%) invert(92%) sepia(95%) saturate(0%) hue-rotate(332deg) brightness(114%) contrast(100%)',
+                                width: '20px',
+                                height: '20px',
+                              }}
+                            />
+                          ) : (
+                            <Notifications sx={{ color: 'white', fontSize: '20px' }} />
+                          )}
                         </Box>
                       </Box>
                     )}

@@ -96,19 +96,41 @@ const TripLogs = ({ tripData, tripId }) => {
         <Box my={2} sx={{ display: 'flex', flexDirection: 'column' }}>
           {currentNotifications?.map((notification, index) =>
             notification.logs ? (
-              <Accordion sx={{ marginBottom: '15px' }}>
+              <Accordion
+                sx={{
+                  marginBottom: '15px',
+                  '&::before': {
+                    display: 'none',
+                    height: '0',
+                  },
+                  boxShadow: 'none',
+                }}
+              >
                 <AccordionSummary
                   expandIcon={<ExpandMoreIcon />}
                   aria-controls="panel1a-content"
                   id="panel1a-header"
                   sx={{
                     backgroundColor: theme.palette.grey.f2,
+                    width: '457px,',
+                    height: '115px',
+                    padding: '0 30px',
+                    borderRadius: '20px',
                   }}
                 >
-                  <Typography sx={{ fontSize: '17px' }}>{notification.content}</Typography>
-                  <Typography sx={{ fontSize: '17px', color: theme.palette.primary.main }}>
-                    {notification.timer}
-                  </Typography>
+                  <Box
+                    sx={{ display: 'grid', gridTemplate: '1fr / 110px 1fr', alignItems: 'center' }}
+                  >
+                    <Box sx={{ display: 'flex', justifyContent: 'center' }}>
+                      <Avatar sx={{ width: 60, height: 60 }} />
+                    </Box>
+                    <Box>
+                      <Typography sx={{ fontSize: '17px' }}>{notification.content}</Typography>
+                      <Typography sx={{ fontSize: '17px', color: theme.palette.primary.main }}>
+                        {notification.timer}
+                      </Typography>
+                    </Box>
+                  </Box>
                 </AccordionSummary>
                 <AccordionDetails>
                   <Box
@@ -148,7 +170,7 @@ const TripLogs = ({ tripData, tripId }) => {
                   height: '105px',
                   padding: '0 30px',
                   display: 'grid',
-                  gridTemplate: '1fr / 110px 1fr',
+                  gridTemplate: '1fr / 110px 1fr 40px',
                   alignItems: 'center',
                   marginBottom: '15px',
                   borderRadius: '20px',

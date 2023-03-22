@@ -830,10 +830,12 @@ export const buildLogSejour = (tripId, tripData) => {
           case 'destinationUpdate':
             console.log('je passe par le destinationUpdate')
             singleNotif.content = owner?.firstname
-              ? `${owner.firstname} a modifié la destination du voyage qui est maintenant ${tripData.destination.label}.`
-              : `La destination du voyage a été modifiée, désormais vous partez pour ${tripData.destination.label}.`
+              ? `${owner.firstname} a modifié la destination du voyage qui est maintenant ${sejour.destination.label}.`
+              : `La destination du voyage a été modifiée, vous partez pour ${sejour.destination.label}.`
             singleNotif.timer = notifBody.definitiveTimer
             singleNotif.state = notifBody.state
+            // singleNotif.icon = event.icon
+            // singleNotif.eventType = event.type
             singleNotif.url = `/tripPage/${tripId}`
             break
         }

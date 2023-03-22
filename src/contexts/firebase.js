@@ -407,7 +407,7 @@ const FirebaseContextProvider = ({ children }) => {
   ) => {
     try {
       const tempTrip = structuredClone(tripData)
-      const tempEvent = event ? structuredClone(event) : undefined
+      const tempEvent = event ? structuredClone(event) : null
       console.log('showmetempevent', tempEvent)
       const tempUserGroup = tempTrip.travelersDetails
         .filter(traveler => traveler.id !== currentUser.id)
