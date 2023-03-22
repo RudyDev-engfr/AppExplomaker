@@ -80,7 +80,8 @@ const useStyles = makeStyles(theme => ({
     padding: '5px 15px',
     borderRadius: '5px',
     '&:hover': {
-      backgroundColor: theme.palette.primary.ultraLight,
+      backgroundColor: `${theme.palette.primary.ultraLight} !important`,
+      opacity: '100% !important',
     },
   },
   arrow: { width: '70px', height: '45px' },

@@ -57,12 +57,14 @@ const NotificationArea = ({ tripId, currentNotifications, isMyTrips = false, set
           onClick={handleClickNotif}
           sx={{
             backgroundColor:
-              user?.notifications?.filter(notification => notification.state === 1).length > 0 &&
-              theme.palette.primary.ultraLight,
+              user?.notifications?.filter(notification => notification.state === 1).length > 0
+                ? theme.palette.primary.ultraLight
+                : 'white',
             '&:hover': {
               backgroundColor:
-                user?.notifications?.filter(notification => notification.state === 1).length > 0 &&
-                theme.palette.primary.ultraLight,
+                user?.notifications?.filter(notification => notification.state === 1).length > 0
+                  ? theme.palette.primary.ultraLight
+                  : 'white',
             },
           }}
         >
