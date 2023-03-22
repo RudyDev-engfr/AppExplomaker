@@ -19,6 +19,7 @@ import { SessionContext } from '../../contexts/session'
 import { buildLogSejour } from '../../helper/functions'
 
 import arrowBack from '../../images/icons/arrow-back.svg'
+import CustomAvatar from '../../components/atoms/CustomAvatar'
 
 const useStyles = makeStyles(theme => ({
   mobileTitleContainer: {
@@ -105,6 +106,7 @@ const TripLogs = ({ tripData, tripId }) => {
                   },
                   boxShadow: 'none',
                 }}
+                key={notification.id}
               >
                 <AccordionSummary
                   expandIcon={<ExpandMoreIcon />}
@@ -122,7 +124,12 @@ const TripLogs = ({ tripData, tripId }) => {
                     sx={{ display: 'grid', gridTemplate: '1fr / 110px 1fr', alignItems: 'center' }}
                   >
                     <Box sx={{ display: 'flex', justifyContent: 'center' }}>
-                      <Avatar sx={{ width: 60, height: 60 }} />
+                      <CustomAvatar
+                        isNotification
+                        width={60}
+                        height={60}
+                        peopleIds={[notification?.owner?.id]}
+                      />
                     </Box>
                     <Box>
                       <Typography sx={{ fontSize: '17px' }}>{notification.content}</Typography>

@@ -597,6 +597,7 @@ export const buildLogSejour = (tripId, tripData) => {
       .filter(notification => notification.tripId === tripId)
       .forEach(({ sejour, priority, state, type, creationDate, owner, event }) => {
         const singleNotif = {}
+        singleNotif.owner = owner
         const notifBody = buildNotifTimerAndState(creationDate, state)
         // eslint-disable-next-line default-case
         switch (type) {
