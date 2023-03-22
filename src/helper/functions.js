@@ -250,13 +250,14 @@ export const buildNotifications = user => {
   const tempNotificationContent = []
   if (user.notifications) {
     user.notifications.forEach(
-      ({ sejour, priority, state, type, creationDate, url, owner, tripId, image }) => {
+      ({ sejour, priority, state, type, creationDate, url, owner, tripId, image, id }) => {
         if (tripId && !tripsIdArray.includes(tripId) && state === 1) {
           tripsIdArray.push(tripId)
           tempNotificationContent.push({ tripId, owner, sejour })
         }
+        const singleNotif = {}
+        singleNotif.id = id
         if (type === 'newTrip') {
-          const singleNotif = {}
           console.log('je suis un newtrip')
           singleNotif.content = `Votre nouveau voyage - ${sejour?.title} - a bien été créé`
           const tempTimer = intervalToDuration({
@@ -278,7 +279,6 @@ export const buildNotifications = user => {
 
           notifications.push(singleNotif)
         } else if (type === 'dateUpdate') {
-          const singleNotif = {}
           console.log('je suis un updateDate')
           singleNotif.content = `Les dates de votre voyage ont été modifiées, elles sont désormais du ${rCTFF(
             sejour.dateRange[0],
@@ -349,9 +349,10 @@ export const buildNotificationsOnTripForUser = (user, tripId) => {
   if (user.notifications) {
     user.notifications
       .filter(notification => notification.tripId === tripId)
-      .forEach(({ sejour, priority, state, type, creationDate, owner, event }) => {
+      .forEach(({ sejour, priority, state, type, creationDate, owner, event, id }) => {
         const singleNotif = {}
         const notifBody = buildNotifTimerAndState(creationDate, state)
+        singleNotif.id = id
         singleNotif.owner = owner
         // eslint-disable-next-line default-case
         switch (type) {
@@ -595,9 +596,10 @@ export const buildLogSejour = (tripId, tripData) => {
   if (tripData?.notifications) {
     tripData.notifications
       .filter(notification => notification.tripId === tripId)
-      .forEach(({ sejour, priority, state, type, creationDate, owner, event }) => {
+      .forEach(({ sejour, priority, state, type, creationDate, owner, event, id }) => {
         const singleNotif = {}
         singleNotif.owner = owner
+        singleNotif.id = id
         const notifBody = buildNotifTimerAndState(creationDate, state)
         // eslint-disable-next-line default-case
         switch (type) {

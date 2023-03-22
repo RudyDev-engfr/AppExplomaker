@@ -73,7 +73,7 @@ const MobileNotificationArea = ({ currentNotifications, setRefreshNotif }) => {
                 backgroundColor:
                   notification.state === 1 ? theme.palette.primary.ultraLight : 'white',
               }}
-              key={notification.content}
+              key={notification.id}
             >
               <Box sx={{ position: 'relative' }}>
                 <CustomAvatar

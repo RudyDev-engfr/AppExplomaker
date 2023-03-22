@@ -183,7 +183,7 @@ const TripLogs = ({ tripData, tripId }) => {
                   borderRadius: '20px',
                   backgroundColor: theme.palette.grey.f2,
                 }}
-                key={notification.content}
+                key={notification.id}
               >
                 <Box sx={{ display: 'flex', justifyContent: 'center' }}>
                   <Avatar sx={{ width: 60, height: 60 }} />

@@ -142,7 +142,7 @@ const NotificationArea = ({ tripId, currentNotifications, isMyTrips = false, set
                       borderBottom: '1px solid lightgrey',
                       borderTop: index === 0 && '1px solid lightgrey',
                     }}
-                    key={notification.content}
+                    key={notification.id}
                     onClick={() => {
                       setNotificationsToNewState(user, 3, notification.id)
                       history.push(notification.url)
