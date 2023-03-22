@@ -107,7 +107,7 @@ const JoinTrip = () => {
   const classes = useStyles()
   const theme = useTheme()
   const matchesXs = useMediaQuery(theme.breakpoints.down('sm'))
-  const { tripid } = useParams()
+  const { tripId } = useParams()
   const { user, setNeedRedirectTo, setJoinCallback } = useContext(SessionContext)
   const { firestore, timestampRef, getUserById, getSpotByDestination } = useContext(FirebaseContext)
 
@@ -123,18 +123,18 @@ const JoinTrip = () => {
   useEffect(() => {
     firestore
       .collection('trips')
-      .doc(tripid)
+      .doc(tripId)
       .onSnapshot(doc => {
         const tempDoc = doc.data()
         tempDoc.travelersDetails.forEach(traveler => {
           if (typeof traveler.id !== 'undefined' && traveler.id === user.id) {
-            history.push(`/tripPage/${tripid}`)
+            history.push(`/tripPage/${tripId}`)
           }
         })
         setTripData(tempDoc)
         setIsLoading(false)
       })
-  }, [tripid])
+  }, [tripId])
 
   useEffect(() => {
     if (tripData) {
@@ -152,7 +152,7 @@ const JoinTrip = () => {
     if (user.isLoggedIn && tripData) {
       tripData.travelersDetails.forEach(traveler => {
         if (typeof traveler.id !== 'undefined' && traveler.id === user.id) {
-          history.push(`/tripPage/${tripid}`)
+          history.push(`/tripPage/${tripId}`)
         }
       })
     }
@@ -187,12 +187,12 @@ const JoinTrip = () => {
 
     firestore
       .collection('trips')
-      .doc(tripid)
+      .doc(tripId)
       .update({ ...tempData })
 
     firestore
       .collection('trips')
-      .doc(tripid)
+      .doc(tripId)
       .collection('messages')
       .add({
         text: `${
@@ -202,13 +202,12 @@ const JoinTrip = () => {
         userId,
       })
 
-    return tripid
+    return tripId
   }
 
   const handleTravelerSelection = (isTraveler = true) => {
     if (user.isLoggedIn) {
       updateTraveler(user.id, isTraveler)
-      history.push(`/tripPage/${tripid}`)
     } else {
       setOpenModal('login')
     }
@@ -229,7 +228,7 @@ const JoinTrip = () => {
         description={`Rejoindre le séjour | ${
           dateRange?.length > 0 ? `${dateRange[0]} - ${dateRange[1]}` : 'Je ne sais pas encore'
         }`}
-        url={`https://${window.location.href.split('/')[2]}/join/${tripid}`}
+        url={`https://${window.location.href.split('/')[2]}/join/${tripId}`}
         thumbnail={tripData?.mainPicture}
       />
       <Box className={classes.mainContainer}>

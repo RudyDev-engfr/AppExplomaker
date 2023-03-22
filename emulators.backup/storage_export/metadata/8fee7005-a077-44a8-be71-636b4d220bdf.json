@@ -1,0 +1,19 @@
+{
+  "name": "avatars/HgxdS5usByKCr6dvWXiOBGMyILkl",
+  "bucket": "explomaker-3010b.appspot.com",
+  "metageneration": 2,
+  "generation": 1621847620330,
+  "contentType": "image/jpeg",
+  "storageClass": "STANDARD",
+  "contentDisposition": "inline",
+  "contentEncoding": "identity",
+  "downloadTokens": [
+    "e08fe9c4-2430-454c-b645-209573d27f63"
+  ],
+  "etag": "someETag",
+  "timeCreated": "2021-05-24T09:13:40.329Z",
+  "updated": "2023-01-23T09:41:49.806Z",
+  "size": 173662,
+  "md5Hash": "mPWRP45T+Sj5paZQefL6kA==",
+  "crc32c": "541191874"
+}

@@ -14,9 +14,9 @@ import { Box, IconButton, Typography, useMediaQuery, useTheme } from '@mui/mater
 import Carousel from 'react-material-ui-carousel'
 import makeStyles from '@mui/styles/makeStyles'
 import clsx from 'clsx'
+import { Notifications } from '@mui/icons-material'
 
-import { rCTFF } from '../../helper/functions'
-import NotificationButton from '../../components/molecules/NotificationButton'
+import { buildNotificationsOnTripForUser, rCTFF } from '../../helper/functions'
 import { FirebaseContext } from '../../contexts/firebase'
 import CustomAvatar from '../../components/atoms/CustomAvatar'
 import EditBtn from '../../components/atoms/EditBtn'
@@ -27,6 +27,9 @@ import lineMobile from '../../images/icons/lineMobile.svg'
 import calendar from '../../images/icons/calendar.svg'
 import location from '../../images/icons/location.svg'
 import person from '../../images/icons/person.svg'
+import NotificationArea from '../../components/molecules/NotificationArea'
+import { SessionContext } from '../../contexts/session'
+import MobileNotificationArea from '../../components/molecules/MobileNotificationArea'
 
 const useStyles = makeStyles(theme => ({
   slides: {
@@ -77,7 +80,8 @@ const useStyles = makeStyles(theme => ({
     padding: '5px 15px',
     borderRadius: '5px',
     '&:hover': {
-      backgroundColor: theme.palette.primary.ultraLight,
+      backgroundColor: `${theme.palette.primary.ultraLight} !important`,
+      opacity: '100% !important',
     },
   },
   arrow: { width: '70px', height: '45px' },
@@ -237,15 +241,38 @@ const useStyles = makeStyles(theme => ({
   },
 }))
 
-const Preview = ({ tripData, setOpenModal, dataNotifications, canEdit, carouselImages }) => {
+const Preview = ({
+  tripData,
+  setOpenModal,
+  dataNotifications,
+  canEdit,
+  carouselImages,
+  tripId,
+}) => {
   const classes = useStyles()
   const theme = useTheme()
   const matchesXs = useMediaQuery(theme.breakpoints.down('sm'))
 
   const { dictionary } = useContext(FirebaseContext)
+  const { user } = useContext(SessionContext)
 
   const [currentDateRange, setCurrentDateRange] = useState(['', ''])
   const [generatedAvatars, setGeneratedAvatars] = useState([])
+  const [currentNotifications, setCurrentNotifications] = useState([])
+  const [refreshNotif, setRefreshNotif] = useState(false)
+
+  useEffect(() => {
+    if (tripData && user && refreshNotif) {
+      const tempNotif = buildNotificationsOnTripForUser(user, tripId)
+      setCurrentNotifications(tempNotif)
+      setRefreshNotif(false)
+    }
+    console.log('le voyage avec ses notifs', user.notifications)
+  }, [tripData, user, refreshNotif])
+
+  useEffect(() => {
+    console.log('les notifs que je veux afficher', currentNotifications)
+  }, [currentNotifications])
 
   useEffect(() => {
     const tempAvatars = []
@@ -293,7 +320,22 @@ const Preview = ({ tripData, setOpenModal, dataNotifications, canEdit, carouselI
     <>
       <Box className={classes.sliderBox}>
         <Box position="absolute" top="0" right="0">
-          <NotificationButton data={dataNotifications} />
+          <Box position="absolute" top="20px" right="20px" zIndex="20">
+            {matchesXs ? (
+              <MobileNotificationArea
+                tripId={tripId}
+                currentNotifications={currentNotifications}
+                setRefreshNotif={setRefreshNotif}
+              />
+            ) : (
+              <NotificationArea
+                tripData={tripData}
+                currentNotifications={currentNotifications}
+                setRefreshNotif={setRefreshNotif}
+                tripId={tripId}
+              />
+            )}
+          </Box>
         </Box>
         {carouselImages?.length > 0 ? (
           <Carousel

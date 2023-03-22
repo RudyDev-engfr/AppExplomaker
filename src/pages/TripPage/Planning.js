@@ -442,8 +442,8 @@ const Planning = ({ tripData, tripId, canEdit }) => {
             if (plannedEvent.isSurvey) {
               plannedEvent.propositions.some(proposition => {
                 proposition.transports.some(transport => {
-                  const zonedTimeStart = stringToDate(transport.startDateTime, 'yyyy-MM-dd HH:mm')
-                  const zonedTimeEnd = stringToDate(transport.endDateTime, 'yyyy-MM-dd HH:mm')
+                  const zonedTimeStart = stringToDate(transport.startTime, 'yyyy-MM-dd HH:mm')
+                  const zonedTimeEnd = stringToDate(transport.endTime, 'yyyy-MM-dd HH:mm')
                   if (
                     isSameDay(days[0], zonedTimeStart) ||
                     isSameDay(days[days.length - 1], zonedTimeEnd)
@@ -462,11 +462,11 @@ const Planning = ({ tripData, tripId, canEdit }) => {
                 transportIndex += 1
               ) {
                 const currentStartDateTime = stringToDate(
-                  plannedEvent.transports[transportIndex].startDateTime,
+                  plannedEvent.transports[transportIndex].startTime,
                   'yyyy-MM-dd HH:mm'
                 )
                 const currentEndDateTime = stringToDate(
-                  plannedEvent.transports[transportIndex].endDateTime,
+                  plannedEvent.transports[transportIndex].endTime,
                   'yyyy-MM-dd HH:mm'
                 )
                 if (
@@ -482,8 +482,8 @@ const Planning = ({ tripData, tripId, canEdit }) => {
         })
       tempEvents.accomodations.sort(
         (a, b) =>
-          startOfDay(stringToDate(a.arrivalDateTime, 'yyyy-MM-dd HH:mm')) -
-          startOfDay(stringToDate(b.arrivalDateTime, 'yyyy-MM-dd HH:mm'))
+          startOfDay(stringToDate(a.startTime, 'yyyy-MM-dd HH:mm')) -
+          startOfDay(stringToDate(b.startTime, 'yyyy-MM-dd HH:mm'))
       )
     }
     // Dynamic days
@@ -500,13 +500,13 @@ const Planning = ({ tripData, tripId, canEdit }) => {
               ) {
                 const currentArrivalDateTime = startOfDay(
                   stringToDate(
-                    plannedEvent.propositions[propositionIndex].arrivalDateTime,
+                    plannedEvent.propositions[propositionIndex].startTime,
                     'yyyy-MM-dd HH:mm'
                   )
                 )
                 const currentDepartureDateTime = startOfDay(
                   stringToDate(
-                    plannedEvent.propositions[propositionIndex].departureDateTime,
+                    plannedEvent.propositions[propositionIndex].endTime,
                     'yyyy-MM-dd HH:mm'
                   )
                 )
@@ -523,10 +523,10 @@ const Planning = ({ tripData, tripId, canEdit }) => {
               }
             } else {
               const currentArrivalDateTime = startOfDay(
-                stringToDate(plannedEvent.arrivalDateTime, 'yyyy-MM-dd HH:mm')
+                stringToDate(plannedEvent.startTime, 'yyyy-MM-dd HH:mm')
               )
               const currentDepartureDateTime = startOfDay(
-                stringToDate(plannedEvent.departureDateTime, 'yyyy-MM-dd HH:mm')
+                stringToDate(plannedEvent.endTime, 'yyyy-MM-dd HH:mm')
               )
               if (
                 isAfter(currentDepartureDateTime, currentArrivalDateTime) &&
@@ -574,16 +574,16 @@ const Planning = ({ tripData, tripId, canEdit }) => {
                 proposition.transports.some(transport => {
                   if (
                     isAfter(
-                      stringToDate(transport.endDateTime, 'yyyy-MM-dd HH:mm'),
-                      stringToDate(transport.startDateTime, 'yyyy-MM-dd HH:mm')
+                      stringToDate(transport.endTime, 'yyyy-MM-dd HH:mm'),
+                      stringToDate(transport.startTime, 'yyyy-MM-dd HH:mm')
                     )
                       ? eachDayOfInterval({
-                          start: stringToDate(transport.startDateTime, 'yyyy-MM-dd HH:mm'),
-                          end: stringToDate(transport.endDateTime, 'yyyy-MM-dd HH:mm'),
+                          start: stringToDate(transport.startTime, 'yyyy-MM-dd HH:mm'),
+                          end: stringToDate(transport.endTime, 'yyyy-MM-dd HH:mm'),
                         }).some(day => isSameDay(day, selectedDate))
                       : eachDayOfInterval({
-                          start: stringToDate(transport.endDateTime, 'yyyy-MM-dd HH:mm'),
-                          end: stringToDate(transport.startDateTime, 'yyyy-MM-dd HH:mm'),
+                          start: stringToDate(transport.endTime, 'yyyy-MM-dd HH:mm'),
+                          end: stringToDate(transport.startTime, 'yyyy-MM-dd HH:mm'),
                         }).some(day => isSameDay(day, selectedDate))
                   ) {
                     tempEvents.surveys.push(plannedEvent)
@@ -601,15 +601,12 @@ const Planning = ({ tripData, tripId, canEdit }) => {
               ) {
                 const currentStartDateTime = startOfDay(
                   stringToDate(
-                    plannedEvent.transports[transportIndex].startDateTime,
+                    plannedEvent.transports[transportIndex].startTime,
                     'yyyy-MM-dd HH:mm'
                   )
                 )
                 const currentEndDateTime = startOfDay(
-                  stringToDate(
-                    plannedEvent.transports[transportIndex].endDateTime,
-                    'yyyy-MM-dd HH:mm'
-                  )
+                  stringToDate(plannedEvent.transports[transportIndex].endTime, 'yyyy-MM-dd HH:mm')
                 )
                 if (
                   (isAfter(currentEndDateTime, currentStartDateTime) &&
@@ -1438,7 +1435,7 @@ const Planning = ({ tripData, tripId, canEdit }) => {
                           .sort((a, b) => b.likes.length - a.likes.length)
                           .map(proposition => {
                             const tempArrivalDateTime = stringToDate(
-                              proposition?.arrivalDateTime,
+                              proposition?.startTime,
                               'yyyy-MM-dd HH:mm'
                             )
                             return (
@@ -1471,14 +1468,14 @@ const Planning = ({ tripData, tripId, canEdit }) => {
                                   >
                                     {survey.type === EVENT_TYPES[0]
                                       ? `${format(tempArrivalDateTime, 'dd MMMM')} - ${format(
-                                          stringToDate(proposition.departureDateTime),
+                                          stringToDate(proposition.endTime),
                                           'dd MMMM'
                                         )}`
                                       : survey.type === EVENT_TYPES[1]
                                       ? rCTFF(proposition.flights[0].date, 'dd MMMM')
                                       : survey.type === EVENT_TYPES[3]
                                       ? `${format(
-                                          stringToDate(proposition.transports[0].startDateTime),
+                                          stringToDate(proposition.transports[0].startTime),
                                           'dd MMMM',
                                           {
                                             locale: frLocale,
@@ -1487,7 +1484,7 @@ const Planning = ({ tripData, tripId, canEdit }) => {
                                           stringToDate(
                                             proposition.transports[
                                               proposition.transports.length - 1
-                                            ].endDateTime
+                                            ].endTime
                                           ),
                                           'dd MMMM',
                                           {
@@ -1543,13 +1540,11 @@ const Planning = ({ tripData, tripId, canEdit }) => {
                                     {survey.type === EVENT_TYPES[3] &&
                                       formatDuration(
                                         intervalToDuration({
-                                          start: stringToDate(
-                                            proposition.transports[0].startDateTime
-                                          ),
+                                          start: stringToDate(proposition.transports[0].startTime),
                                           end: stringToDate(
                                             proposition.transports[
                                               proposition.transports.length - 1
-                                            ].endDateTime
+                                            ].endTime
                                           ),
                                         }),
                                         {
@@ -1678,23 +1673,23 @@ const Planning = ({ tripData, tripId, canEdit }) => {
                                     >
                                       {survey.type === EVENT_TYPES[0]
                                         ? `${format(
-                                            stringToDate(proposition.arrivalDateTime),
+                                            stringToDate(proposition.startTime),
                                             'HH:mm'
                                           )} - ${format(
-                                            stringToDate(proposition.departureDateTime),
+                                            stringToDate(proposition.endTime),
                                             'dd MMMM'
                                           )}`
                                         : survey.type === EVENT_TYPES[1]
                                         ? rCTFF(proposition.flights[0].date, 'dd MMMM')
                                         : survey.type === EVENT_TYPES[3]
                                         ? `${format(
-                                            stringToDate(proposition.transports[0].startDateTime),
+                                            stringToDate(proposition.transports[0].startTime),
                                             'dd MMMM'
                                           )} - ${format(
                                             stringToDate(
                                               proposition.transports[
                                                 proposition.transports.length - 1
-                                              ].endDateTime
+                                              ].endTime
                                             ),
                                             'dd MMMM'
                                           )}`
@@ -1741,11 +1736,11 @@ const Planning = ({ tripData, tripId, canEdit }) => {
                                       {survey.type === EVENT_TYPES[3] &&
                                         formatDuration(
                                           intervalToDuration({
-                                            start: rCTFF(proposition.transports[0].startDateTime),
+                                            start: rCTFF(proposition.transports[0].startTime),
                                             end: rCTFF(
                                               proposition.transports[
                                                 proposition.transports.length - 1
-                                              ].endDateTime
+                                              ].endTime
                                             ),
                                           }),
                                           {

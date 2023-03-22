@@ -93,11 +93,11 @@ const PlanningCard = ({
                   top: '-6px',
                 }}
               >
-                {currentEvent.arrivalDateTime && (
+                {currentEvent.startTime && (
                   <Typography color="primary" className={classes.date}>
-                    {`${format(stringToDate(currentEvent.arrivalDateTime), 'd MMMM', {
+                    {`${format(stringToDate(currentEvent.startTime), 'd MMMM', {
                       locale: frLocale,
-                    })} - ${format(stringToDate(currentEvent.departureDateTime), 'd MMMM', {
+                    })} - ${format(stringToDate(currentEvent.endTime), 'd MMMM', {
                       locale: frLocale,
                     })}`}
                   </Typography>
@@ -137,35 +137,31 @@ const PlanningCard = ({
                 {eventType === EVENT_TYPES[3] && (
                   <Typography color="primary" className={classes.date}>
                     {isSameDay(
-                      stringToDate(currentEvent.transports[0].startDateTime),
+                      stringToDate(currentEvent.transports[0].startTime),
                       stringToDate(
-                        currentEvent.transports[currentEvent.transports.length - 1].endDateTime
+                        currentEvent.transports[currentEvent.transports.length - 1].endTime
                       )
                     )
                       ? `${format(
-                          stringToDate(currentEvent.transports[0].startDateTime),
+                          stringToDate(currentEvent.transports[0].startTime),
                           isWithoutDate ? 'd MMMM | HH:mm' : 'HH:mm',
                           {
                             locale: frLocale,
                           }
                         )} - ${format(
                           stringToDate(
-                            currentEvent.transports[currentEvent.transports.length - 1].endDateTime
+                            currentEvent.transports[currentEvent.transports.length - 1].endTime
                           ),
                           'HH:mm',
                           {
                             locale: frLocale,
                           }
                         )}`
-                      : `${format(
-                          stringToDate(currentEvent.transports[0].startDateTime),
-                          'd MMMM',
-                          {
-                            locale: frLocale,
-                          }
-                        )} - ${format(
+                      : `${format(stringToDate(currentEvent.transports[0].startTime), 'd MMMM', {
+                          locale: frLocale,
+                        })} - ${format(
                           stringToDate(
-                            currentEvent.transports[currentEvent.transports.length - 1].endDateTime
+                            currentEvent.transports[currentEvent.transports.length - 1].endTime
                           ),
                           'd MMMM',
                           {

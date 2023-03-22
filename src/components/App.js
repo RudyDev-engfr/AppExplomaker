@@ -15,7 +15,7 @@ import beta from '../images/beta.svg'
 const mapsLibraries = ['places']
 
 const App = () => {
-  const { setUser } = useContext(SessionContext)
+  const { setUser, user } = useContext(SessionContext)
   const { firestore, database, setLocalUsers, isDictionaryLoaded, timestampRef } =
     useContext(FirebaseContext)
   const { isLoaded, loadError } = useLoadScript({
@@ -23,6 +23,10 @@ const App = () => {
     libraries: mapsLibraries,
   })
   const { initializing, firebaseUser } = useAuth()
+
+  useEffect(() => {
+    console.log('utilisateur', user)
+  }, [user])
 
   useEffect(() => {
     if (firebaseUser) {
@@ -42,6 +46,7 @@ const App = () => {
           tempUser.rangeType = data.rangeType
           tempUser.likes = data.likes
           tempUser.newsletter = data.newsletter
+          tempUser.notifications = data.notifications || []
           setUser({ ...tempUser })
         }
       })

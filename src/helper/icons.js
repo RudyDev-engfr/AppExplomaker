@@ -572,6 +572,7 @@ export default function findIcon(selectedIcon, eventType) {
     case EVENT_TYPES[4]:
       currentArray = [...restaurant]
       break
+    case 'tripIcon':
   }
   return currentArray?.filter(icon => icon.value === selectedIcon)[0].icon
 }

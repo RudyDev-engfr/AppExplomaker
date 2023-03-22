@@ -37,6 +37,9 @@ const CustomAvatar = ({
   isVertical = false,
   propsClasses,
   isLike = false,
+  width = 44,
+  height = 44,
+  isNotification,
 }) => {
   const classes = useStyles()
   const { getUserById } = useContext(FirebaseContext)
@@ -94,12 +97,21 @@ const CustomAvatar = ({
                     badgeContent={<FavoriteRounded fontSize="inherit" />}
                   >
                     <Avatar variant="circular" src={avatar} alt={firstname}>
-                      {firstname.substring(0, 1)}
+                      {firstname?.substring(0, 1)}
                     </Avatar>
                   </Badge>
                 ) : (
-                  <Avatar variant="circular" src={avatar} alt={firstname}>
-                    {firstname.substring(0, 1)}
+                  <Avatar
+                    variant="circular"
+                    src={avatar}
+                    alt={firstname}
+                    sx={{
+                      width,
+                      height,
+                      border: isNotification && '1px solid lightgrey !important',
+                    }}
+                  >
+                    {firstname?.substring(0, 1)}
                   </Avatar>
                 )}
               </Tooltip>

@@ -124,7 +124,7 @@ const TripThird = () => {
   const matchesXs = useMediaQuery(theme.breakpoints.down('sm'))
   const { newTrip, setNewTrip } = useContext(NewTripContext)
   const [title, setTitle] = useState(
-    newTrip.destination.label && newTrip.noDestination
+    newTrip?.noDestination
       ? 'Je ne sais pas encore'
       : `Mon voyage à ${
           newTrip.destination.label.length <= 27
@@ -139,6 +139,10 @@ const TripThird = () => {
   useEffect(() => {
     setNewTrip({ ...newTrip, title, description, context, budget })
   }, [title, description, context, budget])
+
+  useEffect(() => {
+    console.log('nouveauvoyage', newTrip)
+  }, [newTrip])
 
   return (
     <TripWrapper currentStep="3" title="Informations du séjour" backURL="/newtrip/tripSecond">

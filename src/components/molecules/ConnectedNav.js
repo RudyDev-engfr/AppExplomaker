@@ -12,6 +12,9 @@ import {
   Tab,
   useMediaQuery,
   ButtonBase,
+  IconButton,
+  ListItemIcon,
+  Typography,
 } from '@mui/material'
 import { makeStyles } from '@mui/styles'
 import {
@@ -20,6 +23,7 @@ import {
   FavoriteBorderOutlined,
   LogoutOutlined,
   Menu as MenuIcon,
+  Notifications,
 } from '@mui/icons-material'
 import clsx from 'clsx'
 import React, { useContext, useEffect, useState } from 'react'
@@ -33,6 +37,10 @@ import logoGrey from '../../images/icons/logoGrey.svg'
 import inspi from '../../images/icons/inspiLine.svg'
 import profil from '../../images/icons/profil.svg'
 import favorite from '../../images/icons/favorite.svg'
+import { buildNotifications } from '../../helper/functions'
+
+import NotificationArea from './NotificationArea'
+import MobileNotificationArea from './MobileNotificationArea'
 
 const useStyles = makeStyles(theme => ({
   header: {
@@ -133,6 +141,14 @@ const useStyles = makeStyles(theme => ({
     width: '24px',
     height: '24px',
   },
+  iconBtn: {
+    backgroundColor: 'white',
+    color: theme.palette.grey[400],
+    transform: 'rotate(-15deg)',
+    '&:hover': {
+      backgroundColor: 'white',
+    },
+  },
 }))
 
 const ConnectedNav = () => {
@@ -142,15 +158,26 @@ const ConnectedNav = () => {
   const theme = useTheme()
   const matchesXs = useMediaQuery(theme.breakpoints.down('sm'))
 
-  const { auth, database } = useContext(FirebaseContext)
+  const { auth, database, setNotificationsToNewState } = useContext(FirebaseContext)
   const { user, setUser } = useContext(SessionContext)
+  const [currentNotifications, setCurrentNotifications] = useState([])
 
   const [anchorEl, setAnchorEl] = useState(null)
+  const [anchorElNotif, setAnchorElNotif] = useState(null)
+  const [refreshNotif, setRefreshNotif] = useState(false)
   const [currentActiveTab, setCurrentActiveTab] = useState('home')
 
   const open = Boolean(anchorEl)
+  const openNotif = Boolean(anchorElNotif)
   const handleClick = event => {
     setAnchorEl(event.currentTarget)
+  }
+  const handleClickNotif = event => {
+    setAnchorElNotif(event.currentTarget)
+    setNotificationsToNewState(user, 2)
+  }
+  const handleCloseNotif = event => {
+    setAnchorElNotif(null)
   }
   const handleClose = () => {
     setAnchorEl(null)
@@ -162,6 +189,14 @@ const ConnectedNav = () => {
       localStorage.removeItem('newTrip')
     })
   }
+
+  useEffect(() => {
+    if (user) {
+      const tempNotif = buildNotifications(user)
+      setCurrentNotifications(tempNotif)
+    }
+    console.log('lutilisateur avec ses notifs', user.notifications)
+  }, [user])
 
   useEffect(() => {
     const { pathname } = location
@@ -274,7 +309,7 @@ const ConnectedNav = () => {
             </Box>
             <Box position="relative" display="flex">
               <Badge badgeContent={0} color="secondary" overlap="circular">
-                <Box>
+                <Box sx={{ marginRight: '25px' }}>
                   <Button
                     className={clsx(classes.profilBtn, { [classes.greyBgc]: anchorEl })}
                     startIcon={<Avatar src={user.avatar} sx={{ width: 30, height: 30 }} />}
@@ -402,6 +437,107 @@ const ConnectedNav = () => {
                 </Box>
               </Badge>
             </Box>
+            {/* <Badge
+              badgeContent={
+                user?.notifications?.filter(
+                  notification => !notification.tripId && notification.state === 1
+                ).length
+              }
+              color="secondary"
+            >
+              <IconButton
+                aria-label="more"
+                id="notif-button"
+                aria-controls={openNotif ? 'notif-menu' : undefined}
+                aria-expanded={openNotif ? 'true' : undefined}
+                aria-haspopup="true"
+                onClick={handleClickNotif}
+                sx={{
+                  backgroundColor:
+                    user?.notifications?.filter(notification => notification.state === 1).length >
+                      0 && theme.palette.primary.ultraLight,
+                }}
+              >
+                <Notifications
+                  sx={{
+                    color:
+                      user?.notifications?.filter(notification => notification.state === 1).length >
+                        0 && theme.palette.primary.main,
+                  }}
+                />
+              </IconButton>
+            </Badge>
+            <Menu
+              anchorEl={anchorElNotif}
+              id="notif-menu"
+              open={openNotif}
+              onClose={handleCloseNotif}
+              onClick={handleCloseNotif}
+              disableScrollLock
+              PaperProps={{
+                elevation: 0,
+                sx: {
+                  overflow: 'visible',
+                  // filter: 'drop-shadow(0px 2px 8px rgba(0,0,0,0.32))',
+                  mt: 1.5,
+                  '&:before': {
+                    content: '""',
+                    display: 'block',
+                    position: 'absolute',
+                    top: 0,
+                    right: 14,
+                    width: 10,
+                    height: 10,
+                    bgcolor: 'background.paper',
+                    transform: 'translateY(-50%) rotate(45deg)',
+                    zIndex: 0,
+                  },
+                },
+              }}
+              transformOrigin={{ horizontal: 'right', vertical: 'top' }}
+              anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
+            >
+              <Paper
+                sx={{ width: '470px', height: '740px', maxHeight: '740px', overflowY: 'auto' }}
+              >
+                {currentNotifications?.map(notification => (
+                  <Box
+                    sx={{
+                      width: '457px,',
+                      height: '85px',
+                      padding: '0 30px',
+                      display: 'grid',
+                      gridTemplate: '1fr / 110px 1fr',
+                      alignItems: 'center',
+                      marginBottom: '30px',
+                      backgroundColor:
+                        notification.state === 1 ? theme.palette.primary.ultraLight : 'white',
+                    }}
+                    key={notification.content}
+                  >
+                    <Avatar sx={{ width: 80, height: 80 }} />
+                    <Box>
+                      <Typography sx={{ fontSize: '13px' }}>{notification.content}</Typography>
+                      <Typography sx={{ fontSize: '13px', color: theme.palette.primary.main }}>
+                        {notification.timer}
+                      </Typography>
+                    </Box>
+                  </Box>
+                ))}
+              </Paper>
+            </Menu> */}
+            {!matchesXs ? (
+              <NotificationArea
+                currentNotifications={currentNotifications}
+                setRefreshNotif={setRefreshNotif}
+                isMyTrips
+              />
+            ) : (
+              <MobileNotificationArea
+                currentNotifications={currentNotifications}
+                setRefreshNotif={setRefreshNotif}
+              />
+            )}
           </Box>
         </Box>
       </Box>

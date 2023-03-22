@@ -57,8 +57,8 @@ const NewTransport = ({
   description,
   start,
   end,
-  startDateTime,
-  endDateTime,
+  startTime,
+  endTime,
   icon,
   shouldHaveNumber,
   dateRange,
@@ -71,10 +71,10 @@ const NewTransport = ({
   const handleChange = (event, target) => {
     setTransports(prevState => {
       const tempPrevState = [...prevState]
-      if (target === 'startDateTime' || target === 'endDateTime') {
+      if (target === 'startTime' || target === 'endTime') {
         tempPrevState[index][target] = event
-        if (target === 'startDateTime') {
-          tempPrevState[index].endDateTime = add(event, { hours: 2 })
+        if (target === 'startTime') {
+          tempPrevState[index].endTime = add(event, { hours: 2 })
         }
       } else {
         tempPrevState[index][target] = event.target.value
@@ -159,14 +159,14 @@ const NewTransport = ({
           format="dd/MM/yyyy HH:mm"
           minDate={rCTFF(dateRange[0])}
           maxDate={rCTFF(dateRange[1])}
-          value={startDateTime}
+          value={startTime}
           onChange={event => {
             /* if (!isValid(event) || isPast(event)) {
                   setDateError(true)
                 } else if (dateError) {
                   setDateError(false)
                 } */
-            handleChange(event, 'startDateTime')
+            handleChange(event, 'startTime')
           }}
           renderInput={params => <TextField {...params} sx={{ gridColumn: '1 / 5' }} />}
           DialogProps={{ sx: { zIndex: '10000' } }}
@@ -222,14 +222,14 @@ const NewTransport = ({
           format="dd/MM/yyyy HH:mm"
           minDate={rCTFF(dateRange[0])}
           maxDate={rCTFF(dateRange[1])}
-          value={endDateTime}
+          value={endTime}
           onChange={event => {
             /* if (!isValid(event) || isPast(event)) {
                   setDateError(true)
                 } else if (dateError) {
                   setDateError(false)
                 } */
-            handleChange(event, 'endDateTime')
+            handleChange(event, 'endTime')
           }}
           renderInput={params => <TextField {...params} sx={{ gridColumn: '1 / 5' }} />}
           DialogProps={{ sx: { zIndex: '10000' } }}

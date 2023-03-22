@@ -82,6 +82,7 @@ import flat from '../../images/flag.png'
 import pencil from '../../images/icons/pencil-btn.svg'
 import arrow from '../../images/icons/arrow-grey.svg'
 import plusCircle from '../../images/icons/plusCircle.svg'
+import TripLogs from './TripLogs'
 
 const notifications = [
   {
@@ -480,13 +481,26 @@ const useStyles = makeStyles(theme => ({
 
 const TravelerRow = ({ traveler, ageOptions, setModalTravelers, index }) => {
   const classes = useStyles()
+  const [currentTravelerName, setCurrentTravelerName] = useState(traveler.name)
+  const [currentTravelerAge, setCurrentTravelerAge] = useState(traveler.age)
   const handleChange = (event, target) => {
     setModalTravelers(prevState => {
-      const tempPrevState = [...prevState]
+      const tempPrevState = structuredClone(prevState)
       tempPrevState[index][target] = event.target.value
       return tempPrevState
     })
   }
+
+  useEffect(() => {
+    if (currentTravelerAge && currentTravelerName) {
+      setModalTravelers(prevState => {
+        const tempPrevState = structuredClone(prevState)
+        tempPrevState[index].name = currentTravelerName
+        tempPrevState[index].age = currentTravelerAge
+        return tempPrevState
+      })
+    }
+  }, [currentTravelerName, currentTravelerAge])
 
   return (
     <Box className={classes.gridTravelers}>
@@ -494,16 +508,16 @@ const TravelerRow = ({ traveler, ageOptions, setModalTravelers, index }) => {
         hiddenLabel
         type="text"
         variant="filled"
-        value={traveler.name}
-        onChange={event => handleChange(event, 'name')}
+        value={currentTravelerName}
+        onChange={event => setCurrentTravelerName(event.target.value)}
       />
       <FormControl fullWidth>
         <Select
           MenuProps={{ sx: { zIndex: '100000' } }}
           hiddenLabel
           variant="filled"
-          value={traveler.age}
-          onChange={event => handleChange(event, 'age')}
+          value={currentTravelerAge}
+          onChange={event => setCurrentTravelerAge(event.target.value)}
         >
           {ageOptions.map(option => (
             <MenuItem key={uuidv4()} value={option.value}>
@@ -527,14 +541,22 @@ const TripPage = () => {
   const matches1300 = useMediaQuery('(max-width:1300px)')
   const matchesXs = useMediaQuery(theme.breakpoints.down('sm'))
   const history = useHistory()
-  const { tripid } = useParams()
+  const { tripId } = useParams()
   const location = useLocation()
   const classes = useStyles()
 
-  const { getSpotByDestination, genericSpot, testUniqueSpot } = useContext(FirebaseContext)
+  const {
+    getSpotByDestination,
+    genericSpot,
+    testUniqueSpot,
+    firestore,
+    dictionary,
+    timestampRef,
+    updateTrip,
+    getUserById,
+    createNotificationsOnTrip,
+  } = useContext(FirebaseContext)
   const { user } = useContext(SessionContext)
-  const { firestore, dictionary, timestampRef, updateTrip, getUserById } =
-    useContext(FirebaseContext)
 
   const [isLoading, setIsLoading] = useState(true)
   const [carouselImages, setCarouselImages] = useState([])
@@ -572,8 +594,8 @@ const TripPage = () => {
   }, [])
 
   useEffect(() => {
-    console.log('test spot', { testSpot })
-  }, [testSpot])
+    console.log('voyageurs de la modal', modalTravelers)
+  }, [modalTravelers])
 
   useEffect(() => {
     const currentImages = []
@@ -639,7 +661,7 @@ const TripPage = () => {
   useEffect(() => {
     firestore
       .collection('trips')
-      .doc(tripid)
+      .doc(tripId)
       .onSnapshot(doc => {
         const tempDoc = doc.data()
         checkRoles(tempDoc)
@@ -647,7 +669,7 @@ const TripPage = () => {
       })
     firestore
       .collection('trips')
-      .doc(tripid)
+      .doc(tripId)
       .collection('wishes')
       .onSnapshot(docs => {
         const tempWishes = []
@@ -676,7 +698,7 @@ const TripPage = () => {
     const currentTabFromUrl = location.pathname.substring(location.pathname.lastIndexOf('/') + 1)
     let isUrlSameAsTab = currentTabFromUrl === currentActiveTab
     if (
-      !['documents', 'inspiration', 'envies', 'planning', 'photos', 'notes'].includes(
+      !['documents', 'inspiration', 'envies', 'planning', 'photos', 'notes', 'triplogs'].includes(
         currentTabFromUrl
       ) &&
       currentActiveTab === 'preview'
@@ -692,6 +714,7 @@ const TripPage = () => {
       ![
         /* 'documents', 'inspiration',  */ 'envies',
         'planning' /* , 'photos'  , 'notes' */,
+        'triplogs',
       ].includes(currentTabFromUrl)
     ) {
       setCurrentActiveTab('preview')
@@ -709,9 +732,9 @@ const TripPage = () => {
           currentActiveTab === 'notes' ||
           currentActiveTab === 'inspiration'
         ) {
-          history.push(`/tripPage/${tripid}`)
+          history.push(`/tripPage/${tripId}`)
         } else {
-          history.push(`/tripPage/${tripid}/${currentActiveTab}`)
+          history.push(`/tripPage/${tripId}/${currentActiveTab}`)
         }
       }
     }
@@ -779,19 +802,19 @@ const TripPage = () => {
         userWishes.likes.forEach(like => {
           firestore
             .collection('trips')
-            .doc(tripid)
+            .doc(tripId)
             .collection('wishes')
             .add({ ...like, userId: userWishes.userId })
         })
       })
-      firestore.collection('trips').doc(tripid).update({
+      firestore.collection('trips').doc(tripId).update({
         wishes: fieldValueRef.delete(),
       })
     }
   }, [tripData])
 
   useEffect(() => {
-    setModalTravelers(registeredTravelers)
+    setModalTravelers(registeredTravelers.filter(traveler => !traveler.isNotTraveler))
   }, [registeredTravelers, openModal])
 
   useEffect(() => {
@@ -812,7 +835,7 @@ const TripPage = () => {
   const handleUpdate = data => {
     firestore
       .collection('trips')
-      .doc(tripid)
+      .doc(tripId)
       .set(
         {
           ...data,
@@ -846,7 +869,7 @@ const TripPage = () => {
 
     firestore
       .collection('trips')
-      .doc(tripid)
+      .doc(tripId)
       .collection('planning')
       .get()
       .then(querySnapshot => {
@@ -858,20 +881,13 @@ const TripPage = () => {
             case EVENT_TYPES[0]:
               if (currentDoc.isSurvey) {
                 currentDoc.propositions.some(currentProposition => {
-                  if (
-                    isNotInInterval([
-                      currentProposition.departureDateTime,
-                      currentProposition.arrivalDateTime,
-                    ])
-                  ) {
+                  if (isNotInInterval([currentProposition.endTime, currentProposition.startTime])) {
                     needUpdate = true
                     return true
                   }
                   return false
                 })
-              } else if (
-                isNotInInterval([currentDoc.departureDateTime, currentDoc.arrivalDateTime])
-              ) {
+              } else if (isNotInInterval([currentDoc.endTime, currentDoc.startTime])) {
                 needUpdate = true
               }
               break
@@ -914,7 +930,7 @@ const TripPage = () => {
               if (currentDoc.isSurvey) {
                 currentDoc.propositions.some(currentProposition =>
                   currentProposition.transports.some(transport => {
-                    if (isNotInInterval([transport.startDateTime, transport.endDateTime])) {
+                    if (isNotInInterval([transport.startTime, transport.endTime])) {
                       needUpdate = true
                       return true
                     }
@@ -923,7 +939,7 @@ const TripPage = () => {
                 )
               } else {
                 currentDoc.transports.some(transport => {
-                  if (isNotInInterval([transport.startDateTime, transport.endDateTime])) {
+                  if (isNotInInterval([transport.startTime, transport.endTime])) {
                     needUpdate = true
                     return true
                   }
@@ -950,12 +966,15 @@ const TripPage = () => {
       <TripPageNav
         currentActiveTab={currentActiveTab}
         setCurrentActiveTab={setCurrentActiveTab}
-        tripId={tripid}
+        tripId={tripId}
         tripData={tripData}
         currentDateRange={currentDateRange}
+        currentPlanningNotifications={user?.notifications.filter(
+          notification => notification.tripId === tripId && notification.state === 1
+        )}
       />
       {canEdit && (
-        <Chat isChatOpen={isChatOpen} chats={chats} tripId={tripid} setIsChatOpen={setIsChatOpen} />
+        <Chat isChatOpen={isChatOpen} chats={chats} tripId={tripId} setIsChatOpen={setIsChatOpen} />
       )}
       <Box component="section" className={classes.content}>
         <Box
@@ -1005,12 +1024,13 @@ const TripPage = () => {
                     dataNotifications={notifications}
                     canEdit={canEdit}
                     carouselImages={carouselImages}
+                    tripId={tripId}
                   />
                 </Box>
               )}
               {currentActiveTab === 'envies' && (
                 <Envies
-                  tripId={tripid}
+                  tripId={tripId}
                   tripWishes={tripWishes}
                   recommendedWishes={recommendedWishes}
                   canEdit={canEdit}
@@ -1019,10 +1039,11 @@ const TripPage = () => {
               )}
               {currentActiveTab === 'planning' && (
                 <PlanningContextProvider>
-                  <Planning tripData={tripData} tripId={tripid} canEdit={canEdit} />
+                  <Planning tripData={tripData} tripId={tripId} canEdit={canEdit} />
                 </PlanningContextProvider>
               )}
-              {/* {currentActiveTab === 'photos' && <Photos tripId={tripid} />} */}
+              {currentActiveTab === 'triplogs' && <TripLogs tripData={tripData} tripId={tripId} />}
+              {/* {currentActiveTab === 'photos' && <Photos tripId={tripId} />} */}
               {/* {currentActiveTab === 'documents' && <Documents />}
             {currentActiveTab === 'notes' && <Notes />}
             {currentActiveTab === 'inspiration' && <Inspiration />} */}
@@ -1261,6 +1282,7 @@ const TripPage = () => {
             },
             noDestination: false,
           })
+          createNotificationsOnTrip(user, tripData, tripId, 'destinationUpdate', 3)
           setOpenModal('general')
         }}
         isValid={!!currentDestination?.value?.place_id}
@@ -1322,6 +1344,7 @@ const TripPage = () => {
           })
           updatePlanning()
           setOpenModal('general')
+          createNotificationsOnTrip(user, tripData, tripId, 'dateUpdate', 3)
         }}
         preventCloseOnSubmit
         contentMinHeight="470px"
@@ -1342,8 +1365,8 @@ const TripPage = () => {
             <Info color="secondary" />
           </Box>
           <Typography>
-            En modifiant tes dates de séjour, les explos dans ton planning qui n&apos;appartiennent
-            pas à la plage de ton voyage devront être replanifiés.
+            En modifiant tes dates de séjour, les évènements dans ton planning qui
+            n&apos;appartiennent pas à la plage de ton voyage devront être replanifiés.
           </Typography>
         </Box>
       </Modal>
@@ -1442,7 +1465,7 @@ const TripPage = () => {
                                       }
                                       return tempTraveler
                                     })
-                                    updateTrip(tripid, { travelersDetails: tempTravelers })
+                                    updateTrip(tripId, { travelersDetails: tempTravelers })
                                   }}
                                   classes={{
                                     outlined: classes.travelerRoleOptionOutlined,
@@ -1480,7 +1503,7 @@ const TripPage = () => {
                                   const tempEditors = tripData.editors.filter(
                                     editorId => editorId !== travelerDetails.id
                                   )
-                                  updateTrip(tripid, {
+                                  updateTrip(tripId, {
                                     editors: tempEditors,
                                     travelersDetails: tempTravelers,
                                   })
@@ -1508,7 +1531,7 @@ const TripPage = () => {
                                 })
                                 const tempEditors = [...tripData.editors]
                                 tempEditors.push(travelerDetails.id)
-                                updateTrip(tripid, {
+                                updateTrip(tripId, {
                                   editors: tempEditors,
                                   travelersDetails: tempTravelers,
                                 })
@@ -1572,7 +1595,7 @@ const TripPage = () => {
                               }
                               return tempTraveler
                             })
-                            updateTrip(tripid, { travelersDetails: tempTravelers })
+                            updateTrip(tripId, { travelersDetails: tempTravelers })
                           }}
                         >
                           {modeOptions.map(option => (
@@ -1615,7 +1638,7 @@ const TripPage = () => {
                               const tempEditors = tripData.editors.filter(
                                 editorId => editorId !== travelerDetails.id
                               )
-                              updateTrip(tripid, {
+                              updateTrip(tripId, {
                                 editors: tempEditors,
                                 travelersDetails: tempTravelers,
                               })
@@ -1639,7 +1662,7 @@ const TripPage = () => {
                               })
                               const tempEditors = [...tripData.editors]
                               tempEditors.push(travelerDetails.id)
-                              updateTrip(tripid, {
+                              updateTrip(tripId, {
                                 editors: tempEditors,
                                 travelersDetails: tempTravelers,
                               })
@@ -1662,7 +1685,7 @@ const TripPage = () => {
                 sx={{ padding: '0', mr: 2 }}
                 onClick={() => {
                   navigator.clipboard.writeText(
-                    `https://${window.location.href.split('/')[2]}/join/${tripid}`
+                    `https://${window.location.href.split('/')[2]}/join/${tripId}`
                   )
                   toast.success('Lien copié !')
                 }}
@@ -1678,7 +1701,7 @@ const TripPage = () => {
               startIcon={<FileCopyRoundedIcon color="primary" />}
               onClick={() => {
                 navigator.clipboard.writeText(
-                  `https://${window.location.href.split('/')[2]}/join/${tripid}`
+                  `https://${window.location.href.split('/')[2]}/join/${tripId}`
                 )
                 toast.success('Lien copié !')
               }}
@@ -1690,7 +1713,7 @@ const TripPage = () => {
               ) : (
                 <Typography className={classes.typoCopyBtn}>{`https://${
                   window.location.href.split('/')[2]
-                }/join/${tripid}`}</Typography>
+                }/join/${tripId}`}</Typography>
               )}
             </Button>
             <Box
@@ -1815,11 +1838,13 @@ const TripPage = () => {
         modalName="editTravelers"
         submitHandler={() =>
           handleUpdate({
-            travelersDetails: modalTravelers.map(traveler => {
-              const tempTraveler = traveler
-              const filteredTraveler = filterObjectByValue(tempTraveler, undefined, true)
-              return filteredTraveler
-            }),
+            travelersDetails: modalTravelers
+              .filter(traveler => !traveler.isNotTraveler)
+              .map(traveler => {
+                const tempTraveler = traveler
+                const filteredTraveler = filterObjectByValue(tempTraveler, undefined, true)
+                return filteredTraveler
+              }),
           })
         }
       >

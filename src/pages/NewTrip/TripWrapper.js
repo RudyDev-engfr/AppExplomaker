@@ -110,30 +110,17 @@ const TripWrapper = ({ latLng, currentStep, title, subtitle, backURL, handleSubm
   const classes = useStyles()
   const theme = useTheme()
   const matchesXs = useMediaQuery(theme.breakpoints.down('sm'))
-  const { newTrip, setNewTripSpot, newTripSpot } = useContext(NewTripContext)
+  const { newTrip, currentSpot, setCurrentSpot } = useContext(NewTripContext)
   const { getSpotByDestination, genericSpot } = useContext(FirebaseContext)
-  const [currentSpot, setCurrentSpot] = useState()
 
   useEffect(() => {
     if (newTrip.destination.value?.place_id) {
-      console.log(newTrip)
       getSpotByDestination(newTrip.destination, setCurrentSpot)
+      console.log('its ok le spot est trouvé')
     } else {
-      console.log('its no')
       setCurrentSpot(genericSpot)
     }
   }, [newTrip])
-
-  useEffect(() => {
-    if (typeof currentSpot !== 'undefined') {
-      setNewTripSpot(currentSpot)
-    }
-    console.log('spot actuel', currentSpot)
-  }, [currentSpot])
-
-  useEffect(() => {
-    console.log('newTripSpot', newTripSpot)
-  }, [newTripSpot])
 
   const wrapperSubmit = event => {
     event.preventDefault()

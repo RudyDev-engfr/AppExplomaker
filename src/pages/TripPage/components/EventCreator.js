@@ -172,8 +172,8 @@ const priceOption = [
 const initialTransport = date => ({
   start: '',
   end: '',
-  startDateTime: date,
-  endDateTime: add(date, { hours: 2 }),
+  startTime: date,
+  endTime: add(date, { hours: 2 }),
   description: '',
   icon: 'main',
   tempId: uuidv4(),
@@ -213,7 +213,7 @@ const EventCreator = ({
   const matchesXs = useMediaQuery(theme.breakpoints.down('sm'))
 
   const { user } = useContext(SessionContext)
-  const { firestore, timestampRef } = useContext(FirebaseContext)
+  const { firestore, timestampRef, createNotificationsOnTrip } = useContext(FirebaseContext)
   const {
     handleTempFlightMarkers,
     handleTempTransportMarkers,
@@ -260,6 +260,7 @@ const EventCreator = ({
   const [selectedIcon, setSelectedIcon] = useState('main')
   const [isPropositionInEdition, setIsPropositionInEdition] = useState(false)
   const [openModalIconSlider, setOpenModalIconSlider] = useState(false)
+  const [tripData, setTripData] = useState()
 
   const generateParticipatingTravelers = () => {
     const tempTravelers = travelers
@@ -300,6 +301,16 @@ const EventCreator = ({
   useEffect(() => {
     generateParticipatingTravelers()
   }, [])
+
+  useEffect(() => {
+    firestore
+      .collection('trips')
+      .doc(tripId)
+      .onSnapshot(doc => {
+        const tempDoc = doc.data()
+        setTripData(tempDoc)
+      })
+  }, [tripId])
 
   useEffect(() => {
     if (isValid(selectedArrivalDateTime) && isValid(selectedDepartureDateTime)) {
@@ -349,8 +360,8 @@ const EventCreator = ({
         setIsPropositionInEdition(true)
       }
       if (eventType === EVENT_TYPES[0]) {
-        setSelectedArrivalDateTime(stringToDate(currentEvent.arrivalDateTime))
-        setSelectedDepartureDateTime(stringToDate(currentEvent.departureDateTime))
+        setSelectedArrivalDateTime(stringToDate(currentEvent.startTime))
+        setSelectedDepartureDateTime(stringToDate(currentEvent.endTime))
         setLocation({ ...currentEvent.location })
         setDescription(currentEvent?.description)
         setPrice(currentEvent.price / currentEvent.participatingTravelers.length)
@@ -379,8 +390,8 @@ const EventCreator = ({
         setTransports(
           currentEvent.transports.map(transport => ({
             ...transport,
-            startDateTime: stringToDate(transport.startDateTime),
-            endDateTime: stringToDate(transport.endDateTime),
+            startTime: stringToDate(transport.startTime),
+            endTime: stringToDate(transport.endTime),
           }))
         )
         setPrice(currentEvent.price / currentEvent.participatingTravelers.length)
@@ -437,8 +448,8 @@ const EventCreator = ({
       case EVENT_TYPES[0]:
         tempErrors = {
           ...tempErrors,
-          arrivalDateTime: arrivalDateTimeError,
-          departureDateTime: departureDateTimeError,
+          startTime: arrivalDateTimeError,
+          endTime: departureDateTimeError,
           location: !location,
         }
         if (!isValid(selectedDepartureDateTime)) {
@@ -528,11 +539,11 @@ const EventCreator = ({
             recordTransportError()
             currentErrors.start = true
           }
-          if (!isValid(transport.startDateTime)) {
+          if (!isValid(transport.startTime)) {
             currentErrors.startDateTimeIsInvalid = true
             recordTransportError()
           } else if (
-            !isWithinInterval(transport.startDateTime, {
+            !isWithinInterval(transport.startTime, {
               start: rCTFF(dateRange[0]),
               end: rCTFF(dateRange[1]),
             })
@@ -544,11 +555,11 @@ const EventCreator = ({
             recordTransportError()
             currentErrors.end = true
           }
-          if (!isValid(transport.endDateTime)) {
+          if (!isValid(transport.endTime)) {
             currentErrors.endDateTimeIsInvalid = true
             recordTransportError()
           } else if (
-            !isWithinInterval(transport.endDateTime, {
+            !isWithinInterval(transport.endTime, {
               start: rCTFF(dateRange[0]),
               end: add(rCTFF(dateRange[1]), { days: 1 }),
             })
@@ -655,8 +666,9 @@ const EventCreator = ({
         const tempDepartureDateTime = dateTimeToString(selectedDepartureDateTime)
         tempDoc = {
           ...tempDoc,
-          arrivalDateTime: tempArrivalDateTime,
-          departureDateTime: tempDepartureDateTime,
+          date: tempArrivalDateTime,
+          startTime: tempArrivalDateTime,
+          endTime: tempDepartureDateTime,
           location: currentPlaceDetails,
           description,
           price:
@@ -693,6 +705,7 @@ const EventCreator = ({
           currency,
           totalPriceMode,
           website,
+          date: tempFlights[0].date,
         }
         break
       case EVENT_TYPES[2]:
@@ -716,8 +729,9 @@ const EventCreator = ({
       case EVENT_TYPES[3]:
         const tempTransports = transports.map((transport, transportIndex) => ({
           ...transport,
-          startDateTime: dateTimeToString(transport.startDateTime),
-          endDateTime: dateTimeToString(transport.endDateTime),
+          date: dateTimeToString(transport.startTime),
+          startTime: dateTimeToString(transport.startTime),
+          endTime: dateTimeToString(transport.endTime),
           website,
           startLocation: currentPlaceDetails[transportIndex].start,
           endLocation: currentPlaceDetails[transportIndex].end,
@@ -733,6 +747,7 @@ const EventCreator = ({
               : price,
           currency,
           website,
+          date: dateTimeToString(transports[0].startTime),
         }
         break
       case EVENT_TYPES[4]:
@@ -778,6 +793,14 @@ const EventCreator = ({
             setEditMode(false)
             setPreviousEvent({ ...previousEvent, propositions: tempPropositions })
             setCurrentEvent(tempPropositions[selectedPropositionIndex])
+            createNotificationsOnTrip(
+              user,
+              tripData,
+              tripId,
+              'surveyPropositionChange',
+              2,
+              currentEvent
+            )
             setCurrentView('preview')
           })
       } else {
@@ -793,8 +816,10 @@ const EventCreator = ({
             setCurrentEvent(tempEvent)
             if (isSurvey) {
               setCurrentView('survey')
+              createNotificationsOnTrip(user, tripData, tripId, 'turnEventIntoSurvey', 2, tempEvent)
             } else {
               setCurrentView('preview')
+              createNotificationsOnTrip(user, tripData, tripId, 'eventUpdate', 2, currentEvent)
             }
           })
       }
@@ -810,6 +835,7 @@ const EventCreator = ({
         .set({ propositions: tempPropositions }, { merge: true })
       setIsNewProposition(false)
       setCurrentView('survey')
+      createNotificationsOnTrip(user, tripData, tripId, 'propositionAdd', 2, currentEvent)
     } else {
       firestore
         .collection('trips')
@@ -822,7 +848,9 @@ const EventCreator = ({
           if (isSurvey) {
             history.replace(`/tripPage/${tripId}/planning?survey=${docRef.id}`)
             setCurrentView('survey')
+            createNotificationsOnTrip(user, tripData, tripId, 'surveyCreate', 2, tempEvent)
           } else {
+            createNotificationsOnTrip(user, tripData, tripId, 'eventCreate', 2, tempEvent)
             setCurrentView('planning')
           }
         })
@@ -1275,8 +1303,8 @@ const EventCreator = ({
                       description={transport.description}
                       start={transport.start}
                       end={transport.end}
-                      startDateTime={transport.startDateTime}
-                      endDateTime={transport.endDateTime}
+                      startTime={transport.startTime}
+                      endTime={transport.endTime}
                       icon={transport.icon}
                       shouldHaveNumber={transports.length > 1}
                       dateRange={dateRange}
@@ -1289,7 +1317,7 @@ const EventCreator = ({
                     onClick={() =>
                       setTransports([
                         ...transports,
-                        { ...initialTransport(transports[transports.length - 1].endDateTime) },
+                        { ...initialTransport(transports[transports.length - 1].endTime) },
                       ])
                     }
                     startIcon={<AddIcon />}

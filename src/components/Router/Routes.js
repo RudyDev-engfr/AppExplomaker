@@ -10,6 +10,7 @@ import SignupFourthStep from '../../pages/Signup/FourthStep'
 import SignupFifthStep from '../../pages/Signup/FifthStep'
 import PwdResetHandler from '../../pages/PwdResetHandler'
 import JoinTrip from '../../pages/JoinTrip'
+import WelcomeTrip from '../../pages/WelcomeTrip'
 import TripFirst from '../../pages/NewTrip/TripFirst'
 import TripSecond from '../../pages/NewTrip/TripSecond'
 import TripThird from '../../pages/NewTrip/TripThird'
@@ -55,7 +56,7 @@ const Routes = () => {
       <Route path="/pwdreset">
         <PwdResetHandler />
       </Route>
-      <Route path="/join/:tripid">
+      <Route path="/join/:tripId">
         <JoinTrip />
       </Route>
 
@@ -77,8 +78,11 @@ const Routes = () => {
       <PrivateRoute path="/newtrip/tripRecap">
         <TripRecap />
       </PrivateRoute>
-      <PrivateRoute path="/tripPage/:tripid">
+      <PrivateRoute path="/tripPage/:tripId">
         <TripPage />
+      </PrivateRoute>
+      <PrivateRoute path="welcomeTrip/:tripId">
+        <WelcomeTrip />
       </PrivateRoute>
       <PrivateRoute path="/profile">
         <Profile />

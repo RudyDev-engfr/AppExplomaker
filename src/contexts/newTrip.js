@@ -24,7 +24,7 @@ const NewTripContextProvider = ({ children }) => {
   const localNewTrip = JSON.parse(localStorage.getItem('newTrip'))
   const { user } = useContext(SessionContext)
   const [newTrip, setNewTrip] = useState(localNewTrip || { ...initialValues })
-  const [newTripSpot, setNewTripSpot] = useState('spot vide')
+  const [currentSpot, setCurrentSpot] = useState()
 
   useEffect(() => {
     localStorage.setItem('newTrip', JSON.stringify(newTrip))
@@ -85,8 +85,8 @@ const NewTripContextProvider = ({ children }) => {
         newTrip,
         setNewTrip,
         cleanupNewTrip,
-        setNewTripSpot,
-        newTripSpot,
+        currentSpot,
+        setCurrentSpot,
       }}
     >
       {children}
