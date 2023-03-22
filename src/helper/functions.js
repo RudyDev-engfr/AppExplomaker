@@ -354,6 +354,7 @@ export const buildNotificationsOnTripForUser = (user, tripId) => {
         const notifBody = buildNotifTimerAndState(creationDate, state)
         singleNotif.id = id
         singleNotif.owner = owner
+        singleNotif.tripId = tripId
         // eslint-disable-next-line default-case
         switch (type) {
           case 'dateUpdate':

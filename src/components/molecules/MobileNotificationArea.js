@@ -1,7 +1,9 @@
 import { ArrowForward, Notifications } from '@mui/icons-material'
 import { Avatar, Badge, Box, IconButton, Modal, Paper, Typography } from '@mui/material'
 import { makeStyles, useTheme } from '@mui/styles'
-import React, { useState } from 'react'
+import React, { useContext, useState } from 'react'
+import { FirebaseContext } from '../../contexts/firebase'
+import { SessionContext } from '../../contexts/session'
 import findIcon from '../../helper/icons'
 import CustomAvatar from '../atoms/CustomAvatar'
 
@@ -13,23 +15,55 @@ const useStyles = makeStyles(theme => ({
   },
 }))
 
-const MobileNotificationArea = ({ currentNotifications, setRefreshNotif }) => {
+const MobileNotificationArea = ({
+  isMyTrips = false,
+  tripId,
+  currentNotifications,
+  setRefreshNotif,
+}) => {
   const classes = useStyles()
   const theme = useTheme()
+
+  const { user } = useContext(SessionContext)
+  const { setNotificationsToNewStateOnTrip } = useContext(FirebaseContext)
 
   const [open, setOpen] = useState(false)
   const handleOpen = () => setOpen(true)
   const handleClose = () => setOpen(false)
   return (
     <>
-      <IconButton
-        onClick={() => {
-          setRefreshNotif(true)
-          handleOpen()
-        }}
+      <Badge
+        badgeContent={
+          isMyTrips
+            ? user.notifications.filter(notification => notification?.state === 1).length
+            : user?.notifications.filter(
+                notification => notification?.tripId === tripId && notification?.state === 1
+              ).length
+        }
+        color="secondary"
       >
-        <Notifications />
-      </IconButton>
+        <IconButton
+          onClick={() => {
+            setRefreshNotif(true)
+            handleOpen()
+            setNotificationsToNewStateOnTrip(user, 2)
+          }}
+          sx={{
+            backgroundColor:
+              user?.notifications?.filter(notification => notification.state === 1).length > 0
+                ? theme.palette.primary.ultraLight
+                : 'white',
+            '&:hover': {
+              backgroundColor:
+                user?.notifications?.filter(notification => notification.state === 1).length > 0
+                  ? theme.palette.primary.ultraLight
+                  : 'white',
+            },
+          }}
+        >
+          <Notifications />
+        </IconButton>
+      </Badge>
       <Modal
         open={open}
         onClose={handleClose}

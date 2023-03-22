@@ -241,7 +241,14 @@ const NotificationArea = ({ tripId, currentNotifications, isMyTrips = false, set
                   </Box>
                 ))
             ) : (
-              <Box sx={{ width: '100%', display: 'flex', justifyContent: 'center' }}>
+              <Box
+                sx={{
+                  width: '100%',
+                  display: 'flex',
+                  justifyContent: 'center',
+                  paddingBottom: '15px',
+                }}
+              >
                 <Typography>Pas de notification</Typography>
               </Box>
             )}

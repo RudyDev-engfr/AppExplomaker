@@ -970,7 +970,7 @@ const TripPage = () => {
         tripData={tripData}
         currentDateRange={currentDateRange}
         currentPlanningNotifications={user?.notifications.filter(
-          notification => notification.tripId === tripId
+          notification => notification.tripId === tripId && notification.state === 1
         )}
       />
       {canEdit && (
