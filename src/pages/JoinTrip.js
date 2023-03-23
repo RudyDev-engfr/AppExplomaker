@@ -208,6 +208,7 @@ const JoinTrip = () => {
   const handleTravelerSelection = (isTraveler = true) => {
     if (user.isLoggedIn) {
       updateTraveler(user.id, isTraveler)
+      history.push(`/tripPage/${tripId}`)
     } else {
       setOpenModal('login')
     }
