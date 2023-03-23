@@ -41,8 +41,8 @@ const NotificationArea = ({ tripId, currentNotifications, isMyTrips = false, set
       <Badge
         badgeContent={
           isMyTrips
-            ? currentNotifications.filter(notification => notification?.state === 1).length
-            : currentNotifications?.filter(
+            ? user.notifications.filter(notification => notification?.state === 1).length
+            : user.notifications?.filter(
                 notification => notification?.tripId === tripId && notification?.state === 1
               ).length
         }
@@ -58,17 +58,23 @@ const NotificationArea = ({ tripId, currentNotifications, isMyTrips = false, set
           sx={{
             backgroundColor:
               user?.notifications?.filter(notification => notification.state === 1).length > 0
-                ? theme.palette.primary.ultraLight
+                ? theme.palette.primary.main
                 : 'white',
             '&:hover': {
               backgroundColor:
                 user?.notifications?.filter(notification => notification.state === 1).length > 0
-                  ? theme.palette.primary.ultraLight
+                  ? theme.palette.primary.main
                   : 'white',
             },
           }}
         >
-          <Notifications />
+          <Notifications
+            sx={{
+              color:
+                user?.notifications?.filter(notification => notification.state === 1).length > 0 &&
+                'white',
+            }}
+          />
         </IconButton>
       </Badge>
       <Menu
@@ -78,6 +84,11 @@ const NotificationArea = ({ tripId, currentNotifications, isMyTrips = false, set
         onClose={handleCloseNotif}
         onClick={handleCloseNotif}
         disableScrollLock
+        MenuListProps={{
+          sx: {
+            paddingBottom: '0',
+          },
+        }}
         PaperProps={{
           elevation: 0,
           sx: {

@@ -311,8 +311,13 @@ const FirebaseContextProvider = ({ children }) => {
   })
 
   const createNotifications = async (currentUser, tripData, type, priority) => {
-    const tempTrip = structuredClone(tripData)
-    Reflect.deleteProperty(tempTrip, 'travelersDetails')
+    const tempTrip = {
+      mainPicture: tripData.mainPicture,
+      dateRange: tripData.dateRange,
+      destination: { label: tripData.destination.label },
+      title: tripData.title,
+    }
+
     const user = await firestore.collection('users').doc(currentUser.id).get()
     const tempNotifs = user.data().notifications || []
     const updateData = {}
@@ -406,7 +411,14 @@ const FirebaseContextProvider = ({ children }) => {
     event
   ) => {
     try {
-      const tempTrip = structuredClone(tripData)
+      const tempTrip = {
+        mainPicture: tripData.mainPicture,
+        dateRange: tripData.dateRange,
+        destination: { label: tripData.destination.label },
+        travelersDetails: tripData.travelersDetails,
+        title: tripData.title,
+      }
+      console.log('tempTrip', tempTrip)
       const tempEvent = event ? structuredClone(event) : null
       console.log('showmetempevent', tempEvent)
       const tempUserGroup = tempTrip.travelersDetails

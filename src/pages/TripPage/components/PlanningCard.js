@@ -93,28 +93,30 @@ const PlanningCard = ({
                   top: '-6px',
                 }}
               >
-                {currentEvent.startTime && (
-                  <Typography color="primary" className={classes.date}>
-                    {`${format(stringToDate(currentEvent.startTime), 'd MMMM', {
-                      locale: frLocale,
-                    })} - ${format(stringToDate(currentEvent.endTime), 'd MMMM', {
-                      locale: frLocale,
-                    })}`}
-                  </Typography>
-                )}
-                {currentEvent.startTime && (
-                  <Typography color="primary" className={classes.date}>
-                    {isWithoutDate &&
-                      `${format(stringToDate(currentEvent.startTime), 'd MMMM', {
+                <Box>
+                  {currentEvent.startTime && (
+                    <Typography color="primary" className={classes.date}>
+                      {`${format(stringToDate(currentEvent.startTime), 'd MMMM', {
                         locale: frLocale,
-                      })} | `}
-                    {`${format(stringToDate(currentEvent.startTime), 'HH:mm', {
-                      locale: frLocale,
-                    })} - ${format(stringToDate(currentEvent.endTime), 'HH:mm', {
-                      locale: frLocale,
-                    })}`}
-                  </Typography>
-                )}
+                      })} - ${format(stringToDate(currentEvent.endTime), 'd MMMM', {
+                        locale: frLocale,
+                      })}`}
+                    </Typography>
+                  )}
+                  {currentEvent.startTime && (
+                    <Typography color="primary" className={classes.date}>
+                      {isWithoutDate &&
+                        `${format(stringToDate(currentEvent.startTime), 'd MMMM', {
+                          locale: frLocale,
+                        })} | `}
+                      {`${format(stringToDate(currentEvent.startTime), 'HH:mm', {
+                        locale: frLocale,
+                      })} - ${format(stringToDate(currentEvent.endTime), 'HH:mm', {
+                        locale: frLocale,
+                      })}`}
+                    </Typography>
+                  )}
+                </Box>
                 {eventType === EVENT_TYPES[1] && (
                   <Typography color="primary" className={classes.date}>
                     {isSameDay(
