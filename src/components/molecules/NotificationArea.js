@@ -115,7 +115,7 @@ const NotificationArea = ({ tripId, currentNotifications, isMyTrips = false, set
         <Paper
           sx={{
             width: '470px',
-            height: currentNotifications?.length > 0 ? '740px' : 'fit-content',
+            height: 'fit-content',
             maxHeight: currentNotifications?.length > 0 ? '740px' : 'fit-content',
           }}
         >

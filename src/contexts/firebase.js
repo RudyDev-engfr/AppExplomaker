@@ -408,7 +408,8 @@ const FirebaseContextProvider = ({ children }) => {
     tripId,
     type,
     priority,
-    event
+    event,
+    previous
   ) => {
     try {
       const tempTrip = {
@@ -418,6 +419,7 @@ const FirebaseContextProvider = ({ children }) => {
         travelersDetails: tripData.travelersDetails,
         title: tripData.title,
       }
+      const tempPrevious = previous ?? null
       console.log('tempTrip', tempTrip)
       const tempEvent = event ? structuredClone(event) : null
       console.log('showmetempevent', tempEvent)
@@ -454,6 +456,7 @@ const FirebaseContextProvider = ({ children }) => {
           state: 1,
           owner,
           event: tempEvent,
+          previous: tempPrevious,
         }
 
         const userNotification = {
@@ -465,6 +468,7 @@ const FirebaseContextProvider = ({ children }) => {
           priority,
           state: 1,
           event: tempEvent,
+          previous: tempPrevious,
         }
 
         tempTripNotif.push(notification)

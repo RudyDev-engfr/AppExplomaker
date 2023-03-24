@@ -10,6 +10,7 @@ import {
 } from 'date-fns'
 import frLocale from 'date-fns/locale/fr'
 import parse from 'date-fns/parse'
+import { useEffect, useRef } from 'react'
 
 import { EVENT_TYPES } from './constants'
 
@@ -242,6 +243,18 @@ export const renderStopoverTime = (departureTime, arrivalTime, legs) => {
     }
   }
   return stopoverTime
+}
+
+function usePrevious(value) {
+  // The ref object is a generic container whose current property is mutable ...
+  // ... and can hold any value, similar to an instance property on a class
+  const ref = useRef()
+  // Store current value in ref
+  useEffect(() => {
+    ref.current = value
+  }, [value]) // Only re-run if value changes
+  // Return previous value (happens before update in useEffect above)
+  return ref.current
 }
 
 export const buildNotifications = user => {
@@ -597,7 +610,7 @@ export const buildLogSejour = (tripId, tripData) => {
   if (tripData?.notifications) {
     tripData.notifications
       .filter(notification => notification.tripId === tripId)
-      .forEach(({ sejour, priority, state, type, creationDate, owner, event, id }) => {
+      .forEach(({ sejour, priority, state, type, creationDate, owner, event, id, previous }) => {
         const singleNotif = {}
         singleNotif.owner = owner
         singleNotif.id = id
@@ -618,6 +631,16 @@ export const buildLogSejour = (tripId, tripData) => {
             singleNotif.timer = notifBody.definitiveTimer
             singleNotif.state = notifBody.state
             singleNotif.url = `/tripPage/${tripId}`
+            if (previous !== undefined) {
+              singleNotif.logs = {
+                oldDate: `Du ${previous[0]} au ${previous[1]}`,
+                newDate: `Du ${rCTFF(sejour.dateRange[0], 'E dd MMMM', {
+                  locale: 'fr-FR',
+                })} au ${rCTFF(sejour.dateRange[1], 'E dd MMMM', {
+                  locale: 'fr-FR',
+                })}`,
+              }
+            }
             break
 
           case 'surveyCreate':

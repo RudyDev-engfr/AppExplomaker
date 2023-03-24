@@ -152,6 +152,7 @@ const TripPageNav = ({
   tripData,
   currentDateRange,
   currentPlanningNotifications,
+  isAdmin,
 }) => {
   const history = useHistory()
   const classes = useStyles()
@@ -245,20 +246,23 @@ const TripPageNav = ({
             </Box>
           )}
         </Button>
-        <Button
-          className={clsx(classes.sidebarButton, {
-            [classes.activeTabStyle]: currentActiveTab === 'triplogs',
-          })}
-          onClick={() => setCurrentActiveTab('triplogs')}
-          startIcon={
-            <FeedIcon
-              color={currentActiveTab === 'triplogs' ? 'primary' : 'disabled'}
-              className={classes.icons}
-            />
-          }
-        >
-          Logs
-        </Button>
+        {isAdmin && (
+          <Button
+            className={clsx(classes.sidebarButton, {
+              [classes.activeTabStyle]: currentActiveTab === 'triplogs',
+            })}
+            onClick={() => setCurrentActiveTab('triplogs')}
+            startIcon={
+              <FeedIcon
+                color={currentActiveTab === 'triplogs' ? 'primary' : 'disabled'}
+                className={classes.icons}
+              />
+            }
+          >
+            Logs
+          </Button>
+        )}
+
         {/* <Button
               className={clsx(classes.sidebarButton, {
                 [classes.activeTabStyle]: currentActiveTab === 'photos',

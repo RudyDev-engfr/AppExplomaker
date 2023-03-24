@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from 'react'
+import React, { useContext, useEffect, useRef, useState } from 'react'
 import { useHistory, useLocation, useParams } from 'react-router-dom'
 import {
   FormControl,
@@ -83,6 +83,7 @@ import pencil from '../../images/icons/pencil-btn.svg'
 import arrow from '../../images/icons/arrow-grey.svg'
 import plusCircle from '../../images/icons/plusCircle.svg'
 import TripLogs from './TripLogs'
+import usePrevious from '../../hooks/usePrevious'
 
 const notifications = [
   {
@@ -588,10 +589,33 @@ const TripPage = () => {
   const [isAdmin, setIsAdmin] = useState(false)
   const [tripSpot, setTripSpot] = useState()
   const [testSpot, setTestSpot] = useState()
+  const [allowCreateDateNotif, setAllowCreateDateNotif] = useState(false)
+  const previousDateRange = usePrevious(currentDateRange)
 
   useEffect(() => {
     testUniqueSpot(setTestSpot)
   }, [])
+
+  useEffect(() => {
+    console.log('ça cest lancienne date avant', previousDateRange)
+    console.log('ça cest la bonne date avant', currentDateRange)
+    if (previousDateRange !== currentDateRange && allowCreateDateNotif) {
+      console.log('update de la date')
+      console.log('ça cest lancienne date', previousDateRange)
+      console.log('ça cest la bonne date', currentDateRange)
+      // console.log('ça cest la date du tripData', rCTFF(tripData?.dateRange[0]))
+      createNotificationsOnTrip(
+        user,
+        tripData,
+        tripId,
+        'dateUpdate',
+        3,
+        undefined,
+        previousDateRange
+      )
+      setAllowCreateDateNotif(false)
+    }
+  }, [currentDateRange])
 
   useEffect(() => {
     console.log('voyageurs de la modal', modalTravelers)
@@ -967,6 +991,7 @@ const TripPage = () => {
         currentActiveTab={currentActiveTab}
         setCurrentActiveTab={setCurrentActiveTab}
         tripId={tripId}
+        isAdmin={isAdmin}
         tripData={tripData}
         currentDateRange={currentDateRange}
         currentPlanningNotifications={user?.notifications.filter(
@@ -1042,7 +1067,9 @@ const TripPage = () => {
                   <Planning tripData={tripData} tripId={tripId} canEdit={canEdit} />
                 </PlanningContextProvider>
               )}
-              {currentActiveTab === 'triplogs' && <TripLogs tripData={tripData} tripId={tripId} />}
+              {currentActiveTab === 'triplogs' && isAdmin && (
+                <TripLogs isAdmin={isAdmin} tripData={tripData} tripId={tripId} />
+              )}
               {/* {currentActiveTab === 'photos' && <Photos tripId={tripId} />} */}
               {/* {currentActiveTab === 'documents' && <Documents />}
             {currentActiveTab === 'notes' && <Notes />}
@@ -1344,7 +1371,7 @@ const TripPage = () => {
           })
           updatePlanning()
           setOpenModal('general')
-          createNotificationsOnTrip(user, tripData, tripId, 'dateUpdate', 3)
+          setAllowCreateDateNotif(true)
         }}
         preventCloseOnSubmit
         contentMinHeight="470px"
