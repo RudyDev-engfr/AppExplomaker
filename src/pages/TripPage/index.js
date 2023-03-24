@@ -1067,8 +1067,8 @@ const TripPage = () => {
                   <Planning tripData={tripData} tripId={tripId} canEdit={canEdit} />
                 </PlanningContextProvider>
               )}
-              {currentActiveTab === 'triplogs' && canEdit && (
-                <TripLogs tripData={tripData} tripId={tripId} />
+              {currentActiveTab === 'triplogs' && (
+                <TripLogs tripData={tripData} tripId={tripId} canEdit={canEdit} />
               )}
               {/* {currentActiveTab === 'photos' && <Photos tripId={tripId} />} */}
               {/* {currentActiveTab === 'documents' && <Documents />}

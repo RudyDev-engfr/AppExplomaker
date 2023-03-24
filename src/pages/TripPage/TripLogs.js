@@ -59,7 +59,7 @@ const useStyles = makeStyles(theme => ({
   },
 }))
 
-const TripLogs = ({ tripData, tripId }) => {
+const TripLogs = ({ tripData, tripId, canEdit }) => {
   const classes = useStyles()
   const history = useHistory()
   const theme = useTheme()
@@ -67,6 +67,12 @@ const TripLogs = ({ tripData, tripId }) => {
   const matchesXs = useMediaQuery(theme.breakpoints.down('sm'))
 
   const [currentNotifications, setCurrentNotifications] = useState([])
+
+  useEffect(() => {
+    if (!canEdit) {
+      history.push(`/tripPage/${tripId}`)
+    }
+  }, [canEdit])
 
   useEffect(() => {
     console.log('tripData du triplog', tripData)
