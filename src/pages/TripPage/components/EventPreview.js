@@ -305,46 +305,48 @@ const EventPreview = ({
                 Évènement
               </Box>
             </Typography>
-            <Box position="absolute" right="20px">
-              <IconButton
-                size="large"
-                id="basic-button"
-                aria-controls="basic-menu"
-                aria-haspopup="true"
-                aria-expanded={open ? 'true' : undefined}
-                onClick={handleClick}
-              >
-                <MoreHoriz />
-              </IconButton>
-              <Menu
-                id="basic-menu"
-                anchorEl={anchorEl}
-                open={open}
-                onClose={handleClose}
-                MenuListProps={{
-                  'aria-labelledby': 'basic-button',
-                }}
-              >
-                <MenuItem
-                  onClick={() => {
-                    setEventType(previousEvent ? previousEvent.type : currentEvent.type)
-                    setEditMode(true)
-                    setCurrentView('creator')
-                    handleClose()
+            {canEdit && (
+              <Box position="absolute" right="20px">
+                <IconButton
+                  size="large"
+                  id="basic-button"
+                  aria-controls="basic-menu"
+                  aria-haspopup="true"
+                  aria-expanded={open ? 'true' : undefined}
+                  onClick={handleClick}
+                >
+                  <MoreHoriz />
+                </IconButton>
+                <Menu
+                  id="basic-menu"
+                  anchorEl={anchorEl}
+                  open={open}
+                  onClose={handleClose}
+                  MenuListProps={{
+                    'aria-labelledby': 'basic-button',
                   }}
                 >
-                  Modifier l&rsquo;évènement
-                </MenuItem>
-                <MenuItem
-                  onClick={() => {
-                    setIsDeleteDialogOpen(true)
-                    handleClose()
-                  }}
-                >
-                  Supprimer l&apos;évènement
-                </MenuItem>
-              </Menu>
-            </Box>
+                  <MenuItem
+                    onClick={() => {
+                      setEventType(previousEvent ? previousEvent.type : currentEvent.type)
+                      setEditMode(true)
+                      setCurrentView('creator')
+                      handleClose()
+                    }}
+                  >
+                    Modifier l&rsquo;évènement
+                  </MenuItem>
+                  <MenuItem
+                    onClick={() => {
+                      setIsDeleteDialogOpen(true)
+                      handleClose()
+                    }}
+                  >
+                    Supprimer l&apos;évènement
+                  </MenuItem>
+                </Menu>
+              </Box>
+            )}
           </Box>
           <Divider />
           <Container disableGutters>
