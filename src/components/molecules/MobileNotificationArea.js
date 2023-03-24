@@ -1,7 +1,8 @@
 import { ArrowForward, Notifications } from '@mui/icons-material'
 import { Avatar, Badge, Box, IconButton, Modal, Paper, Typography } from '@mui/material'
+import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos'
 import { makeStyles, useTheme } from '@mui/styles'
-import React, { useContext, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import { FirebaseContext } from '../../contexts/firebase'
 import { SessionContext } from '../../contexts/session'
 import findIcon from '../../helper/icons'
@@ -30,6 +31,7 @@ const MobileNotificationArea = ({
   const [open, setOpen] = useState(false)
   const handleOpen = () => setOpen(true)
   const handleClose = () => setOpen(false)
+
   return (
     <>
       <Badge
@@ -46,7 +48,7 @@ const MobileNotificationArea = ({
           onClick={() => {
             setRefreshNotif(true)
             handleOpen()
-            setNotificationsToNewStateOnTrip(user, 2)
+            setNotificationsToNewStateOnTrip(user, tripId, 2)
           }}
           sx={{
             backgroundColor:
@@ -88,10 +90,20 @@ const MobileNotificationArea = ({
               marginBottom: '30px',
             }}
           >
-            <Typography className={classes.notificationTitle}>Notifications</Typography>
-            <IconButton onClick={() => handleClose()}>
-              <ArrowForward sx={{ fontSize: '28 px', color: theme.palette.grey.bd }} />
-            </IconButton>
+            <Typography variant="h4" sx={{ paddingLeft: '15px' }}>
+              Notifications
+            </Typography>
+            <Box position="absolute" left="20px">
+              <IconButton
+                aria-label="back"
+                edge="start"
+                onClick={() => {
+                  handleClose()
+                }}
+              >
+                <ArrowBackIosIcon sx={{ transform: 'translate(5px ,-5px)' }} />
+              </IconButton>
+            </Box>
           </Box>
           {currentNotifications
             ?.slice(0)
@@ -105,7 +117,7 @@ const MobileNotificationArea = ({
                   display: 'grid',
                   gridTemplate: '1fr / 110px 1fr',
                   alignItems: 'center',
-                  marginBottom: '30px',
+                  marginBottom: '10px',
                   borderRadius: '20px',
                   backgroundColor:
                     notification.state === 1 ? theme.palette.primary.ultraLight : 'white',

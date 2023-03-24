@@ -174,7 +174,6 @@ const ConnectedNav = () => {
   }
   const handleClickNotif = event => {
     setAnchorElNotif(event.currentTarget)
-    setNotificationsToNewState(user, 2)
   }
   const handleCloseNotif = event => {
     setAnchorElNotif(null)
@@ -191,12 +190,13 @@ const ConnectedNav = () => {
   }
 
   useEffect(() => {
-    if (user) {
+    if (user && refreshNotif) {
       const tempNotif = buildNotifications(user)
       setCurrentNotifications(tempNotif)
+      setRefreshNotif(false)
     }
     console.log('lutilisateur avec ses notifs', user.notifications)
-  }, [user])
+  }, [user, refreshNotif])
 
   useEffect(() => {
     const { pathname } = location

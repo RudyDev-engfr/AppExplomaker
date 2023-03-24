@@ -152,7 +152,7 @@ const TripPageNav = ({
   tripData,
   currentDateRange,
   currentPlanningNotifications,
-  isAdmin,
+  canEdit,
 }) => {
   const history = useHistory()
   const classes = useStyles()
@@ -246,7 +246,7 @@ const TripPageNav = ({
             </Box>
           )}
         </Button>
-        {isAdmin && (
+        {canEdit && (
           <Button
             className={clsx(classes.sidebarButton, {
               [classes.activeTabStyle]: currentActiveTab === 'triplogs',

@@ -59,7 +59,7 @@ const useStyles = makeStyles(theme => ({
   },
 }))
 
-const TripLogs = ({ isAdmin, tripData, tripId }) => {
+const TripLogs = ({ tripData, tripId }) => {
   const classes = useStyles()
   const history = useHistory()
   const theme = useTheme()

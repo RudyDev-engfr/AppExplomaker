@@ -991,7 +991,7 @@ const TripPage = () => {
         currentActiveTab={currentActiveTab}
         setCurrentActiveTab={setCurrentActiveTab}
         tripId={tripId}
-        isAdmin={isAdmin}
+        canEdit={canEdit}
         tripData={tripData}
         currentDateRange={currentDateRange}
         currentPlanningNotifications={user?.notifications.filter(
@@ -1067,8 +1067,8 @@ const TripPage = () => {
                   <Planning tripData={tripData} tripId={tripId} canEdit={canEdit} />
                 </PlanningContextProvider>
               )}
-              {currentActiveTab === 'triplogs' && isAdmin && (
-                <TripLogs isAdmin={isAdmin} tripData={tripData} tripId={tripId} />
+              {currentActiveTab === 'triplogs' && canEdit && (
+                <TripLogs tripData={tripData} tripId={tripId} />
               )}
               {/* {currentActiveTab === 'photos' && <Photos tripId={tripId} />} */}
               {/* {currentActiveTab === 'documents' && <Documents />}
