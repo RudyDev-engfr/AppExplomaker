@@ -568,10 +568,11 @@ const AuthModals = ({ modalState, modalStateSetter, setCurrentActiveTab }) => {
 
   const handleProviderLogin = authResult => {
     const tempUser = {}
+    console.log('bonjour invité', authResult)
     const name = authResult.user.displayName.split(' ')
     tempUser.email = authResult.user.email
     tempUser.firstname = name[0]
-    tempUser.lastname = name[1]
+    // tempUser.lastname = name[1]
     tempUser.avatar = authResult.user.photoURL
     tempUser.id = authResult.user.uid
     firestore

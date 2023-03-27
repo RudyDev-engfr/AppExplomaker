@@ -101,12 +101,12 @@ const MobilePlus = ({ tripData, tripId, setIsOpen }) => {
         <Typography className={classes.mainTitle} variant="h1">
           {tripData.title}
         </Typography>
-        <Box display="column" gap="10px" margin="20px 0 30px">
+        {/* <Box display="column" gap="10px" margin="20px 0 30px">
           <Typography sx={{ fontSize: '17px' }}>Connecté en tant que :</Typography>
           <Typography
             sx={{ fontSize: '17px', textDecoration: 'underline' }}
           >{`${user.firstname} ${user.lastname}`}</Typography>
-        </Box>
+        </Box> */}
         <Box className={classes.papersContainer}>
           <Paper
             component={Button}

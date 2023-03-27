@@ -41,7 +41,7 @@ const NotificationArea = ({ tripId, currentNotifications, isMyTrips = false, set
       <Badge
         badgeContent={
           isMyTrips
-            ? user.notifications.filter(notification => notification?.state === 1).length
+            ? user.notifications?.filter(notification => notification?.state === 1).length
             : user.notifications?.filter(
                 notification => notification?.tripId === tripId && notification?.state === 1
               ).length
@@ -115,7 +115,7 @@ const NotificationArea = ({ tripId, currentNotifications, isMyTrips = false, set
         <Paper
           sx={{
             width: '470px',
-            height: currentNotifications?.length > 0 ? '740px' : 'fit-content',
+            height: 'fit-content',
             maxHeight: currentNotifications?.length > 0 ? '740px' : 'fit-content',
           }}
         >
@@ -157,7 +157,9 @@ const NotificationArea = ({ tripId, currentNotifications, isMyTrips = false, set
                     }}
                     key={notification.id}
                     onClick={() => {
-                      setNotificationsToNewState(user, 3, notification.id)
+                      if (notification.id) {
+                        setNotificationsToNewState(user, 3, notification.id)
+                      }
                       history.push(notification.url)
                     }}
                   >

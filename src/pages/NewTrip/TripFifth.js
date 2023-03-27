@@ -37,7 +37,9 @@ const useStyles = makeStyles(theme => ({
   },
   autocomplete: {
     borderRadius: '50px',
-    padding: '15px 20px!important',
+    padding: '15px 20px !important',
+    flexWrap: 'wrap',
+    height: 'fit-content',
   },
   autocompleteFocus: {
     borderRadius: '35px 35px 0 0',
@@ -90,6 +92,20 @@ const useStyles = makeStyles(theme => ({
       justifyContent: 'center',
     },
   },
+  mobileWishes: {
+    width: 'calc(100vw + 100px)',
+    height: '450px',
+    position: 'relative',
+    marginLeft: '-80px',
+  },
+  mobileOversizedContainer: {
+    width: 'calc(100vw + 100px)',
+    maxHeight: '450px',
+    overflowX: 'auto',
+    overflowY: 'none',
+    display: 'grid',
+    gridTemplate: 'auto / repeat(6, 250px)',
+  },
 }))
 
 const TripFifth = () => {
@@ -109,7 +125,9 @@ const TripFifth = () => {
 
   useEffect(() => {
     if (dictionary.meta_name_envies_sport) {
+      console.log('ici cest le dico de linscription', dictionary)
       const shuffledWishes = arrayShuffle(dictionary.meta_name_envies_sport)
+      console.log('shuffledwishes', shuffledWishes)
       setWishesOptions(shuffledWishes)
     }
   }, [dictionary])
@@ -222,29 +240,63 @@ const TripFifth = () => {
       backURL="/newtrip/tripFourth"
     >
       <>
-        <Autocomplete
-          onOpen={() => setIsAutocompleteOpen(true)}
-          onClose={() => setIsAutocompleteOpen(false)}
-          classes={{
-            inputRoot: clsx(classes.autocomplete, {
-              [classes.autocompleteFocus]: isAutocompleteOpen,
-            }),
-            paper: classes.autoCompleteListBox,
-          }}
-          multiple
-          // freeSolo TODO
-          options={wishesOptions}
-          value={wishes}
-          getOptionLabel={option => `${option.icon} ${option.label}`}
-          onChange={(event, values) => handleSelect(values)}
-          placeholder="Recherche"
-          renderInput={params => <TextField {...params} hiddenLabel variant="filled" />}
-          ChipProps={{
-            className: classes.chip,
-          }}
-          clearIcon={<Close color="primary" fontSize="small" />}
-          getOptionDisabled={() => wishes.length > 9}
-        />
+        {!matchesXs ? (
+          <Autocomplete
+            onOpen={() => setIsAutocompleteOpen(true)}
+            onClose={() => setIsAutocompleteOpen(false)}
+            classes={{
+              inputRoot: clsx(classes.autocomplete, {
+                [classes.autocompleteFocus]: isAutocompleteOpen,
+              }),
+              paper: classes.autoCompleteListBox,
+            }}
+            multiple
+            // freeSolo TODO
+            options={wishesOptions}
+            value={wishes}
+            getOptionLabel={option => `${option.icon} ${option.label}`}
+            onChange={(event, values) => handleSelect(values)}
+            placeholder="Recherche"
+            renderInput={params => <TextField {...params} hiddenLabel variant="filled" />}
+            ChipProps={{
+              className: classes.chip,
+            }}
+            clearIcon={<Close color="primary" fontSize="small" />}
+            getOptionDisabled={() => wishes.length > 9}
+          />
+        ) : (
+          // <Box className={classes.mobileWishes}>
+          //   <Box className={classes.mobileOversizedContainer}>
+          //     {wishesOptions.map(option => (
+          //       <Box>{option.label}</Box>
+          //     ))}
+          //   </Box>
+          // </Box>
+          <Autocomplete
+            onOpen={() => setIsAutocompleteOpen(true)}
+            onClose={() => setIsAutocompleteOpen(false)}
+            classes={{
+              inputRoot: clsx(classes.autocomplete, {
+                [classes.autocompleteFocus]: isAutocompleteOpen,
+              }),
+              paper: classes.autoCompleteListBox,
+            }}
+            multiple
+            // freeSolo TODO
+            options={wishesOptions}
+            value={wishes}
+            getOptionLabel={option => `${option.icon} ${option.label}`}
+            onChange={(event, values) => handleSelect(values)}
+            placeholder="Recherche"
+            renderInput={params => <TextField {...params} hiddenLabel variant="filled" />}
+            ChipProps={{
+              className: classes.chip,
+            }}
+            clearIcon={<Close color="primary" fontSize="small" />}
+            getOptionDisabled={() => wishes.length > 9}
+          />
+        )}
+
         <Box
           display="flex"
           alignItems="center"
@@ -271,7 +323,9 @@ const TripFifth = () => {
             {wishesOptions
               .filter(
                 option =>
-                  currentSpot.meta_envies.includes(parseInt(option.value, 10)) &&
+                  currentSpot.meta_envies
+                    .map(envie => envie.id)
+                    .includes(parseInt(option.value, 10)) &&
                   !wishes.some(wish => wish.value === option.value)
               )
               .map(option => {

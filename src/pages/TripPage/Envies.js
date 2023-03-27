@@ -141,8 +141,10 @@ const Envies = ({ tripId, tripWishes, recommendedWishes, canEdit, tripTravelers 
   }, [tripWishes])
 
   useEffect(() => {
+    console.log('là cest le dictionnaire', dictionary)
     if (dictionary.meta_name_envies_sport) {
       const shuffledWishes = arrayShuffle(dictionary.meta_name_envies_sport)
+      console.log('les envies', shuffledWishes)
       setWishesOptions(shuffledWishes)
     }
   }, [dictionary])
