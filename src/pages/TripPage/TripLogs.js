@@ -102,6 +102,7 @@ const TripLogs = ({ tripData, tripId, canEdit }) => {
       )}
       <Paper className={classes.paper}>
         <Typography className={classes.title}>Logs du séjour</Typography>
+
         <Box sx={{ maxHeight: 'calc(90vh - 118px)', overflowY: 'auto' }}>
           <Box
             my={2}
