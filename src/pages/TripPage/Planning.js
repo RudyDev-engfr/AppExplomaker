@@ -281,7 +281,7 @@ const Planning = ({ tripData, tripId, canEdit }) => {
   const location = useLocation()
 
   const { user } = useContext(SessionContext)
-  const { firestore } = useContext(FirebaseContext)
+  const { firestore, createNotificationsOnTrip } = useContext(FirebaseContext)
   const {
     setCurrentMarkers,
     setTransportMarkers,
@@ -1155,6 +1155,7 @@ const Planning = ({ tripData, tripId, canEdit }) => {
       .delete()
       .then(() => {
         setIsDeleteDialogOpen(false)
+        createNotificationsOnTrip(user, tripData, tripId, 'eventDelete', 2, currentEvent)
         setCurrentEvent()
         toast.success('Evenement supprime')
       })

@@ -440,6 +440,7 @@ const FirebaseContextProvider = ({ children }) => {
           'eventCreate',
           'eventUpdate',
           'destinationUpdate',
+          'eventDelete',
         ].includes(type)
       ) {
         const id = uuidv4()

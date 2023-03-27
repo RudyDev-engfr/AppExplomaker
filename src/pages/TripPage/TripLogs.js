@@ -102,105 +102,105 @@ const TripLogs = ({ tripData, tripId, canEdit }) => {
       )}
       <Paper className={classes.paper}>
         <Typography className={classes.title}>Logs du séjour</Typography>
-        <Box
-          my={2}
-          sx={{
-            display: 'flex',
-            flexDirection: 'column',
-            overflowY: 'auto !important',
-            maxHeight: 'calc(90vh - 118px)',
-          }}
-        >
-          {currentNotifications
-            ?.slice(0)
-            .reverse()
-            .map((notification, index) =>
-              notification.logs ? (
-                <Accordion
-                  sx={{
-                    marginBottom: '15px',
-                    minHeight: '105px',
-                    '&::before': {
-                      display: 'none',
-                      height: '0',
-                    },
-                    boxShadow: 'none',
-                  }}
-                  key={notification.id}
-                >
-                  <AccordionSummary
-                    expandIcon={<ExpandMoreIcon />}
-                    aria-controls="panel1a-content"
-                    id="panel1a-header"
+        <Box sx={{ maxHeight: 'calc(90vh - 118px)', overflowY: 'auto' }}>
+          <Box
+            my={2}
+            sx={{
+              display: 'flex',
+              flexDirection: 'column',
+            }}
+          >
+            {currentNotifications
+              ?.slice(0)
+              .reverse()
+              .map((notification, index) =>
+                notification.logs ? (
+                  <Accordion
                     sx={{
-                      backgroundColor: theme.palette.grey.f2,
-                      width: '457px,',
-                      height: '115px',
-                      padding: '0 30px',
-                      borderRadius: '20px',
+                      marginBottom: '15px',
+                      minHeight: '105px',
+                      '&::before': {
+                        display: 'none',
+                        height: '0',
+                      },
+                      boxShadow: 'none',
                     }}
+                    key={notification.id}
                   >
-                    <Box
+                    <AccordionSummary
+                      expandIcon={<ExpandMoreIcon />}
+                      aria-controls="panel1a-content"
+                      id="panel1a-header"
                       sx={{
-                        display: 'grid',
-                        gridTemplate: '1fr / 110px 1fr',
-                        alignItems: 'center',
+                        backgroundColor: theme.palette.grey.f2,
+                        width: '457px,',
+                        height: '115px',
+                        padding: '0 30px',
+                        borderRadius: '20px',
                       }}
                     >
-                      <Box sx={{ display: 'flex', justifyContent: 'center' }}>
-                        <CustomAvatar
-                          isNotification
-                          width={60}
-                          height={60}
-                          peopleIds={[notification?.owner?.id]}
-                        />
+                      <Box
+                        sx={{
+                          display: 'grid',
+                          gridTemplate: '1fr / 110px 1fr',
+                          alignItems: 'center',
+                        }}
+                      >
+                        <Box sx={{ display: 'flex', justifyContent: 'center' }}>
+                          <CustomAvatar
+                            isNotification
+                            width={60}
+                            height={60}
+                            peopleIds={[notification?.owner?.id]}
+                          />
+                        </Box>
+                        <Box>
+                          <Typography sx={{ fontSize: '17px' }}>{notification.content}</Typography>
+                          <Typography sx={{ fontSize: '17px', color: theme.palette.primary.main }}>
+                            {notification.timer}
+                          </Typography>
+                        </Box>
                       </Box>
-                      <Box>
-                        <Typography sx={{ fontSize: '17px' }}>{notification.content}</Typography>
-                        <Typography sx={{ fontSize: '17px', color: theme.palette.primary.main }}>
-                          {notification.timer}
-                        </Typography>
-                      </Box>
+                    </AccordionSummary>
+                    <AccordionDetails>
+                      {notification.logs.date && <EventAccordion notification={notification} />}
+                      {notification.logs.oldDate && (
+                        <DateUpdateAccordion notification={notification} />
+                      )}
+                    </AccordionDetails>
+                  </Accordion>
+                ) : (
+                  <Box
+                    sx={{
+                      width: '457px,',
+                      height: '105px',
+                      minHeight: '105px',
+                      padding: '0 30px',
+                      display: 'grid',
+                      gridTemplate: '1fr / 110px 1fr 40px',
+                      alignItems: 'center',
+                      marginBottom: '15px',
+                      borderRadius: '20px',
+                      backgroundColor: theme.palette.grey.f2,
+                    }}
+                    key={notification.id}
+                  >
+                    <Box sx={{ display: 'flex', justifyContent: 'center' }}>
+                      <Avatar sx={{ width: 60, height: 60 }} />
                     </Box>
-                  </AccordionSummary>
-                  <AccordionDetails>
-                    {notification.logs.eventName && <EventAccordion notification={notification} />}
-                    {notification.logs.oldDate && (
-                      <DateUpdateAccordion notification={notification} />
-                    )}
-                  </AccordionDetails>
-                </Accordion>
-              ) : (
-                <Box
-                  sx={{
-                    width: '457px,',
-                    height: '105px',
-                    minHeight: '105px',
-                    padding: '0 30px',
-                    display: 'grid',
-                    gridTemplate: '1fr / 110px 1fr 40px',
-                    alignItems: 'center',
-                    marginBottom: '15px',
-                    borderRadius: '20px',
-                    backgroundColor: theme.palette.grey.f2,
-                  }}
-                  key={notification.id}
-                >
-                  <Box sx={{ display: 'flex', justifyContent: 'center' }}>
-                    <Avatar sx={{ width: 60, height: 60 }} />
+                    <Box>
+                      <Typography sx={{ fontSize: '17px' }}>{notification.content}</Typography>
+                      <Typography sx={{ fontSize: '17px', color: theme.palette.primary.main }}>
+                        {notification.timer}
+                      </Typography>
+                    </Box>
+                    <IconButton onClick={() => history.push(notification.url)}>
+                      <Launch />
+                    </IconButton>
                   </Box>
-                  <Box>
-                    <Typography sx={{ fontSize: '17px' }}>{notification.content}</Typography>
-                    <Typography sx={{ fontSize: '17px', color: theme.palette.primary.main }}>
-                      {notification.timer}
-                    </Typography>
-                  </Box>
-                  <IconButton onClick={() => history.push(notification.url)}>
-                    <Launch />
-                  </IconButton>
-                </Box>
-              )
-            )}
+                )
+              )}
+          </Box>
         </Box>
       </Paper>
     </Box>

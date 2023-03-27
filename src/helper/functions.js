@@ -596,6 +596,36 @@ export const buildNotificationsOnTripForUser = (user, tripId) => {
             // singleNotif.eventType = event.type
             singleNotif.url = `/tripPage/${tripId}`
             break
+
+          case 'eventDelete':
+            console.log('je passe par le eventDelete')
+            singleNotif.content = owner?.firstname
+              ? `${owner.firstname} a supprimé un évènement - ${
+                  event?.type === 'accommodation'
+                    ? 'Hébergement'
+                    : event?.type === 'flight'
+                    ? 'Vol'
+                    : event?.type === 'restaurant'
+                    ? 'Restaurant'
+                    : event?.type === 'explore'
+                    ? 'Exploration'
+                    : event?.type === 'transport' && 'Transport'
+                } - pour la journée du ${
+                  event.type === 'flight'
+                    ? rCTFF(event.flights[0].date, 'dd/MM/yyyy')
+                    : rCTFF(event.date, 'dd/MM/yyyy')
+                }.`
+              : `Un évènement a été supprimé sur la journée du ${
+                  event.type === 'flight'
+                    ? rCTFF(event.flights[0].date, 'dd/MM/yyyy')
+                    : rCTFF(event.date, 'dd/MM/yyyy')
+                }.`
+            singleNotif.timer = notifBody.definitiveTimer
+            singleNotif.state = notifBody.state
+            singleNotif.icon = event.icon
+            singleNotif.eventType = event.type
+            singleNotif.url = `/tripPage/${tripId}/planning`
+            break
         }
         notifications.push(singleNotif)
       })
@@ -865,6 +895,46 @@ export const buildLogSejour = (tripId, tripData) => {
             // singleNotif.eventType = event.type
             singleNotif.url = `/tripPage/${tripId}`
             break
+
+          case 'eventDelete':
+            console.log('je passe par le eventDelete')
+            singleNotif.content = owner?.firstname
+              ? `${owner.firstname} a supprimé un évènement - ${
+                  event?.type === 'accommodation'
+                    ? 'Hébergement'
+                    : event?.type === 'flight'
+                    ? 'Vol'
+                    : event?.type === 'restaurant'
+                    ? 'Restaurant'
+                    : event?.type === 'explore'
+                    ? 'Exploration'
+                    : event?.type === 'transport' && 'Transport'
+                } - pour la journée du ${
+                  event.type === 'flight'
+                    ? rCTFF(event.flights[0].date, 'dd/MM/yyyy')
+                    : rCTFF(event.date, 'dd/MM/yyyy')
+                }.`
+              : `Un évènement a été supprimé sur la journée du ${
+                  event.type === 'flight'
+                    ? rCTFF(event.flights[0].date, 'dd/MM/yyyy')
+                    : rCTFF(event.date, 'dd/MM/yyyy')
+                }.`
+            singleNotif.timer = notifBody.definitiveTimer
+            singleNotif.state = notifBody.state
+            singleNotif.icon = event.icon
+            singleNotif.eventType = event.type
+            singleNotif.url = `/tripPage/${tripId}/planning`
+            singleNotif.logs = {
+              place:
+                event.type === 'flight'
+                  ? event.flights[0].data.airports[0].label
+                  : event.type === 'transport'
+                  ? event.transports[0].start.label
+                  : event.location.label,
+              date: rCTFF(event.date, 'dd/MM/yyyy'),
+              eventName: event.title,
+              participatingTravelers: event.participatingTravelers.map(traveler => traveler.name),
+            }
         }
         console.log('cestfini la generation de notif')
         notifications.push(singleNotif)
