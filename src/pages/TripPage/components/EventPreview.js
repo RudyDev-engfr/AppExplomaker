@@ -212,11 +212,6 @@ const EventPreview = ({
       .doc(tripId)
       .onSnapshot(doc => {
         const tempDoc = doc.data()
-        tempDoc.travelersDetails.forEach(traveler => {
-          if (typeof traveler.id !== 'undefined' && traveler.id === user.id) {
-            history.push(`/tripPage/${tripId}`)
-          }
-        })
         setTripData(tempDoc)
         setIsLoading(false)
       })
