@@ -637,7 +637,7 @@ export const buildNotificationsOnTripForUser = (user, tripId) => {
 export const buildLogSejour = (tripId, tripData) => {
   console.log('raconte moi où tas bobo', tripData.notifications)
   const notifications = []
-  if (tripData?.notifications) {
+  if (tripData?.notifications?.length > 0) {
     tripData.notifications
       .filter(notification => notification.tripId === tripId)
       .forEach(({ sejour, priority, state, type, creationDate, owner, event, id, previous }) => {
@@ -911,29 +911,29 @@ export const buildLogSejour = (tripId, tripData) => {
                     : event?.type === 'transport' && 'Transport'
                 } - pour la journée du ${
                   event.type === 'flight'
-                    ? rCTFF(event.flights[0].date, 'dd/MM/yyyy')
-                    : rCTFF(event.date, 'dd/MM/yyyy')
+                    ? rCTFF(event?.flights[0].date, 'dd/MM/yyyy')
+                    : rCTFF(event?.date, 'dd/MM/yyyy')
                 }.`
               : `Un évènement a été supprimé sur la journée du ${
-                  event.type === 'flight'
-                    ? rCTFF(event.flights[0].date, 'dd/MM/yyyy')
-                    : rCTFF(event.date, 'dd/MM/yyyy')
+                  event?.type === 'flight'
+                    ? rCTFF(event?.flights[0].date, 'dd/MM/yyyy')
+                    : rCTFF(event?.date, 'dd/MM/yyyy')
                 }.`
             singleNotif.timer = notifBody.definitiveTimer
             singleNotif.state = notifBody.state
-            singleNotif.icon = event.icon
-            singleNotif.eventType = event.type
+            singleNotif.icon = event?.icon
+            singleNotif.eventType = event?.type
             singleNotif.url = `/tripPage/${tripId}/planning`
             singleNotif.logs = {
               place:
-                event.type === 'flight'
-                  ? event.flights[0].data.airports[0].label
-                  : event.type === 'transport'
-                  ? event.transports[0].start.label
-                  : event.location.label,
+                event?.type === 'flight'
+                  ? event?.flights[0].data.airports[0].label
+                  : event?.type === 'transport'
+                  ? event?.transports[0].start.label
+                  : event?.location.label,
               date: rCTFF(event.date, 'dd/MM/yyyy'),
-              eventName: event.title,
-              participatingTravelers: event.participatingTravelers.map(traveler => traveler.name),
+              eventName: event?.title,
+              participatingTravelers: event?.participatingTravelers.map(traveler => traveler.name),
             }
         }
         console.log('cestfini la generation de notif')

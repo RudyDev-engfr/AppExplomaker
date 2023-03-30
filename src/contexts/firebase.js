@@ -310,6 +310,76 @@ const FirebaseContextProvider = ({ children }) => {
     }
   })
 
+  const refreshTripData = (tripId, setter) => {
+    if (tripId) {
+      firestore
+        .collection('trips')
+        .doc(tripId)
+        .onSnapshot(doc => {
+          const tempDoc = doc.data()
+          setter(tempDoc)
+        })
+    }
+  }
+
+  const delNotificationsFromAnEventDeleted = async (tripData, tripId, event) => {
+    const definitiveUserGroup = []
+    const tempPromisesUser = []
+    const tempTrip = structuredClone(tripData)
+    const tempEvent = structuredClone(event)
+    const tempTripNotifFiltered = tempTrip.notifications.filter(
+      notification => notification?.event?.id !== tempEvent.id
+    )
+    const tempUserGroup = tempTrip.travelersDetails.map(traveler => traveler.id)
+    console.log('les id du départ', tempUserGroup)
+    tempUserGroup.forEach(user =>
+      tempPromisesUser.push(
+        new Promise((resolve, reject) => {
+          resolve(firestore.collection('users').doc(user).get())
+        })
+      )
+    )
+
+    console.log('les id de firestore', tempPromisesUser)
+
+    Promise.all(tempPromisesUser).then(datas => {
+      console.log('datas', datas)
+
+      datas.forEach(data => {
+        definitiveUserGroup.push(data.data())
+      })
+    })
+
+    console.log('utilisateurs définitifs', definitiveUserGroup)
+    console.log('tableau de notif filtrés pour le voyage', tempTripNotifFiltered)
+
+    const finalUsers = definitiveUserGroup.map(definitiveUser => {
+      const tempDefinitiveUser = structuredClone(definitiveUser)
+      tempDefinitiveUser.notifications =
+        definitiveUser.notifications?.filter(
+          notification => notification?.event?.id !== event.id
+        ) || []
+      return tempDefinitiveUser
+    })
+
+    console.log('les utilisateurs finaux avec les tableaux filtrés', finalUsers)
+
+    const mergedNotifications = tempTripNotifFiltered
+    console.log('mergedNotifications', mergedNotifications)
+    firestore
+      .collection('trips')
+      .doc(tripId)
+      .set({ notifications: mergedNotifications }, { merge: true })
+
+    const promises = finalUsers?.forEach(singleUser => {
+      console.log('chaque utilisateur', singleUser)
+      firestore
+        .collection('users')
+        .doc(singleUser.id)
+        .set({ notifications: singleUser?.notifications }, { merge: true })
+    })
+  }
+
   const createNotifications = async (currentUser, tripData, type, priority) => {
     const tempTrip = {
       mainPicture: tripData.mainPicture,
@@ -388,6 +458,11 @@ const FirebaseContextProvider = ({ children }) => {
         .doc(user.id)
         .set({ ...updateData }, { merge: true })
     }
+  }
+
+  const UpdateNotificationsStateBasedOnEventDeleted = (tripData, eventId) => {
+    const tempTrip = structuredClone(tripData)
+    const tempUserGroupId = tripData.travelersDetails.map(traveler => traveler.id)
   }
 
   const handleUsersGroupInATrip = tripData => {
@@ -480,6 +555,10 @@ const FirebaseContextProvider = ({ children }) => {
         // delete updateDataSingleNotif.event
 
         const updateDataTrip = { notifications: tempTripNotif }
+        console.log(
+          'le tableau de notif avant création du nouveau tableau de notif avec la new notif',
+          updateDataTrip
+        )
         await firestore.collection('trips').doc(tripId).set(updateDataTrip, { merge: true })
 
         tempUserGroup.forEach(singleUser => {
@@ -522,6 +601,8 @@ const FirebaseContextProvider = ({ children }) => {
         setNotificationsToNewStateOnTrip,
         createNotificationsOnTrip,
         handleUsersGroupInATrip,
+        delNotificationsFromAnEventDeleted,
+        refreshTripData,
       }}
     >
       {children}

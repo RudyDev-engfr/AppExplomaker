@@ -273,7 +273,7 @@ const useStyles = makeStyles(theme => ({
   },
 }))
 
-const Planning = ({ tripData, tripId, canEdit }) => {
+const Planning = ({ tripData, setTripData, tripId, canEdit }) => {
   const classes = useStyles()
   const history = useHistory()
   const theme = useTheme()
@@ -281,7 +281,13 @@ const Planning = ({ tripData, tripId, canEdit }) => {
   const location = useLocation()
 
   const { user } = useContext(SessionContext)
-  const { firestore, createNotificationsOnTrip } = useContext(FirebaseContext)
+  const {
+    firestore,
+    createNotificationsOnTrip,
+    setNotificationsToNewStateOnTrip,
+    refreshTripData,
+    delNotificationsFromAnEventDeleted,
+  } = useContext(FirebaseContext)
   const {
     setCurrentMarkers,
     setTransportMarkers,
@@ -314,6 +320,37 @@ const Planning = ({ tripData, tripId, canEdit }) => {
   const [selectedPropositionIndex, setSelectedPropositionIndex] = useState()
   const [editMode, setEditMode] = useState(false)
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false)
+  const [deleteEventNotifications, setDeleteEventNotifications] = useState(false)
+  const [allowDeleteNotif, setAllowDeleteNotif] = useState(false)
+
+  useEffect(() => {
+    if (deleteEventNotifications) {
+      delNotificationsFromAnEventDeleted(tripData, tripId, currentEvent)
+      refreshTripData(tripId, setTripData)
+      setTimeout(() => {
+        setDeleteEventNotifications(false)
+        setAllowDeleteNotif(true)
+      }, 1000)
+    }
+  }, [deleteEventNotifications])
+
+  const handleCreateDeleteNotif = () => {
+    createNotificationsOnTrip(user, tripData, tripId, 'eventDelete', 2, currentEvent)
+    setTimeout(() => {
+      setCurrentEvent()
+    }, 2000)
+    toast.success('Evenement supprime')
+  }
+
+  useEffect(() => {
+    if (allowDeleteNotif) {
+      handleCreateDeleteNotif()
+    }
+  }, [allowDeleteNotif])
+
+  useEffect(() => {
+    console.log('tripData du useEffect planning', tripData)
+  }, [tripData])
 
   const buildFlightTitle = flights =>
     `Vol de ${flights[0].data.airports[0].label} vers ${
@@ -1155,9 +1192,7 @@ const Planning = ({ tripData, tripId, canEdit }) => {
       .delete()
       .then(() => {
         setIsDeleteDialogOpen(false)
-        createNotificationsOnTrip(user, tripData, tripId, 'eventDelete', 2, currentEvent)
-        setCurrentEvent()
-        toast.success('Evenement supprime')
+        setDeleteEventNotifications(true)
       })
   }
 

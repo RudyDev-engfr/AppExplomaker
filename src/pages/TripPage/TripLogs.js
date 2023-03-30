@@ -112,7 +112,8 @@ const TripLogs = ({ tripData, tripId, canEdit }) => {
             }}
           >
             {currentNotifications
-              ?.slice(0)
+              ?.filter(notification => notification.state !== 4)
+              .slice(0)
               .reverse()
               .map((notification, index) =>
                 notification.logs ? (
