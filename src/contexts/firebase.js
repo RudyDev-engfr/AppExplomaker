@@ -364,12 +364,12 @@ const FirebaseContextProvider = ({ children }) => {
 
     console.log('les utilisateurs finaux avec les tableaux filtrés', finalUsers)
 
-    const mergedNotifications = tempTripNotifFiltered
-    console.log('mergedNotifications', mergedNotifications)
-    firestore
-      .collection('trips')
-      .doc(tripId)
-      .set({ notifications: mergedNotifications }, { merge: true })
+    // const mergedNotifications = tempTripNotifFiltered
+    // console.log('mergedNotifications', mergedNotifications)
+    // firestore
+    //   .collection('trips')
+    //   .doc(tripId)
+    //   .set({ notifications: mergedNotifications }, { merge: true })
 
     const promises = finalUsers?.forEach(singleUser => {
       console.log('chaque utilisateur', singleUser)

@@ -56,23 +56,36 @@ const NotificationArea = ({ tripId, currentNotifications, isMyTrips = false, set
           aria-haspopup="true"
           onClick={handleClickNotif}
           sx={{
-            backgroundColor:
-              user?.notifications?.filter(notification => notification.state === 1).length > 0
+            backgroundColor: isMyTrips
+              ? user?.notifications?.filter(notification => notification.state === 1).length > 0
+                ? theme.palette.primary.main
+                : 'white'
+              : user?.notifications?.filter(
+                  notification => notification?.state === 1 && notification?.tripId === tripId
+                ).length > 0
+              ? theme.palette.primary.main
+              : 'white',
+            '&:hover': {
+              backgroundColor: isMyTrips
+                ? user?.notifications?.filter(notification => notification.state === 1).length > 0
+                  ? theme.palette.primary.main
+                  : 'white'
+                : user?.notifications?.filter(
+                    notification => notification?.state === 1 && notification?.tripId === tripId
+                  ).length > 0
                 ? theme.palette.primary.main
                 : 'white',
-            '&:hover': {
-              backgroundColor:
-                user?.notifications?.filter(notification => notification.state === 1).length > 0
-                  ? theme.palette.primary.main
-                  : 'white',
             },
           }}
         >
           <Notifications
             sx={{
-              color:
-                user?.notifications?.filter(notification => notification.state === 1).length > 0 &&
-                'white',
+              color: isMyTrips
+                ? user?.notifications?.filter(notification => notification.state === 1).length >
+                    0 && 'white'
+                : user?.notifications?.filter(
+                    notification => notification.state === 1 && notification.tripId === tripId
+                  ).length > 0 && 'white',
             }}
           />
         </IconButton>

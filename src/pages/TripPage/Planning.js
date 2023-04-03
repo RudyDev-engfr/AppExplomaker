@@ -48,7 +48,6 @@ import { v4 as uuidv4 } from 'uuid'
 import clsx from 'clsx'
 import { useHistory, useLocation } from 'react-router-dom'
 import queryString from 'query-string'
-import { toast } from 'react-toastify'
 import Carousel from 'react-multi-carousel'
 import 'react-multi-carousel/lib/styles.css'
 
@@ -71,6 +70,7 @@ import PlanningCard from './components/PlanningCard'
 
 import mixedIcon from '../../images/eventCreator/transport/mixed.svg'
 import lineMobile from '../../images/icons/lineMobile.svg'
+import { TripContext } from '../../contexts/trip'
 
 const useStyles = makeStyles(theme => ({
   calendarArea: {
@@ -288,6 +288,7 @@ const Planning = ({ tripData, setTripData, tripId, canEdit }) => {
     refreshTripData,
     delNotificationsFromAnEventDeleted,
   } = useContext(FirebaseContext)
+  const { setDeleteEventNotifications, currentEvent, setCurrentEvent } = useContext(TripContext)
   const {
     setCurrentMarkers,
     setTransportMarkers,
@@ -306,7 +307,6 @@ const Planning = ({ tripData, setTripData, tripId, canEdit }) => {
   const [isMounted, setIsMounted] = useState(false)
   const [currentView, setCurrentView] = useState('planning')
   const [currentDateRange, setCurrentDateRange] = useState([])
-  const [currentEvent, setCurrentEvent] = useState()
   const [previousEvent, setPreviousEvent] = useState()
   const [eventType, setEventType] = useState('')
   const [anchorEl, setAnchorEl] = useState(null)
@@ -320,37 +320,6 @@ const Planning = ({ tripData, setTripData, tripId, canEdit }) => {
   const [selectedPropositionIndex, setSelectedPropositionIndex] = useState()
   const [editMode, setEditMode] = useState(false)
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false)
-  const [deleteEventNotifications, setDeleteEventNotifications] = useState(false)
-  const [allowDeleteNotif, setAllowDeleteNotif] = useState(false)
-
-  useEffect(() => {
-    if (deleteEventNotifications) {
-      delNotificationsFromAnEventDeleted(tripData, tripId, currentEvent)
-      refreshTripData(tripId, setTripData)
-      setTimeout(() => {
-        setDeleteEventNotifications(false)
-        setAllowDeleteNotif(true)
-      }, 1000)
-    }
-  }, [deleteEventNotifications])
-
-  const handleCreateDeleteNotif = () => {
-    createNotificationsOnTrip(user, tripData, tripId, 'eventDelete', 2, currentEvent)
-    setTimeout(() => {
-      setCurrentEvent()
-    }, 2000)
-    toast.success('Evenement supprime')
-  }
-
-  useEffect(() => {
-    if (allowDeleteNotif) {
-      handleCreateDeleteNotif()
-    }
-  }, [allowDeleteNotif])
-
-  useEffect(() => {
-    console.log('tripData du useEffect planning', tripData)
-  }, [tripData])
 
   const buildFlightTitle = flights =>
     `Vol de ${flights[0].data.airports[0].label} vers ${
