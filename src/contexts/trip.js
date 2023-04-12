@@ -8,45 +8,59 @@ import { SessionContext } from './session'
 export const TripContext = createContext()
 
 const TripContextProvider = ({ children }) => {
-  const { delNotificationsFromAnEventDeleted, refreshTripData, createNotificationsOnTrip } =
-    useContext(FirebaseContext)
-  const { user } = useContext(SessionContext)
-  const { tripId } = useParams()
+  // const { delNotificationsFromAnEventDeleted, refreshTripData, createNotificationsOnTrip } =
+  //   useContext(FirebaseContext)
+  // const { user } = useContext(SessionContext)
+  // const { tripId } = useParams()
   const [deleteEventNotifications, setDeleteEventNotifications] = useState(false)
   const [tripData, setTripData] = useState()
   const [currentEvent, setCurrentEvent] = useState()
-  const [allowDeleteNotif, setAllowDeleteNotif] = useState(false)
+  // const [allowDeleteNotif, setAllowDeleteNotif] = useState(false)
+  // const [timingRefresh, setTimingRefresh] = useState(false)
 
-  useEffect(() => {
-    console.log(deleteEventNotifications, 'si cest true je peux supprimer')
-  }, [deleteEventNotifications])
+  // useEffect(() => {
+  //   console.log(deleteEventNotifications, 'si cest true je peux supprimer')
+  // }, [deleteEventNotifications])
 
-  useEffect(() => {
-    if (deleteEventNotifications) {
-      console.log('je suis rentré là')
+  // useEffect(() => {
+  //   if (deleteEventNotifications) {
+  //     console.log('je suis rentré là')
+  //     delNotificationsFromAnEventDeleted(tripData, tripId, currentEvent)
+  //     setTimingRefresh(true)
+  //     setDeleteEventNotifications(false)
+  //   }
+  //   if (timingRefresh) {
+  //     setTimeout(() => {
+  //       refreshTripData(tripId, setTripData, setAllowDeleteNotif)
+  //       setAllowDeleteNotif(true)
+  //       setTimingRefresh(false)
+  //     }, 2000)
+  //   }
+  // }, [deleteEventNotifications, timingRefresh])
 
-      delNotificationsFromAnEventDeleted(tripData, tripId, currentEvent)
-      refreshTripData(tripId, setTripData)
-      setDeleteEventNotifications(false)
-      setTimeout(() => {
-        setAllowDeleteNotif(true)
-      }, 2000)
-    }
-  }, [deleteEventNotifications])
+  // useEffect(() => {
+  //   console.log('leventcourant', currentEvent)
+  // }, [currentEvent])
 
-  const handleCreateDeleteNotif = () => {
-    createNotificationsOnTrip(user, tripData, tripId, 'eventDelete', 2, currentEvent)
-    setTimeout(() => {
-      setCurrentEvent()
-    }, 2000)
-    toast.success('Evenement supprime')
-  }
+  // const handleCreateDeleteNotif = () => {
+  //   if (allowDeleteNotif) {
+  //     setTimeout(() => {
+  //       createNotificationsOnTrip(user, tripData, tripId, 'eventDelete', 2, currentEvent)
+  //     }, 2000)
+  //     setTimeout(() => {
+  //       setCurrentEvent()
+  //     }, 2000)
+  //     toast.success('Evenement supprime')
+  //     setAllowDeleteNotif(false)
+  //   }
+  // }
 
-  useEffect(() => {
-    if (allowDeleteNotif) {
-      handleCreateDeleteNotif()
-    }
-  }, [allowDeleteNotif])
+  // useEffect(() => {
+  //   if (allowDeleteNotif === 'ok') {
+  //     handleCreateDeleteNotif()
+  //     setAllowDeleteNotif(false)
+  //   }
+  // }, [allowDeleteNotif])
 
   useEffect(() => {
     console.log('tripData du useEffect planning', tripData)
@@ -59,6 +73,8 @@ const TripContextProvider = ({ children }) => {
         setDeleteEventNotifications,
         currentEvent,
         setCurrentEvent,
+        tripData,
+        setTripData,
       }}
     >
       {children}

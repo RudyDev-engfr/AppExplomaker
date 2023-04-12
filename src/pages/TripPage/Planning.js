@@ -281,13 +281,7 @@ const Planning = ({ tripData, setTripData, tripId, canEdit }) => {
   const location = useLocation()
 
   const { user } = useContext(SessionContext)
-  const {
-    firestore,
-    createNotificationsOnTrip,
-    setNotificationsToNewStateOnTrip,
-    refreshTripData,
-    delNotificationsFromAnEventDeleted,
-  } = useContext(FirebaseContext)
+  const { firestore } = useContext(FirebaseContext)
   const { setDeleteEventNotifications, currentEvent, setCurrentEvent } = useContext(TripContext)
   const {
     setCurrentMarkers,

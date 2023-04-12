@@ -27,6 +27,7 @@ import { rCTFF } from '../../helper/functions'
 const useStyles = makeStyles(theme => ({
   basePaper: {
     width: '350px',
+    borderLeft: 'unset',
     [theme.breakpoints.down('sm')]: {
       width: '100vw',
       height: '100vh',

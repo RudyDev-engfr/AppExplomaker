@@ -61,7 +61,6 @@ const Routes = () => {
       <Route path="/join/:tripId">
         <JoinTrip />
       </Route>
-
       <PrivateRoute path="/newtrip/tripFirst">
         <TripFirst />
       </PrivateRoute>

@@ -326,10 +326,14 @@ const FirebaseContextProvider = ({ children }) => {
     const definitiveUserGroup = []
     const tempPromisesUser = []
     const tempTrip = structuredClone(tripData)
+    console.log('tripdata ça passe')
     const tempEvent = structuredClone(event)
-    const tempTripNotifFiltered = tempTrip.notifications.filter(
-      notification => notification?.event?.id !== tempEvent.id
-    )
+    console.log('tempevent ça passe')
+    // const tempNotifs = tempTrip.notifications || []
+    // console.log('je te montre tempNotifs', tempNotifs)
+    // const tempTripNotifFiltered = tempNotifs.filter(
+    //   notification => notification?.event?.id !== tempEvent.id
+    // )
     const tempUserGroup = tempTrip.travelersDetails.map(traveler => traveler.id)
     console.log('les id du départ', tempUserGroup)
     tempUserGroup.forEach(user =>
@@ -342,42 +346,53 @@ const FirebaseContextProvider = ({ children }) => {
 
     console.log('les id de firestore', tempPromisesUser)
 
-    Promise.all(tempPromisesUser).then(datas => {
-      console.log('datas', datas)
+    Promise.all(tempPromisesUser)
+      .then(datas => {
+        console.log('datas', datas)
 
-      datas.forEach(data => {
-        definitiveUserGroup.push(data.data())
+        datas.forEach((data, index) => {
+          definitiveUserGroup.push({ ...data.data(), id: tempUserGroup[index] })
+        })
       })
-    })
+      .then(() => {
+        console.log('utilisateurs définitifs', definitiveUserGroup)
+        // console.log('tableau de notif filtrés pour le voyage', tempTripNotifFiltered)
 
-    console.log('utilisateurs définitifs', definitiveUserGroup)
-    console.log('tableau de notif filtrés pour le voyage', tempTripNotifFiltered)
+        const finalUsers = definitiveUserGroup?.map(definitiveUser => {
+          const tempDefinitiveUser = structuredClone(definitiveUser)
+          console.log('tempDefinitiveUser', tempDefinitiveUser)
+          tempDefinitiveUser.notifications =
+            definitiveUser.notifications?.filter(
+              notification => notification?.event?.id !== event?.id
+            ) || []
+          return tempDefinitiveUser
+        })
 
-    const finalUsers = definitiveUserGroup.map(definitiveUser => {
-      const tempDefinitiveUser = structuredClone(definitiveUser)
-      tempDefinitiveUser.notifications =
-        definitiveUser.notifications?.filter(
-          notification => notification?.event?.id !== event.id
-        ) || []
-      return tempDefinitiveUser
-    })
+        console.log('les utilisateurs finaux avec les tableaux filtrés', finalUsers)
 
-    console.log('les utilisateurs finaux avec les tableaux filtrés', finalUsers)
+        // const mergedNotifications = tempTripNotifFiltered
+        // console.log('mergedNotifications', mergedNotifications)
+        // firestore
+        //   .collection('trips')
+        //   .doc(tripId)
+        //   .set({ notifications: mergedNotifications }, { merge: true })
 
-    // const mergedNotifications = tempTripNotifFiltered
-    // console.log('mergedNotifications', mergedNotifications)
-    // firestore
-    //   .collection('trips')
-    //   .doc(tripId)
-    //   .set({ notifications: mergedNotifications }, { merge: true })
-
-    const promises = finalUsers?.forEach(singleUser => {
-      console.log('chaque utilisateur', singleUser)
-      firestore
-        .collection('users')
-        .doc(singleUser.id)
-        .set({ notifications: singleUser?.notifications }, { merge: true })
-    })
+        const promises = finalUsers?.forEach(singleUser => {
+          console.log('chaque utilisateur', singleUser)
+          if (singleUser.notifications.length > 0) {
+            firebase
+              .firestore()
+              .collection('users')
+              .doc(singleUser.id)
+              .update({
+                notifications: singleUser.notifications || [],
+              })
+              .then(() => {
+                console.log(`notification updated for ${singleUser?.firstname}`)
+              })
+          }
+        })
+      })
   }
 
   const createNotifications = async (currentUser, tripData, type, priority) => {

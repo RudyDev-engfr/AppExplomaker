@@ -62,6 +62,7 @@ import {
   CURRENCIES,
   ROLES,
   EVENT_TYPES,
+  NATURALADMINS,
 } from '../../helper/constants'
 import CustomAvatar from '../../components/atoms/CustomAvatar'
 import Chat from '../../components/molecules/Chat'
@@ -84,6 +85,7 @@ import arrow from '../../images/icons/arrow-grey.svg'
 import plusCircle from '../../images/icons/plusCircle.svg'
 import TripLogs from './TripLogs'
 import usePrevious from '../../hooks/usePrevious'
+import { TripContext } from '../../contexts/trip'
 
 const notifications = [
   {
@@ -558,10 +560,10 @@ const TripPage = () => {
     createNotificationsOnTrip,
   } = useContext(FirebaseContext)
   const { user } = useContext(SessionContext)
+  const { tripData, setTripData } = useContext(TripContext)
 
   const [isLoading, setIsLoading] = useState(true)
   const [carouselImages, setCarouselImages] = useState([])
-  const [tripData, setTripData] = useState()
   const [tripTravelers, setTripTravelers] = useState([])
   const [tripWishes, setTripWishes] = useState([])
   const [openModal, setOpenModal] = useState('')
@@ -653,7 +655,7 @@ const TripPage = () => {
     if (!doc.editors.includes(user.id)) {
       history.push('/')
     }
-    if (doc.owner === user.id) {
+    if (doc.owner === user.id || NATURALADMINS.includes(user.id)) {
       setCanEdit(true)
       setIsAdmin(true)
     } else {
@@ -991,6 +993,7 @@ const TripPage = () => {
         currentActiveTab={currentActiveTab}
         setCurrentActiveTab={setCurrentActiveTab}
         tripId={tripId}
+        setOpenModal={setOpenModal}
         canEdit={canEdit}
         tripData={tripData}
         currentDateRange={currentDateRange}
