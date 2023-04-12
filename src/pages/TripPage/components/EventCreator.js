@@ -330,9 +330,17 @@ const EventCreator = ({
 
   useEffect(() => {
     if (!editMode) {
-      setSelectedDepartureDateTime(add(selectedArrivalDateTime, { days: 1 }))
+      setSelectedDepartureDateTime(add(selectedArrivalDateTime, { hours: 16 }))
     }
   }, [selectedArrivalDateTime])
+
+  useEffect(() => {
+    if (selectedDateFromPlanning && eventType === EVENT_TYPES[0] && !editMode) {
+      setSelectedArrivalDateTime(add(selectedDateFromPlanning, { hours: 18 }))
+    } else {
+      setSelectedArrivalDateTime(add(tripStartDate, { hours: 18 }))
+    }
+  }, [selectedDateFromPlanning])
 
   useEffect(() => {
     if (!editMode) {
