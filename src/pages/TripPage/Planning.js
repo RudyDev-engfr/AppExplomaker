@@ -2,9 +2,9 @@
 /* eslint-disable no-labels */
 import React, { Fragment, useContext, useEffect, useState } from 'react'
 import Paper from '@mui/material/Paper'
+import Box from '@mui/material/Box'
 import {
   alpha,
-  Box,
   Button,
   ButtonBase,
   Container,
@@ -71,6 +71,7 @@ import PlanningCard from './components/PlanningCard'
 import mixedIcon from '../../images/eventCreator/transport/mixed.svg'
 import lineMobile from '../../images/icons/lineMobile.svg'
 import { TripContext } from '../../contexts/trip'
+import PlanningFeed from './components/PlanningFeed'
 
 const useStyles = makeStyles(theme => ({
   calendarArea: {
@@ -170,6 +171,29 @@ const useStyles = makeStyles(theme => ({
     margin: '20px 20px 0',
     placeItems: 'center',
     borderRadius: '10px 10px 0 0',
+    [theme.breakpoints.down('sm')]: {
+      gridRowStart: 'mapArea',
+      gridRowEnd: 'previewArea',
+      minHeight: 'calc(100vh - 90px - 20px)',
+      maxHeight: 'calc(100vh - 90px - 20px)',
+      zIndex: '10000',
+      margin: '20px 0 0',
+      borderRadius: '30px 30px 0 0',
+      '&::-webkit-scrollbar': {
+        display: 'none',
+      },
+    },
+  },
+  chronoFeed: {
+    gridArea: 'previewArea',
+    overflowY: 'auto',
+    overflowX: 'hidden',
+    minHeight: 'calc(100vh - 100px - 20px)',
+    maxHeight: 'calc(100vh - 100px - 20px)',
+    placeItems: 'center',
+    borderRadius: '10px 10px 0 0',
+    backgroundColor: theme.palette.grey.f7,
+    zIndex: '1000',
     [theme.breakpoints.down('sm')]: {
       gridRowStart: 'mapArea',
       gridRowEnd: 'previewArea',
@@ -296,6 +320,8 @@ const Planning = ({ tripData, setTripData, tripId, canEdit }) => {
     setCurrentEventId,
     setNeedMapRefresh,
     currentMarkers,
+    days,
+    setDays,
   } = useContext(PlanningContext)
 
   const [isMounted, setIsMounted] = useState(false)
@@ -305,7 +331,6 @@ const Planning = ({ tripData, setTripData, tripId, canEdit }) => {
   const [eventType, setEventType] = useState('')
   const [anchorEl, setAnchorEl] = useState(null)
   const [plannedEvents, setPlannedEvents] = useState([])
-  const [days, setDays] = useState([])
   const [selectedDate, setSelectedDate] = useState('')
   const [currentEvents, setCurrentEvents] = useState({ accomodations: [], surveys: [], events: [] })
   const [isNewProposition, setIsNewProposition] = useState(false)
@@ -1187,6 +1212,9 @@ const Planning = ({ tripData, setTripData, tripId, canEdit }) => {
   return (
     <>
       <Box className={classes.boxPlanning}>
+        {currentView === 'chronoFeed' && (
+          <PlanningFeed plannedEvents={plannedEvents} propsClasses={classes.chronoFeed} />
+        )}
         {canEdit && currentView === 'add' && (
           <EventAdd setEventType={setEventType} setCurrentView={setCurrentView} />
         )}
@@ -1249,7 +1277,8 @@ const Planning = ({ tripData, setTripData, tripId, canEdit }) => {
                 onClick={() => {
                   setIsNewDatesSectionOpen(false)
                   setSelectedDate('')
-                  setCurrentView('planning')
+                  // setCurrentView('planning')
+                  setCurrentView('chronoFeed')
                 }}
                 elevation={0}
                 className={clsx(classes.calendarTitle)}

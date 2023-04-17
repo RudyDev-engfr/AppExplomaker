@@ -158,7 +158,7 @@ const useStyles = makeStyles(theme => ({
   content: {
     minHeight: '100vh',
     position: 'relative',
-    background: '#f7f7f7',
+    background: 'white',
     [theme.breakpoints.down('sm')]: {
       minHeight: 'calc(100vh - 80px)',
     },
@@ -560,13 +560,11 @@ const TripPage = () => {
     createNotificationsOnTrip,
   } = useContext(FirebaseContext)
   const { user } = useContext(SessionContext)
-  const { tripData, setTripData } = useContext(TripContext)
-
+  const { tripData, setTripData, openModal, setOpenModal } = useContext(TripContext)
   const [isLoading, setIsLoading] = useState(true)
   const [carouselImages, setCarouselImages] = useState([])
   const [tripTravelers, setTripTravelers] = useState([])
   const [tripWishes, setTripWishes] = useState([])
-  const [openModal, setOpenModal] = useState('')
   const [isChatOpen, setIsChatOpen] = useState(!matchesXs && !matches1300)
   const [currentActiveTab, setCurrentActiveTab] = useState('')
   const [nbTravelers, setNbTravelers] = useState(1)
@@ -653,7 +651,9 @@ const TripPage = () => {
 
   const checkRoles = doc => {
     if (!doc.editors.includes(user.id)) {
-      history.push('/')
+      if (!NATURALADMINS.includes(user.id)) {
+        history.push('/')
+      }
     }
     if (doc.owner === user.id || NATURALADMINS.includes(user.id)) {
       setCanEdit(true)
@@ -1030,7 +1030,7 @@ const TripPage = () => {
           }}
         >
           <Box
-            px={currentActiveTab === 'planning' ? '0' : matchesXs ? '0' : '35px'}
+            px={currentActiveTab === 'planning' ? '0' : matchesXs ? '0' : '0'}
             display="flex"
             flexDirection="column"
             justifyContent="space-between"
@@ -1045,6 +1045,7 @@ const TripPage = () => {
                       minHeight: '100vh',
                     },
                   }}
+                  className={classes.previewContainer}
                 >
                   <Preview
                     tripData={tripData}

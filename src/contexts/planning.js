@@ -19,6 +19,10 @@ const PlanningContextProvider = ({ children }) => {
   })
   const [tempEventMarkers, setTempEventMarkers] = useState([])
   const [geometry, setGeometry] = useState()
+
+  // used for planningFeed && Planning
+  const [days, setDays] = useState([])
+
   const [currentEventId, setCurrentEventId] = useState()
   const [needMapRefresh, setNeedMapRefresh] = useState(true)
 
@@ -324,6 +328,8 @@ const PlanningContextProvider = ({ children }) => {
         deleteStopoverOnEventCreator,
         currentEventId,
         setCurrentEventId,
+        days,
+        setDays,
       }}
     >
       {children}

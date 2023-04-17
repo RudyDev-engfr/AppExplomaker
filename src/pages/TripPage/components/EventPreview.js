@@ -222,6 +222,12 @@ const EventPreview = ({
   }, [])
 
   useEffect(() => {
+    console.log('montre moi', findIcon(currentEvent.icon, currentEventType))
+    console.log('event courant', currentEvent)
+    console.log('type devent courant', currentEventType)
+  }, [currentEvent, currentEventType])
+
+  useEffect(() => {
     setCurrentEventType(currentEvent.type)
     if (previousEvent?.isSurvey) {
       setCurrentEventType(previousEvent.type)

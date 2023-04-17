@@ -1,6 +1,7 @@
 import React, { useState, useEffect, createContext, useContext } from 'react'
 import { useParams } from 'react-router-dom'
 import { toast } from 'react-toastify'
+import { rCTFF } from '../helper/functions'
 
 import { FirebaseContext } from './firebase'
 import { SessionContext } from './session'
@@ -15,6 +16,11 @@ const TripContextProvider = ({ children }) => {
   const [deleteEventNotifications, setDeleteEventNotifications] = useState(false)
   const [tripData, setTripData] = useState()
   const [currentEvent, setCurrentEvent] = useState()
+  const [openModal, setOpenModal] = useState('')
+
+  // used in preview, desktopPreview
+  const [currentDateRange, setCurrentDateRange] = useState(['', ''])
+
   // const [allowDeleteNotif, setAllowDeleteNotif] = useState(false)
   // const [timingRefresh, setTimingRefresh] = useState(false)
 
@@ -63,6 +69,23 @@ const TripContextProvider = ({ children }) => {
   // }, [allowDeleteNotif])
 
   useEffect(() => {
+    if (
+      tripData?.dateRange &&
+      tripData?.dateRange.length &&
+      tripData?.dateRange[0] !== '' &&
+      tripData?.dateRange[1] !== ''
+    ) {
+      setCurrentDateRange(rCTFF(tripData.dateRange, 'E dd MMMM'))
+    } else {
+      setCurrentDateRange(['', ''])
+    }
+  }, [tripData])
+
+  useEffect(() => {
+    console.log('les dates du voyage dans le trip context', currentDateRange)
+  }, [currentDateRange])
+
+  useEffect(() => {
     console.log('tripData du useEffect planning', tripData)
   }, [tripData])
 
@@ -75,6 +98,10 @@ const TripContextProvider = ({ children }) => {
         setCurrentEvent,
         tripData,
         setTripData,
+        openModal,
+        setOpenModal,
+        currentDateRange,
+        setCurrentDateRange,
       }}
     >
       {children}

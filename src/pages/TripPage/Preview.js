@@ -26,6 +26,7 @@ import NotificationArea from '../../components/molecules/NotificationArea'
 import { SessionContext } from '../../contexts/session'
 import MobileNotificationArea from '../../components/molecules/MobileNotificationArea'
 import DesktopPreview from './DesktopPreview'
+import { TripContext } from '../../contexts/trip'
 
 const useStyles = makeStyles(theme => ({
   slides: {
@@ -111,7 +112,7 @@ const useStyles = makeStyles(theme => ({
   descriptionPaper: {
     background: '#fff',
     borderRadius: '20px',
-    margin: '20px 0',
+    marginBottom: '20px',
     padding: '30px 30px 70px',
     position: 'relative',
     [theme.breakpoints.down('sm')]: {
@@ -238,8 +239,8 @@ const Preview = ({
 
   const { dictionary } = useContext(FirebaseContext)
   const { user } = useContext(SessionContext)
+  const { currentDateRange, setCurrentDateRange } = useContext(TripContext)
 
-  const [currentDateRange, setCurrentDateRange] = useState(['', ''])
   const [generatedAvatars, setGeneratedAvatars] = useState([])
   const [currentNotifications, setCurrentNotifications] = useState([])
   const [refreshNotif, setRefreshNotif] = useState(false)
@@ -268,19 +269,6 @@ const Preview = ({
       })
     setGeneratedAvatars(tempAvatars)
   }, [tripData])
-
-  useEffect(() => {
-    if (
-      tripData.dateRange &&
-      tripData.dateRange.length &&
-      tripData.dateRange[0] !== '' &&
-      tripData.dateRange[1] !== ''
-    ) {
-      setCurrentDateRange(rCTFF(tripData.dateRange, 'E dd MMMM'))
-    } else {
-      setCurrentDateRange(['', ''])
-    }
-  }, [tripData.dateRange])
 
   const displayTripContext = context => {
     switch (context) {
@@ -395,12 +383,15 @@ const Preview = ({
           </Box>
         </Box>
         <Box className={classes.mobileContent}>
-          <DesktopPreview
-            tripData={tripData}
-            generatedAvatars={generatedAvatars}
-            currentDateRange={currentDateRange}
-          />
-          <Box sx={{ padding: '0 30px' }}>
+          {!matchesXs && <DesktopPreview tripData={tripData} generatedAvatars={generatedAvatars} />}
+          <Box
+            sx={{
+              padding: '20px 30px',
+              borderRadius: '20px 20px 0 0',
+              backgroundColor: theme.palette.grey.f7,
+            }}
+            className={classes.informationsContainer}
+          >
             <Paper className={classes.descriptionPaper}>
               {canEdit && <EditBtn onClick={() => setOpenModal('editDescription')} />}
               <Box display="flex">

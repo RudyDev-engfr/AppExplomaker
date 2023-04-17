@@ -51,9 +51,9 @@ export function rCTFF(arrayOfTimestamps, formatStr) {
   return timestamps
 }
 
-export function dateToString(date) {
+export function dateToString(date, displayFormat = 'yyyy-MM-dd') {
   const tempDate = date
-  return format(tempDate, 'yyyy-MM-dd', { locale: frLocale })
+  return format(tempDate, displayFormat, { locale: frLocale })
 }
 
 export function dateTimeToString(dateTime) {
