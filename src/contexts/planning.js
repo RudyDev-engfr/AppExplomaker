@@ -1,6 +1,8 @@
-import React, { createContext, useRef, useState } from 'react'
+import { eachDayOfInterval, isSameDay } from 'date-fns'
+import React, { createContext, useEffect, useRef, useState } from 'react'
 import { v4 as uuidv4 } from 'uuid'
 import CustomMarker from '../components/atoms/CustomMarker'
+import { dateToString, stringToDate } from '../helper/functions'
 
 import { findSpecificGoogleMarker } from '../helper/icons'
 import { firestore } from './firebase'
@@ -20,8 +22,16 @@ const PlanningContextProvider = ({ children }) => {
   const [tempEventMarkers, setTempEventMarkers] = useState([])
   const [geometry, setGeometry] = useState()
 
+  // used for Planning
+  const [plannedEvents, setPlannedEvents] = useState([])
+
   // used for planningFeed && Planning
   const [days, setDays] = useState([])
+  const [selectedDate, setSelectedDate] = useState('')
+  const [isNewDatesSectionOpen, setIsNewDatesSectionOpen] = useState(false)
+
+  // used to construct planningFeed
+  const [singleDayPlannedEvents, setSingleDayPlannedEvents] = useState()
 
   const [currentEventId, setCurrentEventId] = useState()
   const [needMapRefresh, setNeedMapRefresh] = useState(true)
@@ -29,6 +39,44 @@ const PlanningContextProvider = ({ children }) => {
   const planningMapRef = useRef(null)
 
   const planningBounds = new window.google.maps.LatLngBounds()
+
+  useEffect(() => {
+    if (plannedEvents.length > 0) {
+      const singleDayEventsArray = []
+      let singleDate
+      plannedEvents.forEach(plannedEvent => {
+        const plannedEventInterval = eachDayOfInterval({
+          start: stringToDate(plannedEvent.startTime, 'yyyy-MM-dd HH:mm'),
+          end: stringToDate(plannedEvent.endTime, 'yyyy-MM-dd HH:mm'),
+        })
+        if (plannedEventInterval.length > 0) {
+          plannedEventInterval.forEach(eachDayOfEvent => {
+            const tempPlannedEvent = structuredClone(plannedEvent)
+            if (
+              isSameDay(
+                stringToDate(tempPlannedEvent.startTime, 'yyyy-MM-dd HH:mm'),
+                eachDayOfEvent
+              )
+            ) {
+              singleDate = tempPlannedEvent.startTime
+            } else if (
+              isSameDay(stringToDate(tempPlannedEvent.endTime, 'yyyy-MM-dd HH:mm'), eachDayOfEvent)
+            ) {
+              singleDate = tempPlannedEvent.endTime
+            } else {
+              singleDate = dateToString(eachDayOfEvent, 'yyyy-MM-dd HH:mm')
+              tempPlannedEvent.itsAllDayLong = true
+            }
+            tempPlannedEvent.fakeDate = singleDate
+            singleDayEventsArray.push(tempPlannedEvent)
+          })
+        }
+        if (singleDayEventsArray.length > 0) {
+          setSingleDayPlannedEvents(singleDayEventsArray)
+        }
+      })
+    }
+  }, [plannedEvents])
 
   const deleteStopoverOnEventCreator = (flights, flightId, setter) => {
     const tempFlights = structuredClone(flights)
@@ -330,6 +378,14 @@ const PlanningContextProvider = ({ children }) => {
         setCurrentEventId,
         days,
         setDays,
+        singleDayPlannedEvents,
+        setSingleDayPlannedEvents,
+        plannedEvents,
+        setPlannedEvents,
+        selectedDate,
+        setSelectedDate,
+        isNewDatesSectionOpen,
+        setIsNewDatesSectionOpen,
       }}
     >
       {children}

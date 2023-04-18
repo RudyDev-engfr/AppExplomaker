@@ -756,6 +756,8 @@ const EventCreator = ({
           currency,
           website,
           date: dateTimeToString(transports[0].startTime),
+          startTime: dateTimeToString(transports[0].startTime),
+          endTime: dateTimeToString(transports[transports.length - 1].endTime),
         }
         break
       case EVENT_TYPES[4]:

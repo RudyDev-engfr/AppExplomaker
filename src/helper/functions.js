@@ -7,6 +7,7 @@ import {
   subHours,
   intervalToDuration,
   formatDuration,
+  isBefore,
 } from 'date-fns'
 import frLocale from 'date-fns/locale/fr'
 import parse from 'date-fns/parse'
@@ -54,6 +55,13 @@ export function rCTFF(arrayOfTimestamps, formatStr) {
 export function dateToString(date, displayFormat = 'yyyy-MM-dd') {
   const tempDate = date
   return format(tempDate, displayFormat, { locale: frLocale })
+}
+
+export function sortDates(date1, date2) {
+  if (isBefore(date1, date2)) {
+    return 1
+  }
+  return -1
 }
 
 export function dateTimeToString(dateTime) {

@@ -28,7 +28,7 @@ const useStyles = makeStyles(theme => ({
     color: theme.palette.grey['82'],
   },
   eventTitleTypo: {
-    fontWeight: 700,
+    fontWeight: 400,
   },
   iconContainer: {
     padding: '6px',
@@ -64,7 +64,11 @@ const MiniEventCard = ({ plannedEvent }) => {
       </Box>
       <Box className={classes.miniaEventTypoContainer}>
         <Typography className={classes.hourTypo}>
-          {format(stringToDate(plannedEvent.startTime, 'yyyy-MM-dd HH:mm'), "HH 'h' mm")}
+          {plannedEvent.itsAllDayLong && plannedEvent.type === EVENT_TYPES[0]
+            ? 'Nuit'
+            : plannedEvent.itsAllDayLong
+            ? 'Jour'
+            : format(stringToDate(plannedEvent.fakeDate, 'yyyy-MM-dd HH:mm'), "HH 'h' mm")}
         </Typography>
         <Typography className={classes.eventTitleTypo}>{plannedEvent.title}</Typography>
       </Box>

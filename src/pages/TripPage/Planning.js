@@ -322,6 +322,12 @@ const Planning = ({ tripData, setTripData, tripId, canEdit }) => {
     currentMarkers,
     days,
     setDays,
+    plannedEvents,
+    setPlannedEvents,
+    selectedDate,
+    setSelectedDate,
+    isNewDatesSectionOpen,
+    setIsNewDatesSectionOpen,
   } = useContext(PlanningContext)
 
   const [isMounted, setIsMounted] = useState(false)
@@ -330,12 +336,9 @@ const Planning = ({ tripData, setTripData, tripId, canEdit }) => {
   const [previousEvent, setPreviousEvent] = useState()
   const [eventType, setEventType] = useState('')
   const [anchorEl, setAnchorEl] = useState(null)
-  const [plannedEvents, setPlannedEvents] = useState([])
-  const [selectedDate, setSelectedDate] = useState('')
   const [currentEvents, setCurrentEvents] = useState({ accomodations: [], surveys: [], events: [] })
   const [isNewProposition, setIsNewProposition] = useState(false)
   const [withoutDatesEvents, setWithoutDatesEvents] = useState({ surveys: [], events: [] })
-  const [isNewDatesSectionOpen, setIsNewDatesSectionOpen] = useState(false)
   const [selectedPropositionIndex, setSelectedPropositionIndex] = useState()
   const [editMode, setEditMode] = useState(false)
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false)
@@ -1213,7 +1216,11 @@ const Planning = ({ tripData, setTripData, tripId, canEdit }) => {
     <>
       <Box className={classes.boxPlanning}>
         {currentView === 'chronoFeed' && (
-          <PlanningFeed plannedEvents={plannedEvents} propsClasses={classes.chronoFeed} />
+          <PlanningFeed
+            plannedEvents={plannedEvents}
+            propsClasses={classes.chronoFeed}
+            setCurrentView={setCurrentView}
+          />
         )}
         {canEdit && currentView === 'add' && (
           <EventAdd setEventType={setEventType} setCurrentView={setCurrentView} />
