@@ -1,15 +1,22 @@
+/* eslint-disable no-use-before-define */
 import { eachDayOfInterval, isSameDay } from 'date-fns'
-import React, { createContext, useEffect, useRef, useState } from 'react'
+import React, { createContext, useContext, useEffect, useRef, useState } from 'react'
+import { useHistory, useParams } from 'react-router-dom'
 import { v4 as uuidv4 } from 'uuid'
 import CustomMarker from '../components/atoms/CustomMarker'
+import { EVENT_TYPES } from '../helper/constants'
 import { dateToString, stringToDate } from '../helper/functions'
 
-import { findSpecificGoogleMarker } from '../helper/icons'
+import { findGoogleMarker, findSpecificGoogleMarker } from '../helper/icons'
 import { firestore } from './firebase'
+import { TripContext } from './trip'
 
 export const PlanningContext = createContext()
 
 const PlanningContextProvider = ({ children }) => {
+  const history = useHistory()
+  const { tripId } = useParams()
+  const { currentEvent, setCurrentEvent } = useContext(TripContext)
   const [currentMarkers, setCurrentMarkers] = useState([])
   const [transportMarkers, setTransportMarkers] = useState({
     transportMarkers: [],
@@ -24,6 +31,11 @@ const PlanningContextProvider = ({ children }) => {
 
   // used for Planning
   const [plannedEvents, setPlannedEvents] = useState([])
+  const [currentEvents, setCurrentEvents] = useState({ accomodations: [], surveys: [], events: [] })
+  const [withoutDatesEvents, setWithoutDatesEvents] = useState({ surveys: [], events: [] })
+  const [currentView, setCurrentView] = useState('chronoFeed')
+  const [previousEvent, setPreviousEvent] = useState()
+  const [selectedPropositionIndex, setSelectedPropositionIndex] = useState()
 
   // used for planningFeed && Planning
   const [days, setDays] = useState([])
@@ -41,51 +53,509 @@ const PlanningContextProvider = ({ children }) => {
   const planningBounds = new window.google.maps.LatLngBounds()
 
   useEffect(() => {
+    if (singleDayPlannedEvents?.length > 1) {
+      singleDayPlannedEvents.forEach(singleDayPlannedEvent =>
+        // eslint-disable-next-line no-use-before-define
+        preventEventFormat(singleDayPlannedEvent)
+      )
+    }
+  }, [singleDayPlannedEvents])
+
+  useEffect(() => {
+    if (currentView === 'chronoFeed') {
+      setCurrentEvents()
+    }
+  }, [currentView])
+
+  useEffect(() => {
+    const tempMarkers = []
+    if (isNewDatesSectionOpen) {
+      if (withoutDatesEvents.surveys.length < 1 && withoutDatesEvents.events.length < 1) {
+        setIsNewDatesSectionOpen(false)
+      } else {
+        const tempCurrentTransportMarkers = []
+        const tempTransportCoordinates = []
+        let tempFlightIndex = 0
+        const tempWithoutDateSurveyMarkers = []
+        withoutDatesEvents.surveys.forEach(survey =>
+          survey.propositions.forEach((proposition, propositionIndex) => {
+            if (
+              survey.type === EVENT_TYPES[0] ||
+              survey.type === EVENT_TYPES[2] ||
+              survey.type === EVENT_TYPES[4]
+            ) {
+              tempWithoutDateSurveyMarkers.push(
+                <CustomMarker
+                  key={proposition.location.value.place_id}
+                  position={{ lat: proposition.location?.lat, lng: proposition.location?.lng }}
+                  viewport={proposition.location.viewport}
+                  clickable
+                  onClick={() => {
+                    if (currentView !== 'preview') {
+                      if (currentView === 'survey') {
+                        setPreviousEvent(survey)
+                        setSelectedPropositionIndex(propositionIndex)
+                        setEvent(proposition)
+                      } else {
+                        setSurvey(survey)
+                      }
+                    }
+                  }}
+                  onMouseOver={() => setCurrentEventId(survey.id)}
+                  onMouseOut={() => setCurrentEventId()}
+                  icon={findGoogleMarker(survey.type, survey.id === currentEventId)}
+                />
+              )
+            }
+            if (survey.type === EVENT_TYPES[1]) {
+              proposition.flights.forEach(currentFlight =>
+                tempWithoutDateSurveyMarkers.push(
+                  <CustomMarker
+                    key={currentFlight.data.airports[0].iataCode} // TODO better key
+                    position={{
+                      lat: currentFlight.data.airports[0].geocode.latitude,
+                      lng: currentFlight.data.airports[0].geocode.longitude,
+                    }}
+                    clickable
+                    onClick={() => {
+                      if (currentView !== 'preview') {
+                        if (currentView === 'survey') {
+                          setPreviousEvent(survey)
+                          setSelectedPropositionIndex(propositionIndex)
+                          setEvent(proposition)
+                        } else {
+                          setSurvey(survey)
+                        }
+                      }
+                    }}
+                    onMouseOver={() => setCurrentEventId(survey.id)}
+                    onMouseOut={() => setCurrentEventId()}
+                    icon={findGoogleMarker(survey.type, survey.id === currentEventId)} // TODO proposition.icon
+                  />
+                )
+              )
+            }
+            if (survey.type === EVENT_TYPES[3]) {
+              proposition.transports.forEach(currentTransport => {
+                const startPos = {
+                  lat: currentTransport.startLocation.lat,
+                  lng: currentTransport.startLocation.lng,
+                }
+                const endPos = {
+                  lat: currentTransport.endLocation.lat,
+                  lng: currentTransport.endLocation.lng,
+                }
+                tempTransportCoordinates.push([{ ...startPos }, { ...endPos }])
+                tempCurrentTransportMarkers.push(
+                  <CustomMarker
+                    key={currentTransport.start.value.place_id}
+                    position={{ ...startPos }}
+                    clickable
+                    onClick={() => {
+                      if (currentView !== 'preview') {
+                        if (currentView === 'survey') {
+                          setPreviousEvent(survey)
+                          setSelectedPropositionIndex(propositionIndex)
+                          setEvent(proposition)
+                        } else {
+                          setSurvey(survey)
+                        }
+                      }
+                    }}
+                    onMouseOver={() => setCurrentEventId(survey.id)}
+                    onMouseOut={() => setCurrentEventId()}
+                    icon={findGoogleMarker(survey.type, survey.id === currentEventId)}
+                  />,
+                  <CustomMarker
+                    key={currentTransport.end.value.place_id}
+                    position={{ ...endPos }}
+                    clickable
+                    onClick={() => {
+                      if (currentView !== 'preview') {
+                        if (currentView === 'survey') {
+                          setPreviousEvent(survey)
+                          setSelectedPropositionIndex(propositionIndex)
+                          setEvent(proposition)
+                        } else {
+                          setSurvey(survey)
+                        }
+                      }
+                    }}
+                    onMouseOver={() => setCurrentEventId(survey.id)}
+                    onMouseOut={() => setCurrentEventId()}
+                    icon={findGoogleMarker(survey.type, survey.id === currentEventId)}
+                  />
+                )
+              })
+            }
+          })
+        )
+        const withoutDateEventMarkers = []
+        withoutDatesEvents.events.forEach(event => {
+          if (
+            event.type === EVENT_TYPES[0] ||
+            event.type === EVENT_TYPES[2] ||
+            event.type === EVENT_TYPES[4]
+          ) {
+            withoutDateEventMarkers.push(
+              <CustomMarker
+                key={event.id}
+                position={{ lat: event.location.lat, lng: event.location.lng }}
+                clickable
+                onClick={() => {
+                  if (currentView !== 'preview') {
+                    setEvent(event)
+                  }
+                }}
+                onMouseOver={() => setCurrentEventId(event.id)}
+                onMouseOut={() => setCurrentEventId()}
+                viewport={event.location.viewport}
+                icon={findSpecificGoogleMarker(event.icon, event.id === currentEventId, event.type)}
+              />
+            )
+          } else if (event.type === EVENT_TYPES[1]) {
+            event.flights.forEach(flight => {
+              const currentFlightIndex = tempFlightIndex
+              tempTransportCoordinates.push([])
+              tempFlightIndex += 1
+
+              flight.data.airports.forEach(airport => {
+                tempTransportCoordinates[currentFlightIndex].push({
+                  lat: airport.geocode.latitude,
+                  lng: airport.geocode.longitude,
+                })
+
+                withoutDateEventMarkers.push(
+                  <CustomMarker
+                    key={event.id}
+                    position={{
+                      lat: airport.geocode.latitude,
+                      lng: airport.geocode.longitude,
+                    }}
+                    clickable
+                    onClick={() => {
+                      if (currentView !== 'preview') {
+                        setEvent(event)
+                      }
+                    }}
+                    onMouseOver={() => setCurrentEventId(event.id)}
+                    onMouseOut={() => setCurrentEventId()}
+                    icon={findSpecificGoogleMarker(
+                      event.icon,
+                      event.id === currentEventId,
+                      event.type
+                    )}
+                  />
+                )
+              })
+            })
+          } else if (event.type === EVENT_TYPES[3]) {
+            event.transports.forEach(transport => {
+              const startPos = {
+                lat: transport.startLocation.lat,
+                lng: transport.startLocation.lng,
+              }
+              const endPos = { lat: transport.endLocation.lat, lng: transport.endLocation.lng }
+              const currentIcon = findSpecificGoogleMarker(
+                transport.icon,
+                event.id === currentEventId,
+                EVENT_TYPES[3]
+              )
+
+              tempTransportCoordinates.push([{ ...startPos }, { ...endPos }])
+              tempCurrentTransportMarkers.push(
+                <CustomMarker
+                  key={`${transport.start.value.place_id}-${event.id}`}
+                  position={{ ...startPos }}
+                  clickable
+                  onClick={() => {
+                    if (currentView !== 'preview') {
+                      setEvent(event)
+                    }
+                  }}
+                  onMouseOver={() => setCurrentEventId(event.id)}
+                  onMouseOut={() => setCurrentEventId()}
+                  icon={currentIcon}
+                />,
+                <CustomMarker
+                  key={`${transport.end.value.place_id}-${event.id}`}
+                  position={{ ...endPos }}
+                  clickable
+                  onClick={() => {
+                    if (currentView !== 'preview') {
+                      setEvent(event)
+                    }
+                  }}
+                  onMouseOver={() => setCurrentEventId(event.id)}
+                  onMouseOut={() => setCurrentEventId()}
+                  icon={currentIcon}
+                />
+              )
+            })
+          }
+        })
+        tempMarkers.push(tempWithoutDateSurveyMarkers, withoutDateEventMarkers)
+        setTransportMarkers({
+          transportMarkers: tempCurrentTransportMarkers,
+          transportCoordinates: tempTransportCoordinates,
+        })
+      }
+    } else {
+      const tempCurrentTransportMarkers = []
+      const tempTransportCoordinates = []
+      let tempFlightIndex = 0
+
+      const tempAccomodationMarkers = currentEvents?.accomodations
+        .map(accomodation => (
+          <CustomMarker
+            key={accomodation.location.value.place_id}
+            position={{ lat: accomodation.location.lat, lng: accomodation.location.lng }}
+            clickable
+            onClick={() => {
+              if (currentView !== 'preview') {
+                setEvent(accomodation)
+              }
+            }}
+            onMouseOver={() => setCurrentEventId(accomodation.id)}
+            onMouseOut={() => setCurrentEventId()}
+            viewport={accomodation.location.viewport}
+            icon={findSpecificGoogleMarker(
+              accomodation.icon,
+              accomodation.id === currentEventId,
+              EVENT_TYPES[0]
+            )}
+          />
+        ))
+        .flat()
+      const tempSurveyMarkers = currentEvents?.surveys
+        .filter(
+          survey =>
+            survey.type === EVENT_TYPES[0] ||
+            survey.type === EVENT_TYPES[2] ||
+            survey.type === EVENT_TYPES[4]
+        )
+        .map(survey =>
+          survey.propositions.map((proposition, propositionIndex) => (
+            <CustomMarker
+              key={proposition.location.value.place_id}
+              position={{ lat: proposition.location?.lat, lng: proposition.location?.lng }}
+              clickable
+              onClick={() => {
+                if (currentView !== 'preview') {
+                  if (currentView === 'survey') {
+                    setPreviousEvent(survey)
+                    setSelectedPropositionIndex(propositionIndex)
+                    setEvent(proposition)
+                  } else {
+                    setSurvey(survey)
+                  }
+                }
+              }}
+              onMouseOver={() => setCurrentEventId(survey.id)}
+              onMouseOut={() => setCurrentEventId()}
+              viewport={proposition.location?.viewport}
+              icon={findGoogleMarker(survey.type, survey.id === currentEventId)}
+            />
+          ))
+        )
+        .flat()
+      const tempSurveyFlightMarkers = currentEvents?.surveys
+        .filter(survey => survey.type === EVENT_TYPES[1])
+        .map(survey =>
+          survey.propositions.map((flightProposition, flightPropositionIndex) =>
+            flightProposition.flights.map(flight => {
+              const currentFlightIndex = tempFlightIndex
+              tempTransportCoordinates.push([])
+              tempFlightIndex += 1
+              return flight.data.airports.map(airport => {
+                tempTransportCoordinates[currentFlightIndex].push({
+                  lat: airport.geocode.latitude,
+                  lng: airport.geocode.longitude,
+                })
+                return (
+                  <CustomMarker
+                    key={flightProposition.id}
+                    position={{
+                      lat: airport.geocode.latitude,
+                      lng: airport.geocode.longitude,
+                    }}
+                    clickable
+                    onClick={() => {
+                      if (currentView !== 'preview') {
+                        if (currentView === 'survey') {
+                          setPreviousEvent(survey)
+                          setSelectedPropositionIndex(flightPropositionIndex)
+                          setEvent(flightProposition)
+                        } else {
+                          setSurvey(survey)
+                        }
+                      }
+                    }}
+                    onMouseOver={() => setCurrentEventId(survey.id)}
+                    onMouseOut={() => setCurrentEventId()}
+                    icon={findGoogleMarker(survey.type, survey.id === currentEventId)}
+                  />
+                )
+              })
+            })
+          )
+        )
+        .flat()
+
+      const tempFlightMarkers = currentEvents?.events
+        .filter(event => event.type === EVENT_TYPES[1])
+        .map(event =>
+          event.flights.map(flight => {
+            const currentFlightIndex = tempFlightIndex
+            tempTransportCoordinates.push([])
+            tempFlightIndex += 1
+            return flight.data.airports.map((airport, airportIndex) => {
+              tempTransportCoordinates[currentFlightIndex].push({
+                lat: airport.geocode.latitude,
+                lng: airport.geocode.longitude,
+              })
+
+              return (
+                <CustomMarker
+                  key={`${event.id}-${flight.data.airports[airportIndex].iataCode}`}
+                  position={{
+                    lat: airport.geocode.latitude,
+                    lng: airport.geocode.longitude,
+                  }}
+                  clickable
+                  onClick={() => {
+                    if (currentView !== 'preview') {
+                      setEvent(event)
+                    }
+                  }}
+                  onMouseOver={() => setCurrentEventId(event.id)}
+                  onMouseOut={() => setCurrentEventId()}
+                  icon={findSpecificGoogleMarker(
+                    event.icon,
+                    event.id === currentEventId,
+                    event.type
+                  )}
+                />
+              )
+            })
+          })
+        )
+        .flat()
+      const tempCurrentEventMarkers = currentEvents?.events
+        .filter(event => event.type === EVENT_TYPES[2] || event.type === EVENT_TYPES[4])
+        .map(event => (
+          <CustomMarker
+            key={event.id}
+            position={{ lat: event.location?.lat, lng: event.location?.lng }}
+            clickable
+            onClick={() => {
+              if (currentView !== 'preview') {
+                setEvent(event)
+              }
+            }}
+            onMouseOver={() => setCurrentEventId(event.id)}
+            onMouseOut={() => setCurrentEventId()}
+            viewport={event.location.viewport}
+            icon={findSpecificGoogleMarker(event.icon, event.id === currentEventId, event.type)}
+          />
+        ))
+      tempMarkers.push(tempAccomodationMarkers, tempSurveyMarkers, tempCurrentEventMarkers)
+      tempCurrentTransportMarkers.push(
+        tempFlightMarkers,
+        tempSurveyFlightMarkers,
+        handleTransportMarkers(
+          currentEvents?.events.filter(event => event.type === EVENT_TYPES[3]),
+          false
+        )
+      )
+      const tempCoordinates = handleTransportMarkers(
+        currentEvents?.events.filter(event => event.type === EVENT_TYPES[3]),
+        true
+      )
+      currentEvents?.surveys
+        .filter(survey => survey.type === EVENT_TYPES[3])
+        .forEach(survey => {
+          tempCurrentTransportMarkers.push(handleTransportMarkers(survey.propositions, false))
+          tempCoordinates.push(handleTransportMarkers(survey.propositions, true).flat())
+        })
+      setTransportMarkers({
+        transportMarkers: tempCurrentTransportMarkers,
+        transportCoordinates: [tempTransportCoordinates.flat(), ...tempCoordinates],
+      })
+    }
+    setCurrentMarkers(tempMarkers.flat())
+  }, [currentEvents, isNewDatesSectionOpen, withoutDatesEvents, currentView, currentEventId])
+
+  useEffect(() => {
     if (plannedEvents.length > 0) {
       const singleDayEventsArray = []
       let singleDate
-      plannedEvents.forEach(plannedEvent => {
-        const plannedEventInterval = eachDayOfInterval({
-          start: stringToDate(plannedEvent.startTime, 'yyyy-MM-dd HH:mm'),
-          end: stringToDate(plannedEvent.endTime, 'yyyy-MM-dd HH:mm'),
-        })
-        if (plannedEventInterval.length > 0) {
-          plannedEventInterval.forEach(eachDayOfEvent => {
-            const tempPlannedEvent = structuredClone(plannedEvent)
-            if (
-              isSameDay(
-                stringToDate(tempPlannedEvent.startTime, 'yyyy-MM-dd HH:mm'),
-                eachDayOfEvent
-              )
-            ) {
-              singleDate = tempPlannedEvent.startTime
-            } else if (
-              isSameDay(stringToDate(tempPlannedEvent.endTime, 'yyyy-MM-dd HH:mm'), eachDayOfEvent)
-            ) {
-              singleDate = tempPlannedEvent.endTime
-            } else {
-              singleDate = dateToString(eachDayOfEvent, 'yyyy-MM-dd HH:mm')
-              tempPlannedEvent.itsAllDayLong = true
-            }
-            tempPlannedEvent.fakeDate = singleDate
-            singleDayEventsArray.push(tempPlannedEvent)
+      plannedEvents
+        .filter(plannedEvent => plannedEvent.type !== EVENT_TYPES[1])
+        .forEach(plannedEvent => {
+          const plannedEventInterval = eachDayOfInterval({
+            start: stringToDate(plannedEvent.startTime, 'yyyy-MM-dd HH:mm'),
+            end: stringToDate(plannedEvent.endTime, 'yyyy-MM-dd HH:mm'),
           })
-        }
-        if (singleDayEventsArray.length > 0) {
-          setSingleDayPlannedEvents(singleDayEventsArray)
-        }
-      })
+          if (plannedEventInterval.length > 0) {
+            plannedEventInterval.forEach(eachDayOfEvent => {
+              const tempPlannedEvent = structuredClone(plannedEvent)
+              if (
+                isSameDay(
+                  stringToDate(tempPlannedEvent.startTime, 'yyyy-MM-dd HH:mm'),
+                  eachDayOfEvent
+                )
+              ) {
+                singleDate = tempPlannedEvent.startTime
+              } else if (
+                isSameDay(
+                  stringToDate(tempPlannedEvent.endTime, 'yyyy-MM-dd HH:mm'),
+                  eachDayOfEvent
+                )
+              ) {
+                singleDate = tempPlannedEvent.endTime
+              } else {
+                singleDate = dateToString(eachDayOfEvent, 'yyyy-MM-dd HH:mm')
+                tempPlannedEvent.itsAllDayLong = true
+              }
+              tempPlannedEvent.fakeDate = singleDate
+              singleDayEventsArray.push(tempPlannedEvent)
+            })
+          }
+          if (singleDayEventsArray.length > 0) {
+            setSingleDayPlannedEvents(singleDayEventsArray)
+          }
+        })
     }
   }, [plannedEvents])
+
+  const preventEventFormat = event => {
+    if (!event.startTime || !event.endTime) {
+      const tempEvent = structuredClone(event)
+      // eslint-disable-next-line default-case
+      switch (event.type) {
+        case EVENT_TYPES[0]:
+          tempEvent.startTime = event.date
+          break
+        case EVENT_TYPES[2]:
+          tempEvent.startTime = event.date
+          break
+        case EVENT_TYPES[3]:
+          tempEvent.startTime = event.date
+          tempEvent.endTime = event.transports[event.transports.length - 1].endTime
+          break
+        case EVENT_TYPES[4]:
+          tempEvent.startTime = event.date
+          break
+      }
+      return tempEvent
+    }
+  }
 
   const deleteStopoverOnEventCreator = (flights, flightId, setter) => {
     const tempFlights = structuredClone(flights)
     tempFlights.filter(flight => flight.tempId !== flightId)
     setter(tempFlights)
-  }
-
-  const deleteStopover = tripId => {
-    firestore.collection('trips').doc(tripId).collection('planning')
   }
 
   const deleteImpliciteStopover = () => {}
@@ -168,7 +638,7 @@ const PlanningContextProvider = ({ children }) => {
     const transportPoints = []
     let lastTransportPoint
     let tempTransportIndex = 0
-    const tempCurrentTransportMarkers = events.map(event =>
+    const tempCurrentTransportMarkers = events?.map(event =>
       event.transports.map(transport => {
         const currentTransportIndex = tempTransportIndex
         tempTransportCoordinates.push([])
@@ -349,6 +819,18 @@ const PlanningContextProvider = ({ children }) => {
     })
   }
 
+  const setEvent = event => {
+    setCurrentEvent(event)
+    history.push(`/tripPage/${tripId}/planning?event=${event.id}`)
+    setCurrentView('preview')
+  }
+
+  const setSurvey = survey => {
+    setCurrentEvent(survey)
+    history.push(`/tripPage/${tripId}/planning?survey=${survey.id}`)
+    setCurrentView('survey')
+  }
+
   return (
     <PlanningContext.Provider
       value={{
@@ -372,7 +854,6 @@ const PlanningContextProvider = ({ children }) => {
         planningBounds,
         needMapRefresh,
         setNeedMapRefresh,
-        deleteStopover,
         deleteStopoverOnEventCreator,
         currentEventId,
         setCurrentEventId,
@@ -386,6 +867,18 @@ const PlanningContextProvider = ({ children }) => {
         setSelectedDate,
         isNewDatesSectionOpen,
         setIsNewDatesSectionOpen,
+        currentEvents,
+        setCurrentEvents,
+        withoutDatesEvents,
+        setWithoutDatesEvents,
+        currentView,
+        setCurrentView,
+        setEvent,
+        setSurvey,
+        previousEvent,
+        setPreviousEvent,
+        selectedPropositionIndex,
+        setSelectedPropositionIndex,
       }}
     >
       {children}

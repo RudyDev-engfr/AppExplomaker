@@ -57,13 +57,6 @@ export function dateToString(date, displayFormat = 'yyyy-MM-dd') {
   return format(tempDate, displayFormat, { locale: frLocale })
 }
 
-export function sortDates(date1, date2) {
-  if (isBefore(date1, date2)) {
-    return 1
-  }
-  return -1
-}
-
 export function dateTimeToString(dateTime) {
   const tempDateTime = dateTime
   return format(tempDateTime, 'yyyy-MM-dd HH:mm', { locale: frLocale })

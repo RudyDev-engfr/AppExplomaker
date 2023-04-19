@@ -45,7 +45,7 @@ const TitleArea = ({
               ? 'Je ne sais pas encore'
               : `${tripDateRange[0]} - ${tripDateRange[1]}`}
           </Typography>
-          {canEdit && <EditBtn onClick={() => setOpenModal('general')} top="-15px" right="-80px" />}
+          {canEdit && <EditBtn onClick={() => setOpenModal('general')} top="-15px" right="-50px" />}
         </Box>
       </Box>
     </Paper>

@@ -230,11 +230,11 @@ const PlanningMap = ({ latitude, longitude, zoom = 5, planningMapRef, isDraggabl
             })
           )
         } else {
-          if (typeof markerOrArrayMarker.props?.viewport !== 'undefined') {
+          if (typeof markerOrArrayMarker?.props?.viewport !== 'undefined') {
             tempCoordinates.push({ ...markerOrArrayMarker.props.viewport.northeast })
             tempCoordinates.push({ ...markerOrArrayMarker.props.viewport.southwest })
           }
-          if (typeof markerOrArrayMarker.props?.position !== 'undefined') {
+          if (typeof markerOrArrayMarker?.props?.position !== 'undefined') {
             tempCoordinates.push(markerOrArrayMarker.props.position)
           }
         }

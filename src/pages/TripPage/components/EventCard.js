@@ -49,7 +49,7 @@ const useStyles = makeStyles(theme => ({
   },
 }))
 
-const PlanningCard = ({
+const EventCard = ({
   currentEvent,
   setCurrentEvent,
   setEvent,
@@ -103,7 +103,7 @@ const PlanningCard = ({
                       })}`}
                     </Typography>
                   )}
-                  {currentEvent.startTime && (
+                  {/* {currentEvent.startTime && (
                     <Typography color="primary" className={classes.date}>
                       {isWithoutDate &&
                         `${format(stringToDate(currentEvent.startTime), 'd MMMM', {
@@ -115,7 +115,7 @@ const PlanningCard = ({
                         locale: frLocale,
                       })}`}
                     </Typography>
-                  )}
+                  )} */}
                 </Box>
                 {eventType === EVENT_TYPES[1] && (
                   <Typography color="primary" className={classes.date}>
@@ -248,4 +248,4 @@ const PlanningCard = ({
   )
 }
 
-export default PlanningCard
+export default EventCard

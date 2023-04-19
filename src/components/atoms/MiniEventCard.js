@@ -1,10 +1,13 @@
-import React, { useEffect } from 'react'
-import { Box, Typography } from '@mui/material'
+import React, { useContext, useEffect } from 'react'
+import { Box, Button, Typography } from '@mui/material'
 import { makeStyles } from '@mui/styles'
 import { format } from 'date-fns'
+import { useHistory, useParams } from 'react-router-dom'
 import { stringToDate } from '../../helper/functions'
 import findIcon from '../../helper/icons'
 import { EVENT_TYPES } from '../../helper/constants'
+import { TripContext } from '../../contexts/trip'
+import { PlanningContext } from '../../contexts/planning'
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -21,6 +24,8 @@ const useStyles = makeStyles(theme => ({
     alignItems: 'center',
     backgroundColor: 'white',
     borderRadius: '10px',
+    textTransform: 'none',
+    color: theme.palette.grey['33'],
   },
   hourTypo: {
     marginRight: '15px',
@@ -41,15 +46,34 @@ const useStyles = makeStyles(theme => ({
     marginRight: '15px',
   },
 }))
-const MiniEventCard = ({ plannedEvent }) => {
+
+const MiniEventCard = ({ plannedEvent, setCurrentView }) => {
   const classes = useStyles()
+  const history = useHistory()
+  const { tripId } = useParams()
+  const { currentEventId, setCurrentEventId } = useContext(PlanningContext)
+  const { setCurrentEvent } = useContext(TripContext)
 
   useEffect(() => {
     console.log('leventtoutseulplanifie', plannedEvent)
   }, [plannedEvent])
 
+  const setEvent = event => {
+    setCurrentEvent(event)
+    history.push(`/tripPage/${tripId}/planning?event=${event.id}`)
+    setCurrentView('preview')
+  }
+
   return (
-    <Box className={classes.root}>
+    <Box
+      className={classes.root}
+      onMouseEnter={() => {
+        setCurrentEventId(plannedEvent.id)
+      }}
+      onMouseLeave={() => {
+        setCurrentEventId()
+      }}
+    >
       <Box className={classes.iconContainer}>
         <Box
           component="img"
@@ -62,7 +86,7 @@ const MiniEventCard = ({ plannedEvent }) => {
           }}
         />
       </Box>
-      <Box className={classes.miniaEventTypoContainer}>
+      <Button className={classes.miniaEventTypoContainer} onClick={() => setEvent(plannedEvent)}>
         <Typography className={classes.hourTypo}>
           {plannedEvent.itsAllDayLong && plannedEvent.type === EVENT_TYPES[0]
             ? 'Nuit'
@@ -71,7 +95,7 @@ const MiniEventCard = ({ plannedEvent }) => {
             : format(stringToDate(plannedEvent.fakeDate, 'yyyy-MM-dd HH:mm'), "HH 'h' mm")}
         </Typography>
         <Typography className={classes.eventTitleTypo}>{plannedEvent.title}</Typography>
-      </Box>
+      </Button>
     </Box>
   )
 }

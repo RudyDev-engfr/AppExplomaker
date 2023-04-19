@@ -2,13 +2,13 @@ import React, { useContext, useEffect } from 'react'
 import Box from '@mui/material/Box'
 import { makeStyles, useTheme } from '@mui/styles'
 import { IconButton, Typography, useMediaQuery } from '@mui/material'
-import { compareAsc, format, isBefore, isSameDay, parseISO } from 'date-fns'
+import { format, isSameDay } from 'date-fns'
 import frLocale from 'date-fns/locale/fr'
 import capitalize from 'lodash.capitalize'
-import { ManageSearch, Stroller } from '@mui/icons-material'
+import { ManageSearch } from '@mui/icons-material'
 
 import { PlanningContext } from '../../../contexts/planning'
-import { dateToString, rCTFF, sortDates, stringToDate } from '../../../helper/functions'
+import { dateToString, stringToDate } from '../../../helper/functions'
 import MiniEventCard from '../../../components/atoms/MiniEventCard'
 import { EVENT_TYPES } from '../../../helper/constants'
 
@@ -17,6 +17,7 @@ const useStyles = makeStyles({})
 const PlanningFeed = ({ propsClasses, setCurrentView }) => {
   const classes = useStyles()
   const theme = useTheme()
+
   const matchesXs = useMediaQuery(theme.breakpoints.down('sm'))
 
   const { days, singleDayPlannedEvents, setSelectedDate, setIsNewDatesSectionOpen } =
@@ -45,22 +46,6 @@ const PlanningFeed = ({ propsClasses, setCurrentView }) => {
   }
 
   useEffect(() => {
-    console.log('les jours', days)
-    // console.log(
-    //   'cestlememejour',
-    //   isSameDay(
-    //     stringToDate(singleDayPlannedEvents[0].date, 'yyyy-MM-dd HH:mm').getTime(),
-    //     stringToDate(dateToString(days[0]), 'yyyy-MM-dd HH:mm').getTime()
-    //   )
-    // )
-    console.log('jour0', stringToDate(dateToString(days[0]), 'yyyy-MM-dd'))
-    console.log(
-      'hebergementjour0',
-      stringToDate(singleDayPlannedEvents[0].date, 'yyyy-MM-dd HH:mm')
-    )
-  }, [days])
-
-  useEffect(() => {
     console.log('la liste des events par jour finale', singleDayPlannedEvents)
   }, [singleDayPlannedEvents])
 
@@ -73,6 +58,7 @@ const PlanningFeed = ({ propsClasses, setCurrentView }) => {
             .filter(
               plannedEvent => !plannedEvent.needNewDates && stringToDate(plannedEvent.date) === day
             )
+            .filter(plannedEvent => plannedEvent.type !== EVENT_TYPES[1])
             .map(event => (
               <Box>{event.title}</Box>
             ))}
@@ -81,49 +67,56 @@ const PlanningFeed = ({ propsClasses, setCurrentView }) => {
     </Box>
   ) : (
     <Box className={propsClasses} sx={{ padding: '35px 30px 15px 30px' }}>
-      {days?.map(day => (
-        <Box key={day} sx={{ marginBottom: '25px' }}>
-          <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-            <Typography
-              sx={{
-                fontSize: '20px',
-                fontWeight: 500,
-                lineHeight: '33px',
-                marginBottom: '10px',
-                paddingLeft: '40px',
-              }}
-            >
-              {capitalize(format(day, 'EEEE dd MMMM', { locale: frLocale }))}
-            </Typography>
-            <IconButton
-              onClick={() => {
-                setSelectedDate(day)
-                setIsNewDatesSectionOpen(false)
-                setCurrentView('planning')
-              }}
-              variant="contained"
-              sx={{
-                width: '25px',
-                height: '25px',
-                borderRadius: '10px',
-              }}
-            >
-              <ManageSearch />
-            </IconButton>
+      {days?.length > 1 &&
+        days.map(day => (
+          <Box key={day} sx={{ marginBottom: '25px' }}>
+            <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+              <Typography
+                sx={{
+                  fontSize: '20px',
+                  fontWeight: 500,
+                  lineHeight: '33px',
+                  marginBottom: '10px',
+                  paddingLeft: '40px',
+                }}
+              >
+                {capitalize(format(day, 'EEEE dd MMMM', { locale: frLocale }))}
+              </Typography>
+              <IconButton
+                onClick={() => {
+                  setSelectedDate(day)
+                  setIsNewDatesSectionOpen(false)
+                  setCurrentView('planning')
+                }}
+                variant="contained"
+                sx={{
+                  width: '25px',
+                  height: '25px',
+                  borderRadius: '10px',
+                }}
+              >
+                <ManageSearch />
+              </IconButton>
+            </Box>
+            {singleDayPlannedEvents?.length > 1 &&
+              singleDayPlannedEvents
+                .filter(plannedEvent => plannedEvent.type !== EVENT_TYPES[1])
+                .filter(plannedEvent =>
+                  isSameDay(
+                    stringToDate(plannedEvent.fakeDate, 'yyyy-MM-dd HH:mm').getTime(),
+                    stringToDate(dateToString(day), 'yyyy-MM-dd').getTime()
+                  )
+                )
+                .sort(compare)
+                .map(plannedEvent => (
+                  <MiniEventCard
+                    plannedEvent={plannedEvent}
+                    key={plannedEvent.title}
+                    setCurrentView={setCurrentView}
+                  />
+                ))}
           </Box>
-          {singleDayPlannedEvents
-            .filter(plannedEvent =>
-              isSameDay(
-                stringToDate(plannedEvent.fakeDate, 'yyyy-MM-dd HH:mm').getTime(),
-                stringToDate(dateToString(day), 'yyyy-MM-dd').getTime()
-              )
-            )
-            .sort(compare)
-            .map(plannedEvent => (
-              <MiniEventCard plannedEvent={plannedEvent} key={plannedEvent.title} />
-            ))}
-        </Box>
-      ))}
+        ))}
     </Box>
   )
 }
