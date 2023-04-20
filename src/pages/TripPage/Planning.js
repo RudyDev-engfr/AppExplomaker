@@ -2,9 +2,9 @@
 /* eslint-disable no-labels */
 import React, { Fragment, useContext, useEffect, useState } from 'react'
 import Paper from '@mui/material/Paper'
+import Box from '@mui/material/Box'
 import {
   alpha,
-  Box,
   Button,
   ButtonBase,
   Container,
@@ -48,7 +48,6 @@ import { v4 as uuidv4 } from 'uuid'
 import clsx from 'clsx'
 import { useHistory, useLocation } from 'react-router-dom'
 import queryString from 'query-string'
-import { toast } from 'react-toastify'
 import Carousel from 'react-multi-carousel'
 import 'react-multi-carousel/lib/styles.css'
 
@@ -67,10 +66,12 @@ import SurveyPreview from './components/SurveyPreview'
 import FabDial from '../../components/atoms/FabDial'
 import findIcon, { findGoogleMarker, findSpecificGoogleMarker } from '../../helper/icons'
 import CustomMarker from '../../components/atoms/CustomMarker'
-import PlanningCard from './components/PlanningCard'
+import EventCard from './components/EventCard'
 
 import mixedIcon from '../../images/eventCreator/transport/mixed.svg'
 import lineMobile from '../../images/icons/lineMobile.svg'
+import { TripContext } from '../../contexts/trip'
+import PlanningFeed from './components/PlanningFeed'
 
 const useStyles = makeStyles(theme => ({
   calendarArea: {
@@ -107,7 +108,7 @@ const useStyles = makeStyles(theme => ({
     width: '100%',
     height: '100vh',
     display: 'grid',
-    gridTemplateColumns: '200px 300px 1fr',
+    gridTemplateColumns: '200px 175px 1fr',
     gridTemplateRows: '100px 1fr',
     gridTemplateAreas: `
     "calendarArea calendarArea calendarArea"
@@ -183,12 +184,35 @@ const useStyles = makeStyles(theme => ({
       },
     },
   },
+  chronoFeed: {
+    gridArea: 'previewArea',
+    overflowY: 'auto',
+    overflowX: 'hidden',
+    minHeight: 'calc(100vh - 100px - 20px)',
+    maxHeight: 'calc(100vh - 100px - 20px)',
+    placeItems: 'center',
+    borderRadius: '10px 10px 0 0',
+    backgroundColor: theme.palette.grey.f7,
+    zIndex: '1000',
+    [theme.breakpoints.down('sm')]: {
+      gridRowStart: 'mapArea',
+      gridRowEnd: 'previewArea',
+      minHeight: 'calc(100vh - 90px - 20px)',
+      maxHeight: 'calc(100vh - 90px - 20px)',
+      zIndex: '10000',
+      margin: '20px 0 0',
+      borderRadius: '30px 30px 0 0',
+      '&::-webkit-scrollbar': {
+        display: 'none',
+      },
+    },
+  },
   previewPaper: {
     gridArea: 'previewArea',
     position: 'relative',
     borderRadius: '10px 10px 0 0',
     overflowY: 'auto',
-    backgroundColor: theme.palette.grey.f7,
+    backgroundColor: theme.palette.grey.f2,
     [theme.breakpoints.down('sm')]: {
       borderRadius: '0',
       overflowY: 'unset',
@@ -282,6 +306,7 @@ const Planning = ({ tripData, tripId, canEdit }) => {
 
   const { user } = useContext(SessionContext)
   const { firestore } = useContext(FirebaseContext)
+  const { setDeleteEventNotifications, currentEvent, setCurrentEvent } = useContext(TripContext)
   const {
     setCurrentMarkers,
     setTransportMarkers,
@@ -295,23 +320,33 @@ const Planning = ({ tripData, tripId, canEdit }) => {
     setCurrentEventId,
     setNeedMapRefresh,
     currentMarkers,
+    days,
+    setDays,
+    plannedEvents,
+    setPlannedEvents,
+    selectedDate,
+    setSelectedDate,
+    isNewDatesSectionOpen,
+    setIsNewDatesSectionOpen,
+    currentEvents,
+    setCurrentEvents,
+    withoutDatesEvents,
+    setWithoutDatesEvents,
+    currentView,
+    setCurrentView,
+    previousEvent,
+    setPreviousEvent,
+    setEvent,
+    setSurvey,
+    selectedPropositionIndex,
+    setSelectedPropositionIndex,
   } = useContext(PlanningContext)
 
   const [isMounted, setIsMounted] = useState(false)
-  const [currentView, setCurrentView] = useState('planning')
   const [currentDateRange, setCurrentDateRange] = useState([])
-  const [currentEvent, setCurrentEvent] = useState()
-  const [previousEvent, setPreviousEvent] = useState()
   const [eventType, setEventType] = useState('')
   const [anchorEl, setAnchorEl] = useState(null)
-  const [plannedEvents, setPlannedEvents] = useState([])
-  const [days, setDays] = useState([])
-  const [selectedDate, setSelectedDate] = useState('')
-  const [currentEvents, setCurrentEvents] = useState({ accomodations: [], surveys: [], events: [] })
   const [isNewProposition, setIsNewProposition] = useState(false)
-  const [withoutDatesEvents, setWithoutDatesEvents] = useState({ surveys: [], events: [] })
-  const [isNewDatesSectionOpen, setIsNewDatesSectionOpen] = useState(false)
-  const [selectedPropositionIndex, setSelectedPropositionIndex] = useState()
   const [editMode, setEditMode] = useState(false)
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false)
 
@@ -321,18 +356,6 @@ const Planning = ({ tripData, tripId, canEdit }) => {
         flights[flights.length - 1].data.airports.length - 1
       ].label
     }`
-
-  const setEvent = event => {
-    setCurrentEvent(event)
-    history.push(`/tripPage/${tripId}/planning?event=${event.id}`)
-    setCurrentView('preview')
-  }
-
-  const setSurvey = survey => {
-    setCurrentEvent(survey)
-    history.push(`/tripPage/${tripId}/planning?survey=${survey.id}`)
-    setCurrentView('survey')
-  }
 
   useEffect(() => {
     if (tripId) {
@@ -368,15 +391,15 @@ const Planning = ({ tripData, tripId, canEdit }) => {
     }
   }, [tripData.dateRange])
 
-  useEffect(() => {
-    if (days.length && plannedEvents.length) {
-      days.forEach(day => {
-        if (isToday(day) && !isMounted && planningMapRef.current) {
-          setSelectedDate(day)
-        }
-      })
-    }
-  }, [days, plannedEvents, planningMapRef])
+  // useEffect(() => {
+  //   if (days.length && plannedEvents.length) {
+  //     days.forEach(day => {
+  //       if (isToday(day) && !isMounted && planningMapRef.current) {
+  //         setSelectedDate(day)
+  //       }
+  //     })
+  //   }
+  // }, [days, plannedEvents, planningMapRef])
 
   useEffect(() => {
     const tempWithoutDatesEvents = { surveys: [], events: [] }
@@ -645,424 +668,6 @@ const Planning = ({ tripData, tripId, canEdit }) => {
     )
     setCurrentEvents(tempEvents)
   }, [selectedDate, plannedEvents, isNewDatesSectionOpen])
-  useEffect(() => {
-    const tempMarkers = []
-    if (isNewDatesSectionOpen) {
-      if (withoutDatesEvents.surveys.length < 1 && withoutDatesEvents.events.length < 1) {
-        setIsNewDatesSectionOpen(false)
-      } else {
-        const tempCurrentTransportMarkers = []
-        const tempTransportCoordinates = []
-        let tempFlightIndex = 0
-        const tempWithoutDateSurveyMarkers = []
-        withoutDatesEvents.surveys.forEach(survey =>
-          survey.propositions.forEach((proposition, propositionIndex) => {
-            if (
-              survey.type === EVENT_TYPES[0] ||
-              survey.type === EVENT_TYPES[2] ||
-              survey.type === EVENT_TYPES[4]
-            ) {
-              tempWithoutDateSurveyMarkers.push(
-                <CustomMarker
-                  key={proposition.location.value.place_id}
-                  position={{ lat: proposition.location?.lat, lng: proposition.location?.lng }}
-                  viewport={proposition.location.viewport}
-                  clickable
-                  onClick={() => {
-                    if (currentView !== 'preview') {
-                      if (currentView === 'survey') {
-                        setPreviousEvent(survey)
-                        setSelectedPropositionIndex(propositionIndex)
-                        setEvent(proposition)
-                      } else {
-                        setSurvey(survey)
-                      }
-                    }
-                  }}
-                  onMouseOver={() => setCurrentEventId(survey.id)}
-                  onMouseOut={() => setCurrentEventId()}
-                  icon={findGoogleMarker(survey.type, survey.id === currentEventId)}
-                />
-              )
-            }
-            if (survey.type === EVENT_TYPES[1]) {
-              proposition.flights.forEach(currentFlight =>
-                tempWithoutDateSurveyMarkers.push(
-                  <CustomMarker
-                    key={currentFlight.data.airports[0].iataCode} // TODO better key
-                    position={{
-                      lat: currentFlight.data.airports[0].geocode.latitude,
-                      lng: currentFlight.data.airports[0].geocode.longitude,
-                    }}
-                    clickable
-                    onClick={() => {
-                      if (currentView !== 'preview') {
-                        if (currentView === 'survey') {
-                          setPreviousEvent(survey)
-                          setSelectedPropositionIndex(propositionIndex)
-                          setEvent(proposition)
-                        } else {
-                          setSurvey(survey)
-                        }
-                      }
-                    }}
-                    onMouseOver={() => setCurrentEventId(survey.id)}
-                    onMouseOut={() => setCurrentEventId()}
-                    icon={findGoogleMarker(survey.type, survey.id === currentEventId)} // TODO proposition.icon
-                  />
-                )
-              )
-            }
-            if (survey.type === EVENT_TYPES[3]) {
-              proposition.transports.forEach(currentTransport => {
-                const startPos = {
-                  lat: currentTransport.startLocation.lat,
-                  lng: currentTransport.startLocation.lng,
-                }
-                const endPos = {
-                  lat: currentTransport.endLocation.lat,
-                  lng: currentTransport.endLocation.lng,
-                }
-                tempTransportCoordinates.push([{ ...startPos }, { ...endPos }])
-                tempCurrentTransportMarkers.push(
-                  <CustomMarker
-                    key={currentTransport.start.value.place_id}
-                    position={{ ...startPos }}
-                    clickable
-                    onClick={() => {
-                      if (currentView !== 'preview') {
-                        if (currentView === 'survey') {
-                          setPreviousEvent(survey)
-                          setSelectedPropositionIndex(propositionIndex)
-                          setEvent(proposition)
-                        } else {
-                          setSurvey(survey)
-                        }
-                      }
-                    }}
-                    onMouseOver={() => setCurrentEventId(survey.id)}
-                    onMouseOut={() => setCurrentEventId()}
-                    icon={findGoogleMarker(survey.type, survey.id === currentEventId)}
-                  />,
-                  <CustomMarker
-                    key={currentTransport.end.value.place_id}
-                    position={{ ...endPos }}
-                    clickable
-                    onClick={() => {
-                      if (currentView !== 'preview') {
-                        if (currentView === 'survey') {
-                          setPreviousEvent(survey)
-                          setSelectedPropositionIndex(propositionIndex)
-                          setEvent(proposition)
-                        } else {
-                          setSurvey(survey)
-                        }
-                      }
-                    }}
-                    onMouseOver={() => setCurrentEventId(survey.id)}
-                    onMouseOut={() => setCurrentEventId()}
-                    icon={findGoogleMarker(survey.type, survey.id === currentEventId)}
-                  />
-                )
-              })
-            }
-          })
-        )
-        const withoutDateEventMarkers = []
-        withoutDatesEvents.events.forEach((event, eventIndex) => {
-          if (
-            event.type === EVENT_TYPES[0] ||
-            event.type === EVENT_TYPES[2] ||
-            event.type === EVENT_TYPES[4]
-          ) {
-            withoutDateEventMarkers.push(
-              <CustomMarker
-                key={event.id}
-                position={{ lat: event.location.lat, lng: event.location.lng }}
-                clickable
-                onClick={() => {
-                  if (currentView !== 'preview') {
-                    setEvent(event)
-                  }
-                }}
-                onMouseOver={() => setCurrentEventId(event.id)}
-                onMouseOut={() => setCurrentEventId()}
-                viewport={event.location.viewport}
-                icon={findSpecificGoogleMarker(event.icon, event.id === currentEventId, event.type)}
-              />
-            )
-          } else if (event.type === EVENT_TYPES[1]) {
-            event.flights.forEach(flight => {
-              const currentFlightIndex = tempFlightIndex
-              tempTransportCoordinates.push([])
-              tempFlightIndex += 1
-
-              flight.data.airports.forEach(airport => {
-                tempTransportCoordinates[currentFlightIndex].push({
-                  lat: airport.geocode.latitude,
-                  lng: airport.geocode.longitude,
-                })
-
-                withoutDateEventMarkers.push(
-                  <CustomMarker
-                    key={event.id}
-                    position={{
-                      lat: airport.geocode.latitude,
-                      lng: airport.geocode.longitude,
-                    }}
-                    clickable
-                    onClick={() => {
-                      if (currentView !== 'preview') {
-                        setEvent(event)
-                      }
-                    }}
-                    onMouseOver={() => setCurrentEventId(event.id)}
-                    onMouseOut={() => setCurrentEventId()}
-                    icon={findSpecificGoogleMarker(
-                      event.icon,
-                      event.id === currentEventId,
-                      event.type
-                    )}
-                  />
-                )
-              })
-            })
-          } else if (event.type === EVENT_TYPES[3]) {
-            event.transports.forEach(transport => {
-              const startPos = {
-                lat: transport.startLocation.lat,
-                lng: transport.startLocation.lng,
-              }
-              const endPos = { lat: transport.endLocation.lat, lng: transport.endLocation.lng }
-              const currentIcon = findSpecificGoogleMarker(
-                transport.icon,
-                event.id === currentEventId,
-                EVENT_TYPES[3]
-              )
-
-              tempTransportCoordinates.push([{ ...startPos }, { ...endPos }])
-              tempCurrentTransportMarkers.push(
-                <CustomMarker
-                  key={`${transport.start.value.place_id}-${event.id}`}
-                  position={{ ...startPos }}
-                  clickable
-                  onClick={() => {
-                    if (currentView !== 'preview') {
-                      setEvent(event)
-                    }
-                  }}
-                  onMouseOver={() => setCurrentEventId(event.id)}
-                  onMouseOut={() => setCurrentEventId()}
-                  icon={currentIcon}
-                />,
-                <CustomMarker
-                  key={`${transport.end.value.place_id}-${event.id}`}
-                  position={{ ...endPos }}
-                  clickable
-                  onClick={() => {
-                    if (currentView !== 'preview') {
-                      setEvent(event)
-                    }
-                  }}
-                  onMouseOver={() => setCurrentEventId(event.id)}
-                  onMouseOut={() => setCurrentEventId()}
-                  icon={currentIcon}
-                />
-              )
-            })
-          }
-        })
-        tempMarkers.push(tempWithoutDateSurveyMarkers, withoutDateEventMarkers)
-        setTransportMarkers({
-          transportMarkers: tempCurrentTransportMarkers,
-          transportCoordinates: tempTransportCoordinates,
-        })
-      }
-    } else {
-      const tempCurrentTransportMarkers = []
-      const tempTransportCoordinates = []
-      let tempFlightIndex = 0
-
-      const tempAccomodationMarkers = currentEvents.accomodations
-        .map(accomodation => (
-          <CustomMarker
-            key={accomodation.location.value.place_id}
-            position={{ lat: accomodation.location.lat, lng: accomodation.location.lng }}
-            clickable
-            onClick={() => {
-              if (currentView !== 'preview') {
-                setEvent(accomodation)
-              }
-            }}
-            onMouseOver={() => setCurrentEventId(accomodation.id)}
-            onMouseOut={() => setCurrentEventId()}
-            viewport={accomodation.location.viewport}
-            icon={findSpecificGoogleMarker(
-              accomodation.icon,
-              accomodation.id === currentEventId,
-              EVENT_TYPES[0]
-            )}
-          />
-        ))
-        .flat()
-      const tempSurveyMarkers = currentEvents.surveys
-        .filter(
-          survey =>
-            survey.type === EVENT_TYPES[0] ||
-            survey.type === EVENT_TYPES[2] ||
-            survey.type === EVENT_TYPES[4]
-        )
-        .map((survey, surveyIndex) =>
-          survey.propositions.map((proposition, propositionIndex) => (
-            <CustomMarker
-              key={proposition.location.value.place_id}
-              position={{ lat: proposition.location?.lat, lng: proposition.location?.lng }}
-              clickable
-              onClick={() => {
-                if (currentView !== 'preview') {
-                  if (currentView === 'survey') {
-                    setPreviousEvent(survey)
-                    setSelectedPropositionIndex(propositionIndex)
-                    setEvent(proposition)
-                  } else {
-                    setSurvey(survey)
-                  }
-                }
-              }}
-              onMouseOver={() => setCurrentEventId(survey.id)}
-              onMouseOut={() => setCurrentEventId()}
-              viewport={proposition.location?.viewport}
-              icon={findGoogleMarker(survey.type, survey.id === currentEventId)}
-            />
-          ))
-        )
-        .flat()
-      const tempSurveyFlightMarkers = currentEvents.surveys
-        .filter(survey => survey.type === EVENT_TYPES[1])
-        .map((survey, surveyIndex) =>
-          survey.propositions.map((flightProposition, flightPropositionIndex) =>
-            flightProposition.flights.map(flight => {
-              const currentFlightIndex = tempFlightIndex
-              tempTransportCoordinates.push([])
-              tempFlightIndex += 1
-              return flight.data.airports.map(airport => {
-                tempTransportCoordinates[currentFlightIndex].push({
-                  lat: airport.geocode.latitude,
-                  lng: airport.geocode.longitude,
-                })
-                return (
-                  <CustomMarker
-                    key={flightProposition.id}
-                    position={{
-                      lat: airport.geocode.latitude,
-                      lng: airport.geocode.longitude,
-                    }}
-                    clickable
-                    onClick={() => {
-                      if (currentView !== 'preview') {
-                        if (currentView === 'survey') {
-                          setPreviousEvent(survey)
-                          setSelectedPropositionIndex(flightPropositionIndex)
-                          setEvent(flightProposition)
-                        } else {
-                          setSurvey(survey)
-                        }
-                      }
-                    }}
-                    onMouseOver={() => setCurrentEventId(survey.id)}
-                    onMouseOut={() => setCurrentEventId()}
-                    icon={findGoogleMarker(survey.type, survey.id === currentEventId)}
-                  />
-                )
-              })
-            })
-          )
-        )
-        .flat()
-
-      const tempFlightMarkers = currentEvents.events
-        .filter(event => event.type === EVENT_TYPES[1])
-        .map(event =>
-          event.flights.map(flight => {
-            const currentFlightIndex = tempFlightIndex
-            tempTransportCoordinates.push([])
-            tempFlightIndex += 1
-            return flight.data.airports.map((airport, airportIndex) => {
-              tempTransportCoordinates[currentFlightIndex].push({
-                lat: airport.geocode.latitude,
-                lng: airport.geocode.longitude,
-              })
-
-              return (
-                <CustomMarker
-                  key={`${event.id}-${flight.data.airports[airportIndex].iataCode}`}
-                  position={{
-                    lat: airport.geocode.latitude,
-                    lng: airport.geocode.longitude,
-                  }}
-                  clickable
-                  onClick={() => {
-                    if (currentView !== 'preview') {
-                      setEvent(event)
-                    }
-                  }}
-                  onMouseOver={() => setCurrentEventId(event.id)}
-                  onMouseOut={() => setCurrentEventId()}
-                  icon={findSpecificGoogleMarker(
-                    event.icon,
-                    event.id === currentEventId,
-                    event.type
-                  )}
-                />
-              )
-            })
-          })
-        )
-        .flat()
-      const tempCurrentEventMarkers = currentEvents.events
-        .filter(event => event.type === EVENT_TYPES[2] || event.type === EVENT_TYPES[4])
-        .map(event => (
-          <CustomMarker
-            key={event.id}
-            position={{ lat: event.location?.lat, lng: event.location?.lng }}
-            clickable
-            onClick={() => {
-              if (currentView !== 'preview') {
-                setEvent(event)
-              }
-            }}
-            onMouseOver={() => setCurrentEventId(event.id)}
-            onMouseOut={() => setCurrentEventId()}
-            viewport={event.location.viewport}
-            icon={findSpecificGoogleMarker(event.icon, event.id === currentEventId, event.type)}
-          />
-        ))
-      tempMarkers.push(tempAccomodationMarkers, tempSurveyMarkers, tempCurrentEventMarkers)
-      tempCurrentTransportMarkers.push(
-        tempFlightMarkers,
-        tempSurveyFlightMarkers,
-        handleTransportMarkers(
-          currentEvents.events.filter(event => event.type === EVENT_TYPES[3]),
-          false
-        )
-      )
-      const tempCoordinates = handleTransportMarkers(
-        currentEvents.events.filter(event => event.type === EVENT_TYPES[3]),
-        true
-      )
-      currentEvents.surveys
-        .filter(survey => survey.type === EVENT_TYPES[3])
-        .forEach(survey => {
-          tempCurrentTransportMarkers.push(handleTransportMarkers(survey.propositions, false))
-          tempCoordinates.push(handleTransportMarkers(survey.propositions, true).flat())
-        })
-      setTransportMarkers({
-        transportMarkers: tempCurrentTransportMarkers,
-        transportCoordinates: [tempTransportCoordinates.flat(), ...tempCoordinates],
-      })
-    }
-    setCurrentMarkers(tempMarkers.flat())
-  }, [currentEvents, isNewDatesSectionOpen, withoutDatesEvents, currentView, currentEventId])
 
   useEffect(() => {
     if (!currentEventId) {
@@ -1100,7 +705,9 @@ const Planning = ({ tripData, tripId, canEdit }) => {
     const queries = queryString.parse(location.search)
     const { event: eventId, survey: surveyId, proposition: propositionIndex } = queries
     if (!eventId && !surveyId && !propositionIndex) {
-      setCurrentView('planning')
+      setIsNewDatesSectionOpen(false)
+      setSelectedDate('')
+      setCurrentView('chronoFeed')
     }
   }, [location.search])
 
@@ -1155,8 +762,7 @@ const Planning = ({ tripData, tripId, canEdit }) => {
       .delete()
       .then(() => {
         setIsDeleteDialogOpen(false)
-        setCurrentEvent()
-        toast.success('Evenement supprime')
+        setDeleteEventNotifications(true)
       })
   }
 
@@ -1188,6 +794,9 @@ const Planning = ({ tripData, tripId, canEdit }) => {
   return (
     <>
       <Box className={classes.boxPlanning}>
+        {currentView === 'chronoFeed' && (
+          <PlanningFeed propsClasses={classes.chronoFeed} setCurrentView={setCurrentView} />
+        )}
         {canEdit && currentView === 'add' && (
           <EventAdd setEventType={setEventType} setCurrentView={setCurrentView} />
         )}
@@ -1250,7 +859,8 @@ const Planning = ({ tripData, tripId, canEdit }) => {
                 onClick={() => {
                   setIsNewDatesSectionOpen(false)
                   setSelectedDate('')
-                  setCurrentView('planning')
+                  // setCurrentView('planning')
+                  setCurrentView('chronoFeed')
                 }}
                 elevation={0}
                 className={clsx(classes.calendarTitle)}
@@ -1422,7 +1032,7 @@ const Planning = ({ tripData, tripId, canEdit }) => {
                   </Typography>
                 ) : isNewDatesSectionOpen ? (
                   <>
-                    {withoutDatesEvents.surveys.map((survey, surveyIndex) => (
+                    {withoutDatesEvents.surveys.map(survey => (
                       <Paper
                         className={clsx(classes.surveyPaper, {
                           [classes.hoveredSurvey]: currentEventId === survey.id,
@@ -1580,12 +1190,10 @@ const Planning = ({ tripData, tripId, canEdit }) => {
                         </Button>
                       </Paper>
                     ))}
-                    {withoutDatesEvents.events.map((event, eventIndex) => (
-                      <PlanningCard
+                    {withoutDatesEvents.events.map(event => (
+                      <EventCard
                         key={event.id}
-                        type="events"
                         currentEvent={event}
-                        currentEventIndex={eventIndex}
                         setCurrentEvent={setCurrentEvent}
                         setEvent={setEvent}
                         canEdit={canEdit}
@@ -1599,20 +1207,18 @@ const Planning = ({ tripData, tripId, canEdit }) => {
                   <>
                     <Box mb={5}>
                       <Typography variant="h6">Hébergements 🏡</Typography>
-                      {currentEvents.accomodations.map((accomodation, accomodationIndex) => (
-                        <PlanningCard
-                          key={accomodation.id}
-                          type="accomodations"
-                          currentEvent={accomodation}
-                          currentEventIndex={accomodationIndex}
-                          setCurrentEvent={setCurrentEvent}
-                          setEvent={setEvent}
-                          canEdit={canEdit}
-                          handleOpenDropdown={handleOpenDropdown}
-                          eventType={EVENT_TYPES[0]}
-                          setCurrentEventId={setCurrentEventId}
-                        />
-                      ))}
+                      {currentEvents.accomodations?.length > 0 &&
+                        currentEvents.accomodations?.map(accomodation => (
+                          <EventCard
+                            key={accomodation.id}
+                            currentEvent={accomodation}
+                            setCurrentEvent={setCurrentEvent}
+                            setEvent={setEvent}
+                            canEdit={canEdit}
+                            handleOpenDropdown={handleOpenDropdown}
+                            eventType={EVENT_TYPES[0]}
+                          />
+                        ))}
                       {currentEvents.accomodations.length < 1 && (
                         <Typography>
                           Pas encore d&apos;hébergement{selectedDate !== '' && ' ce jour la'}
@@ -1622,7 +1228,7 @@ const Planning = ({ tripData, tripId, canEdit }) => {
                     {currentEvents.surveys.length > 0 && (
                       <>
                         <Typography variant="h6">Propositions</Typography>
-                        {currentEvents.surveys.map((survey, surveyIndex) => (
+                        {currentEvents.surveys.map(survey => (
                           <Paper
                             className={clsx(classes.surveyPaper, {
                               [classes.hoveredSurvey]: survey.id === currentEventId,
@@ -1784,9 +1390,8 @@ const Planning = ({ tripData, tripId, canEdit }) => {
                       </Typography>
                     }
                     {currentEvents.events.map((event, eventIndex) => (
-                      <PlanningCard
+                      <EventCard
                         key={event.id}
-                        type="events"
                         currentEvent={event}
                         currentEventIndex={eventIndex}
                         setCurrentEvent={setCurrentEvent}

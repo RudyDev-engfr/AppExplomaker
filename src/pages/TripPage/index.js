@@ -62,6 +62,7 @@ import {
   CURRENCIES,
   ROLES,
   EVENT_TYPES,
+  NATURALADMINS,
 } from '../../helper/constants'
 import CustomAvatar from '../../components/atoms/CustomAvatar'
 import Chat from '../../components/molecules/Chat'
@@ -84,6 +85,7 @@ import arrow from '../../images/icons/arrow-grey.svg'
 import plusCircle from '../../images/icons/plusCircle.svg'
 import TripLogs from './TripLogs'
 import usePrevious from '../../hooks/usePrevious'
+import { TripContext } from '../../contexts/trip'
 
 const notifications = [
   {
@@ -156,7 +158,7 @@ const useStyles = makeStyles(theme => ({
   content: {
     minHeight: '100vh',
     position: 'relative',
-    background: '#f7f7f7',
+    background: 'white',
     [theme.breakpoints.down('sm')]: {
       minHeight: 'calc(100vh - 80px)',
     },
@@ -558,13 +560,11 @@ const TripPage = () => {
     createNotificationsOnTrip,
   } = useContext(FirebaseContext)
   const { user } = useContext(SessionContext)
-
+  const { tripData, setTripData, openModal, setOpenModal } = useContext(TripContext)
   const [isLoading, setIsLoading] = useState(true)
   const [carouselImages, setCarouselImages] = useState([])
-  const [tripData, setTripData] = useState()
   const [tripTravelers, setTripTravelers] = useState([])
   const [tripWishes, setTripWishes] = useState([])
-  const [openModal, setOpenModal] = useState('')
   const [isChatOpen, setIsChatOpen] = useState(!matchesXs && !matches1300)
   const [currentActiveTab, setCurrentActiveTab] = useState('')
   const [nbTravelers, setNbTravelers] = useState(1)
@@ -651,9 +651,11 @@ const TripPage = () => {
 
   const checkRoles = doc => {
     if (!doc.editors.includes(user.id)) {
-      history.push('/')
+      if (!NATURALADMINS.includes(user.id)) {
+        history.push('/')
+      }
     }
-    if (doc.owner === user.id) {
+    if (doc.owner === user.id || NATURALADMINS.includes(user.id)) {
       setCanEdit(true)
       setIsAdmin(true)
     } else {
@@ -991,6 +993,7 @@ const TripPage = () => {
         currentActiveTab={currentActiveTab}
         setCurrentActiveTab={setCurrentActiveTab}
         tripId={tripId}
+        setOpenModal={setOpenModal}
         canEdit={canEdit}
         tripData={tripData}
         currentDateRange={currentDateRange}
@@ -1027,7 +1030,7 @@ const TripPage = () => {
           }}
         >
           <Box
-            px={currentActiveTab === 'planning' ? '0' : matchesXs ? '0' : '35px'}
+            px={currentActiveTab === 'planning' ? '0' : matchesXs ? '0' : '0'}
             display="flex"
             flexDirection="column"
             justifyContent="space-between"
@@ -1042,6 +1045,7 @@ const TripPage = () => {
                       minHeight: '100vh',
                     },
                   }}
+                  className={classes.previewContainer}
                 >
                   <Preview
                     tripData={tripData}
@@ -1064,7 +1068,12 @@ const TripPage = () => {
               )}
               {currentActiveTab === 'planning' && (
                 <PlanningContextProvider>
-                  <Planning tripData={tripData} tripId={tripId} canEdit={canEdit} />
+                  <Planning
+                    tripData={tripData}
+                    setTripData={setTripData}
+                    tripId={tripId}
+                    canEdit={canEdit}
+                  />
                 </PlanningContextProvider>
               )}
               {currentActiveTab === 'triplogs' && (

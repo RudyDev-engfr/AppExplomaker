@@ -153,6 +153,7 @@ const TripPageNav = ({
   currentDateRange,
   currentPlanningNotifications,
   canEdit,
+  setOpenModal,
 }) => {
   const history = useHistory()
   const classes = useStyles()
@@ -178,6 +179,8 @@ const TripPageNav = ({
         tripDestinationLabel={tripData.destination?.label}
         tripTitle={tripData.title}
         tripDateRange={currentDateRange}
+        canEdit={canEdit}
+        setOpenModal={setOpenModal}
       />
       <Box display="flex" flexDirection="column">
         <Button

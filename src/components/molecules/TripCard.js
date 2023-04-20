@@ -81,25 +81,16 @@ const TripCard = ({ bgImg, people, title, date, destination, tripId, startDate, 
   const theme = useTheme()
   const { user } = useContext(SessionContext)
 
-  useEffect(() => {
-    console.log(
-      'mdr',
-      user.notifications.filter(
-        notification => notification.tripId === tripId && notification.state === 1
-      )
-    )
-  }, [user])
-
   return (
     <Card className={classes.root}>
-      {user.notifications.filter(
-        notification => notification.tripId === tripId && notification.state === 1
+      {user.notifications?.filter(
+        notification => notification?.tripId === tripId && notification?.state === 1
       ).length > 0 && (
         <Box position="absolute" top="calc(4% + 1rem)" right="calc(4% + 1rem)" zIndex={10}>
           <Badge
             badgeContent={
-              user.notifications.filter(
-                notification => notification.tripId === tripId && notification.state === 1
+              user.notifications?.filter(
+                notification => notification?.tripId === tripId && notification?.state === 1
               ).length
             }
             color="secondary"
@@ -109,14 +100,14 @@ const TripCard = ({ bgImg, people, title, date, destination, tripId, startDate, 
               className={classes.iconBtn}
               size="large"
               disabled={
-                user.notifications.filter(
-                  notification => notification.tripId === tripId && notification.state === 1
+                user.notifications?.filter(
+                  notification => notification?.tripId === tripId && notification?.state === 1
                 ).length === 0
               }
               sx={{
                 backgroundColor:
-                  user.notifications.filter(
-                    notification => notification.tripId === tripId && notification.state === 1
+                  user.notifications?.filter(
+                    notification => notification?.tripId === tripId && notification?.state === 1
                   ).length > 0
                     ? `${theme.palette.primary.ultraLight} !important`
                     : `${theme.palette.grey.bd}!important`,
@@ -125,8 +116,8 @@ const TripCard = ({ bgImg, people, title, date, destination, tripId, startDate, 
               <Notifications
                 sx={{
                   color:
-                    user.notifications.filter(
-                      notification => notification.tripId === tripId && notification.state === 1
+                    user.notifications?.filter(
+                      notification => notification?.tripId === tripId && notification.state === 1
                     ).length > 0
                       ? `${theme.palette.primary.main} !important`
                       : `${theme.palette.grey.bd}!important`,

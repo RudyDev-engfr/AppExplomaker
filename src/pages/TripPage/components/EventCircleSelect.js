@@ -42,7 +42,7 @@ const useStyles = makeStyles(theme => ({
   container: {
     '--m': imagesOnCircle,
     '--tan': +tan.toFixed(2),
-    '--d': '130px',
+    '--d': '100px',
     '--rel': '.75',
     '--r': 'calc(.5 * (1 + var(--rel)) * var(--d) / var(--tan))',
     '--s': 'calc(2 * var(--r) + var(--d))',

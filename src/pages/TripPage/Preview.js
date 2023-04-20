@@ -4,9 +4,6 @@ import { v4 as uuidv4 } from 'uuid'
 import InfoIcon from '@mui/icons-material/Info'
 import PersonIcon from '@mui/icons-material/Person'
 import ChatBubbleRoundedIcon from '@mui/icons-material/ChatBubbleRounded'
-import RoomRoundedIcon from '@mui/icons-material/RoomRounded'
-import TodayRoundedIcon from '@mui/icons-material/TodayRounded'
-import EventRoundedIcon from '@mui/icons-material/EventRounded'
 import ArrowBackRoundedIcon from '@mui/icons-material/ArrowBackRounded'
 import ArrowForwardRoundedIcon from '@mui/icons-material/ArrowForwardRounded'
 import Paper from '@mui/material/Paper'
@@ -14,11 +11,9 @@ import { Box, IconButton, Typography, useMediaQuery, useTheme } from '@mui/mater
 import Carousel from 'react-material-ui-carousel'
 import makeStyles from '@mui/styles/makeStyles'
 import clsx from 'clsx'
-import { Notifications } from '@mui/icons-material'
 
 import { buildNotificationsOnTripForUser, rCTFF } from '../../helper/functions'
 import { FirebaseContext } from '../../contexts/firebase'
-import CustomAvatar from '../../components/atoms/CustomAvatar'
 import EditBtn from '../../components/atoms/EditBtn'
 import Loader from '../../components/Loader'
 import { ROLES } from '../../helper/constants'
@@ -30,6 +25,8 @@ import person from '../../images/icons/person.svg'
 import NotificationArea from '../../components/molecules/NotificationArea'
 import { SessionContext } from '../../contexts/session'
 import MobileNotificationArea from '../../components/molecules/MobileNotificationArea'
+import DesktopPreview from './DesktopPreview'
+import { TripContext } from '../../contexts/trip'
 
 const useStyles = makeStyles(theme => ({
   slides: {
@@ -45,20 +42,6 @@ const useStyles = makeStyles(theme => ({
         borderRadius: 'unset',
       },
     },
-  },
-  smallTitle: {
-    fontWeight: '500',
-    fontSize: '16px',
-    color: theme.palette.primary.main,
-  },
-  smalltitleIcon: {
-    color: theme.palette.primary.main,
-    fontSize: '16px',
-    marginRight: theme.spacing(0.5),
-  },
-  subtitle: {
-    fontWeight: '500',
-    fontSize: '20px',
   },
   infotitle: {
     color: theme.palette.grey[82],
@@ -89,6 +72,7 @@ const useStyles = makeStyles(theme => ({
   nextArrow: { top: '80px' },
   sliderBox: {
     position: 'relative',
+    backgroundColor: 'white',
     [theme.breakpoints.down('sm')]: {
       position: 'fixed',
       top: '0',
@@ -97,38 +81,38 @@ const useStyles = makeStyles(theme => ({
       height: '100vh',
     },
   },
-  sliderCaption: {
-    width: '100%',
-    position: 'absolute',
-    bottom: '0',
-    left: '0',
-    borderRadius: '0 0 20px 20px',
-    background: theme.palette.primary.main,
-    padding: '9px 30px',
-    fontWeight: '500',
-    fontSize: '14px',
-    color: '#ffffff',
-    [theme.breakpoints.down('sm')]: {
-      left: '50%',
-      top: '55%',
-      bottom: 'unset',
-      width: '250px',
-      whiteSpace: 'wrap',
-      textOverflow: 'ellipsis',
-      padding: '8px 15px',
-      background: '#f4fbfa',
-      boxShadow: '0px 1px 3px rgba(0, 0, 0, 0.1)',
-      borderRadius: '30px',
-      fontSize: '12px',
-      textAlign: 'center',
-      color: theme.palette.primary.main,
-      transform: 'translateX(-50%)',
-    },
-  },
+  // sliderCaption: {
+  //   width: '100%',
+  //   position: 'absolute',
+  //   bottom: '0',
+  //   left: '0',
+  //   borderRadius: '0 0 20px 20px',
+  //   background: theme.palette.primary.main,
+  //   padding: '9px 30px',
+  //   fontWeight: '500',
+  //   fontSize: '14px',
+  //   color: '#ffffff',
+  //   [theme.breakpoints.down('sm')]: {
+  //     left: '50%',
+  //     top: '55%',
+  //     bottom: 'unset',
+  //     width: '250px',
+  //     whiteSpace: 'wrap',
+  //     textOverflow: 'ellipsis',
+  //     padding: '8px 15px',
+  //     background: '#f4fbfa',
+  //     boxShadow: '0px 1px 3px rgba(0, 0, 0, 0.1)',
+  //     borderRadius: '30px',
+  //     fontSize: '12px',
+  //     textAlign: 'center',
+  //     color: theme.palette.primary.main,
+  //     transform: 'translateX(-50%)',
+  //   },
+  // },
   descriptionPaper: {
     background: '#fff',
     borderRadius: '20px',
-    margin: '20px 0',
+    marginBottom: '20px',
     padding: '30px 30px 70px',
     position: 'relative',
     [theme.breakpoints.down('sm')]: {
@@ -225,14 +209,14 @@ const useStyles = makeStyles(theme => ({
       marginTop: '25px',
     },
   },
-  mobilePaperContent: {
-    marginTop: '20px',
-    padding: '20px 30px 30px',
-    position: 'relative',
-    [theme.breakpoints.down('sm')]: {
-      display: 'none',
-    },
-  },
+  // mobilePaperContent: {
+  //   marginTop: '20px',
+  //   padding: '20px 30px 30px',
+  //   position: 'relative',
+  //   [theme.breakpoints.down('sm')]: {
+  //     display: 'none',
+  //   },
+  // },
   titlePapers: {
     [theme.breakpoints.down('sm')]: {
       fontSize: '22px',
@@ -255,8 +239,8 @@ const Preview = ({
 
   const { dictionary } = useContext(FirebaseContext)
   const { user } = useContext(SessionContext)
+  const { currentDateRange, setCurrentDateRange } = useContext(TripContext)
 
-  const [currentDateRange, setCurrentDateRange] = useState(['', ''])
   const [generatedAvatars, setGeneratedAvatars] = useState([])
   const [currentNotifications, setCurrentNotifications] = useState([])
   const [refreshNotif, setRefreshNotif] = useState(false)
@@ -285,19 +269,6 @@ const Preview = ({
       })
     setGeneratedAvatars(tempAvatars)
   }, [tripData])
-
-  useEffect(() => {
-    if (
-      tripData.dateRange &&
-      tripData.dateRange.length &&
-      tripData.dateRange[0] !== '' &&
-      tripData.dateRange[1] !== ''
-    ) {
-      setCurrentDateRange(rCTFF(tripData.dateRange, 'E dd MMMM'))
-    } else {
-      setCurrentDateRange(['', ''])
-    }
-  }, [tripData.dateRange])
 
   const displayTripContext = context => {
     switch (context) {
@@ -371,10 +342,10 @@ const Preview = ({
             {carouselImages.map(image => (
               <Box key={uuidv4()} className={classes.slides}>
                 <img src={image.src.original} alt="" />
-                <Typography
+                {/* <Typography
                   className={classes.sliderCaption}
                   dangerouslySetInnerHTML={{ __html: image.title }}
-                />
+                /> */}
               </Box>
             ))}
           </Carousel>
@@ -395,7 +366,8 @@ const Preview = ({
             </Box>
             <div>
               <Box className={classes.mobileHeaderRow}>
-                <img src={calendar} alt="" className={classes.mobileIcon} /> {currentDateRange[0]}
+                <img src={calendar} alt="" className={classes.mobileIcon} />
+                {currentDateRange[0]}
                 {' - '}
                 {currentDateRange[1]}
               </Box>
@@ -411,118 +383,84 @@ const Preview = ({
           </Box>
         </Box>
         <Box className={classes.mobileContent}>
-          <Paper className={classes.mobilePaperContent}>
-            {canEdit && <EditBtn onClick={() => setOpenModal('general')} />}
-            <Box
-              display="flex"
-              alignItems="flex-start"
-              justifyContent="space-between"
-              width="calc(100% - 50px)"
-              mb="20px"
-            >
-              <Typography variant="h1">{tripData.title}</Typography>
-              <CustomAvatar peopleIds={generatedAvatars} />
-            </Box>
-            <div>
-              <Box display="flex" alignItems="center" justifyContent="space-between">
-                <div>
-                  <Box display="flex" alignItems="center">
-                    <RoomRoundedIcon className={classes.smalltitleIcon} />
-                    <Typography className={classes.smallTitle}>Destination</Typography>
-                  </Box>
-                  <Typography className={classes.subtitle}>
-                    {!tripData.noDestination && tripData.destination.label}
-                  </Typography>
-                </div>
-                <div>
-                  <Box display="flex" alignItems="center">
-                    <TodayRoundedIcon className={classes.smalltitleIcon} />
-                    <Typography className={classes.smallTitle}>Arrivée</Typography>
-                  </Box>
-                  {currentDateRange && (
-                    <Typography className={classes.subtitle}>{currentDateRange[0]}</Typography>
-                  )}
-                </div>
-                <div>
-                  <Box display="flex" alignItems="center">
-                    <EventRoundedIcon className={classes.smalltitleIcon} />
-                    <Typography className={classes.smallTitle}>Départ</Typography>
-                  </Box>
-                  {currentDateRange && (
-                    <Typography className={classes.subtitle}>{currentDateRange[1]}</Typography>
-                  )}
-                </div>
+          {!matchesXs && <DesktopPreview tripData={tripData} generatedAvatars={generatedAvatars} />}
+          <Box
+            sx={{
+              padding: '20px 30px',
+              borderRadius: '20px 20px 0 0',
+              backgroundColor: theme.palette.grey.f7,
+            }}
+            className={classes.informationsContainer}
+          >
+            <Paper className={classes.descriptionPaper}>
+              {canEdit && <EditBtn onClick={() => setOpenModal('editDescription')} />}
+              <Box display="flex">
+                <ChatBubbleRoundedIcon className={classes.titleIcon} />
+                <Typography variant="h4" className={classes.titlePapers}>
+                  Le projet
+                </Typography>
               </Box>
-            </div>
-          </Paper>
-          <Paper className={classes.descriptionPaper}>
-            {canEdit && <EditBtn onClick={() => setOpenModal('editDescription')} />}
-            <Box display="flex">
-              <ChatBubbleRoundedIcon className={classes.titleIcon} />
-              <Typography variant="h4" className={classes.titlePapers}>
-                Le projet
-              </Typography>
-            </Box>
-            <Box fontSize="14px" color="#000000">
-              {tripData.description}
-            </Box>
-          </Paper>
-          <Box display="flex" alignItems="stretch" className={classes.doubleCol}>
-            <Paper className={classes.doubleColPaper}>
-              <Box className={classes.boxInfo}>
-                {canEdit && <EditBtn onClick={() => setOpenModal('editInfo')} />}
-                <Box display="flex">
-                  <InfoIcon className={classes.titleIcon} />
-                  <Typography variant="h4" className={classes.titlePapers}>
-                    Informations
-                  </Typography>
-                </Box>
-                <Box m="15px 0">
-                  <Typography className={classes.infotitle}>Contexte</Typography>
-                  <Typography className={classes.infobody}>
-                    {displayTripContext(tripData.context)}
-                  </Typography>
-                </Box>
-                <Box m="15px 0">
-                  <Typography className={classes.infotitle}>Budget</Typography>
-                  <Typography className={classes.infobody}>
-                    {tripData.budget === 'low'
-                      ? 'Faible'
-                      : tripData.budget === 'medium'
-                      ? 'Moyen'
-                      : 'Élevé'}
-                  </Typography>
-                </Box>
+              <Box fontSize="14px" color="#000000">
+                {tripData.description}
               </Box>
             </Paper>
-            <Paper className={classes.colPaperTrav}>
-              <Box p="30px" position="relative">
-                {canEdit && <EditBtn onClick={() => setOpenModal('editTravelers')} />}
-                <Box display="flex">
-                  <PersonIcon className={classes.titleIcon} />
-                  <Typography variant="h4" className={classes.titlePapers}>
-                    Les voyageurs
-                  </Typography>
+            <Box display="flex" alignItems="stretch" className={classes.doubleCol}>
+              <Paper className={classes.doubleColPaper}>
+                <Box className={classes.boxInfo}>
+                  {canEdit && <EditBtn onClick={() => setOpenModal('editInfo')} />}
+                  <Box display="flex">
+                    <InfoIcon className={classes.titleIcon} />
+                    <Typography variant="h4" className={classes.titlePapers}>
+                      Informations
+                    </Typography>
+                  </Box>
+                  <Box m="15px 0">
+                    <Typography className={classes.infotitle}>Contexte</Typography>
+                    <Typography className={classes.infobody}>
+                      {displayTripContext(tripData.context)}
+                    </Typography>
+                  </Box>
+                  <Box m="15px 0">
+                    <Typography className={classes.infotitle}>Budget</Typography>
+                    <Typography className={classes.infobody}>
+                      {tripData.budget === 'low'
+                        ? 'Faible'
+                        : tripData.budget === 'medium'
+                        ? 'Moyen'
+                        : 'Élevé'}
+                    </Typography>
+                  </Box>
                 </Box>
-                <Box m="15px 0">
-                  {tripData &&
-                    [...dictionary.travelers_age].reverse().map(travelerAge => (
-                      <Fragment key={uuidv4()}>
-                        {tripData.travelersDetails.some(({ age }) => age === travelerAge.value) && (
-                          <Typography>{travelerAge.label}</Typography>
-                        )}
-                        {tripData.travelersDetails
-                          .filter(({ age }) => age === travelerAge.value)
-                          .map(traveler => (
-                            <Typography key={uuidv4()} className={classes.infobody}>
-                              {traveler.name}
-                            </Typography>
-                          ))}
-                      </Fragment>
-                    ))}
+              </Paper>
+              <Paper className={classes.colPaperTrav}>
+                <Box p="30px" position="relative">
+                  {canEdit && <EditBtn onClick={() => setOpenModal('editTravelers')} />}
+                  <Box display="flex">
+                    <PersonIcon className={classes.titleIcon} />
+                    <Typography variant="h4" className={classes.titlePapers}>
+                      Les voyageurs
+                    </Typography>
+                  </Box>
+                  <Box m="15px 0">
+                    {tripData &&
+                      [...dictionary.travelers_age].reverse().map(travelerAge => (
+                        <Fragment key={uuidv4()}>
+                          {tripData.travelersDetails.some(
+                            ({ age }) => age === travelerAge.value
+                          ) && <Typography>{travelerAge.label}</Typography>}
+                          {tripData.travelersDetails
+                            .filter(({ age }) => age === travelerAge.value)
+                            .map(traveler => (
+                              <Typography key={uuidv4()} className={classes.infobody}>
+                                {traveler.name}
+                              </Typography>
+                            ))}
+                        </Fragment>
+                      ))}
+                  </Box>
                 </Box>
-              </Box>
-            </Paper>
+              </Paper>
+            </Box>
           </Box>
         </Box>
       </Box>

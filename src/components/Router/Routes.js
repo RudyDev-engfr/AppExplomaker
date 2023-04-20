@@ -24,6 +24,8 @@ import Settings from '../../pages/Profile/Settings'
 import Help from '../../pages/Profile/Help'
 import HelpDetails from '../../pages/Profile/HelpDetails'
 
+import TripContextProvider from '../../contexts/trip'
+
 const Routes = () => {
   const history = useHistory()
   const location = useLocation()
@@ -59,7 +61,6 @@ const Routes = () => {
       <Route path="/join/:tripId">
         <JoinTrip />
       </Route>
-
       <PrivateRoute path="/newtrip/tripFirst">
         <TripFirst />
       </PrivateRoute>
@@ -79,10 +80,9 @@ const Routes = () => {
         <TripRecap />
       </PrivateRoute>
       <PrivateRoute path="/tripPage/:tripId">
-        <TripPage />
-      </PrivateRoute>
-      <PrivateRoute path="welcomeTrip/:tripId">
-        <WelcomeTrip />
+        <TripContextProvider>
+          <TripPage />
+        </TripContextProvider>
       </PrivateRoute>
       <PrivateRoute path="/profile">
         <Profile />

@@ -330,9 +330,17 @@ const EventCreator = ({
 
   useEffect(() => {
     if (!editMode) {
-      setSelectedDepartureDateTime(add(selectedArrivalDateTime, { days: 1 }))
+      setSelectedDepartureDateTime(add(selectedArrivalDateTime, { hours: 16 }))
     }
   }, [selectedArrivalDateTime])
+
+  useEffect(() => {
+    if (selectedDateFromPlanning && eventType === EVENT_TYPES[0] && !editMode) {
+      setSelectedArrivalDateTime(add(selectedDateFromPlanning, { hours: 18 }))
+    } else {
+      setSelectedArrivalDateTime(add(tripStartDate, { hours: 18 }))
+    }
+  }, [selectedDateFromPlanning])
 
   useEffect(() => {
     if (!editMode) {
@@ -688,7 +696,7 @@ const EventCreator = ({
           tempData.timings[1] = new timestampRef.fromDate(new Date(tempData.timings[1])) // ArrivalDateTime
           return {
             ...flight,
-            date: new timestampRef.fromDate(flight.date),
+            date: new timestampRef.fromDate(flight.tempData.timings[0]),
             data: tempData, // DepartureDateTime, ArrivalDateTime, DepartureAirport, ArrivalAirport
             website,
           }
@@ -748,6 +756,8 @@ const EventCreator = ({
           currency,
           website,
           date: dateTimeToString(transports[0].startTime),
+          startTime: dateTimeToString(transports[0].startTime),
+          endTime: dateTimeToString(transports[transports.length - 1].endTime),
         }
         break
       case EVENT_TYPES[4]:
@@ -855,6 +865,9 @@ const EventCreator = ({
           }
         })
     }
+    // history.push(
+    //   `/tripPage/${tripId}/planning?${isSurvey ? 'survey=' : 'event='}${currentEvent.id}`
+    // )
     setEventType('')
   }
 

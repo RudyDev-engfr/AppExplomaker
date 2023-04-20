@@ -12,7 +12,7 @@ import icecream from '../images/eventCreator/restaurant/icecream.svg'
 import meat from '../images/eventCreator/restaurant/meat.svg'
 import tea from '../images/eventCreator/restaurant/tea.svg'
 import veggie from '../images/eventCreator/restaurant/veggie.svg'
-import mainTransports from '../images/eventCreator/transport/main.svg'
+import mainTransport from '../images/eventCreator/transport/main.svg'
 import train from '../images/eventCreator/transport/train.svg'
 import taxi from '../images/eventCreator/transport/taxi.svg'
 import bike from '../images/eventCreator/transport/bike.svg'
@@ -144,7 +144,7 @@ export const accomodation = [
 
 export const transport = [
   {
-    icon: mainTransports,
+    icon: mainTransport,
     value: 'main',
   },
   {
@@ -572,7 +572,7 @@ export default function findIcon(selectedIcon, eventType) {
     case EVENT_TYPES[4]:
       currentArray = [...restaurant]
       break
-    case 'tripIcon':
+    // case 'tripIcon':
   }
   return currentArray?.filter(icon => icon.value === selectedIcon)[0].icon
 }

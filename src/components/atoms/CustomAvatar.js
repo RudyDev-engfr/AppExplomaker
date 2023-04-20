@@ -29,6 +29,9 @@ const useStyles = makeStyles(theme => ({
     borderRadius: '50%',
     fontSize: '10px',
   },
+  previewGroup: {
+    justifyContent: 'flex-start',
+  },
 }))
 
 const CustomAvatar = ({
@@ -40,6 +43,7 @@ const CustomAvatar = ({
   width = 44,
   height = 44,
   isNotification,
+  isPreview,
 }) => {
   const classes = useStyles()
   const { getUserById } = useContext(FirebaseContext)
@@ -70,6 +74,8 @@ const CustomAvatar = ({
         classes={
           isVertical
             ? { root: classes.verticalGroup, avatar: classes.verticalAvatar }
+            : isPreview
+            ? { root: classes.previewGroup }
             : { root: classes.horizontalGroup }
         }
         max={isVertical ? 4 : 5}

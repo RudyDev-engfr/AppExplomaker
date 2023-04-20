@@ -6,14 +6,14 @@ import makeStyles from '@mui/styles/makeStyles'
 const useStyles = makeStyles(theme => ({
   root: {
     position: 'absolute',
-    top: '24px',
-    right: '20px',
+
     width: '40px',
     height: '40px',
     background: theme.palette.grey.f7,
     color: 'rgba(0, 0, 0, 0.5)',
     fontSize: '18px',
     transition: '0.2s linear',
+    zIndex: 10,
     '@media (max-width: 650px)': {
       top: '20px',
       color: '#bdbdbd !important',
@@ -23,11 +23,17 @@ const useStyles = makeStyles(theme => ({
   },
 }))
 
-const EditBtn = ({ onClick }) => {
+const EditBtn = ({ onClick, top = '24px', right = '20px' }) => {
   const classes = useStyles()
 
   return (
-    <IconButton type="button" onClick={onClick} className={classes.root} size="large">
+    <IconButton
+      type="button"
+      onClick={onClick}
+      className={classes.root}
+      sx={{ top, right }}
+      size="large"
+    >
       <CreateOutlined />
     </IconButton>
   )

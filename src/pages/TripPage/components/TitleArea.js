@@ -3,6 +3,7 @@ import Paper from '@mui/material/Paper'
 import Box from '@mui/material/Box'
 import Typography from '@mui/material/Typography'
 import React from 'react'
+import EditBtn from '../../../components/atoms/EditBtn'
 
 const useStyles = makeStyles(theme => ({
   titleArea: {
@@ -17,7 +18,13 @@ const useStyles = makeStyles(theme => ({
     },
   },
 }))
-const TitleArea = ({ tripDestinationLabel, tripTitle, tripDateRange = [] }) => {
+const TitleArea = ({
+  tripDestinationLabel,
+  tripTitle,
+  tripDateRange = [],
+  setOpenModal,
+  canEdit,
+}) => {
   const classes = useStyles()
 
   return (
@@ -29,14 +36,17 @@ const TitleArea = ({ tripDestinationLabel, tripTitle, tripDateRange = [] }) => {
             {tripDestinationLabel ?? tripTitle}
           </Box>
         </Typography>
-        <Typography>
-          {/* {typeof currentDateRange[0] === 'undefined'
+        <Box sx={{ position: 'relative' }}>
+          <Typography>
+            {/* {typeof currentDateRange[0] === 'undefined'
             ? 'Je ne sais pas encore'
             : `${currentDateRange[0]} - ${currentDateRange[1]}`} */}
-          {typeof tripDateRange[0] === 'undefined'
-            ? 'Je ne sais pas encore'
-            : `${tripDateRange[0]} - ${tripDateRange[1]}`}
-        </Typography>
+            {typeof tripDateRange[0] === 'undefined'
+              ? 'Je ne sais pas encore'
+              : `${tripDateRange[0]} - ${tripDateRange[1]}`}
+          </Typography>
+          {canEdit && <EditBtn onClick={() => setOpenModal('general')} top="-15px" right="-50px" />}
+        </Box>
       </Box>
     </Paper>
   )

@@ -45,6 +45,7 @@ import LineFull from '../../../images/LineFull.svg'
 import findIcon from '../../../helper/icons'
 import FlightPreview from './FlightPreview'
 import { PlanningContext } from '../../../contexts/planning'
+import { SessionContext } from '../../../contexts/session'
 
 const useStyles = makeStyles(theme => ({
   iconBackground: {
@@ -186,10 +187,12 @@ const EventPreview = ({
 }) => {
   const classes = useStyles()
   const history = useHistory()
-  const { firestore } = useContext(FirebaseContext)
+  const { firestore, createNotificationsOnTrip } = useContext(FirebaseContext)
+  const { user } = useContext(SessionContext)
   const { setNeedMapRefresh } = useContext(PlanningContext)
 
   const [isLoading, setIsLoading] = useState(false)
+  const [tripData, setTripData] = useState()
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false)
   const [currentEventType, setCurrentEventType] = useState('')
   // Menu Button Logic
@@ -204,8 +207,25 @@ const EventPreview = ({
   // End of Menu Button Logic
 
   useEffect(() => {
+    firestore
+      .collection('trips')
+      .doc(tripId)
+      .onSnapshot(doc => {
+        const tempDoc = doc.data()
+        setTripData(tempDoc)
+        setIsLoading(false)
+      })
+  }, [tripId])
+
+  useEffect(() => {
     setNeedMapRefresh(true)
   }, [])
+
+  useEffect(() => {
+    console.log('montre moi', findIcon(currentEvent.icon, currentEventType))
+    console.log('event courant', currentEvent)
+    console.log('type devent courant', currentEventType)
+  }, [currentEvent, currentEventType])
 
   useEffect(() => {
     setCurrentEventType(currentEvent.type)
@@ -247,6 +267,7 @@ const EventPreview = ({
               setPreviousEvent()
               history.replace(`/tripPage/${tripId}/planning`)
               setSelectedPropositionIndex()
+              createNotificationsOnTrip(user, tripData, tripId, 'eventDelete', 2, currentEvent)
               setCurrentEvent()
               setCurrentView('planning')
             })
