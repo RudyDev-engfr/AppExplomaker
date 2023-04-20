@@ -72,6 +72,7 @@ import mixedIcon from '../../images/eventCreator/transport/mixed.svg'
 import lineMobile from '../../images/icons/lineMobile.svg'
 import { TripContext } from '../../contexts/trip'
 import PlanningFeed from './components/PlanningFeed'
+import EventsTimeline from '../../components/molecules/EventsTimeline'
 
 const useStyles = makeStyles(theme => ({
   calendarArea: {
@@ -1389,7 +1390,7 @@ const Planning = ({ tripData, tripId, canEdit }) => {
                           : 'Événements'}
                       </Typography>
                     }
-                    {currentEvents.events.map((event, eventIndex) => (
+                    {/* {currentEvents.events.map((event, eventIndex) => (
                       <EventCard
                         key={event.id}
                         currentEvent={event}
@@ -1400,7 +1401,12 @@ const Planning = ({ tripData, tripId, canEdit }) => {
                         handleOpenDropdown={handleOpenDropdown}
                         eventType={event.type}
                       />
-                    ))}
+                    ))} */}
+                    <EventsTimeline
+                      currentEvents={currentEvents}
+                      canEdit={canEdit}
+                      handleOpenDropdown={handleOpenDropdown}
+                    />
                     {currentEvents.events.length < 1 && (
                       <Typography>
                         {selectedDate === '' && !isNewDatesSectionOpen
