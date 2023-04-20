@@ -262,10 +262,10 @@ const PlanningMap = ({ latitude, longitude, zoom = 5, planningMapRef, isDraggabl
     }
   }, [currentMarkers, transportMarkers, tempTransportMarkers, tempEventMarkers])
 
-  useEffect(() => {
-    console.log({ markersContainer })
-    console.log({ latLngMarkersArray })
-  }, [markersContainer, latLngMarkersArray])
+  // useEffect(() => {
+  //   console.log({ markersContainer })
+  //   console.log({ latLngMarkersArray })
+  // }, [markersContainer, latLngMarkersArray])
 
   useEffect(() => {
     const willNeedRefresh = markersContainer.some((markerOrArrayMarker, index) => {

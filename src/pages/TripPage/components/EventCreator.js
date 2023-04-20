@@ -696,7 +696,7 @@ const EventCreator = ({
           tempData.timings[1] = new timestampRef.fromDate(new Date(tempData.timings[1])) // ArrivalDateTime
           return {
             ...flight,
-            date: new timestampRef.fromDate(flight.date),
+            date: new timestampRef.fromDate(flight.tempData.timings[0]),
             data: tempData, // DepartureDateTime, ArrivalDateTime, DepartureAirport, ArrivalAirport
             website,
           }

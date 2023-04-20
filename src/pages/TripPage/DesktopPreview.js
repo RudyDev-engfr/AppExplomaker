@@ -11,6 +11,7 @@ import person from '../../images/icons/person.svg'
 
 import CustomAvatar from '../../components/atoms/CustomAvatar'
 import { TripContext } from '../../contexts/trip'
+import AddCollaboratorsButton from '../../components/atoms/AddCollaboratorsButton'
 
 const useStyles = makeStyles(theme => ({
   generalInformationBlock: {
@@ -97,7 +98,15 @@ const DesktopPreview = ({ tripData, generatedAvatars }) => {
             {tripData.editors.length} participant{tripData.editors.length > 1 ? 's' : ''}
           </Typography>
         </Box>
-        <Box sx={{ alignSelf: 'flex-end' }}>
+        <Box
+          sx={{
+            alignSelf: 'flex-end',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'flex-end',
+          }}
+        >
+          <AddCollaboratorsButton tripId={tripId} />
           <CustomAvatar peopleIds={generatedAvatars} isPreview />
         </Box>
       </Box>
