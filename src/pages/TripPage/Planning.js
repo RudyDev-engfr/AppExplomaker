@@ -1207,17 +1207,18 @@ const Planning = ({ tripData, tripId, canEdit }) => {
                   <>
                     <Box mb={5}>
                       <Typography variant="h6">Hébergements 🏡</Typography>
-                      {currentEvents.accomodations.map(accomodation => (
-                        <EventCard
-                          key={accomodation.id}
-                          currentEvent={accomodation}
-                          setCurrentEvent={setCurrentEvent}
-                          setEvent={setEvent}
-                          canEdit={canEdit}
-                          handleOpenDropdown={handleOpenDropdown}
-                          eventType={EVENT_TYPES[0]}
-                        />
-                      ))}
+                      {currentEvents.accomodations?.length > 0 &&
+                        currentEvents.accomodations?.map(accomodation => (
+                          <EventCard
+                            key={accomodation.id}
+                            currentEvent={accomodation}
+                            setCurrentEvent={setCurrentEvent}
+                            setEvent={setEvent}
+                            canEdit={canEdit}
+                            handleOpenDropdown={handleOpenDropdown}
+                            eventType={EVENT_TYPES[0]}
+                          />
+                        ))}
                       {currentEvents.accomodations.length < 1 && (
                         <Typography>
                           Pas encore d&apos;hébergement{selectedDate !== '' && ' ce jour la'}

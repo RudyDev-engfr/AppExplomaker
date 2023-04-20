@@ -58,7 +58,7 @@ const PlanningFeed = ({ propsClasses, setCurrentView }) => {
             .filter(
               plannedEvent => !plannedEvent.needNewDates && stringToDate(plannedEvent.date) === day
             )
-            .filter(plannedEvent => plannedEvent.type !== EVENT_TYPES[1])
+            .filter(plannedEvent => plannedEvent.type !== EVENT_TYPES[1] && !plannedEvent.isSurvey)
             .map(event => (
               <Box>{event.title}</Box>
             ))}
@@ -100,7 +100,9 @@ const PlanningFeed = ({ propsClasses, setCurrentView }) => {
             </Box>
             {singleDayPlannedEvents?.length > 1 &&
               singleDayPlannedEvents
-                .filter(plannedEvent => plannedEvent.type !== EVENT_TYPES[1])
+                .filter(
+                  plannedEvent => plannedEvent.type !== EVENT_TYPES[1] && !plannedEvent.isSurvey
+                )
                 .filter(plannedEvent =>
                   isSameDay(
                     stringToDate(plannedEvent.fakeDate, 'yyyy-MM-dd HH:mm').getTime(),

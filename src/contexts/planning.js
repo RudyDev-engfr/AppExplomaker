@@ -56,16 +56,34 @@ const PlanningContextProvider = ({ children }) => {
     if (singleDayPlannedEvents?.length > 1) {
       singleDayPlannedEvents.forEach(singleDayPlannedEvent =>
         // eslint-disable-next-line no-use-before-define
-        preventEventFormat(singleDayPlannedEvent)
+        {
+          if (!singleDayPlannedEvent.startTime || !singleDayPlannedEvent.endTime) {
+            preventEventFormat(singleDayPlannedEvent)
+          }
+        }
       )
     }
   }, [singleDayPlannedEvents])
 
   useEffect(() => {
-    if (currentView === 'chronoFeed') {
-      setCurrentEvents()
+    if (currentView === 'chronoFeed' && singleDayPlannedEvents?.length > 1) {
+      setCurrentEvents({
+        accomodations: singleDayPlannedEvents.filter(
+          plannedEvent =>
+            plannedEvent.type === EVENT_TYPES[0] &&
+            !plannedEvent.itsAllDayLong &&
+            plannedEvent.fakeDate !== plannedEvent.endTime
+        ),
+        surveys: [],
+        events: singleDayPlannedEvents.filter(
+          plannedEvent =>
+            plannedEvent.type !== EVENT_TYPES[0] &&
+            !plannedEvent.itsAllDayLong &&
+            plannedEvent.fakeDate !== plannedEvent.endTime
+        ),
+      })
     }
-  }, [currentView])
+  }, [currentView, singleDayPlannedEvents])
 
   useEffect(() => {
     const tempMarkers = []
@@ -491,7 +509,7 @@ const PlanningContextProvider = ({ children }) => {
       const singleDayEventsArray = []
       let singleDate
       plannedEvents
-        .filter(plannedEvent => plannedEvent.type !== EVENT_TYPES[1])
+        .filter(plannedEvent => plannedEvent.type !== EVENT_TYPES[1] && !plannedEvent.isSurvey)
         .forEach(plannedEvent => {
           const plannedEventInterval = eachDayOfInterval({
             start: stringToDate(plannedEvent.startTime, 'yyyy-MM-dd HH:mm'),
@@ -535,17 +553,29 @@ const PlanningContextProvider = ({ children }) => {
       // eslint-disable-next-line default-case
       switch (event.type) {
         case EVENT_TYPES[0]:
-          tempEvent.startTime = event.date
+          tempEvent.startTime = dateToString(
+            stringToDate(event.date, 'yyyy-MM-dd'),
+            'yyyy-MM-dd HH:mm'
+          )
           break
         case EVENT_TYPES[2]:
-          tempEvent.startTime = event.date
+          tempEvent.startTime = dateToString(
+            stringToDate(event.date, 'yyyy-MM-dd'),
+            'yyyy-MM-dd HH:mm'
+          )
           break
         case EVENT_TYPES[3]:
-          tempEvent.startTime = event.date
+          tempEvent.startTime = dateToString(
+            stringToDate(event.date, 'yyyy-MM-dd'),
+            'yyyy-MM-dd HH:mm'
+          )
           tempEvent.endTime = event.transports[event.transports.length - 1].endTime
           break
         case EVENT_TYPES[4]:
-          tempEvent.startTime = event.date
+          tempEvent.startTime = dateToString(
+            stringToDate(event.date, 'yyyy-MM-dd'),
+            'yyyy-MM-dd HH:mm'
+          )
           break
       }
       return tempEvent
