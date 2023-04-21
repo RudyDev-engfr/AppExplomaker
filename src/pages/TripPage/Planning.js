@@ -196,16 +196,22 @@ const useStyles = makeStyles(theme => ({
     backgroundColor: theme.palette.grey.f7,
     zIndex: '1000',
     [theme.breakpoints.down('sm')]: {
-      gridRowStart: 'mapArea',
-      gridRowEnd: 'previewArea',
+      // gridRowStart: 'mapArea',
+      // gridRowEnd: 'previewArea',
+      gridTemplateAreas: `
+      "mapArea" 
+      "calendarArea" 
+      "previewArea"`,
+      marginTop: 'unset',
+      borderRadius: 'unset',
       minHeight: 'calc(100vh - 90px - 20px)',
       maxHeight: 'calc(100vh - 90px - 20px)',
-      zIndex: '10000',
+      zIndex: '1000',
       margin: '20px 0 0',
-      borderRadius: '30px 30px 0 0',
       '&::-webkit-scrollbar': {
         display: 'none',
       },
+      paddingBottom: '100px',
     },
   },
   previewPaper: {

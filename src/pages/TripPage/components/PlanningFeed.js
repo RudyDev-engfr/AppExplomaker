@@ -49,23 +49,7 @@ const PlanningFeed = ({ propsClasses, setCurrentView }) => {
     console.log('la liste des events par jour finale', singleDayPlannedEvents)
   }, [singleDayPlannedEvents])
 
-  return matchesXs ? (
-    <Box className={classes.mobileMainContainer}>
-      {days.map(day => (
-        <Box key={day}>
-          <Typography>{dateToString(day)}</Typography>
-          {singleDayPlannedEvents
-            .filter(
-              plannedEvent => !plannedEvent.needNewDates && stringToDate(plannedEvent.date) === day
-            )
-            .filter(plannedEvent => plannedEvent.type !== EVENT_TYPES[1] && !plannedEvent.isSurvey)
-            .map(event => (
-              <Box>{event.title}</Box>
-            ))}
-        </Box>
-      ))}
-    </Box>
-  ) : (
+  return (
     <Box className={propsClasses} sx={{ padding: '35px 30px 15px 30px' }}>
       {days?.length > 1 &&
         days.map(day => (

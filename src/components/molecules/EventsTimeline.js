@@ -61,7 +61,9 @@ const EventsTimeline = ({ currentEvents, canEdit, handleOpenDropdown }) => {
                   />
                 </Box>
                 <Typography>
-                  {dateToString(stringToDate(event.startTime, 'yyyy-MM-dd HH:mm'), 'HH:mm')}
+                  {event.startTime
+                    ? dateToString(stringToDate(event.startTime, 'yyyy-MM-dd HH:mm'), 'HH:mm')
+                    : dateToString(stringToDate(event.date, 'yyyy-MM-dd HH:mm'), 'HH:mm')}
                 </Typography>
               </Box>
               <TimelineConnector />

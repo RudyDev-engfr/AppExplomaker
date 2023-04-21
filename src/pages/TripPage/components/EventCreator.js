@@ -696,7 +696,7 @@ const EventCreator = ({
           tempData.timings[1] = new timestampRef.fromDate(new Date(tempData.timings[1])) // ArrivalDateTime
           return {
             ...flight,
-            date: new timestampRef.fromDate(flight.tempData.timings[0]),
+            date: dateToString(rCTFF(flight.data.timings[0]), 'yyyy-MM-dd HH:mm'),
             data: tempData, // DepartureDateTime, ArrivalDateTime, DepartureAirport, ArrivalAirport
             website,
           }
@@ -714,6 +714,11 @@ const EventCreator = ({
           totalPriceMode,
           website,
           date: tempFlights[0].date,
+          startTime: dateToString(rCTFF(flights[0].data.timings[0]), 'yyyy-MM-dd HH:mm'),
+          endTime: dateToString(
+            rCTFF(flights[flights.length - 1].data.timings[1]),
+            'yyyy-MM-dd HH:mm'
+          ),
         }
         break
       case EVENT_TYPES[2]:
