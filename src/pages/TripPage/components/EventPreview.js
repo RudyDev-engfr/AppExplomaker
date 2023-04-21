@@ -118,7 +118,7 @@ const useStyles = makeStyles(theme => ({
   },
   greyBtn: {
     backgroundColor: theme.palette.grey.f7,
-    padding: '1rem 2rem',
+    padding: '15px',
   },
   deleteDialogTitle: {
     textAlign: 'center',
@@ -406,9 +406,11 @@ const EventPreview = ({
                         },
                       }}
                     >
-                      {currentEvent.location.photos.map(photo => (
-                        <img key={photo} className={classes.photo} src={photo} alt="" />
-                      ))}
+                      {currentEvent.location.photos
+                        .filter((photo, index) => index < 4)
+                        .map(photo => (
+                          <img key={photo} className={classes.photo} src={photo} alt="" />
+                        ))}
                     </Carousel>
                   ) : (
                     <PlanningCardIcon
@@ -540,12 +542,12 @@ const EventPreview = ({
                       </Typography>
                       <Box mt={1}>
                         <Typography sx={{ fontWeight: 'bold' }}>
-                          {format(stringToDate(currentEvent.startTime), 'EEEE dd MMMM', {
+                          {format(stringToDate(currentEvent.startTime), 'EEE dd MMM', {
                             locale: frLocale,
                           })}
                         </Typography>
                         <Typography>
-                          {format(stringToDate(currentEvent.endTime), 'HH:mm', {
+                          {format(stringToDate(currentEvent.startTime), 'HH:mm', {
                             locale: frLocale,
                           })}
                         </Typography>

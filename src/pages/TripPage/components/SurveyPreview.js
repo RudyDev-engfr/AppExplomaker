@@ -54,8 +54,8 @@ const useStyles = makeStyles(theme => ({
   },
   headerContainer: {
     display: 'grid',
-    gridTemplate: '1fr / auto 1fr',
-    placeItems: 'center',
+    gridTemplate: '1fr / auto',
+    placeItems: 'start',
     padding: `${theme.spacing(3)} ${theme.spacing(1)} ${theme.spacing(2)}`,
     [theme.breakpoints.down('sm')]: {
       gridTemplate: '1fr 1fr / auto',
@@ -283,7 +283,7 @@ const SurveyPreview = ({
     <>
       <Box className={classes.mainContainer}>
         <Box className={classes.headerContainer}>
-          <Box display="flex" justifyContent="space-between" alignItems="center">
+          <Box display="flex" justifyContent="flex-start" alignItems="center">
             <IconButton
               onClick={() => {
                 if (chooseMode) {
@@ -313,14 +313,14 @@ const SurveyPreview = ({
               {chooseMode ? 'Choisir une proposition' : 'Propositions'}
             </Typography>
           </Box>
-          {!chooseMode && (
+          {/* {!chooseMode && (
             <Box display="flex" alignItems="center">
               <Typography sx={{ marginRight: theme.spacing(1) }}>
                 {matchesXs ? 'Créateur :' : 'Sondage créé(e) par :'}
               </Typography>
               <CustomAvatar peopleIds={[currentEvent.createdBy]} />
             </Box>
-          )}
+          )} */}
         </Box>
         <Box className={classes.cardContainer}>
           {currentEvent.propositions.map((proposition, index) => (
@@ -360,7 +360,7 @@ const SurveyPreview = ({
                       component="img"
                       src={
                         proposition?.location?.photos?.length > 0
-                          ? `https://maps.googleapis.com/maps/api/place/photo?maxwidth=180&maxheight=180&photo_reference=${proposition.location.photos[0].photo_reference}&key=AIzaSyCKC9_XX60E1at2qp_90SU07-d-22pDydM`
+                          ? `${encodeURI(proposition?.location?.photos[0])}`
                           : findIcon(proposition.icon, currentEvent.type)
                       }
                       className={proposition?.location?.photos?.length > 0 && classes.photo}

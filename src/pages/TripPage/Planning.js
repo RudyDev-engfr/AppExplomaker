@@ -261,7 +261,7 @@ const useStyles = makeStyles(theme => ({
   propositionPaper: {
     borderRadius: '10px',
     display: 'grid',
-    gridTemplate: '1fr / 60px 1fr 120px',
+    gridTemplate: '1fr / 60px 1fr',
     padding: '20px',
     marginBottom: theme.spacing(3),
     [theme.breakpoints.down('sm')]: {
@@ -271,6 +271,7 @@ const useStyles = makeStyles(theme => ({
   },
   propositionAvatars: {
     placeSelf: 'end',
+    gridColumn: '1 / 3',
   },
   daysCarousel: {
     height: '100%',
@@ -281,7 +282,7 @@ const useStyles = makeStyles(theme => ({
     },
   },
   surveyCardPrice: {
-    fontSize: '20px',
+    fontSize: '14px',
     fontWeight: '400',
     lineHeight: '27px',
     [theme.breakpoints.down('sm')]: {
@@ -1323,28 +1324,28 @@ const Planning = ({ tripData, tripId, canEdit }) => {
                                           : proposition.title}
                                       </Box>
                                     </Typography>
-                                    <Typography className={classes.surveyCardPrice}>
-                                      {proposition.price === 0
-                                        ? 'Pas de prix'
-                                        : `${
-                                            proposition.price /
-                                            proposition.participatingTravelers.length
-                                          } €`}{' '}
-                                      {proposition.price > 0 && (
-                                        <Typography
-                                          component="span"
-                                          className={classes.surveyCardPrice}
-                                          sx={{
-                                            [theme.breakpoints.down('sm')]: {
-                                              fontSize: '14px!important',
-                                              lineHeight: '20px!important',
-                                            },
-                                          }}
-                                        >
-                                          / pers
-                                        </Typography>
-                                      )}
-                                    </Typography>
+                                    {proposition.price !== 0 && (
+                                      <Typography className={classes.surveyCardPrice}>
+                                        {`${
+                                          proposition.price /
+                                          proposition.participatingTravelers.length
+                                        } €`}
+                                        {proposition.price > 0 && (
+                                          <Typography
+                                            component="span"
+                                            className={classes.surveyCardPrice}
+                                            sx={{
+                                              [theme.breakpoints.down('sm')]: {
+                                                fontSize: '14px!important',
+                                                lineHeight: '20px!important',
+                                              },
+                                            }}
+                                          >
+                                            / pers
+                                          </Typography>
+                                        )}
+                                      </Typography>
+                                    )}
                                     <Typography>
                                       {survey.type === EVENT_TYPES[3] &&
                                         formatDuration(
