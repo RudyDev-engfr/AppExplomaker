@@ -83,32 +83,21 @@ const EventCard = ({
               photo={currentEvent?.location?.photos?.length > 0 && currentEvent.location.photos[0]}
             /> */}
             <Box>
-              <Box
-                sx={{
-                  display: 'grid',
-                  gridTemplate: '1fr / 1fr min-content',
-                  alignItems: 'center',
-                  height: '24px',
-                  position: 'relative',
-                  top: '-6px',
-                }}
-              >
-                <Box>
-                  {currentEvent.startTime &&
-                    currentEvent.endTime &&
-                    !isSameDay(
-                      stringToDate(currentEvent.startTime, 'yyyy-MM-dd HH:mm'),
-                      stringToDate(currentEvent.endTime, 'yyyy-MM-dd HH:mm')
-                    ) && (
-                      <Typography color="primary" className={classes.date}>
-                        {`${format(stringToDate(currentEvent.startTime), 'd MMMM', {
-                          locale: frLocale,
-                        })} - ${format(stringToDate(currentEvent.endTime), 'd MMMM', {
-                          locale: frLocale,
-                        })}`}
-                      </Typography>
-                    )}
-                  {/* {currentEvent.startTime && (
+              {currentEvent.startTime &&
+                currentEvent.endTime &&
+                !isSameDay(
+                  stringToDate(currentEvent.startTime, 'yyyy-MM-dd HH:mm'),
+                  stringToDate(currentEvent.endTime, 'yyyy-MM-dd HH:mm')
+                ) && (
+                  <Typography color="primary" className={classes.date}>
+                    {`${format(stringToDate(currentEvent.startTime), 'd MMMM', {
+                      locale: frLocale,
+                    })} - ${format(stringToDate(currentEvent.endTime), 'd MMMM', {
+                      locale: frLocale,
+                    })}`}
+                  </Typography>
+                )}
+              {/* {currentEvent.startTime && (
                     <Typography color="primary" className={classes.date}>
                       {isWithoutDate &&
                         `${format(stringToDate(currentEvent.startTime), 'd MMMM', {
@@ -121,8 +110,8 @@ const EventCard = ({
                       })}`}
                     </Typography>
                   )} */}
-                </Box>
-                {/* {eventType === EVENT_TYPES[1] && (
+
+              {/* {eventType === EVENT_TYPES[1] && (
                   <Typography color="primary" className={classes.date}>
                     {isSameDay(
                       rCTFF(currentEvent.flights[0].date),
@@ -141,57 +130,56 @@ const EventCard = ({
                         )}`}
                   </Typography>
                 )} */}
-                {eventType === EVENT_TYPES[3] && (
-                  <Typography color="primary" className={classes.date}>
-                    {isSameDay(
-                      stringToDate(currentEvent.transports[0].startTime),
-                      stringToDate(
-                        currentEvent.transports[currentEvent.transports.length - 1].endTime
-                      )
+              {eventType === EVENT_TYPES[3] && (
+                <Typography color="primary" className={classes.date}>
+                  {isSameDay(
+                    stringToDate(currentEvent.transports[0].startTime),
+                    stringToDate(
+                      currentEvent.transports[currentEvent.transports.length - 1].endTime
                     )
-                      ? `${format(
-                          stringToDate(currentEvent.transports[0].startTime),
-                          isWithoutDate ? 'd MMMM | HH:mm' : 'HH:mm',
-                          {
-                            locale: frLocale,
-                          }
-                        )} - ${format(
-                          stringToDate(
-                            currentEvent.transports[currentEvent.transports.length - 1].endTime
-                          ),
-                          'HH:mm',
-                          {
-                            locale: frLocale,
-                          }
-                        )}`
-                      : `${format(stringToDate(currentEvent.transports[0].startTime), 'd MMMM', {
+                  )
+                    ? `${format(
+                        stringToDate(currentEvent.transports[0].startTime),
+                        isWithoutDate ? 'd MMMM | HH:mm' : 'HH:mm',
+                        {
                           locale: frLocale,
-                        })} - ${format(
-                          stringToDate(
-                            currentEvent.transports[currentEvent.transports.length - 1].endTime
-                          ),
-                          'd MMMM',
-                          {
-                            locale: frLocale,
-                          }
-                        )}`}
-                  </Typography>
-                )}
-                {canEdit && (
-                  <CardActions sx={{ padding: '0' }}>
-                    <IconButton
-                      size="small"
-                      onClick={event => {
-                        event.stopPropagation()
-                        setCurrentEvent(currentEvent)
-                        handleOpenDropdown(event)
-                      }}
-                    >
-                      <MoreHoriz />
-                    </IconButton>
-                  </CardActions>
-                )}
-              </Box>
+                        }
+                      )} - ${format(
+                        stringToDate(
+                          currentEvent.transports[currentEvent.transports.length - 1].endTime
+                        ),
+                        'HH:mm',
+                        {
+                          locale: frLocale,
+                        }
+                      )}`
+                    : `${format(stringToDate(currentEvent.transports[0].startTime), 'd MMMM', {
+                        locale: frLocale,
+                      })} - ${format(
+                        stringToDate(
+                          currentEvent.transports[currentEvent.transports.length - 1].endTime
+                        ),
+                        'd MMMM',
+                        {
+                          locale: frLocale,
+                        }
+                      )}`}
+                </Typography>
+              )}
+              {canEdit && (
+                <CardActions sx={{ padding: '0', position: 'absolute', right: '2%', top: '2%' }}>
+                  <IconButton
+                    size="small"
+                    onClick={event => {
+                      event.stopPropagation()
+                      setCurrentEvent(currentEvent)
+                      handleOpenDropdown(event)
+                    }}
+                  >
+                    <MoreHoriz />
+                  </IconButton>
+                </CardActions>
+              )}
               {currentEvent.title && (
                 <Typography className={classes.title}>
                   {currentEvent.title.length > 39

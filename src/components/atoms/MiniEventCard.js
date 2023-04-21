@@ -31,9 +31,13 @@ const useStyles = makeStyles(theme => ({
     marginRight: '15px',
     fontSize: '12px',
     color: theme.palette.grey['82'],
+    whiteSpace: 'nowrap',
   },
   eventTitleTypo: {
     fontWeight: 400,
+    textOverflow: 'ellipsis',
+    overflow: 'hidden',
+    whiteSpace: 'nowrap',
   },
   iconContainer: {
     padding: '6px',
@@ -92,7 +96,7 @@ const MiniEventCard = ({ plannedEvent, setCurrentView }) => {
             ? 'Nuit'
             : plannedEvent.itsAllDayLong
             ? 'Jour'
-            : format(stringToDate(plannedEvent.fakeDate, 'yyyy-MM-dd HH:mm'), "HH 'h' mm")}
+            : format(stringToDate(plannedEvent.fakeDate, 'yyyy-MM-dd HH:mm'), "HH'h'mm")}
         </Typography>
         <Typography className={classes.eventTitleTypo}>{plannedEvent.title}</Typography>
       </Button>

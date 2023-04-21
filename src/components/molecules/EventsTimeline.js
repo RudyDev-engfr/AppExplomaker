@@ -4,7 +4,6 @@ import {
   Timeline,
   TimelineConnector,
   TimelineContent,
-  TimelineDot,
   TimelineItem,
   TimelineSeparator,
 } from '@mui/lab'
@@ -68,7 +67,7 @@ const EventsTimeline = ({ currentEvents, canEdit, handleOpenDropdown }) => {
               </Box>
               <TimelineConnector />
             </TimelineSeparator>
-            <TimelineContent>
+            <TimelineContent sx={{ paddingRight: '0 !important' }}>
               <EventCard
                 key={event.id}
                 currentEvent={event}

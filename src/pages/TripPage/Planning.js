@@ -189,8 +189,8 @@ const useStyles = makeStyles(theme => ({
     gridArea: 'previewArea',
     overflowY: 'auto',
     overflowX: 'hidden',
-    minHeight: 'calc(100vh - 100px - 20px)',
-    maxHeight: 'calc(100vh - 100px - 20px)',
+    minHeight: 'calc(100vh - 100px)',
+    maxHeight: 'calc(100vh - 100px)',
     placeItems: 'center',
     borderRadius: '10px 10px 0 0',
     backgroundColor: theme.palette.grey.f7,
@@ -1027,7 +1027,7 @@ const Planning = ({ tripData, tripId, canEdit }) => {
                   <Typography variant="h5">
                     <Box fontWeight="bold" component="span">
                       {isNewDatesSectionOpen
-                        ? 'Evenements sans dates'
+                        ? 'Archives'
                         : selectedDate === ''
                         ? 'Aperçu de ton séjour'
                         : format(selectedDate, 'd MMMM', { locale: frLocale })}
@@ -1390,13 +1390,6 @@ const Planning = ({ tripData, tripId, canEdit }) => {
                         ))}
                       </>
                     )}
-                    {
-                      <Typography variant="h6">
-                        {selectedDate === '' && !isNewDatesSectionOpen
-                          ? 'Transports'
-                          : 'Événements'}
-                      </Typography>
-                    }
                     {/* {currentEvents.events.map((event, eventIndex) => (
                       <EventCard
                         key={event.id}

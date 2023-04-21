@@ -50,7 +50,7 @@ const PlanningFeed = ({ propsClasses, setCurrentView }) => {
   }, [singleDayPlannedEvents])
 
   return (
-    <Box className={propsClasses} sx={{ padding: '35px 30px 15px 30px' }}>
+    <Box className={propsClasses} sx={{ padding: '20px' }}>
       {days?.length > 1 &&
         days.map(day => (
           <Box key={day} sx={{ marginBottom: '25px' }}>
