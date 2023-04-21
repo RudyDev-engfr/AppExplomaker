@@ -53,6 +53,10 @@ const PlanningContextProvider = ({ children }) => {
   const planningBounds = new window.google.maps.LatLngBounds()
 
   useEffect(() => {
+    console.log('ma date sélectionné', selectedDate)
+  }, [selectedDate])
+
+  useEffect(() => {
     if (singleDayPlannedEvents?.length > 1) {
       singleDayPlannedEvents.forEach(singleDayPlannedEvent =>
         // eslint-disable-next-line no-use-before-define

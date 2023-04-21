@@ -17,7 +17,7 @@ import frLocale from 'date-fns/locale/fr'
 import PlanningCardIcon from './PlanningCardIcon'
 import CustomAvatar from '../../../components/atoms/CustomAvatar'
 import { EVENT_TYPES } from '../../../helper/constants'
-import { rCTFF, stringToDate } from '../../../helper/functions'
+import { dateToString, rCTFF, stringToDate } from '../../../helper/functions'
 import { PlanningContext } from '../../../contexts/planning'
 
 const useStyles = makeStyles(theme => ({
@@ -31,7 +31,7 @@ const useStyles = makeStyles(theme => ({
   },
   cardGrid: {
     display: 'grid',
-    gridTemplate: '1fr / 60px 1fr',
+    gridTemplate: '1fr / 1fr',
     gridGap: '15px',
     width: '100%',
   },
@@ -77,11 +77,11 @@ const EventCard = ({
       <CardActionArea onClick={() => setEvent(currentEvent)}>
         <CardContent sx={{ padding: '15px' }}>
           <Box className={classes.cardGrid}>
-            <PlanningCardIcon
+            {/* <PlanningCardIcon
               icon={currentEvent.icon}
               eventType={eventType}
               photo={currentEvent?.location?.photos?.length > 0 && currentEvent.location.photos[0]}
-            />
+            /> */}
             <Box>
               <Box
                 sx={{
@@ -94,15 +94,20 @@ const EventCard = ({
                 }}
               >
                 <Box>
-                  {currentEvent.startTime && (
-                    <Typography color="primary" className={classes.date}>
-                      {`${format(stringToDate(currentEvent.startTime), 'd MMMM', {
-                        locale: frLocale,
-                      })} - ${format(stringToDate(currentEvent.endTime), 'd MMMM', {
-                        locale: frLocale,
-                      })}`}
-                    </Typography>
-                  )}
+                  {currentEvent.startTime &&
+                    currentEvent.endTime &&
+                    !isSameDay(
+                      stringToDate(currentEvent.startTime, 'yyyy-MM-dd HH:mm'),
+                      stringToDate(currentEvent.endTime, 'yyyy-MM-dd HH:mm')
+                    ) && (
+                      <Typography color="primary" className={classes.date}>
+                        {`${format(stringToDate(currentEvent.startTime), 'd MMMM', {
+                          locale: frLocale,
+                        })} - ${format(stringToDate(currentEvent.endTime), 'd MMMM', {
+                          locale: frLocale,
+                        })}`}
+                      </Typography>
+                    )}
                   {/* {currentEvent.startTime && (
                     <Typography color="primary" className={classes.date}>
                       {isWithoutDate &&
@@ -117,7 +122,7 @@ const EventCard = ({
                     </Typography>
                   )} */}
                 </Box>
-                {eventType === EVENT_TYPES[1] && (
+                {/* {eventType === EVENT_TYPES[1] && (
                   <Typography color="primary" className={classes.date}>
                     {isSameDay(
                       rCTFF(currentEvent.flights[0].date),
@@ -135,7 +140,7 @@ const EventCard = ({
                           'd MMMM'
                         )}`}
                   </Typography>
-                )}
+                )} */}
                 {eventType === EVENT_TYPES[3] && (
                   <Typography color="primary" className={classes.date}>
                     {isSameDay(
@@ -187,7 +192,7 @@ const EventCard = ({
                   </CardActions>
                 )}
               </Box>
-              {currentEvent.title && eventType !== EVENT_TYPES[1] && (
+              {currentEvent.title && (
                 <Typography className={classes.title}>
                   {currentEvent.title.length > 39
                     ? `${currentEvent.title.substring(0, 39)}...`
@@ -224,7 +229,7 @@ const EventCard = ({
                       ? `${currentEvent.flights.length - 1} escale${
                           currentEvent.flights.length - 1 > 1 ? 's' : ''
                         }`
-                      : 'Direct'}
+                      : 'Vol direct'}
                   </Typography>
                   <Typography>{`Arrivée prévue : ${
                     currentEvent.flights[currentEvent.flights.length - 1].data.timings[1]

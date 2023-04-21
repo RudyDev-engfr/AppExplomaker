@@ -708,15 +708,15 @@ const Planning = ({ tripData, tripId, canEdit }) => {
     }
   }, [currentEvent, plannedEvents])
 
-  useEffect(() => {
-    const queries = queryString.parse(location.search)
-    const { event: eventId, survey: surveyId, proposition: propositionIndex } = queries
-    if (!eventId && !surveyId && !propositionIndex) {
-      setIsNewDatesSectionOpen(false)
-      setSelectedDate('')
-      setCurrentView('chronoFeed')
-    }
-  }, [location.search])
+  // useEffect(() => {
+  //   const queries = queryString.parse(location.search)
+  //   const { event: eventId, survey: surveyId, proposition: propositionIndex } = queries
+  //   if (!eventId && !surveyId && !propositionIndex) {
+  //     setIsNewDatesSectionOpen(false)
+  //     setSelectedDate('')
+  //     setCurrentView('chronoFeed')
+  //   }
+  // }, [location.search])
 
   useEffect(() => {
     if (

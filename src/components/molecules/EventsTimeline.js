@@ -15,7 +15,7 @@ import EventCard from '../../pages/TripPage/components/EventCard'
 import { PlanningContext } from '../../contexts/planning'
 import { TripContext } from '../../contexts/trip'
 import findIcon from '../../helper/icons'
-import { dateToString, stringToDate } from '../../helper/functions'
+import { dateToString, rCTFF, stringToDate } from '../../helper/functions'
 
 const useStyles = makeStyles(theme => ({
   iconContainer: {
@@ -63,7 +63,7 @@ const EventsTimeline = ({ currentEvents, canEdit, handleOpenDropdown }) => {
                 <Typography>
                   {event.startTime
                     ? dateToString(stringToDate(event.startTime, 'yyyy-MM-dd HH:mm'), 'HH:mm')
-                    : dateToString(stringToDate(event.date, 'yyyy-MM-dd HH:mm'), 'HH:mm')}
+                    : dateToString(rCTFF(event.date), 'HH:mm')}
                 </Typography>
               </Box>
               <TimelineConnector />
