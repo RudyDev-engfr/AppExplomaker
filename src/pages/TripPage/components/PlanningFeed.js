@@ -51,7 +51,7 @@ const PlanningFeed = ({ propsClasses, setCurrentView }) => {
 
   return (
     <Box className={propsClasses} sx={{ padding: '20px' }}>
-      {days?.length > 1 &&
+      {days?.length >= 1 &&
         days.map(day => (
           <Box key={day} sx={{ marginBottom: '25px' }}>
             <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
@@ -82,16 +82,14 @@ const PlanningFeed = ({ propsClasses, setCurrentView }) => {
                 <ManageSearch />
               </IconButton>
             </Box>
-            {singleDayPlannedEvents?.length > 1 &&
+            {singleDayPlannedEvents?.length >= 1 &&
               singleDayPlannedEvents
                 .filter(
-                  plannedEvent => plannedEvent.type !== EVENT_TYPES[1] && !plannedEvent.isSurvey
-                )
-                .filter(plannedEvent =>
-                  isSameDay(
-                    stringToDate(plannedEvent.fakeDate, 'yyyy-MM-dd HH:mm').getTime(),
-                    stringToDate(dateToString(day), 'yyyy-MM-dd').getTime()
-                  )
+                  plannedEvent =>
+                    isSameDay(
+                      stringToDate(plannedEvent.fakeDate, 'yyyy-MM-dd HH:mm').getTime(),
+                      stringToDate(dateToString(day), 'yyyy-MM-dd').getTime()
+                    ) && !plannedEvent.isSurvey
                 )
                 .sort(compare)
                 .map(plannedEvent => (
@@ -101,6 +99,27 @@ const PlanningFeed = ({ propsClasses, setCurrentView }) => {
                     setCurrentView={setCurrentView}
                   />
                 ))}
+            {singleDayPlannedEvents?.length >= 1 &&
+              singleDayPlannedEvents
+                .filter(plannedEvent => plannedEvent.isSurvey)
+                .map(plannedSurvey =>
+                  plannedSurvey.propositions
+                    .filter(plannedProposition =>
+                      isSameDay(
+                        stringToDate(plannedProposition.fakeDate, 'yyyy-MM-dd HH:mm').getTime(),
+                        stringToDate(dateToString(day), 'yyyy-MM-dd').getTime()
+                      )
+                    )
+                    .sort(compare)
+                    .map(plannedProposition => (
+                      <MiniEventCard
+                        plannedEvent={plannedProposition}
+                        key={plannedProposition.title}
+                        setCurrentView={setCurrentView}
+                        surveyId={plannedSurvey.id}
+                      />
+                    ))
+                )}
           </Box>
         ))}
     </Box>

@@ -1,3 +1,4 @@
+/* eslint-disable no-else-return */
 import React, { useContext } from 'react'
 import { Box, Typography } from '@mui/material'
 import {
@@ -8,6 +9,7 @@ import {
   TimelineSeparator,
 } from '@mui/lab'
 import { makeStyles } from '@mui/styles'
+import { isSameDay } from 'date-fns'
 
 import EventCard from '../../pages/TripPage/components/EventCard'
 
@@ -15,6 +17,7 @@ import { PlanningContext } from '../../contexts/planning'
 import { TripContext } from '../../contexts/trip'
 import findIcon from '../../helper/icons'
 import { dateToString, rCTFF, stringToDate } from '../../helper/functions'
+import { EVENT_TYPES } from '../../helper/constants'
 
 const useStyles = makeStyles(theme => ({
   iconContainer: {
@@ -37,11 +40,37 @@ const useStyles = makeStyles(theme => ({
 }))
 const EventsTimeline = ({ currentEvents, canEdit, handleOpenDropdown }) => {
   const classes = useStyles()
-  const { setEvent } = useContext(PlanningContext)
+  const { setEvent, selectedDate } = useContext(PlanningContext)
   const { setCurrentEvent } = useContext(TripContext)
+
+  function compareDates(objet1, objet2) {
+    const today = new Date(selectedDate)
+    if (!objet1.startTime || !objet1.endTime || !objet2.startTime || !objet2.endTime) {
+      // Si l'un des objets n'a pas de date de début ou de fin, le placer en dernier
+      if (!objet1.startTime || !objet1.endTime) {
+        return 1
+      } else {
+        return -1
+      }
+    } else {
+      const start1 = new Date(objet1.startTime)
+      const end1 = new Date(objet1.endTime)
+      const start2 = new Date(objet2.startTime)
+      const end2 = new Date(objet2.endTime)
+      // Comparer la date de début et la date de fin avec la date d'aujourd'hui en utilisant isSameDay
+      if (isSameDay(start1, today) || isSameDay(end1, today)) {
+        return -1
+      } else if (isSameDay(start2, today) || isSameDay(end2, today)) {
+        return 1
+      } else {
+        return 0
+      }
+    }
+  }
+
   return (
     <Timeline position="right" sx={{ padding: '0 !important' }}>
-      {currentEvents.events.map((event, eventIndex) => (
+      {currentEvents.events.sort(compareDates).map((event, eventIndex) => (
         <>
           <TimelineItem sx={{ '&::before': { display: 'none' } }}>
             <TimelineSeparator>
@@ -59,10 +88,14 @@ const EventsTimeline = ({ currentEvents, canEdit, handleOpenDropdown }) => {
                     }}
                   />
                 </Box>
-                <Typography>
-                  {event.startTime
-                    ? dateToString(stringToDate(event.startTime, 'yyyy-MM-dd HH:mm'), 'HH:mm')
-                    : dateToString(rCTFF(event.date), 'HH:mm')}
+                <Typography sx={{ fontSize: '14px' }}>
+                  {isSameDay(stringToDate(event?.startTime, 'yyyy-MM-dd HH:mm'), selectedDate)
+                    ? dateToString(stringToDate(event?.startTime, 'yyyy-MM-dd HH:mm'), 'HH:mm')
+                    : isSameDay(stringToDate(event?.endTime, 'yyyy-MM-dd HH:mm'), selectedDate)
+                    ? dateToString(stringToDate(event?.endTime, 'yyyy-MM-dd HH:mm'), 'HH:mm')
+                    : event.type === EVENT_TYPES[0]
+                    ? 'Nuit'
+                    : 'jour'}
                 </Typography>
               </Box>
               <TimelineConnector />

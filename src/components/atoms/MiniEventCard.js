@@ -1,6 +1,6 @@
 import React, { useContext, useEffect } from 'react'
 import { Box, Button, Typography } from '@mui/material'
-import { makeStyles } from '@mui/styles'
+import { makeStyles, useTheme } from '@mui/styles'
 import { format } from 'date-fns'
 import { useHistory, useParams } from 'react-router-dom'
 import { stringToDate } from '../../helper/functions'
@@ -22,7 +22,6 @@ const useStyles = makeStyles(theme => ({
     justifyContent: 'flex-start',
     padding: '8px 15px',
     alignItems: 'center',
-    backgroundColor: 'white',
     borderRadius: '10px',
     textTransform: 'none',
     color: theme.palette.grey['33'],
@@ -51,9 +50,10 @@ const useStyles = makeStyles(theme => ({
   },
 }))
 
-const MiniEventCard = ({ plannedEvent, setCurrentView }) => {
+const MiniEventCard = ({ plannedEvent, setCurrentView, surveyId }) => {
   const classes = useStyles()
   const history = useHistory()
+  const theme = useTheme()
   const { tripId } = useParams()
   const { currentEventId, setCurrentEventId } = useContext(PlanningContext)
   const { setCurrentEvent } = useContext(TripContext)
@@ -72,7 +72,11 @@ const MiniEventCard = ({ plannedEvent, setCurrentView }) => {
     <Box
       className={classes.root}
       onMouseEnter={() => {
-        setCurrentEventId(plannedEvent.id)
+        if (surveyId) {
+          setCurrentEventId(surveyId)
+        } else {
+          setCurrentEventId(plannedEvent.id)
+        }
       }}
       onMouseLeave={() => {
         setCurrentEventId()
@@ -90,7 +94,13 @@ const MiniEventCard = ({ plannedEvent, setCurrentView }) => {
           }}
         />
       </Box>
-      <Button className={classes.miniaEventTypoContainer} onClick={() => setEvent(plannedEvent)}>
+      <Button
+        className={classes.miniaEventTypoContainer}
+        sx={{
+          backgroundColor: surveyId ? `${theme.palette.primary.ultraLight} !important ` : 'white',
+        }}
+        onClick={() => setEvent(plannedEvent)}
+      >
         <Typography className={classes.hourTypo}>
           {plannedEvent.itsAllDayLong && plannedEvent.type === EVENT_TYPES[0]
             ? 'Nuit'

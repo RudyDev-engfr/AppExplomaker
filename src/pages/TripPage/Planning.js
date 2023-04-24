@@ -423,7 +423,7 @@ const Planning = ({ tripData, tripId, canEdit }) => {
     })
     setWithoutDatesEvents(tempWithoutDatesEvents)
 
-    const tempEvents = { accomodations: [], surveys: [], events: [] }
+    const tempEvents = { surveys: [], events: [] }
     // Preview
     if (selectedDate === '' && !isNewDatesSectionOpen) {
       plannedEvents
@@ -433,7 +433,7 @@ const Planning = ({ tripData, tripId, canEdit }) => {
             if (plannedEvent.isSurvey) {
               tempEvents.surveys.push(plannedEvent)
             } else {
-              tempEvents.accomodations.push(plannedEvent)
+              tempEvents.events.push(plannedEvent)
             }
           }
           if (plannedEvent.type === EVENT_TYPES[1]) {
@@ -511,11 +511,6 @@ const Planning = ({ tripData, tripId, canEdit }) => {
             }
           }
         })
-      tempEvents.accomodations.sort(
-        (a, b) =>
-          startOfDay(stringToDate(a.startTime, 'yyyy-MM-dd HH:mm')) -
-          startOfDay(stringToDate(b.startTime, 'yyyy-MM-dd HH:mm'))
-      )
     }
     // Dynamic days
     if (selectedDate) {
@@ -566,7 +561,7 @@ const Planning = ({ tripData, tripId, canEdit }) => {
                   end: currentDepartureDateTime,
                 })
               ) {
-                tempEvents.accomodations.push(plannedEvent)
+                tempEvents.events.push(plannedEvent)
               }
             }
           } else if (plannedEvent.type === EVENT_TYPES[1]) {
@@ -592,6 +587,20 @@ const Planning = ({ tripData, tripId, canEdit }) => {
                     selectedDate,
 
                     rCTFF(plannedEvent.flights[transportIndex].date)
+                  )
+                ) {
+                  tempEvents.events.push(plannedEvent)
+                  break
+                } else if (
+                  isSameDay(
+                    selectedDate,
+
+                    rCTFF(plannedEvent.flights[transportIndex].data.timings[1])
+                  ) &&
+                  !isSameDay(
+                    rCTFF(plannedEvent.flights[transportIndex].date),
+
+                    rCTFF(plannedEvent.flights[transportIndex].data.timings[1])
                   )
                 ) {
                   tempEvents.events.push(plannedEvent)
@@ -668,9 +677,6 @@ const Planning = ({ tripData, tripId, canEdit }) => {
           }
         })
     }
-    tempEvents.accomodations = tempEvents.accomodations.sort(
-      (a, b) => getEventStartDate(a) - getEventStartDate(b)
-    )
     tempEvents.events = tempEvents.events.sort(
       (a, b) => getEventStartDate(a) - getEventStartDate(b)
     )
@@ -1213,26 +1219,6 @@ const Planning = ({ tripData, tripId, canEdit }) => {
                   </>
                 ) : (
                   <>
-                    <Box mb={5}>
-                      <Typography variant="h6">Hébergements 🏡</Typography>
-                      {currentEvents.accomodations?.length > 0 &&
-                        currentEvents.accomodations?.map(accomodation => (
-                          <EventCard
-                            key={accomodation.id}
-                            currentEvent={accomodation}
-                            setCurrentEvent={setCurrentEvent}
-                            setEvent={setEvent}
-                            canEdit={canEdit}
-                            handleOpenDropdown={handleOpenDropdown}
-                            eventType={EVENT_TYPES[0]}
-                          />
-                        ))}
-                      {currentEvents.accomodations.length < 1 && (
-                        <Typography>
-                          Pas encore d&apos;hébergement{selectedDate !== '' && ' ce jour la'}
-                        </Typography>
-                      )}
-                    </Box>
                     {currentEvents.surveys.length > 0 && (
                       <>
                         <Typography variant="h6">Propositions</Typography>
