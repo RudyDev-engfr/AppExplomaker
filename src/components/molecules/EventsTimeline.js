@@ -31,12 +31,7 @@ const useStyles = makeStyles(theme => ({
     justifyContent: 'center',
     marginBottom: '5px',
   },
-  MuiTimelineConnectorDashed: {
-    borderStyle: 'solid',
-    borderWidth: '1px',
-    borderImage:
-      'repeating-linear-gradient(45deg, #666 0, #666 5px, transparent 5px, transparent 10px) !important',
-  },
+  MuiTimelineConnectorDashed: {},
 }))
 const EventsTimeline = ({ currentEvents, canEdit, handleOpenDropdown }) => {
   const classes = useStyles()
@@ -59,7 +54,12 @@ const EventsTimeline = ({ currentEvents, canEdit, handleOpenDropdown }) => {
       const end2 = new Date(objet2.endTime)
       // Comparer la date de début et la date de fin avec la date d'aujourd'hui en utilisant isSameDay
       if (isSameDay(start1, today) || isSameDay(end1, today)) {
-        return -1
+        if (isSameDay(start2, today) || isSameDay(end2, today)) {
+          // Si les deux objets ont une date égale à celle du jour, les trier par leur date de début
+          return start1 - start2
+        } else {
+          return -1
+        }
       } else if (isSameDay(start2, today) || isSameDay(end2, today)) {
         return 1
       } else {

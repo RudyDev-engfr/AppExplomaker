@@ -522,9 +522,13 @@ const EventPreview = ({
                   </Box>
                   <Box mb="1rem">
                     <Typography>
-                      {`${format(stringToDate(currentEvent.date, 'yyyy-MM-dd'), 'EEEE dd MMMM', {
-                        locale: frLocale,
-                      })} • ${format(stringToDate(currentEvent.startTime), 'HH:mm', {
+                      {`${format(
+                        stringToDate(currentEvent.startTime, 'yyyy-MM-dd HH:mm'),
+                        'EEEE dd MMMM',
+                        {
+                          locale: frLocale,
+                        }
+                      )} • ${format(stringToDate(currentEvent.startTime), 'HH:mm', {
                         locale: frLocale,
                       })} - ${format(stringToDate(currentEvent.endTime), 'HH:mm', {
                         locale: frLocale,

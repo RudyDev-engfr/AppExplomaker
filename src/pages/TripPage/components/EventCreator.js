@@ -39,6 +39,7 @@ import {
   setMinutes,
   setHours,
   startOfDay,
+  isSameDay,
 } from 'date-fns'
 import clsx from 'clsx'
 import { useHistory } from 'react-router-dom'
@@ -196,6 +197,7 @@ const EventCreator = ({
   travelers,
   dateRange,
   selectedDateFromPlanning,
+  setSelectedDateFromPlanning,
   isNewProposition,
   setIsNewProposition,
   currentEvent,
@@ -220,6 +222,7 @@ const EventCreator = ({
     handleTempEventsMarkers,
     getPlaceDetails,
     tempEventsMarkers,
+    days,
   } = useContext(PlanningContext)
 
   const tripStartDate = rCTFF(dateRange[0])
@@ -239,9 +242,8 @@ const EventCreator = ({
     selectedDateFromPlanning || tripStartDate
   )
   const [arrivalDateTimeError, setArrivalDateTimeError] = useState(false)
-  const [selectedDepartureDateTime, setSelectedDepartureDateTime] = useState(
-    selectedDateFromPlanning || tripStartDate
-  )
+  const [selectedDepartureDateTime, setSelectedDepartureDateTime] =
+    useState(selectedDateFromPlanning)
   const [departureDateTimeError, setDepartureDateTimeError] = useState(false)
   const [selectedDate, setSelectedDate] = useState(selectedDateFromPlanning || tripStartDate)
   const [dateError, setDateError] = useState(false)
@@ -285,7 +287,24 @@ const EventCreator = ({
     if (eventType === EVENT_TYPES[1]) {
       handleTempFlightMarkers(flights)
     }
+    if (flights[0].date && selectedDateFromPlanning && eventType === EVENT_TYPES[1]) {
+      days.forEach(day => {
+        if (isSameDay(flights[0].date, day)) {
+          setSelectedDateFromPlanning(day)
+        }
+      })
+    }
   }, [flights])
+
+  useEffect(() => {
+    if (transports[0].startTime && selectedDateFromPlanning && eventType === EVENT_TYPES[3]) {
+      days.forEach(day => {
+        if (isSameDay(transports[0].startTime, day)) {
+          setSelectedDateFromPlanning(day)
+        }
+      })
+    }
+  }, [transports])
 
   useEffect(() => {
     if (
@@ -330,9 +349,50 @@ const EventCreator = ({
 
   useEffect(() => {
     if (!editMode) {
-      setSelectedDepartureDateTime(add(selectedArrivalDateTime, { hours: 16 }))
+      if (
+        isSameDay(selectedArrivalDateTime, selectedDepartureDateTime) ||
+        isBefore(selectedDepartureDateTime, selectedArrivalDateTime)
+      ) {
+        setSelectedDepartureDateTime(add(selectedDateFromPlanning, { days: 1, hours: 10 }))
+      } else {
+        setSelectedDepartureDateTime(add(selectedArrivalDateTime, { hours: 16 }))
+      }
     }
   }, [selectedArrivalDateTime])
+
+  useEffect(() => {
+    console.log('temps de partir', selectedDepartureDateTime)
+  }, [selectedDepartureDateTime])
+
+  useEffect(() => {
+    if (
+      selectedArrivalDateTime &&
+      selectedDateFromPlanning &&
+      !isSameDay(selectedArrivalDateTime, selectedDateFromPlanning) &&
+      eventType === EVENT_TYPES[0]
+    ) {
+      days.forEach(day => {
+        if (isSameDay(selectedArrivalDateTime, day)) {
+          setSelectedDateFromPlanning(day)
+        }
+      })
+    }
+  }, [selectedArrivalDateTime, selectedDateFromPlanning])
+
+  useEffect(() => {
+    if (
+      selectedDate &&
+      selectedDateFromPlanning &&
+      !isSameDay(selectedDate, selectedDateFromPlanning) &&
+      (eventType === EVENT_TYPES[2] || eventType === EVENT_TYPES[4])
+    ) {
+      days.forEach(day => {
+        if (isSameDay(selectedDate, day)) {
+          setSelectedDateFromPlanning(day)
+        }
+      })
+    }
+  }, [selectedDate])
 
   useEffect(() => {
     if (selectedDateFromPlanning && eventType === EVENT_TYPES[0] && !editMode) {
@@ -664,7 +724,7 @@ const EventCreator = ({
       icon: selectedIcon,
     }
 
-    const tempDate = dateToString(selectedDate)
+    const tempDate = dateToString(selectedDate, 'yyyy-MM-dd HH:mm')
     const tempStartTime = dateTimeToString(selectedStartTime)
     const tempEndTime = dateTimeToString(selectedEndTime)
     // eslint-disable-next-line default-case
@@ -919,7 +979,7 @@ const EventCreator = ({
             display: 'flex',
             justifyContent: 'space-between',
             alignItems: 'center',
-            padding: '1rem 2rem',
+            padding: '15px',
           }}
         >
           {matchesXs ? (
@@ -1194,7 +1254,7 @@ const EventCreator = ({
                     format="dd/MM/yyyy HH:mm"
                     className={classes.dateTimePicker}
                     ampm={false}
-                    minDate={add(selectedArrivalDateTime, { days: 1 })}
+                    minDate={add(selectedArrivalDateTime, { minutes: 1 })}
                     maxDate={tripEndDate}
                     value={selectedDepartureDateTime}
                     onChange={event => {
@@ -1419,7 +1479,7 @@ const EventCreator = ({
                   disableRipple
                 >
                   - Tous
-                </Button>{' '}
+                </Button>
                 <Button
                   onClick={() => setParticipatingTravelers([])}
                   sx={{ textTransform: 'none', color: theme.palette.grey.black }}

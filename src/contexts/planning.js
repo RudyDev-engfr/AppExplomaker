@@ -17,6 +17,7 @@ const PlanningContextProvider = ({ children }) => {
   const history = useHistory()
   const { tripId } = useParams()
   const { currentEvent, setCurrentEvent } = useContext(TripContext)
+  const [eventType, setEventType] = useState()
   const [currentMarkers, setCurrentMarkers] = useState([])
   const [transportMarkers, setTransportMarkers] = useState({
     transportMarkers: [],
@@ -39,7 +40,7 @@ const PlanningContextProvider = ({ children }) => {
 
   // used for planningFeed && Planning
   const [days, setDays] = useState([])
-  const [selectedDate, setSelectedDate] = useState('')
+  const [selectedDateOnPlanning, setSelectedDateOnPlanning] = useState('')
   const [isNewDatesSectionOpen, setIsNewDatesSectionOpen] = useState(false)
 
   // used to construct planningFeed
@@ -53,8 +54,8 @@ const PlanningContextProvider = ({ children }) => {
   const planningBounds = new window.google.maps.LatLngBounds()
 
   useEffect(() => {
-    console.log('ma date sélectionné', selectedDate)
-  }, [selectedDate])
+    console.log('ma date sélectionné', selectedDateOnPlanning)
+  }, [selectedDateOnPlanning])
 
   useEffect(() => {
     console.log('currentevents avec un s', currentEvents)
@@ -62,7 +63,7 @@ const PlanningContextProvider = ({ children }) => {
 
   useEffect(() => {
     const tempEvents = { surveys: [], events: [] }
-    if (selectedDate) {
+    if (selectedDateOnPlanning) {
       plannedEvents
         .filter(plannedEvent => !plannedEvent?.needNewDates)
         .forEach(plannedEvent => {
@@ -87,7 +88,7 @@ const PlanningContextProvider = ({ children }) => {
                 )
                 if (
                   isAfter(currentDepartureDateTime, currentArrivalDateTime) &&
-                  isWithinInterval(selectedDate, {
+                  isWithinInterval(selectedDateOnPlanning, {
                     start: currentArrivalDateTime,
                     end: currentDepartureDateTime,
                   })
@@ -105,7 +106,7 @@ const PlanningContextProvider = ({ children }) => {
               )
               if (
                 isAfter(currentDepartureDateTime, currentArrivalDateTime) &&
-                isWithinInterval(selectedDate, {
+                isWithinInterval(selectedDateOnPlanning, {
                   start: currentArrivalDateTime,
                   end: currentDepartureDateTime,
                 })
@@ -117,7 +118,7 @@ const PlanningContextProvider = ({ children }) => {
             if (plannedEvent.isSurvey) {
               plannedEvent.propositions.some(proposition => {
                 proposition.flights.some(flight => {
-                  if (isSameDay(selectedDate, rCTFF(flight.date))) {
+                  if (isSameDay(selectedDateOnPlanning, rCTFF(flight.date))) {
                     tempEvents.surveys.push(plannedEvent)
                     return true
                   }
@@ -133,7 +134,7 @@ const PlanningContextProvider = ({ children }) => {
               ) {
                 if (
                   isSameDay(
-                    selectedDate,
+                    selectedDateOnPlanning,
 
                     rCTFF(plannedEvent.flights[transportIndex].date)
                   )
@@ -142,7 +143,7 @@ const PlanningContextProvider = ({ children }) => {
                   break
                 } else if (
                   isSameDay(
-                    selectedDate,
+                    selectedDateOnPlanning,
 
                     rCTFF(plannedEvent.flights[transportIndex].data.timings[1])
                   ) &&
@@ -169,11 +170,11 @@ const PlanningContextProvider = ({ children }) => {
                       ? eachDayOfInterval({
                           start: stringToDate(transport.startTime, 'yyyy-MM-dd HH:mm'),
                           end: stringToDate(transport.endTime, 'yyyy-MM-dd HH:mm'),
-                        }).some(day => isSameDay(day, selectedDate))
+                        }).some(day => isSameDay(day, selectedDateOnPlanning))
                       : eachDayOfInterval({
                           start: stringToDate(transport.endTime, 'yyyy-MM-dd HH:mm'),
                           end: stringToDate(transport.startTime, 'yyyy-MM-dd HH:mm'),
-                        }).some(day => isSameDay(day, selectedDate))
+                        }).some(day => isSameDay(day, selectedDateOnPlanning))
                   ) {
                     tempEvents.surveys.push(plannedEvent)
                     return true
@@ -199,11 +200,11 @@ const PlanningContextProvider = ({ children }) => {
                 )
                 if (
                   (isAfter(currentEndDateTime, currentStartDateTime) &&
-                    isWithinInterval(selectedDate, {
+                    isWithinInterval(selectedDateOnPlanning, {
                       start: currentStartDateTime,
                       end: currentEndDateTime,
                     })) ||
-                  (isSameDay(selectedDate, currentStartDateTime) &&
+                  (isSameDay(selectedDateOnPlanning, currentStartDateTime) &&
                     isSameDay(currentStartDateTime, currentEndDateTime))
                 ) {
                   tempEvents.events.push(plannedEvent)
@@ -219,12 +220,17 @@ const PlanningContextProvider = ({ children }) => {
             if (plannedEvent.isSurvey) {
               if (
                 plannedEvent.propositions.some(proposition =>
-                  isSameDay(selectedDate, stringToDate(proposition.startTime, 'yyyy-MM-dd HH:mm'))
+                  isSameDay(
+                    selectedDateOnPlanning,
+                    stringToDate(proposition.startTime, 'yyyy-MM-dd HH:mm')
+                  )
                 )
               ) {
                 tempEvents.surveys.push(plannedEvent)
               }
-            } else if (isSameDay(selectedDate, stringToDate(plannedEvent.date, 'yyyy-MM-dd'))) {
+            } else if (
+              isSameDay(selectedDateOnPlanning, stringToDate(plannedEvent.date, 'yyyy-MM-dd'))
+            ) {
               tempEvents.events.push(plannedEvent)
             }
           }
@@ -234,7 +240,7 @@ const PlanningContextProvider = ({ children }) => {
       (a, b) => getEventStartDate(a) - getEventStartDate(b)
     )
     setCurrentEvents(tempEvents)
-  }, [selectedDate, plannedEvents, isNewDatesSectionOpen])
+  }, [selectedDateOnPlanning, plannedEvents, isNewDatesSectionOpen])
 
   useEffect(() => {
     if (currentView === 'chronoFeed' && singleDayPlannedEvents?.length > 1) {
@@ -660,40 +666,42 @@ const PlanningContextProvider = ({ children }) => {
         if (plannedEvent.isSurvey) {
           const tempPropositions = []
           const tempPlannedSurvey = structuredClone(plannedEvent)
-          plannedEvent.propositions.forEach(proposition => {
-            const plannedEventInterval = eachDayOfInterval({
-              start: stringToDate(proposition.startTime, 'yyyy-MM-dd HH:mm'),
-              end: stringToDate(proposition.endTime, 'yyyy-MM-dd HH:mm'),
-            })
-
-            if (plannedEventInterval.length > 0) {
-              plannedEventInterval.forEach(eachDayOfEvent => {
-                const tempPlannedProposition = structuredClone(proposition)
-                if (
-                  isSameDay(
-                    stringToDate(tempPlannedProposition.startTime, 'yyyy-MM-dd HH:mm'),
-                    eachDayOfEvent
-                  )
-                ) {
-                  singleDate = tempPlannedProposition.startTime
-                } else if (
-                  isSameDay(
-                    stringToDate(tempPlannedProposition.endTime, 'yyyy-MM-dd HH:mm'),
-                    eachDayOfEvent
-                  )
-                ) {
-                  singleDate = tempPlannedProposition.endTime
-                } else {
-                  singleDate = dateToString(eachDayOfEvent, 'yyyy-MM-dd HH:mm')
-                  tempPlannedProposition.itsAllDayLong = true
-                }
-                tempPlannedProposition.fakeDate = singleDate
-                tempPlannedProposition.type = plannedEvent.type
-                tempPlannedProposition.isSurvey = true
-                tempPropositions.push(tempPlannedProposition)
+          if (plannedEvent.propositions.length > 0) {
+            plannedEvent.propositions.forEach(proposition => {
+              const plannedEventInterval = eachDayOfInterval({
+                start: stringToDate(proposition.startTime, 'yyyy-MM-dd HH:mm'),
+                end: stringToDate(proposition.endTime, 'yyyy-MM-dd HH:mm'),
               })
-            }
-          })
+
+              if (plannedEventInterval.length > 0) {
+                plannedEventInterval.forEach(eachDayOfEvent => {
+                  const tempPlannedProposition = structuredClone(proposition)
+                  if (
+                    isSameDay(
+                      stringToDate(tempPlannedProposition.startTime, 'yyyy-MM-dd HH:mm'),
+                      eachDayOfEvent
+                    )
+                  ) {
+                    singleDate = tempPlannedProposition.startTime
+                  } else if (
+                    isSameDay(
+                      stringToDate(tempPlannedProposition.endTime, 'yyyy-MM-dd HH:mm'),
+                      eachDayOfEvent
+                    )
+                  ) {
+                    singleDate = tempPlannedProposition.endTime
+                  } else {
+                    singleDate = dateToString(eachDayOfEvent, 'yyyy-MM-dd HH:mm')
+                    tempPlannedProposition.itsAllDayLong = true
+                  }
+                  tempPlannedProposition.fakeDate = singleDate
+                  tempPlannedProposition.type = plannedEvent.type
+                  tempPlannedProposition.isSurvey = true
+                  tempPropositions.push(tempPlannedProposition)
+                })
+              }
+            })
+          }
           tempPlannedSurvey.propositions = tempPropositions
           singleDayEventsArray.push(tempPlannedSurvey)
         } else {
@@ -776,7 +784,11 @@ const PlanningContextProvider = ({ children }) => {
           tempLocation.name = place.name || false
           tempLocation.phone = place.formatted_phone_number || false
           tempLocation.photos =
-            place?.photos?.length > 0 ? place.photos.map(photo => photo.getUrl()) : false
+            place?.photos?.length > 0
+              ? place.photos
+                  .filter((photo, photoIndex) => photoIndex < 4)
+                  .map(photo => photo.getUrl())
+              : false
           tempLocation.openingHours = place.opening_hours?.periods || false
           tempLocation.businessStatus = place.business_status || false
           tempLocation.website = place.website || false
@@ -870,7 +882,7 @@ const PlanningContextProvider = ({ children }) => {
     return tempCurrentTransportMarkers
   }
 
-  const handleTempEventsMarkers = (location, eventType) => {
+  const handleTempEventsMarkers = (location, functionEventType) => {
     if (location?.value?.place_id) {
       const tempViewport = { northeast: { lat: 0, lng: 0 }, southwest: { lat: 0, lng: 0 } }
       getPlaceGeometry(location.value.place_id).then(({ geometry: currentGeometry }) => {
@@ -893,7 +905,7 @@ const PlanningContextProvider = ({ children }) => {
               lat: currentGeometry.location.lat(),
               lng: currentGeometry.location.lng(),
             }}
-            icon={findSpecificGoogleMarker(eventType, false, eventType)}
+            icon={findSpecificGoogleMarker(functionEventType, false, functionEventType)}
             viewport={tempViewport}
           />,
         ])
@@ -1046,8 +1058,8 @@ const PlanningContextProvider = ({ children }) => {
         setSingleDayPlannedEvents,
         plannedEvents,
         setPlannedEvents,
-        selectedDate,
-        setSelectedDate,
+        selectedDateOnPlanning,
+        setSelectedDateOnPlanning,
         isNewDatesSectionOpen,
         setIsNewDatesSectionOpen,
         currentEvents,
@@ -1062,6 +1074,8 @@ const PlanningContextProvider = ({ children }) => {
         setPreviousEvent,
         selectedPropositionIndex,
         setSelectedPropositionIndex,
+        eventType,
+        setEventType,
       }}
     >
       {children}

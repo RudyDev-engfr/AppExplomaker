@@ -1,12 +1,14 @@
-import React, { useEffect, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import { Box, Button, CircularProgress, TextField, Typography, useTheme } from '@mui/material'
 import makeStyles from '@mui/styles/makeStyles'
 import DatePicker from '@mui/lab/DatePicker'
 import Info from '@mui/icons-material/Info'
-import { add, sub } from 'date-fns'
+import { add, isSameDay, sub } from 'date-fns'
 import { DateTimePicker } from '@mui/lab'
 
 import { rCTFF } from '../../../helper/functions'
+import { PlanningContext } from '../../../contexts/planning'
+import { EVENT_TYPES } from '../../../helper/constants'
 
 const useStyles = makeStyles(theme => ({
   marginBottom: {

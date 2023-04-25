@@ -109,7 +109,7 @@ const useStyles = makeStyles(theme => ({
     width: '100%',
     height: '100vh',
     display: 'grid',
-    gridTemplateColumns: '200px 175px 1fr',
+    gridTemplateColumns: '200px 200px 1fr',
     gridTemplateRows: '100px 1fr',
     gridTemplateAreas: `
     "calendarArea calendarArea calendarArea"
@@ -332,8 +332,8 @@ const Planning = ({ tripData, tripId, canEdit }) => {
     setDays,
     plannedEvents,
     setPlannedEvents,
-    selectedDate,
-    setSelectedDate,
+    selectedDateOnPlanning,
+    setSelectedDateOnPlanning,
     isNewDatesSectionOpen,
     setIsNewDatesSectionOpen,
     currentEvents,
@@ -348,11 +348,12 @@ const Planning = ({ tripData, tripId, canEdit }) => {
     setSurvey,
     selectedPropositionIndex,
     setSelectedPropositionIndex,
+    eventType,
+    setEventType,
   } = useContext(PlanningContext)
 
   const [isMounted, setIsMounted] = useState(false)
   const [currentDateRange, setCurrentDateRange] = useState([])
-  const [eventType, setEventType] = useState('')
   const [anchorEl, setAnchorEl] = useState(null)
   const [isNewProposition, setIsNewProposition] = useState(false)
   const [editMode, setEditMode] = useState(false)
@@ -403,7 +404,7 @@ const Planning = ({ tripData, tripId, canEdit }) => {
   //   if (days.length && plannedEvents.length) {
   //     days.forEach(day => {
   //       if (isToday(day) && !isMounted && planningMapRef.current) {
-  //         setSelectedDate(day)
+  //         setSelectedDateOnPlanning(day)
   //       }
   //     })
   //   }
@@ -425,7 +426,7 @@ const Planning = ({ tripData, tripId, canEdit }) => {
 
     const tempEvents = { surveys: [], events: [] }
     // Preview
-    if (selectedDate === '' && !isNewDatesSectionOpen) {
+    if (selectedDateOnPlanning === '' && !isNewDatesSectionOpen) {
       plannedEvents
         .filter(plannedEvent => !plannedEvent?.needNewDates)
         .forEach(plannedEvent => {
@@ -513,7 +514,7 @@ const Planning = ({ tripData, tripId, canEdit }) => {
         })
     }
     // Dynamic days
-    if (selectedDate) {
+    if (selectedDateOnPlanning) {
       plannedEvents
         .filter(plannedEvent => !plannedEvent?.needNewDates)
         .forEach(plannedEvent => {
@@ -538,7 +539,7 @@ const Planning = ({ tripData, tripId, canEdit }) => {
                 )
                 if (
                   isAfter(currentDepartureDateTime, currentArrivalDateTime) &&
-                  isWithinInterval(selectedDate, {
+                  isWithinInterval(selectedDateOnPlanning, {
                     start: currentArrivalDateTime,
                     end: currentDepartureDateTime,
                   })
@@ -556,7 +557,7 @@ const Planning = ({ tripData, tripId, canEdit }) => {
               )
               if (
                 isAfter(currentDepartureDateTime, currentArrivalDateTime) &&
-                isWithinInterval(selectedDate, {
+                isWithinInterval(selectedDateOnPlanning, {
                   start: currentArrivalDateTime,
                   end: currentDepartureDateTime,
                 })
@@ -568,7 +569,7 @@ const Planning = ({ tripData, tripId, canEdit }) => {
             if (plannedEvent.isSurvey) {
               plannedEvent.propositions.some(proposition => {
                 proposition.flights.some(flight => {
-                  if (isSameDay(selectedDate, rCTFF(flight.date))) {
+                  if (isSameDay(selectedDateOnPlanning, rCTFF(flight.date))) {
                     tempEvents.surveys.push(plannedEvent)
                     return true
                   }
@@ -584,7 +585,7 @@ const Planning = ({ tripData, tripId, canEdit }) => {
               ) {
                 if (
                   isSameDay(
-                    selectedDate,
+                    selectedDateOnPlanning,
 
                     rCTFF(plannedEvent.flights[transportIndex].date)
                   )
@@ -593,7 +594,7 @@ const Planning = ({ tripData, tripId, canEdit }) => {
                   break
                 } else if (
                   isSameDay(
-                    selectedDate,
+                    selectedDateOnPlanning,
 
                     rCTFF(plannedEvent.flights[transportIndex].data.timings[1])
                   ) &&
@@ -620,11 +621,11 @@ const Planning = ({ tripData, tripId, canEdit }) => {
                       ? eachDayOfInterval({
                           start: stringToDate(transport.startTime, 'yyyy-MM-dd HH:mm'),
                           end: stringToDate(transport.endTime, 'yyyy-MM-dd HH:mm'),
-                        }).some(day => isSameDay(day, selectedDate))
+                        }).some(day => isSameDay(day, selectedDateOnPlanning))
                       : eachDayOfInterval({
                           start: stringToDate(transport.endTime, 'yyyy-MM-dd HH:mm'),
                           end: stringToDate(transport.startTime, 'yyyy-MM-dd HH:mm'),
-                        }).some(day => isSameDay(day, selectedDate))
+                        }).some(day => isSameDay(day, selectedDateOnPlanning))
                   ) {
                     tempEvents.surveys.push(plannedEvent)
                     return true
@@ -650,11 +651,11 @@ const Planning = ({ tripData, tripId, canEdit }) => {
                 )
                 if (
                   (isAfter(currentEndDateTime, currentStartDateTime) &&
-                    isWithinInterval(selectedDate, {
+                    isWithinInterval(selectedDateOnPlanning, {
                       start: currentStartDateTime,
                       end: currentEndDateTime,
                     })) ||
-                  (isSameDay(selectedDate, currentStartDateTime) &&
+                  (isSameDay(selectedDateOnPlanning, currentStartDateTime) &&
                     isSameDay(currentStartDateTime, currentEndDateTime))
                 ) {
                   tempEvents.events.push(plannedEvent)
@@ -666,12 +667,17 @@ const Planning = ({ tripData, tripId, canEdit }) => {
             if (plannedEvent.isSurvey) {
               if (
                 plannedEvent.propositions.some(proposition =>
-                  isSameDay(selectedDate, stringToDate(proposition.startTime, 'yyyy-MM-dd HH:mm'))
+                  isSameDay(
+                    selectedDateOnPlanning,
+                    stringToDate(proposition.startTime, 'yyyy-MM-dd HH:mm')
+                  )
                 )
               ) {
                 tempEvents.surveys.push(plannedEvent)
               }
-            } else if (isSameDay(selectedDate, stringToDate(plannedEvent.date, 'yyyy-MM-dd'))) {
+            } else if (
+              isSameDay(selectedDateOnPlanning, stringToDate(plannedEvent.date, 'yyyy-MM-dd'))
+            ) {
               tempEvents.events.push(plannedEvent)
             }
           }
@@ -681,7 +687,7 @@ const Planning = ({ tripData, tripId, canEdit }) => {
       (a, b) => getEventStartDate(a) - getEventStartDate(b)
     )
     setCurrentEvents(tempEvents)
-  }, [selectedDate, plannedEvents, isNewDatesSectionOpen])
+  }, [selectedDateOnPlanning, plannedEvents, isNewDatesSectionOpen])
 
   useEffect(() => {
     if (!currentEventId) {
@@ -720,7 +726,7 @@ const Planning = ({ tripData, tripId, canEdit }) => {
   //   const { event: eventId, survey: surveyId, proposition: propositionIndex } = queries
   //   if (!eventId && !surveyId && !propositionIndex) {
   //     setIsNewDatesSectionOpen(false)
-  //     setSelectedDate('')
+  //     setSelectedDateOnPlanning('')
   //     setCurrentView('chronoFeed')
   //   }
   // }, [location.search])
@@ -823,7 +829,8 @@ const Planning = ({ tripData, tripId, canEdit }) => {
             tripId={tripId}
             travelers={tripData.travelersDetails}
             dateRange={tripData.dateRange}
-            selectedDateFromPlanning={selectedDate}
+            selectedDateFromPlanning={selectedDateOnPlanning}
+            setSelectedDateFromPlanning={setSelectedDateOnPlanning}
             isNewProposition={isNewProposition}
             setIsNewProposition={setIsNewProposition}
             currentEvent={currentEvent}
@@ -872,14 +879,14 @@ const Planning = ({ tripData, tripId, canEdit }) => {
                 component={ButtonBase}
                 onClick={() => {
                   setIsNewDatesSectionOpen(false)
-                  setSelectedDate('')
+                  setSelectedDateOnPlanning('')
                   // setCurrentView('planning')
                   setCurrentView('chronoFeed')
                 }}
                 elevation={0}
                 className={clsx(classes.calendarTitle)}
                 style={
-                  selectedDate === '' && !isNewDatesSectionOpen
+                  selectedDateOnPlanning === '' && !isNewDatesSectionOpen
                     ? {
                         backgroundColor: '#009D8C',
                         color: '#FFFFFF',
@@ -904,7 +911,7 @@ const Planning = ({ tripData, tripId, canEdit }) => {
                   component={ButtonBase}
                   onClick={() => {
                     setIsNewDatesSectionOpen(true)
-                    setSelectedDate('')
+                    setSelectedDateOnPlanning('')
                     setCurrentView('planning')
                   }}
                   elevation={0}
@@ -966,13 +973,13 @@ const Planning = ({ tripData, tripId, canEdit }) => {
                   key={day}
                   component={ButtonBase}
                   onClick={() => {
-                    setSelectedDate(day)
+                    setSelectedDateOnPlanning(day)
                     setIsNewDatesSectionOpen(false)
                     setCurrentView('planning')
                   }}
                   elevation={0}
                   className={clsx(classes.calendarTitle, {
-                    [classes.activeCalendarTitle]: selectedDate === day,
+                    [classes.activeCalendarTitle]: selectedDateOnPlanning === day,
                   })}
                 >
                   <Box
@@ -988,7 +995,7 @@ const Planning = ({ tripData, tripId, canEdit }) => {
                     <Typography
                       sx={{
                         fontSize: '12px',
-                        color: selectedDate === day ? 'inherit' : theme.palette.grey[33],
+                        color: selectedDateOnPlanning === day ? 'inherit' : theme.palette.grey[33],
                       }}
                     >
                       <Box component="span" fontWeight="400">
@@ -1001,7 +1008,7 @@ const Planning = ({ tripData, tripId, canEdit }) => {
                       sx={{
                         fontSize: '20px',
                         fontWeight: '500',
-                        color: selectedDate === day ? 'inherit' : theme.palette.grey[33],
+                        color: selectedDateOnPlanning === day ? 'inherit' : theme.palette.grey[33],
                       }}
                     >
                       {format(day, 'dd', {
@@ -1011,7 +1018,7 @@ const Planning = ({ tripData, tripId, canEdit }) => {
                     <Typography
                       sx={{
                         fontSize: '12px',
-                        color: selectedDate === day ? 'inherit' : '#7B7B7B',
+                        color: selectedDateOnPlanning === day ? 'inherit' : '#7B7B7B',
                       }}
                     >
                       {format(day, 'MMM', {
@@ -1034,9 +1041,9 @@ const Planning = ({ tripData, tripId, canEdit }) => {
                     <Box fontWeight="bold" component="span">
                       {isNewDatesSectionOpen
                         ? 'Archives'
-                        : selectedDate === ''
+                        : selectedDateOnPlanning === ''
                         ? 'Aperçu de ton séjour'
-                        : format(selectedDate, 'd MMMM', { locale: frLocale })}
+                        : format(selectedDateOnPlanning, 'd MMMM', { locale: frLocale })}
                     </Box>
                   </Typography>
                 </Box>
@@ -1395,7 +1402,7 @@ const Planning = ({ tripData, tripId, canEdit }) => {
                     />
                     {currentEvents.events.length < 1 && (
                       <Typography>
-                        {selectedDate === '' && !isNewDatesSectionOpen
+                        {selectedDateOnPlanning === '' && !isNewDatesSectionOpen
                           ? 'Pas encore de transports prévus'
                           : "Pas encore d'évenement ce jour la"}
                       </Typography>
