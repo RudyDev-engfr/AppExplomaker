@@ -15,6 +15,12 @@ const TripContextProvider = ({ children }) => {
   // const { tripId } = useParams()
   const [deleteEventNotifications, setDeleteEventNotifications] = useState(false)
   const [tripData, setTripData] = useState()
+
+  // used to handle date from events Notifications
+  const [days, setDays] = useState([])
+  const [currentView, setCurrentView] = useState('chronoFeed')
+  const [selectedDateOnPlanning, setSelectedDateOnPlanning] = useState('')
+
   const [currentEvent, setCurrentEvent] = useState()
   const [openModal, setOpenModal] = useState('')
 
@@ -102,6 +108,12 @@ const TripContextProvider = ({ children }) => {
         setOpenModal,
         currentDateRange,
         setCurrentDateRange,
+        days,
+        setDays,
+        selectedDateOnPlanning,
+        setSelectedDateOnPlanning,
+        currentView,
+        setCurrentView,
       }}
     >
       {children}

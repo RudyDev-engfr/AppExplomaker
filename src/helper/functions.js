@@ -369,6 +369,9 @@ export const buildNotificationsOnTripForUser = (user, tripId) => {
         singleNotif.id = id
         singleNotif.owner = owner
         singleNotif.tripId = tripId
+        if (event) {
+          singleNotif.startTime = event.startTime
+        }
         // eslint-disable-next-line default-case
         switch (type) {
           case 'dateUpdate':
@@ -643,6 +646,13 @@ export const buildLogSejour = (tripId, tripData) => {
       .filter(notification => notification.tripId === tripId)
       .forEach(({ sejour, priority, state, type, creationDate, owner, event, id, previous }) => {
         const singleNotif = {}
+        if (event) {
+          singleNotif.startTime = event.startTime
+        } else if (event && event?.propositions) {
+          singleNotif.startTime = event.propositions[0].startTime
+        } else {
+          singleNotif.startTime = null
+        }
         singleNotif.owner = owner
         singleNotif.id = id
         const notifBody = buildNotifTimerAndState(creationDate, state)

@@ -189,7 +189,7 @@ const EventPreview = ({
   const history = useHistory()
   const { firestore, createNotificationsOnTrip } = useContext(FirebaseContext)
   const { user } = useContext(SessionContext)
-  const { setNeedMapRefresh } = useContext(PlanningContext)
+  const { setNeedMapRefresh, days, selectedDateOnPlanning } = useContext(PlanningContext)
 
   const [isLoading, setIsLoading] = useState(false)
   const [tripData, setTripData] = useState()

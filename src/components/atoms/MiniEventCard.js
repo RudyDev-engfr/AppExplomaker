@@ -50,12 +50,13 @@ const useStyles = makeStyles(theme => ({
   },
 }))
 
-const MiniEventCard = ({ plannedEvent, setCurrentView, surveyId }) => {
+const MiniEventCard = ({ plannedEvent, setCurrentView, surveyId, plannedSurvey, day }) => {
   const classes = useStyles()
   const history = useHistory()
   const theme = useTheme()
   const { tripId } = useParams()
-  const { currentEventId, setCurrentEventId } = useContext(PlanningContext)
+  const { currentEventId, setCurrentEventId, setSurvey, setSelectedDateOnPlanning } =
+    useContext(PlanningContext)
   const { setCurrentEvent } = useContext(TripContext)
 
   useEffect(() => {
@@ -99,7 +100,14 @@ const MiniEventCard = ({ plannedEvent, setCurrentView, surveyId }) => {
         sx={{
           backgroundColor: surveyId ? `${theme.palette.primary.ultraLight} !important ` : 'white',
         }}
-        onClick={() => setEvent(plannedEvent)}
+        onClick={() => {
+          setSelectedDateOnPlanning(day)
+          if (surveyId && plannedSurvey) {
+            setSurvey(plannedSurvey)
+          } else {
+            setEvent(plannedEvent)
+          }
+        }}
       >
         <Typography className={classes.hourTypo}>
           {plannedEvent.itsAllDayLong && plannedEvent.type === EVENT_TYPES[0]

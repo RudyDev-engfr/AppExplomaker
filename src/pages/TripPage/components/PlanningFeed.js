@@ -97,6 +97,7 @@ const PlanningFeed = ({ propsClasses, setCurrentView }) => {
                     plannedEvent={plannedEvent}
                     key={plannedEvent.title}
                     setCurrentView={setCurrentView}
+                    day={day}
                   />
                 ))}
             {singleDayPlannedEvents?.length >= 1 &&
@@ -114,9 +115,11 @@ const PlanningFeed = ({ propsClasses, setCurrentView }) => {
                     .map(plannedProposition => (
                       <MiniEventCard
                         plannedEvent={plannedProposition}
+                        plannedSurvey={plannedSurvey}
                         key={plannedProposition.title}
                         setCurrentView={setCurrentView}
                         surveyId={plannedSurvey.id}
+                        day={day}
                       />
                     ))
                 )}

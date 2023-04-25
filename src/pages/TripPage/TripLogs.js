@@ -14,14 +14,16 @@ import React, { useContext, useEffect, useState } from 'react'
 import { useHistory } from 'react-router-dom'
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore'
 import { Launch } from '@mui/icons-material'
+import { isSameDay } from 'date-fns'
 
 import { SessionContext } from '../../contexts/session'
-import { buildLogSejour } from '../../helper/functions'
+import { buildLogSejour, stringToDate } from '../../helper/functions'
 
 import arrowBack from '../../images/icons/arrow-back.svg'
 import CustomAvatar from '../../components/atoms/CustomAvatar'
 import EventAccordion from '../../components/atoms/EventAccordion'
 import DateUpdateAccordion from '../../components/atoms/DateUpdateAccordion'
+import { TripContext } from '../../contexts/trip'
 
 const useStyles = makeStyles(theme => ({
   mobileTitleContainer: {
@@ -65,6 +67,7 @@ const TripLogs = ({ tripData, tripId, canEdit }) => {
   const theme = useTheme()
   const { user } = useContext(SessionContext)
   const matchesXs = useMediaQuery(theme.breakpoints.down('sm'))
+  const { days, setSelectedDateOnPlanning, setCurrentView } = useContext(TripContext)
 
   const [currentNotifications, setCurrentNotifications] = useState([])
 
@@ -165,7 +168,14 @@ const TripLogs = ({ tripData, tripId, canEdit }) => {
                       </Box>
                     </AccordionSummary>
                     <AccordionDetails>
-                      {notification.logs.date && <EventAccordion notification={notification} />}
+                      {notification.logs.date && (
+                        <EventAccordion
+                          notification={notification}
+                          setCurrentView={setCurrentView}
+                          days={days}
+                          setSelectedDateOnPlanning={setSelectedDateOnPlanning}
+                        />
+                      )}
                       {notification.logs.oldDate && (
                         <DateUpdateAccordion notification={notification} />
                       )}
@@ -196,7 +206,11 @@ const TripLogs = ({ tripData, tripId, canEdit }) => {
                         {notification.timer}
                       </Typography>
                     </Box>
-                    <IconButton onClick={() => history.push(notification.url)}>
+                    <IconButton
+                      onClick={() => {
+                        history.push(notification.url)
+                      }}
+                    >
                       <Launch />
                     </IconButton>
                   </Box>

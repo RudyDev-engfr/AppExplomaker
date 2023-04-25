@@ -2,12 +2,14 @@ import React, { useContext, useState } from 'react'
 import { Avatar, Badge, Box, IconButton, Menu, Paper, Typography } from '@mui/material'
 import { makeStyles, useTheme } from '@mui/styles'
 import { Notifications } from '@mui/icons-material'
+import { isSameDay } from 'date-fns'
 import { useHistory } from 'react-router-dom'
 import findIcon from '../../helper/icons'
 import { SessionContext } from '../../contexts/session'
 import { FirebaseContext } from '../../contexts/firebase'
 import CustomAvatar from '../atoms/CustomAvatar'
 import kenya1 from '../../images/inherit/Kenya 1.png'
+import { stringToDate } from '../../helper/functions'
 
 const useStyles = makeStyles(theme => ({
   notificationImage: {
@@ -16,7 +18,14 @@ const useStyles = makeStyles(theme => ({
     borderRadius: '50px',
   },
 }))
-const NotificationArea = ({ tripId, currentNotifications, isMyTrips = false, setRefreshNotif }) => {
+const NotificationArea = ({
+  tripId,
+  currentNotifications,
+  isMyTrips = false,
+  setRefreshNotif,
+  days,
+  setSelectedDateOnPlanning,
+}) => {
   const classes = useStyles()
   const theme = useTheme()
   const history = useHistory()
@@ -174,6 +183,15 @@ const NotificationArea = ({ tripId, currentNotifications, isMyTrips = false, set
                         setNotificationsToNewState(user, 3, notification.id)
                       }
                       history.push(notification.url)
+                      if (notification?.eventType) {
+                        days.forEach(day => {
+                          if (
+                            isSameDay(stringToDate(notification.startTime, 'yyyy-MM-dd HH:mm'), day)
+                          ) {
+                            setSelectedDateOnPlanning(day)
+                          }
+                        })
+                      }
                     }}
                   >
                     {isMyTrips ? (

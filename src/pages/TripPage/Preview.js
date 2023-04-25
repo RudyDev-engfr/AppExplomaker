@@ -239,7 +239,8 @@ const Preview = ({
 
   const { dictionary } = useContext(FirebaseContext)
   const { user } = useContext(SessionContext)
-  const { currentDateRange, setCurrentDateRange } = useContext(TripContext)
+  const { currentDateRange, setCurrentDateRange, days, setSelectedDateOnPlanning } =
+    useContext(TripContext)
 
   const [generatedAvatars, setGeneratedAvatars] = useState([])
   const [currentNotifications, setCurrentNotifications] = useState([])
@@ -297,6 +298,8 @@ const Preview = ({
                 tripId={tripId}
                 currentNotifications={currentNotifications}
                 setRefreshNotif={setRefreshNotif}
+                days={days}
+                setSelectedDateOnPlanning={setSelectedDateOnPlanning}
               />
             ) : (
               <NotificationArea

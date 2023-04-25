@@ -16,7 +16,16 @@ export const PlanningContext = createContext()
 const PlanningContextProvider = ({ children }) => {
   const history = useHistory()
   const { tripId } = useParams()
-  const { currentEvent, setCurrentEvent } = useContext(TripContext)
+  const {
+    currentEvent,
+    setCurrentEvent,
+    days,
+    setDays,
+    selectedDateOnPlanning,
+    setSelectedDateOnPlanning,
+    currentView,
+    setCurrentView,
+  } = useContext(TripContext)
   const [eventType, setEventType] = useState()
   const [currentMarkers, setCurrentMarkers] = useState([])
   const [transportMarkers, setTransportMarkers] = useState({
@@ -34,13 +43,10 @@ const PlanningContextProvider = ({ children }) => {
   const [plannedEvents, setPlannedEvents] = useState([])
   const [currentEvents, setCurrentEvents] = useState({ surveys: [], events: [] })
   const [withoutDatesEvents, setWithoutDatesEvents] = useState({ surveys: [], events: [] })
-  const [currentView, setCurrentView] = useState('chronoFeed')
   const [previousEvent, setPreviousEvent] = useState()
   const [selectedPropositionIndex, setSelectedPropositionIndex] = useState()
 
   // used for planningFeed && Planning
-  const [days, setDays] = useState([])
-  const [selectedDateOnPlanning, setSelectedDateOnPlanning] = useState('')
   const [isNewDatesSectionOpen, setIsNewDatesSectionOpen] = useState(false)
 
   // used to construct planningFeed
@@ -236,9 +242,9 @@ const PlanningContextProvider = ({ children }) => {
           }
         })
     }
-    tempEvents.events = tempEvents.events.sort(
-      (a, b) => getEventStartDate(a) - getEventStartDate(b)
-    )
+    tempEvents.events = tempEvents.events
+      .sort((a, b) => getEventStartDate(a) - getEventStartDate(b))
+      .filter(event => !event.needNewDates)
     setCurrentEvents(tempEvents)
   }, [selectedDateOnPlanning, plannedEvents, isNewDatesSectionOpen])
 
@@ -662,84 +668,86 @@ const PlanningContextProvider = ({ children }) => {
     if (plannedEvents.length > 0) {
       const singleDayEventsArray = []
       let singleDate
-      plannedEvents.forEach(plannedEvent => {
-        if (plannedEvent.isSurvey) {
-          const tempPropositions = []
-          const tempPlannedSurvey = structuredClone(plannedEvent)
-          if (plannedEvent.propositions.length > 0) {
-            plannedEvent.propositions.forEach(proposition => {
-              const plannedEventInterval = eachDayOfInterval({
-                start: stringToDate(proposition.startTime, 'yyyy-MM-dd HH:mm'),
-                end: stringToDate(proposition.endTime, 'yyyy-MM-dd HH:mm'),
-              })
-
-              if (plannedEventInterval.length > 0) {
-                plannedEventInterval.forEach(eachDayOfEvent => {
-                  const tempPlannedProposition = structuredClone(proposition)
-                  if (
-                    isSameDay(
-                      stringToDate(tempPlannedProposition.startTime, 'yyyy-MM-dd HH:mm'),
-                      eachDayOfEvent
-                    )
-                  ) {
-                    singleDate = tempPlannedProposition.startTime
-                  } else if (
-                    isSameDay(
-                      stringToDate(tempPlannedProposition.endTime, 'yyyy-MM-dd HH:mm'),
-                      eachDayOfEvent
-                    )
-                  ) {
-                    singleDate = tempPlannedProposition.endTime
-                  } else {
-                    singleDate = dateToString(eachDayOfEvent, 'yyyy-MM-dd HH:mm')
-                    tempPlannedProposition.itsAllDayLong = true
-                  }
-                  tempPlannedProposition.fakeDate = singleDate
-                  tempPlannedProposition.type = plannedEvent.type
-                  tempPlannedProposition.isSurvey = true
-                  tempPropositions.push(tempPlannedProposition)
+      plannedEvents
+        .filter(plannedEvent => !plannedEvent.needNewDates)
+        .forEach(plannedEvent => {
+          if (plannedEvent.isSurvey) {
+            const tempPropositions = []
+            const tempPlannedSurvey = structuredClone(plannedEvent)
+            if (plannedEvent.propositions?.length > 0) {
+              plannedEvent.propositions.forEach(proposition => {
+                const plannedEventInterval = eachDayOfInterval({
+                  start: stringToDate(proposition.startTime, 'yyyy-MM-dd HH:mm'),
+                  end: stringToDate(proposition.endTime, 'yyyy-MM-dd HH:mm'),
                 })
-              }
-            })
-          }
-          tempPlannedSurvey.propositions = tempPropositions
-          singleDayEventsArray.push(tempPlannedSurvey)
-        } else {
-          const plannedEventInterval = eachDayOfInterval({
-            start: stringToDate(plannedEvent.startTime, 'yyyy-MM-dd HH:mm'),
-            end: stringToDate(plannedEvent.endTime, 'yyyy-MM-dd HH:mm'),
-          })
-          if (plannedEventInterval.length > 0) {
-            plannedEventInterval.forEach(eachDayOfEvent => {
-              const tempPlannedEvent = structuredClone(plannedEvent)
-              if (
-                isSameDay(
-                  stringToDate(tempPlannedEvent.startTime, 'yyyy-MM-dd HH:mm'),
-                  eachDayOfEvent
-                )
-              ) {
-                singleDate = tempPlannedEvent.startTime
-              } else if (
-                isSameDay(
-                  stringToDate(tempPlannedEvent.endTime, 'yyyy-MM-dd HH:mm'),
-                  eachDayOfEvent
-                )
-              ) {
-                singleDate = tempPlannedEvent.endTime
-              } else {
-                singleDate = dateToString(eachDayOfEvent, 'yyyy-MM-dd HH:mm')
-                tempPlannedEvent.itsAllDayLong = true
-              }
-              tempPlannedEvent.fakeDate = singleDate
-              singleDayEventsArray.push(tempPlannedEvent)
-            })
-          }
-        }
 
-        if (singleDayEventsArray.length > 0) {
-          setSingleDayPlannedEvents(singleDayEventsArray)
-        }
-      })
+                if (plannedEventInterval.length > 0) {
+                  plannedEventInterval.forEach(eachDayOfEvent => {
+                    const tempPlannedProposition = structuredClone(proposition)
+                    if (
+                      isSameDay(
+                        stringToDate(tempPlannedProposition.startTime, 'yyyy-MM-dd HH:mm'),
+                        eachDayOfEvent
+                      )
+                    ) {
+                      singleDate = tempPlannedProposition.startTime
+                    } else if (
+                      isSameDay(
+                        stringToDate(tempPlannedProposition.endTime, 'yyyy-MM-dd HH:mm'),
+                        eachDayOfEvent
+                      )
+                    ) {
+                      singleDate = tempPlannedProposition.endTime
+                    } else {
+                      singleDate = dateToString(eachDayOfEvent, 'yyyy-MM-dd HH:mm')
+                      tempPlannedProposition.itsAllDayLong = true
+                    }
+                    tempPlannedProposition.fakeDate = singleDate
+                    tempPlannedProposition.type = plannedEvent.type
+                    tempPlannedProposition.isSurvey = true
+                    tempPropositions.push(tempPlannedProposition)
+                  })
+                }
+              })
+            }
+            tempPlannedSurvey.propositions = tempPropositions
+            singleDayEventsArray.push(tempPlannedSurvey)
+          } else {
+            const plannedEventInterval = eachDayOfInterval({
+              start: stringToDate(plannedEvent.startTime, 'yyyy-MM-dd HH:mm'),
+              end: stringToDate(plannedEvent.endTime, 'yyyy-MM-dd HH:mm'),
+            })
+            if (plannedEventInterval.length > 0) {
+              plannedEventInterval.forEach(eachDayOfEvent => {
+                const tempPlannedEvent = structuredClone(plannedEvent)
+                if (
+                  isSameDay(
+                    stringToDate(tempPlannedEvent.startTime, 'yyyy-MM-dd HH:mm'),
+                    eachDayOfEvent
+                  )
+                ) {
+                  singleDate = tempPlannedEvent.startTime
+                } else if (
+                  isSameDay(
+                    stringToDate(tempPlannedEvent.endTime, 'yyyy-MM-dd HH:mm'),
+                    eachDayOfEvent
+                  )
+                ) {
+                  singleDate = tempPlannedEvent.endTime
+                } else {
+                  singleDate = dateToString(eachDayOfEvent, 'yyyy-MM-dd HH:mm')
+                  tempPlannedEvent.itsAllDayLong = true
+                }
+                tempPlannedEvent.fakeDate = singleDate
+                singleDayEventsArray.push(tempPlannedEvent)
+              })
+            }
+          }
+
+          if (singleDayEventsArray.length > 0) {
+            setSingleDayPlannedEvents(singleDayEventsArray)
+          }
+        })
     }
   }, [plannedEvents])
 

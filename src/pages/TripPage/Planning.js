@@ -328,11 +328,8 @@ const Planning = ({ tripData, tripId, canEdit }) => {
     setCurrentEventId,
     setNeedMapRefresh,
     currentMarkers,
-    days,
-    setDays,
     plannedEvents,
     setPlannedEvents,
-    selectedDateOnPlanning,
     setSelectedDateOnPlanning,
     isNewDatesSectionOpen,
     setIsNewDatesSectionOpen,
@@ -351,6 +348,7 @@ const Planning = ({ tripData, tripId, canEdit }) => {
     eventType,
     setEventType,
   } = useContext(PlanningContext)
+  const { days, setDays, selectedDateOnPlanning } = useContext(TripContext)
 
   const [isMounted, setIsMounted] = useState(false)
   const [currentDateRange, setCurrentDateRange] = useState([])
