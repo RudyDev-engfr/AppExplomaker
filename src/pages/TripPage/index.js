@@ -86,6 +86,7 @@ import plusCircle from '../../images/icons/plusCircle.svg'
 import TripLogs from './TripLogs'
 import usePrevious from '../../hooks/usePrevious'
 import { TripContext } from '../../contexts/trip'
+import MobileTripPageHeader from '../../components/molecules/MobileTripPageHeader'
 
 const notifications = [
   {

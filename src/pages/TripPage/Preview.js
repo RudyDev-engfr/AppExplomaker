@@ -27,6 +27,7 @@ import { SessionContext } from '../../contexts/session'
 import MobileNotificationArea from '../../components/molecules/MobileNotificationArea'
 import DesktopPreview from './DesktopPreview'
 import { TripContext } from '../../contexts/trip'
+import MobileTripPageHeader from '../../components/molecules/MobileTripPageHeader'
 
 const useStyles = makeStyles(theme => ({
   slides: {
@@ -358,6 +359,7 @@ const Preview = ({
       </Box>
       <Box className={classes.mobileContainer}>
         {/* main header block */}
+        {matchesXs && <MobileTripPageHeader />}
         <Box className={classes.mobileHeader}>
           <Box display="flex" justifyContent="center">
             <img src={lineMobile} alt="" />
