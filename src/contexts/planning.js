@@ -25,8 +25,10 @@ const PlanningContextProvider = ({ children }) => {
     setSelectedDateOnPlanning,
     currentView,
     setCurrentView,
+    eventType,
+    setEventType,
+    setTypeCreator,
   } = useContext(TripContext)
-  const [eventType, setEventType] = useState()
   const [currentMarkers, setCurrentMarkers] = useState([])
   const [transportMarkers, setTransportMarkers] = useState({
     transportMarkers: [],
@@ -1084,6 +1086,7 @@ const PlanningContextProvider = ({ children }) => {
         setSelectedPropositionIndex,
         eventType,
         setEventType,
+        setTypeCreator,
       }}
     >
       {children}

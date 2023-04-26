@@ -541,7 +541,6 @@ const initialTraveler = () => ({
 
 const TripPage = () => {
   const theme = useTheme()
-  const matches1300 = useMediaQuery('(max-width:1300px)')
   const matchesXs = useMediaQuery(theme.breakpoints.down('sm'))
   const history = useHistory()
   const { tripId } = useParams()
@@ -560,12 +559,12 @@ const TripPage = () => {
     createNotificationsOnTrip,
   } = useContext(FirebaseContext)
   const { user } = useContext(SessionContext)
-  const { tripData, setTripData, openModal, setOpenModal } = useContext(TripContext)
+  const { tripData, setTripData, openModal, setOpenModal, matches1600, isChatOpen, setIsChatOpen } =
+    useContext(TripContext)
   const [isLoading, setIsLoading] = useState(true)
   const [carouselImages, setCarouselImages] = useState([])
   const [tripTravelers, setTripTravelers] = useState([])
   const [tripWishes, setTripWishes] = useState([])
-  const [isChatOpen, setIsChatOpen] = useState(!matchesXs && !matches1300)
   const [currentActiveTab, setCurrentActiveTab] = useState('')
   const [nbTravelers, setNbTravelers] = useState(1)
   const [registeredTravelers, setRegisteredTravelers] = useState([])
@@ -767,12 +766,12 @@ const TripPage = () => {
   }, [currentActiveTab])
 
   useEffect(() => {
-    if (matches1300 && isChatOpen) {
+    if (matches1600 && isChatOpen) {
       setIsChatOpen(false)
-    } else if (canEdit && !matchesXs && !matches1300) {
+    } else if (canEdit && !matchesXs && !matches1600) {
       setIsChatOpen(true)
     }
-  }, [matches1300, matchesXs])
+  }, [matches1600, matchesXs])
 
   useEffect(() => {
     if (tripData) {
@@ -994,8 +993,11 @@ const TripPage = () => {
         setCurrentActiveTab={setCurrentActiveTab}
         tripId={tripId}
         setOpenModal={setOpenModal}
+        openModal={openModal}
         canEdit={canEdit}
         tripData={tripData}
+        isChatOpen={isChatOpen}
+        setIsChatOpen={setIsChatOpen}
         currentDateRange={currentDateRange}
         currentPlanningNotifications={user?.notifications.filter(
           notification => notification.tripId === tripId && notification.state === 1
@@ -1090,8 +1092,8 @@ const TripPage = () => {
               <Box position="relative">
                 <Box
                   position={matchesXs ? 'fixed' : 'absolute'}
-                  right={matchesXs ? '50%' : matches1300 ? '-35px' : '-15px'}
-                  bottom={matchesXs ? '110px' : matches1300 ? '85px' : '20px'}
+                  right={matchesXs ? '50%' : matches1600 ? '-35px' : '-15px'}
+                  bottom={matchesXs ? '110px' : matches1600 ? '85px' : '20px'}
                   style={{ transform: matchesXs ? 'translate(50%, 0)' : 'none' }}
                 >
                   <Fab

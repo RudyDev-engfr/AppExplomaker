@@ -348,6 +348,7 @@ const Planning = ({ tripData, tripId, canEdit }) => {
     setSelectedPropositionIndex,
     eventType,
     setEventType,
+    setTypeCreator,
   } = useContext(PlanningContext)
   const { days, setDays, selectedDateOnPlanning } = useContext(TripContext)
 
@@ -749,11 +750,6 @@ const Planning = ({ tripData, tripId, canEdit }) => {
 
   const handleCloseDropdown = () => {
     setAnchorEl(null)
-  }
-
-  const setTypeCreator = type => () => {
-    setEventType(type)
-    setCurrentView('creator')
   }
 
   const addActions = [
@@ -1430,7 +1426,7 @@ const Planning = ({ tripData, tripId, canEdit }) => {
               )}
             </Paper>
             {canEdit && matchesXs && typeof currentDateRange[0] !== 'undefined' && (
-              <FabDial actions={addActions} />
+              <FabDial actions={addActions} isPlanning />
             )}
           </>
         )}

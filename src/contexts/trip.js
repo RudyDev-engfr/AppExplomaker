@@ -1,3 +1,5 @@
+import { useMediaQuery } from '@mui/material'
+import { useTheme } from '@mui/styles'
 import React, { useState, useEffect, createContext, useContext } from 'react'
 import { useParams } from 'react-router-dom'
 import { toast } from 'react-toastify'
@@ -13,19 +15,32 @@ const TripContextProvider = ({ children }) => {
   //   useContext(FirebaseContext)
   // const { user } = useContext(SessionContext)
   // const { tripId } = useParams()
+  const theme = useTheme()
+  const matchesXs = useMediaQuery(theme.breakpoints.down('sm'))
+  const matches1600 = useMediaQuery('(max-width:1600px)')
   const [deleteEventNotifications, setDeleteEventNotifications] = useState(false)
   const [tripData, setTripData] = useState()
+
+  // use to handle events
+  const [eventType, setEventType] = useState()
 
   // used to handle date from events Notifications
   const [days, setDays] = useState([])
   const [currentView, setCurrentView] = useState('chronoFeed')
   const [selectedDateOnPlanning, setSelectedDateOnPlanning] = useState('')
 
+  const [isChatOpen, setIsChatOpen] = useState(!matchesXs && !matches1600)
+
   const [currentEvent, setCurrentEvent] = useState()
   const [openModal, setOpenModal] = useState('')
 
   // used in preview, desktopPreview
   const [currentDateRange, setCurrentDateRange] = useState(['', ''])
+
+  const setTypeCreator = type => () => {
+    setEventType(type)
+    setCurrentView('creator')
+  }
 
   // const [allowDeleteNotif, setAllowDeleteNotif] = useState(false)
   // const [timingRefresh, setTimingRefresh] = useState(false)
@@ -114,6 +129,12 @@ const TripContextProvider = ({ children }) => {
         setSelectedDateOnPlanning,
         currentView,
         setCurrentView,
+        matches1600,
+        isChatOpen,
+        setIsChatOpen,
+        setTypeCreator,
+        eventType,
+        setEventType,
       }}
     >
       {children}

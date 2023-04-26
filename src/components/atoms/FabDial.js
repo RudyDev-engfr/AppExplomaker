@@ -9,9 +9,27 @@ const useStyles = makeStyles(theme => ({
     color: theme.palette.primary.main,
     backgroundColor: theme.palette.primary.ultraLight,
   },
+  planningSpeedDial: {
+    position: 'fixed',
+    top: 'unset',
+    right: '50%',
+    bottom: '120px',
+    transform: 'translateX(50%)',
+    '& .MuiSpeedDialAction-staticTooltipLabel ': {
+      color: theme.palette.grey[33],
+      fontWeight: '500',
+    },
+  },
+  speedDial: {
+    position: 'fixed',
+    right: '50%',
+    bottom: '10px',
+    transform: 'translateX(50%)',
+    top: 'unset',
+  },
 }))
 
-const FabDial = ({ actions }) => {
+const FabDial = ({ actions, isPlanning = false }) => {
   const classes = useStyles()
   const theme = useTheme()
 
@@ -30,17 +48,7 @@ const FabDial = ({ actions }) => {
       <Backdrop open={open} sx={{ zIndex: '100' }} />
       <SpeedDial
         ariaLabel="Add event"
-        sx={{
-          position: 'fixed',
-          top: 'unset',
-          right: '50%',
-          bottom: '120px',
-          transform: 'translateX(50%)',
-          '& .MuiSpeedDialAction-staticTooltipLabel ': {
-            color: theme.palette.grey[33],
-            fontWeight: '500',
-          },
-        }}
+        className={isPlanning ? classes.planningSpeedDial : classes.speedDial}
         icon={<SpeedDialIcon />}
         onClose={handleClose}
         onOpen={handleOpen}
