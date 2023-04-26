@@ -12,6 +12,7 @@ import {
   MenuItem,
   Paper,
   Select,
+  Switch,
   TextField,
   Tooltip,
   Typography,
@@ -63,6 +64,7 @@ import IconModal from '../../../components/atoms/IconModal'
 import { PlanningContext } from '../../../contexts/planning'
 
 import plusCircle from '../../../images/icons/plusCircle.svg'
+import AdvancedModeButton, { AdvancedSwitch } from '../../../components/atoms/AdvancedModeButton'
 
 const useStyles = makeStyles(theme => ({
   marginBottom: {
@@ -137,8 +139,8 @@ const useStyles = makeStyles(theme => ({
     height: '36px',
     padding: '8px 12px',
     borderRadius: '5px',
-    marginBottom: '30px',
-    alignSelf: 'flex-start',
+    width: 'fit-content',
+    marginBottom: '20px',
   },
 
   durationAccomodationText: {
@@ -265,6 +267,7 @@ const EventCreator = ({
   const [isPropositionInEdition, setIsPropositionInEdition] = useState(false)
   const [openModalIconSlider, setOpenModalIconSlider] = useState(false)
   const [tripData, setTripData] = useState()
+  const [advancedMode, setAdvancedMode] = useState(false)
 
   const generateParticipatingTravelers = () => {
     const tempTravelers = travelers
@@ -1044,11 +1047,13 @@ const EventCreator = ({
         </Box>
         <Divider />
       </Box>
+
       <Box
         sx={{
           display: 'flex',
           justifyContent: 'space-between',
           alignItems: 'center',
+          position: 'relative',
           [theme.breakpoints.down('sm')]: {
             marginTop: '90px',
           },
@@ -1290,6 +1295,9 @@ const EventCreator = ({
                 </Box>
               </>
             )}
+            <Box sx={{ display: 'flex', justifyContent: 'flex-start', marginBottom: '15px' }}>
+              <AdvancedModeButton advancedMode={advancedMode} setAdvancedMode={setAdvancedMode} />
+            </Box>
             <TextField
               label="Titre"
               variant="filled"
@@ -1298,6 +1306,7 @@ const EventCreator = ({
               onChange={event => setTitle(event.target.value)}
               className={clsx(classes.titleInput, classes.marginBottom)}
               InputLabelProps={{ className: classes.textFieldLabel }}
+              sx={{ display: !advancedMode && 'none' }}
             />
             {(eventType === EVENT_TYPES[0] ||
               eventType === EVENT_TYPES[2] ||
@@ -1314,6 +1323,7 @@ const EventCreator = ({
                 InputProps={{
                   classes: { root: classes.rootMultilineInput, filledInput: classes.filledInput },
                 }}
+                sx={{ display: !advancedMode && 'none' }}
               />
             )}
             <TextField
@@ -1324,6 +1334,7 @@ const EventCreator = ({
               fullWidth
               onChange={event => setWebsite(event.target.value)}
               type="url"
+              sx={{ display: !advancedMode && 'none' }}
             />
             {eventType === EVENT_TYPES[1] && (
               <>
@@ -1413,7 +1424,10 @@ const EventCreator = ({
               eventType === EVENT_TYPES[2] ||
               eventType === EVENT_TYPES[3] ||
               eventType === EVENT_TYPES[4]) && (
-              <Box className={clsx(classes.marginBottom, classes.gridContainer)}>
+              <Box
+                className={clsx(classes.marginBottom, classes.gridContainer)}
+                sx={{ display: !advancedMode && 'none !important' }}
+              >
                 <TextField
                   label="Prix - optionnel"
                   variant="filled"
@@ -1459,68 +1473,73 @@ const EventCreator = ({
                 </ButtonGroup>
               </Box>
             )}
-            <Typography gutterBottom>
-              <Box fontWeight="bold" component="span">
-                Participants
-              </Box>
-            </Typography>
-            <Box mb={2}>
-              <Typography variant="body2" color="textSecondary">
-                {
-                  participatingTravelers.filter(isTravelerParticipating => isTravelerParticipating)
-                    .length
-                }{' '}
-                sélectionné
-                {participatingTravelers.filter(isTravelerParticipating => isTravelerParticipating)
-                  .length > 1 && 's'}{' '}
-                <Button
-                  onClick={() =>
-                    setParticipatingTravelers(travelers.filter(traveler => !traveler.isNotTraveler))
-                  }
-                  sx={{ textTransform: 'none', color: theme.palette.grey.black }}
-                  disableRipple
-                >
-                  - Tous
-                </Button>
-                <Button
-                  onClick={() => setParticipatingTravelers([])}
-                  sx={{ textTransform: 'none', color: theme.palette.grey.black }}
-                  disableRipple
-                >
-                  - Aucun
-                </Button>
+            <Box sx={{ display: !advancedMode && 'none' }}>
+              <Typography gutterBottom>
+                <Box fontWeight="bold" component="span">
+                  Participants
+                </Box>
               </Typography>
-            </Box>
-            <Box display="flex" flexWrap="wrap" pb={5}>
-              {travelers
-                .filter(traveler => !traveler.isNotTraveler)
-                .map((traveler, travelerIndex) => (
-                  <Fragment key={uuidv4()}>
-                    <Button
-                      variant="contained"
-                      endIcon={
-                        participatingTravelers[travelerIndex] ? <ClearRoundedIcon /> : <AddIcon />
-                      }
-                      className={clsx(classes.travelerBtn, {
-                        [classes.selectedTravelerBtn]: participatingTravelers[travelerIndex],
-                      })}
-                      onClick={() => {
-                        const tempParticipatingTravelers = [...participatingTravelers]
-                        tempParticipatingTravelers[travelerIndex] =
-                          !participatingTravelers[travelerIndex]
-                        setParticipatingTravelers(tempParticipatingTravelers)
-                      }}
-                    >
-                      {traveler.name}
-                    </Button>
-                  </Fragment>
-                ))}
+              <Box mb={2}>
+                <Typography variant="body2" color="textSecondary">
+                  {
+                    participatingTravelers.filter(
+                      isTravelerParticipating => isTravelerParticipating
+                    ).length
+                  }{' '}
+                  sélectionné
+                  {participatingTravelers.filter(isTravelerParticipating => isTravelerParticipating)
+                    .length > 1 && 's'}{' '}
+                  <Button
+                    onClick={() =>
+                      setParticipatingTravelers(
+                        travelers.filter(traveler => !traveler.isNotTraveler)
+                      )
+                    }
+                    sx={{ textTransform: 'none', color: theme.palette.grey.black }}
+                    disableRipple
+                  >
+                    - Tous
+                  </Button>
+                  <Button
+                    onClick={() => setParticipatingTravelers([])}
+                    sx={{ textTransform: 'none', color: theme.palette.grey.black }}
+                    disableRipple
+                  >
+                    - Aucun
+                  </Button>
+                </Typography>
+              </Box>
+              <Box display="flex" flexWrap="wrap" pb={5}>
+                {travelers
+                  .filter(traveler => !traveler.isNotTraveler)
+                  .map((traveler, travelerIndex) => (
+                    <Fragment key={uuidv4()}>
+                      <Button
+                        variant="contained"
+                        endIcon={
+                          participatingTravelers[travelerIndex] ? <ClearRoundedIcon /> : <AddIcon />
+                        }
+                        className={clsx(classes.travelerBtn, {
+                          [classes.selectedTravelerBtn]: participatingTravelers[travelerIndex],
+                        })}
+                        onClick={() => {
+                          const tempParticipatingTravelers = [...participatingTravelers]
+                          tempParticipatingTravelers[travelerIndex] =
+                            !participatingTravelers[travelerIndex]
+                          setParticipatingTravelers(tempParticipatingTravelers)
+                        }}
+                      >
+                        {traveler.name}
+                      </Button>
+                    </Fragment>
+                  ))}
+              </Box>
             </Box>
           </Box>
           <Divider />
           <Box
             sx={{
-              margin: '2rem 2rem',
+              margin: '30px 30px 30px 20px',
               [theme.breakpoints.down('sm')]: {
                 margin: '0 30px 30px 30px',
               },
@@ -1536,7 +1555,7 @@ const EventCreator = ({
                 <FormControlLabel
                   className={classes.marginBottom}
                   control={
-                    <Checkbox
+                    <AdvancedSwitch
                       checked={isSurvey}
                       onChange={() => setIsSurvey(!isSurvey)}
                       color="primary"
