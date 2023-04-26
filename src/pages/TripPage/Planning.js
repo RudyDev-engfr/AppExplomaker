@@ -24,6 +24,7 @@ import makeStyles from '@mui/styles/makeStyles'
 import AddIcon from '@mui/icons-material/Add'
 import {
   AirplanemodeActiveRounded,
+  ArrowBackIos,
   Close,
   DirectionsBusFilled,
   ExploreRounded,
@@ -1034,7 +1035,17 @@ const Planning = ({ tripData, tripId, canEdit }) => {
           <>
             <Paper className={classes.previewPaper}>
               <Container>
-                <Box my={4}>
+                <Box sx={{ margin: '32px 0', display: 'flex', alignItems: 'center' }}>
+                  <IconButton
+                    onClick={() => {
+                      setCurrentView('chronoFeed')
+                      setSelectedDateOnPlanning('')
+                      setIsNewDatesSectionOpen(false)
+                    }}
+                    sx={{ marginRight: '15px' }}
+                  >
+                    <ArrowBackIos />
+                  </IconButton>
                   <Typography variant="h5">
                     <Box fontWeight="bold" component="span">
                       {isNewDatesSectionOpen
