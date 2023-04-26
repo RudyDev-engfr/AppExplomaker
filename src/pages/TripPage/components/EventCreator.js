@@ -13,10 +13,12 @@ import {
   Paper,
   Select,
   TextField,
+  Tooltip,
   Typography,
   useMediaQuery,
   useTheme,
 } from '@mui/material'
+import Fade from '@mui/material/Fade'
 import makeStyles from '@mui/styles/makeStyles'
 import CloseRoundedIcon from '@mui/icons-material/CloseRounded'
 import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos'
@@ -1523,22 +1525,31 @@ const EventCreator = ({
                 margin: '0 30px 30px 30px',
               },
             }}
-            pt={5}
           >
             {!isNewProposition && !isPropositionInEdition && (
-              <FormControlLabel
-                className={classes.marginBottom}
-                control={
-                  <Checkbox
-                    checked={isSurvey}
-                    onChange={() => setIsSurvey(!isSurvey)}
-                    color="primary"
-                    sx={{ position: 'relative', left: '-10px' }}
-                  />
-                }
-                label="Proposer d’autres options pour cet évènement (jusqu’à 3 options). Les participants pourront voter pour leur option préférée."
-                sx={{ position: 'relative', left: '20px', alignItems: 'flex-start' }}
-              />
+              <Tooltip
+                title="Proposer d’autres options pour cet évènement (jusqu’à 3 options). Les participants pourront voter pour leur option préférée."
+                TransitionComponent={Fade}
+                TransitionProps={{ timeout: 600 }}
+                sx={{ fontSize: '14px', marginBottom: '0' }}
+              >
+                <FormControlLabel
+                  className={classes.marginBottom}
+                  control={
+                    <Checkbox
+                      checked={isSurvey}
+                      onChange={() => setIsSurvey(!isSurvey)}
+                      color="primary"
+                      sx={{
+                        position: 'relative',
+                        left: '-10px',
+                      }}
+                    />
+                  }
+                  label="Proposer en sondage"
+                  sx={{ position: 'relative', left: '20px', alignItems: 'center' }}
+                />
+              </Tooltip>
             )}
             <Button
               type="submit"
