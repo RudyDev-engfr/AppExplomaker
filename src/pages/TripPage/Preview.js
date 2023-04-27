@@ -18,7 +18,6 @@ import EditBtn from '../../components/atoms/EditBtn'
 import Loader from '../../components/Loader'
 import { ROLES } from '../../helper/constants'
 
-import lineMobile from '../../images/icons/lineMobile.svg'
 import calendar from '../../images/icons/calendar.svg'
 import location from '../../images/icons/location.svg'
 import person from '../../images/icons/person.svg'
@@ -172,7 +171,6 @@ const useStyles = makeStyles(theme => ({
       paddingTop: '10px',
       background: '#fff',
       boxShadow: '-3px 12px 30px -8px rgba(78, 56, 56, 0.1)',
-      borderRadius: '40px 40px 0 0',
       width: '100%',
     },
   },
@@ -361,9 +359,6 @@ const Preview = ({
         {/* main header block */}
         {matchesXs && <MobileTripPageHeader />}
         <Box className={classes.mobileHeader}>
-          <Box display="flex" justifyContent="center">
-            <img src={lineMobile} alt="" />
-          </Box>
           <Box className={classes.mobileHeaderInner}>
             <Box className={classes.mobileHeaderInnerHeader}>
               <Typography className={classes.mobileHeaderInnerTitle}>{tripData.title}</Typography>

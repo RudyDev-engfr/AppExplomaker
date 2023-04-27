@@ -74,6 +74,7 @@ import lineMobile from '../../images/icons/lineMobile.svg'
 import { TripContext } from '../../contexts/trip'
 import PlanningFeed from './components/PlanningFeed'
 import EventsTimeline from '../../components/molecules/EventsTimeline'
+import MobileTripPageHeader from '../../components/molecules/MobileTripPageHeader'
 
 const useStyles = makeStyles(theme => ({
   calendarArea: {
@@ -176,8 +177,8 @@ const useStyles = makeStyles(theme => ({
     [theme.breakpoints.down('sm')]: {
       gridRowStart: 'mapArea',
       gridRowEnd: 'previewArea',
-      minHeight: 'calc(100vh - 90px - 20px)',
-      maxHeight: 'calc(100vh - 90px - 20px)',
+      minHeight: 'calc(100vh - 260px)',
+      maxHeight: 'calc(100vh - 260px)',
       zIndex: '10000',
       margin: '20px 0 0',
       borderRadius: '30px 30px 0 0',
@@ -205,8 +206,8 @@ const useStyles = makeStyles(theme => ({
       "previewArea"`,
       marginTop: 'unset',
       borderRadius: 'unset',
-      minHeight: 'calc(100vh - 90px - 20px)',
-      maxHeight: 'calc(100vh - 90px - 20px)',
+      minHeight: 'calc(100vh - 260px)',
+      maxHeight: 'calc(100vh - 260px)',
       zIndex: '1000',
       margin: '20px 0 0',
       '&::-webkit-scrollbar': {
@@ -857,11 +858,12 @@ const Planning = ({ tripData, tripId, canEdit }) => {
         )}
         <Paper variant="outlined" square className={classes.calendarArea}>
           {matchesXs && (
-            <Box className={classes.mobilePlanningTitle}>
-              <Box display="flex" justifyContent="center" marginTop="10px">
-                <img src={lineMobile} alt="" />
-              </Box>
-            </Box>
+            // <Box className={classes.mobilePlanningTitle}>
+            //   <Box display="flex" justifyContent="center" marginTop="10px">
+            //     <img src={lineMobile} alt="" />
+            //   </Box>
+            // </Box>
+            <MobileTripPageHeader />
           )}
           <Box
             sx={{

@@ -560,13 +560,21 @@ const TripPage = () => {
     createNotificationsOnTrip,
   } = useContext(FirebaseContext)
   const { user } = useContext(SessionContext)
-  const { tripData, setTripData, openModal, setOpenModal, matches1600, isChatOpen, setIsChatOpen } =
-    useContext(TripContext)
+  const {
+    tripData,
+    setTripData,
+    openModal,
+    setOpenModal,
+    matches1600,
+    isChatOpen,
+    setIsChatOpen,
+    currentActiveTab,
+    setCurrentActiveTab,
+  } = useContext(TripContext)
   const [isLoading, setIsLoading] = useState(true)
   const [carouselImages, setCarouselImages] = useState([])
   const [tripTravelers, setTripTravelers] = useState([])
   const [tripWishes, setTripWishes] = useState([])
-  const [currentActiveTab, setCurrentActiveTab] = useState('')
   const [nbTravelers, setNbTravelers] = useState(1)
   const [registeredTravelers, setRegisteredTravelers] = useState([])
   const [modalTravelers, setModalTravelers] = useState([])

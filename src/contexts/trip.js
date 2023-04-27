@@ -36,6 +36,7 @@ const TripContextProvider = ({ children }) => {
 
   // used in preview, desktopPreview
   const [currentDateRange, setCurrentDateRange] = useState(['', ''])
+  const [currentActiveTab, setCurrentActiveTab] = useState('')
 
   const setTypeCreator = type => () => {
     setEventType(type)
@@ -135,6 +136,8 @@ const TripContextProvider = ({ children }) => {
         setTypeCreator,
         eventType,
         setEventType,
+        currentActiveTab,
+        setCurrentActiveTab,
       }}
     >
       {children}
