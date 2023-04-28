@@ -97,7 +97,7 @@ const TripContextProvider = ({ children }) => {
       tripData?.dateRange[0] !== '' &&
       tripData?.dateRange[1] !== ''
     ) {
-      setCurrentDateRange(rCTFF(tripData.dateRange, 'E dd MMMM'))
+      setCurrentDateRange(rCTFF(tripData.dateRange, 'dd MMMM'))
     } else {
       setCurrentDateRange(['', ''])
     }

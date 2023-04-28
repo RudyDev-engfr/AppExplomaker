@@ -253,12 +253,11 @@ const PlanningContextProvider = ({ children }) => {
   useEffect(() => {
     if (currentView === 'chronoFeed' && singleDayPlannedEvents?.length > 1) {
       setCurrentEvents({
-        surveys: singleDayPlannedEvents.filter(plannedEvent => plannedEvent.isSurvey),
+        surveys: singleDayPlannedEvents.filter(
+          plannedEvent => plannedEvent.isSurvey && !plannedEvent.itsAllDayLong
+        ),
         events: singleDayPlannedEvents.filter(
-          plannedEvent =>
-            !plannedEvent.itsAllDayLong &&
-            !plannedEvent.isSurvey &&
-            plannedEvent.fakeDate !== plannedEvent.endTime
+          plannedEvent => !plannedEvent.itsAllDayLong && !plannedEvent.isSurvey
         ),
       })
     }

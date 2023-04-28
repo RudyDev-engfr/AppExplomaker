@@ -28,7 +28,7 @@ const useStyles = makeStyles(theme => ({
     margin: '1rem 0',
   },
   planeIcon: {
-    fontSize: '45px',
+    fontSize: '30px',
     color: theme.palette.primary.main,
   },
   planebackgTransit1: {
@@ -57,8 +57,8 @@ const useStyles = makeStyles(theme => ({
     display: 'flex',
     justifyContent: 'center',
     alignItems: 'center',
-    width: '75px',
-    height: '75px',
+    width: '50px',
+    height: '50px',
     borderRadius: '50%',
     backgroundColor: theme.palette.primary.ultraLight,
     color: theme.palette.primary.main,

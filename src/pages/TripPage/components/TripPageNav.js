@@ -1,4 +1,4 @@
-import React, { useContext, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import { useHistory } from 'react-router-dom'
 import DashboardOutlinedIcon from '@mui/icons-material/DashboardOutlined'
 import StarBorderIcon from '@mui/icons-material/StarBorder'
@@ -32,6 +32,7 @@ import {
   ExploreRounded,
   HomeRounded,
   Logout,
+  Notifications,
   Person,
   RestaurantMenuRounded,
 } from '@mui/icons-material'
@@ -50,6 +51,12 @@ import TitleArea from './TitleArea'
 import { TripContext } from '../../../contexts/trip'
 import FabDial from '../../../components/atoms/FabDial'
 import { EVENT_TYPES } from '../../../helper/constants'
+import MobileNotificationArea, {
+  MobileNotificationModal,
+} from '../../../components/molecules/MobileNotificationArea'
+import { FirebaseContext } from '../../../contexts/firebase'
+import { SessionContext } from '../../../contexts/session'
+import { buildNotificationsOnTripForUser } from '../../../helper/functions'
 
 const Transition = React.forwardRef((props, ref) => <Slide direction="up" ref={ref} {...props} />)
 
@@ -179,9 +186,17 @@ const TripPageNav = ({
   const matches1060 = useMediaQuery('(max-width:1060px)')
   const theme = useTheme()
   const isXs = useMediaQuery(theme.breakpoints.down('sm'))
+
   const { setTypeCreator } = useContext(TripContext)
+  const { setNotificationsToNewStateOnTrip } = useContext(FirebaseContext)
+  const { user } = useContext(SessionContext)
 
   const [isMobilePlusOpen, setIsMobilePlusOpen] = useState(false)
+  const [open, setOpen] = useState(false)
+  const [refreshNotif, setRefreshNotif] = useState(false)
+  const [currentNotifications, setCurrentNotifications] = useState([])
+  const handleOpen = () => setOpen(true)
+  const handleClose = () => setOpen(false)
 
   const handleMobileNavigation = target => {
     if (isMobilePlusOpen) {
@@ -189,6 +204,15 @@ const TripPageNav = ({
     }
     setCurrentActiveTab(target)
   }
+
+  useEffect(() => {
+    if (tripData && user && refreshNotif) {
+      const tempNotif = buildNotificationsOnTripForUser(user, tripId)
+      setCurrentNotifications(tempNotif)
+      setRefreshNotif(false)
+    }
+    console.log('le voyage avec ses notifs', user.notifications)
+  }, [tripData, user, refreshNotif])
 
   const addActions = [
     {
@@ -398,7 +422,7 @@ const TripPageNav = ({
             value="myTrips"
             sx={{ padding: '0', minWidth: '20vw !important' }}
           />
-          <Tab
+          {/* <Tab
             icon={
               <Person
                 sx={{
@@ -410,6 +434,19 @@ const TripPageNav = ({
             onClick={() => setOpenModal('editEditors')}
             value="editEditors"
             sx={{ marginRight: '8vw', padding: '0', minWidth: '20vw !important' }}
+          /> */}
+          <Tab
+            icon={
+              <DisplaySettings
+                sx={{
+                  fontSize: '35px',
+                  color: openModal === 'general' && theme.palette.primary.main,
+                }}
+              />
+            }
+            onClick={() => setOpenModal('general')}
+            value="tripSettings"
+            sx={{ padding: '0', minWidth: '20vw !important', marginRight: '8vw' }}
           />
           <Box sx={{ maxHeight: '80px', height: '80px', paddingBottom: '5px' }}>
             <FabDial actions={addActions} tripId={tripId} />
@@ -440,21 +477,29 @@ const TripPageNav = ({
             sx={{ padding: '0', minWidth: '20vw !important', marginLeft: '8vw' }}
           />
           <Tab
+            onClick={() => {
+              setRefreshNotif(true)
+              handleOpen()
+              setNotificationsToNewStateOnTrip(user, tripId, 2)
+            }}
             icon={
-              <DisplaySettings
+              <Notifications
                 sx={{
+                  color: openModal === 'editEditors' && theme.palette.primary.main,
                   fontSize: '35px',
-                  color: openModal === 'general' && theme.palette.primary.main,
                 }}
               />
             }
-            onClick={() => setOpenModal('general')}
-            value="tripSettings"
+            value="myNotifications"
             sx={{ padding: '0', minWidth: '20vw !important' }}
           />
         </Tabs>
       </Paper>
-
+      <MobileNotificationModal
+        open={open}
+        setOpen={setOpen}
+        currentNotifications={currentNotifications}
+      />
       <Dialog
         fullScreen
         open={isMobilePlusOpen}
