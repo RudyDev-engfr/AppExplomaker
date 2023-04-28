@@ -412,7 +412,7 @@ const TripPageNav = ({
             sx={{ marginRight: '8vw', padding: '0', minWidth: '20vw !important' }}
           />
           <Box sx={{ maxHeight: '80px', height: '80px', paddingBottom: '5px' }}>
-            <FabDial actions={addActions} />
+            <FabDial actions={addActions} tripId={tripId} />
           </Box>
           {/* <Tab
           icon={<img src={currentActiveTab === 'photos' ? photoGreen : photo} alt="" />}

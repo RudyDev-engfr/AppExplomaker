@@ -3,6 +3,7 @@ import { Backdrop, SpeedDial, SpeedDialAction, useTheme } from '@mui/material'
 import makeStyles from '@mui/styles/makeStyles'
 import Box from '@mui/material/Box'
 import SpeedDialIcon from '@mui/material/SpeedDialIcon'
+import { useHistory } from 'react-router-dom'
 
 const useStyles = makeStyles(theme => ({
   tooltip: {
@@ -34,10 +35,10 @@ const useStyles = makeStyles(theme => ({
   },
 }))
 
-const FabDial = ({ actions, isPlanning = false }) => {
+const FabDial = ({ actions, isPlanning = false, tripId }) => {
   const classes = useStyles()
   const theme = useTheme()
-
+  const history = useHistory()
   const [open, setOpen] = useState(false)
 
   const handleOpen = (event, reason) => {
@@ -72,7 +73,10 @@ const FabDial = ({ actions, isPlanning = false }) => {
             key={action.name}
             tooltipTitle={action.name}
             tooltipOpen
-            onClick={action.callback}
+            onClick={() => {
+              action.callback()
+              history.push(`/tripPage/${tripId}/planning`)
+            }}
             tooltipPlacement="right"
             FabProps={{ className: classes.tooltip }}
           />

@@ -201,12 +201,12 @@ const useStyles = makeStyles(theme => ({
     },
   },
   chatBtnOpen: {
-    '@media (max-width: 1300px)': {
+    '@media (max-width: 1600px)': {
       right: '370px',
     },
   },
   chatBtnClose: {
-    '@media (max-width: 1300px)': {
+    '@media (max-width: 1600px)': {
       right: '20px',
     },
   },
@@ -1022,7 +1022,7 @@ const TripPage = () => {
             position: 'relative',
             padding: canEdit ? '0 350px' : '0 0 0 350px',
             margin: '0 auto',
-            '@media (max-width: 1300px)': {
+            '@media (max-width: 1600px)': {
               maxWidth: '100%',
               // padding: '0 20px 0 380px',
               padding: '0 0 0 350px',
@@ -2219,7 +2219,7 @@ const TripPage = () => {
           </div>
         </div>
       </Modal>
-      {canEdit && (
+      {canEdit && !matchesXs && (
         <Box
           display={matchesXs ? 'block' : 'none'}
           className={clsx(classes.chatBtn, {

@@ -246,8 +246,9 @@ const EventCreator = ({
     selectedDateFromPlanning || tripStartDate
   )
   const [arrivalDateTimeError, setArrivalDateTimeError] = useState(false)
-  const [selectedDepartureDateTime, setSelectedDepartureDateTime] =
-    useState(selectedDateFromPlanning)
+  const [selectedDepartureDateTime, setSelectedDepartureDateTime] = useState(
+    selectedDateFromPlanning || add(tripStartDate, { hours: 16 })
+  )
   const [departureDateTimeError, setDepartureDateTimeError] = useState(false)
   const [selectedDate, setSelectedDate] = useState(selectedDateFromPlanning || tripStartDate)
   const [dateError, setDateError] = useState(false)
@@ -1055,7 +1056,7 @@ const EventCreator = ({
           alignItems: 'center',
           position: 'relative',
           [theme.breakpoints.down('sm')]: {
-            marginTop: '90px',
+            marginTop: '80px',
           },
         }}
       >
@@ -1067,6 +1068,7 @@ const EventCreator = ({
           sx={{
             [theme.breakpoints.down('sm')]: {
               maxWidth: '100vw',
+              minWidth: '100vw',
             },
           }}
         >
@@ -1083,11 +1085,13 @@ const EventCreator = ({
               eventType === EVENT_TYPES[4]) && (
               <>
                 {matchesXs && (
-                  <IconSlider
-                    eventType={eventType}
-                    selectedIcon={selectedIcon}
-                    setSelectedIcon={setSelectedIcon}
-                  />
+                  <Box sx={{ display: 'flex', justifyContent: 'center' }}>
+                    <IconSlider
+                      eventType={eventType}
+                      selectedIcon={selectedIcon}
+                      setSelectedIcon={setSelectedIcon}
+                    />
+                  </Box>
                 )}
                 <Box display="flex" alignItems="center" className={classes.marginBottom}>
                   <GooglePlacesAutocomplete
@@ -1540,18 +1544,36 @@ const EventCreator = ({
           <Box
             sx={{
               margin: '30px 30px 30px 20px',
-              [theme.breakpoints.down('sm')]: {
-                margin: '0 30px 30px 30px',
-              },
+              [theme.breakpoints.down('sm')]: {},
             }}
           >
-            {!isNewProposition && !isPropositionInEdition && (
-              <Tooltip
-                title="Proposer d’autres options pour cet évènement (jusqu’à 3 options). Les participants pourront voter pour leur option préférée."
-                TransitionComponent={Fade}
-                TransitionProps={{ timeout: 600 }}
-                sx={{ fontSize: '14px', marginBottom: '0' }}
-              >
+            {!isNewProposition &&
+              !isPropositionInEdition &&
+              (!matchesXs ? (
+                <Tooltip
+                  title="Proposer d’autres options pour cet évènement (jusqu’à 3 options). Les participants pourront voter pour leur option préférée."
+                  TransitionComponent={Fade}
+                  TransitionProps={{ timeout: 600 }}
+                  sx={{ fontSize: '14px', marginBottom: '0' }}
+                >
+                  <FormControlLabel
+                    className={classes.marginBottom}
+                    control={
+                      <AdvancedSwitch
+                        checked={isSurvey}
+                        onChange={() => setIsSurvey(!isSurvey)}
+                        color="primary"
+                        sx={{
+                          position: 'relative',
+                          left: !matchesXs && '-10px',
+                        }}
+                      />
+                    }
+                    label="Proposer en sondage"
+                    sx={{ position: 'relative', left: '20px', alignItems: 'center' }}
+                  />
+                </Tooltip>
+              ) : (
                 <FormControlLabel
                   className={classes.marginBottom}
                   control={
@@ -1568,8 +1590,7 @@ const EventCreator = ({
                   label="Proposer en sondage"
                   sx={{ position: 'relative', left: '20px', alignItems: 'center' }}
                 />
-              </Tooltip>
-            )}
+              ))}
             <Button
               type="submit"
               variant="contained"

@@ -177,8 +177,8 @@ const useStyles = makeStyles(theme => ({
     [theme.breakpoints.down('sm')]: {
       gridRowStart: 'mapArea',
       gridRowEnd: 'previewArea',
-      minHeight: 'calc(100vh - 260px)',
-      maxHeight: 'calc(100vh - 260px)',
+      minHeight: 'calc(100vh - 100px)',
+      maxHeight: 'calc(100vh - 100px)',
       zIndex: '10000',
       margin: '20px 0 0',
       borderRadius: '30px 30px 0 0',
@@ -1427,9 +1427,9 @@ const Planning = ({ tripData, tripId, canEdit }) => {
                 </Fab>
               )}
             </Paper>
-            {canEdit && matchesXs && typeof currentDateRange[0] !== 'undefined' && (
+            {/* {canEdit && matchesXs && typeof currentDateRange[0] !== 'undefined' && (
               <FabDial actions={addActions} isPlanning />
-            )}
+            )} */}
           </>
         )}
         {!previousEvent && currentView === 'survey' && (
