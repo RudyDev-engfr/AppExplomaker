@@ -411,7 +411,7 @@ const TripPageNav = ({
             value="editEditors"
             sx={{ marginRight: '8vw', padding: '0', minWidth: '20vw !important' }}
           />
-          <Box sx={{ maxHeight: '80px', height: '80px' }}>
+          <Box sx={{ maxHeight: '80px', height: '80px', paddingBottom: '5px' }}>
             <FabDial actions={addActions} />
           </Box>
           {/* <Tab

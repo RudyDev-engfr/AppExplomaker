@@ -11,9 +11,11 @@ const useStyles = makeStyles(theme => ({
     backgroundColor: theme.palette.primary.main,
     width: '100vw',
     height: '150px',
-    position: 'fixed',
     borderRadius: '20px 20px 0 0 ',
     paddingTop: '10px',
+    position: 'sticky',
+    zIndex: 1001,
+    top: '-100px',
   },
 }))
 const MobileTripPageHeader = () => {
@@ -54,7 +56,7 @@ const MobileTripPageHeader = () => {
           position: 'sticky',
           top: 0,
           boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)',
-          zIndex: 100001,
+          zIndex: 1001,
         }}
       >
         <Tabs
@@ -111,7 +113,7 @@ const MobileTripPageHeader = () => {
                 Envies
               </Typography>
             }
-            value="wishes"
+            value="envies"
             onClick={() => setCurrentActiveTab('envies')}
           />
           <Tab

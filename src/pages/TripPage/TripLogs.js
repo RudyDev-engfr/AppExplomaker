@@ -24,6 +24,7 @@ import CustomAvatar from '../../components/atoms/CustomAvatar'
 import EventAccordion from '../../components/atoms/EventAccordion'
 import DateUpdateAccordion from '../../components/atoms/DateUpdateAccordion'
 import { TripContext } from '../../contexts/trip'
+import MobileTripPageHeader from '../../components/molecules/MobileTripPageHeader'
 
 const useStyles = makeStyles(theme => ({
   mobileTitleContainer: {
@@ -91,18 +92,7 @@ const TripLogs = ({ tripData, tripId, canEdit }) => {
 
   return (
     <Box sx={{ marginBottom: '110px' }}>
-      {matchesXs && (
-        <Box className={classes.mobileTitleContainer}>
-          <IconButton
-            className={classes.mobileTitleIcon}
-            size="large"
-            onClick={() => history.goBack()}
-          >
-            <img src={arrowBack} alt="" />
-          </IconButton>
-          <Typography className={classes.mobileTitleTypo}>Logs du Séjour</Typography>
-        </Box>
-      )}
+      {matchesXs && <MobileTripPageHeader />}
       <Paper className={classes.paper}>
         <Typography className={classes.title}>Logs du séjour</Typography>
 

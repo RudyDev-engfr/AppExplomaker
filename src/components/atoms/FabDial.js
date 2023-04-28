@@ -23,9 +23,14 @@ const useStyles = makeStyles(theme => ({
   speedDial: {
     position: 'fixed',
     right: '50%',
-    bottom: '10px',
+    bottom: '15px',
     transform: 'translateX(50%)',
     top: 'unset',
+    '& button': {
+      width: '50px',
+      height: '50px',
+      boxShadow: 'none',
+    },
   },
 }))
 

@@ -27,6 +27,7 @@ import MobileNotificationArea from '../../components/molecules/MobileNotificatio
 import DesktopPreview from './DesktopPreview'
 import { TripContext } from '../../contexts/trip'
 import MobileTripPageHeader from '../../components/molecules/MobileTripPageHeader'
+import AddCollaboratorsButton from '../../components/atoms/AddCollaboratorsButton'
 
 const useStyles = makeStyles(theme => ({
   slides: {
@@ -116,8 +117,7 @@ const useStyles = makeStyles(theme => ({
     padding: '30px 30px 70px',
     position: 'relative',
     [theme.breakpoints.down('sm')]: {
-      width: 'calc(100% - 40px)',
-      margin: '0 20px 30px',
+      width: '100%',
     },
   },
   doubleCol: {
@@ -129,17 +129,17 @@ const useStyles = makeStyles(theme => ({
     width: 'calc(50% - 10px)',
     '&:first-child': { marginRight: '20px' },
     [theme.breakpoints.down('sm')]: {
-      width: 'calc(100% - 40px)',
-      margin: '0 20px 30px',
+      width: '100%',
       '&:first-child': { marginRight: '0' },
+      marginBottom: '20px',
     },
   },
   colPaperTrav: {
     width: 'calc(50% - 10px)',
     '&:first-child': { marginRight: '20px' },
     [theme.breakpoints.down('sm')]: {
-      width: 'calc(100% - 40px)',
-      margin: '0 20px 120px',
+      width: '100%',
+      marginBottom: '120px',
       '&:first-child': { marginRight: '0' },
     },
   },
@@ -205,7 +205,6 @@ const useStyles = makeStyles(theme => ({
   mobileContent: {
     [theme.breakpoints.down('sm')]: {
       height: 'calc(100% - 300px)',
-      marginTop: '25px',
     },
   },
   // mobilePaperContent: {
@@ -375,9 +374,16 @@ const Preview = ({
                 <img src={location} alt="" className={classes.mobileIcon} />
                 {!tripData.noDestination && tripData.destination.label}
               </Box>
-              <Box className={classes.mobileHeaderRow}>
-                <img src={person} alt="" className={classes.mobileIcon} /> {tripData.editors.length}{' '}
-                contributeurs
+              <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                <Box className={classes.mobileHeaderRow}>
+                  <img src={person} alt="" className={classes.mobileIcon} />
+                  <Typography sx={{ fontSize: '14px' }}>
+                    {tripData.editors.length} participant{tripData.editors.length > 1 && 's'}
+                  </Typography>
+                </Box>
+                <Box sx={{ paddingRight: '10px' }}>
+                  <AddCollaboratorsButton tripId={tripId} size="30px" iconSize="20px" />
+                </Box>
               </Box>
             </div>
           </Box>
