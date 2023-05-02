@@ -48,7 +48,7 @@ const MobileTripPageHeader = () => {
           padding: '40px 40px 5px 40px',
         }}
       >
-        {tripData.destination.label}
+        {tripData?.title}
       </Typography>
       <Box
         className={`my-box-class ${classes.tripPageTabsContainer}`}

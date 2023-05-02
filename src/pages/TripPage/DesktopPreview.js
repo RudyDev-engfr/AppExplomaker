@@ -53,7 +53,13 @@ const DesktopPreview = ({ tripData, generatedAvatars }) => {
           <ShareIcon />
         </IconButton> */}
       </Box>
-      <Box sx={{ display: 'grid', alignItems: 'center', gridTemplate: '1fr / 1fr 1fr 1fr 2fr' }}>
+      <Box
+        sx={{
+          display: 'grid',
+          alignItems: 'center',
+          gridTemplate: '1fr / 1fr 1fr 1fr fit-content(40%)',
+        }}
+      >
         <Box display="flex" alignItems="center">
           <img src={calendar} alt="" className={classes.mobileIcon} />
           {currentDateRange[0] !== '' ? (

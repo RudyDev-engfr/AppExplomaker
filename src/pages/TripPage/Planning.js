@@ -180,7 +180,6 @@ const useStyles = makeStyles(theme => ({
       minHeight: 'calc(100vh - 100px)',
       maxHeight: 'calc(100vh - 100px)',
       zIndex: '10000',
-      margin: '20px 0 0',
       borderRadius: '30px 30px 0 0',
       '&::-webkit-scrollbar': {
         display: 'none',
@@ -209,7 +208,6 @@ const useStyles = makeStyles(theme => ({
       minHeight: 'calc(100vh - 260px)',
       maxHeight: 'calc(100vh - 260px)',
       zIndex: '1000',
-      margin: '20px 0 0',
       '&::-webkit-scrollbar': {
         display: 'none',
       },

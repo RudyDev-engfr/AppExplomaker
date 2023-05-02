@@ -237,7 +237,10 @@ const PlanningContextProvider = ({ children }) => {
                 tempEvents.surveys.push(plannedEvent)
               }
             } else if (
-              isSameDay(selectedDateOnPlanning, stringToDate(plannedEvent.date, 'yyyy-MM-dd'))
+              isSameDay(
+                selectedDateOnPlanning,
+                stringToDate(plannedEvent.startTime, 'yyyy-MM-dd HH:mm')
+              )
             ) {
               tempEvents.events.push(plannedEvent)
             }

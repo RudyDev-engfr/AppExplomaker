@@ -90,12 +90,10 @@ const EventsTimeline = ({ currentEvents, canEdit, handleOpenDropdown }) => {
                 </Box>
                 <Typography sx={{ fontSize: '14px', textAlign: 'center' }}>
                   {isSameDay(stringToDate(event?.startTime, 'yyyy-MM-dd HH:mm'), selectedDate)
-                    ? dateToString(stringToDate(event?.startTime, 'yyyy-MM-dd HH:mm'), 'HH:mm')
-                    : isSameDay(stringToDate(event?.endTime, 'yyyy-MM-dd HH:mm'), selectedDate)
-                    ? dateToString(stringToDate(event?.endTime, 'yyyy-MM-dd HH:mm'), 'HH:mm')
-                    : event.type === EVENT_TYPES[0]
-                    ? 'Nuit'
-                    : 'Jour'}
+                    ? isSameDay(stringToDate(event?.endTime, 'yyyy-MM-dd HH:mm'), selectedDate)
+                      ? event?.type === EVENT_TYPES[0] && 'Nuit'
+                      : dateToString(stringToDate(event?.startTime, 'yyyy-MM-dd HH:mm'), 'HH:mm')
+                    : dateToString(stringToDate(event?.endTime, 'yyyy-MM-dd HH:mm'), 'HH:mm')}
                 </Typography>
               </Box>
               <TimelineConnector />
