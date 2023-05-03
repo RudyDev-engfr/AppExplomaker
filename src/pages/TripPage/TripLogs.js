@@ -27,24 +27,11 @@ import { TripContext } from '../../contexts/trip'
 import MobileTripPageHeader from '../../components/molecules/MobileTripPageHeader'
 
 const useStyles = makeStyles(theme => ({
-  mobileTitleContainer: {
-    backgroundColor: 'white',
-    display: 'flex',
-    justifyContent: 'flex-start',
-    padding: '57px 0 25px',
-    alignItems: 'center',
-  },
-  mobileTitleTypo: {
-    fontSize: '22px',
-    fontWeight: '500',
-  },
-  mobileTitleIcon: {
-    margin: '0 25px',
-  },
   title: {
     fontFamily: theme.typography.h1.fontFamily,
     fontSize: '28px',
     fontWeight: '700',
+    marginBottom: '15px',
     [theme.breakpoints.down('sm')]: {
       fontFamily: theme.typography.fontFamily,
       fontSize: '20px',
@@ -54,11 +41,15 @@ const useStyles = makeStyles(theme => ({
   paper: {
     padding: '30px',
     margin: '20px 0',
-    height: '90vh',
+    overflowY: 'auto',
     [theme.breakpoints.down('sm')]: {
-      margin: '20px',
-      padding: '15px',
+      padding: '30px',
+      paddingBottom: '120px',
+      overflowY: 'auto',
     },
+  },
+  accordionDetailsRoot: {
+    borderRadius: '0 0 20px 20px',
   },
 }))
 
@@ -79,26 +70,19 @@ const TripLogs = ({ tripData, tripId, canEdit }) => {
   }, [canEdit])
 
   useEffect(() => {
-    console.log('tripData du triplog', tripData)
     if (tripData && tripId && user) {
-      console.log('regarde il fonctionne ce tripData', tripData)
-      console.log('il est beau le tripId', tripId)
       const tempNotif = buildLogSejour(tripId, tripData)
-      console.log('tempnotif', tempNotif)
       setCurrentNotifications(tempNotif)
     }
-    console.log('le voyage avec ses notifs', tripData.notifications)
   }, [tripData, user, tripId])
 
   return (
     <Box sx={{ marginBottom: '110px' }}>
       {matchesXs && <MobileTripPageHeader />}
       <Paper className={classes.paper}>
-        <Typography className={classes.title}>Logs du séjour</Typography>
-
-        <Box sx={{ maxHeight: 'calc(90vh - 118px)', overflowY: 'auto' }}>
+        {!matchesXs && <Typography className={classes.title}>Logs du séjour</Typography>}
+        <Box>
           <Box
-            my={2}
             sx={{
               display: 'flex',
               flexDirection: 'column',
@@ -130,8 +114,11 @@ const TripLogs = ({ tripData, tripId, canEdit }) => {
                         backgroundColor: theme.palette.grey.f2,
                         width: '457px,',
                         height: '115px',
-                        padding: '0 30px',
                         borderRadius: '20px',
+                        padding: matchesXs && '0 5px 0 0 !important',
+                        '&.Mui-expanded': {
+                          borderRadius: '20px 20px 0 0 !important',
+                        },
                       }}
                     >
                       <Box
@@ -150,14 +137,24 @@ const TripLogs = ({ tripData, tripId, canEdit }) => {
                           />
                         </Box>
                         <Box>
-                          <Typography sx={{ fontSize: '17px' }}>{notification.content}</Typography>
-                          <Typography sx={{ fontSize: '17px', color: theme.palette.primary.main }}>
+                          <Typography sx={{ fontSize: !matchesXs ? '17px' : '14px' }}>
+                            {notification.content}
+                          </Typography>
+                          <Typography
+                            sx={{
+                              fontSize: !matchesXs ? '17px' : '14px',
+                              color: theme.palette.primary.main,
+                            }}
+                          >
                             {notification.timer}
                           </Typography>
                         </Box>
                       </Box>
                     </AccordionSummary>
-                    <AccordionDetails>
+                    <AccordionDetails
+                      sx={{ backgroundColor: theme.palette.grey.f7 }}
+                      classes={{ root: classes.accordionDetailsRoot }}
+                    >
                       {notification.logs.date && (
                         <EventAccordion
                           notification={notification}
@@ -191,8 +188,15 @@ const TripLogs = ({ tripData, tripId, canEdit }) => {
                       <Avatar sx={{ width: 60, height: 60 }} />
                     </Box>
                     <Box>
-                      <Typography sx={{ fontSize: '17px' }}>{notification.content}</Typography>
-                      <Typography sx={{ fontSize: '17px', color: theme.palette.primary.main }}>
+                      <Typography sx={{ fontSize: !matchesXs ? '17px' : '14px' }}>
+                        {notification.content}
+                      </Typography>
+                      <Typography
+                        sx={{
+                          fontSize: !matchesXs ? '17px' : '14px',
+                          color: theme.palette.primary.main,
+                        }}
+                      >
                         {notification.timer}
                       </Typography>
                     </Box>

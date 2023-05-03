@@ -378,7 +378,7 @@ const Preview = ({
                 <Box className={classes.mobileHeaderRow}>
                   <img src={person} alt="" className={classes.mobileIcon} />
                   <Typography sx={{ fontSize: '14px' }}>
-                    {tripData.editors.length} participant{tripData.editors.length > 1 && 's'}
+                    {tripData.editors.length} contributeur{tripData.editors.length > 1 && 's'}
                   </Typography>
                 </Box>
                 <Box sx={{ paddingRight: '10px' }}>

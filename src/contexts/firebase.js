@@ -242,7 +242,7 @@ const FirebaseContextProvider = ({ children }) => {
   }
 
   const getSpotByDestination = (destination, spotSetter) => {
-    if (destination.value?.place_id) {
+    if (destination?.value?.place_id) {
       database
         .ref('content/spots')
         .orderByChild('gps/google_place_id')

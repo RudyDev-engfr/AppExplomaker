@@ -65,6 +65,7 @@ import { PlanningContext } from '../../../contexts/planning'
 
 import plusCircle from '../../../images/icons/plusCircle.svg'
 import AdvancedModeButton, { AdvancedSwitch } from '../../../components/atoms/AdvancedModeButton'
+import { TripContext } from '../../../contexts/trip'
 
 const useStyles = makeStyles(theme => ({
   marginBottom: {
@@ -228,6 +229,7 @@ const EventCreator = ({
     tempEventsMarkers,
     days,
   } = useContext(PlanningContext)
+  const { setSelectedDateOnPlanning } = useContext(TripContext)
 
   const tripStartDate = rCTFF(dateRange[0])
   const tripEndDate = rCTFF(dateRange[1])
@@ -933,6 +935,7 @@ const EventCreator = ({
           } else {
             createNotificationsOnTrip(user, tripData, tripId, 'eventCreate', 2, tempEvent)
             setCurrentView('planning')
+            setCurrentEvent('')
           }
         })
     }
@@ -1555,6 +1558,7 @@ const EventCreator = ({
                   TransitionComponent={Fade}
                   TransitionProps={{ timeout: 600 }}
                   sx={{ fontSize: '14px', marginBottom: '0' }}
+                  placement="top"
                 >
                   <FormControlLabel
                     className={classes.marginBottom}

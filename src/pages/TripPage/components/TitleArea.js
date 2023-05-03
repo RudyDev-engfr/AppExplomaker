@@ -7,7 +7,7 @@ import EditBtn from '../../../components/atoms/EditBtn'
 
 const useStyles = makeStyles(theme => ({
   titleArea: {
-    padding: '15px 50px 15px 50px',
+    padding: '15px 50px 15px 15px',
     display: 'flex',
     alignItems: 'center',
     color: '#000000',
@@ -15,6 +15,9 @@ const useStyles = makeStyles(theme => ({
     justifyContent: 'flex-start',
     [theme.breakpoints.down('sm')]: {
       display: 'none',
+    },
+    '@media (max-width: 1060px)': {
+      padding: '15px 50px 15px 50px',
     },
   },
 }))

@@ -15,6 +15,7 @@ import {
   MenuItem,
   Paper,
   Typography,
+  useMediaQuery,
 } from '@mui/material'
 import makeStyles from '@mui/styles/makeStyles'
 import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos'
@@ -31,6 +32,7 @@ import EuroIcon from '@mui/icons-material/Euro'
 import { v4 as uuidv4 } from 'uuid'
 import { ArrowBack, ArrowForward, Close, Info } from '@mui/icons-material'
 import { toast } from 'react-toastify'
+import { useTheme } from '@mui/styles'
 import Carousel from 'react-material-ui-carousel'
 import { useHistory } from 'react-router-dom'
 import { format, formatDuration, intervalToDuration, isSameDay } from 'date-fns'
@@ -187,9 +189,12 @@ const EventPreview = ({
 }) => {
   const classes = useStyles()
   const history = useHistory()
+  const theme = useTheme()
+  const matchesXs = useMediaQuery(theme.breakpoints.down('sm'))
   const { firestore, createNotificationsOnTrip } = useContext(FirebaseContext)
   const { user } = useContext(SessionContext)
-  const { setNeedMapRefresh, days, selectedDateOnPlanning } = useContext(PlanningContext)
+  const { setNeedMapRefresh, days, selectedDateOnPlanning, setSelectedDateOnPlanning } =
+    useContext(PlanningContext)
 
   const [isLoading, setIsLoading] = useState(false)
   const [tripData, setTripData] = useState()
@@ -220,6 +225,14 @@ const EventPreview = ({
   useEffect(() => {
     setNeedMapRefresh(true)
   }, [])
+
+  useEffect(() => {
+    days.forEach(day => {
+      if (isSameDay(stringToDate(currentEvent.startTime), day)) {
+        setSelectedDateOnPlanning(day)
+      }
+    })
+  }, [currentEvent, days])
 
   useEffect(() => {
     setCurrentEventType(currentEvent.type)
@@ -288,86 +301,91 @@ const EventPreview = ({
     <>
       <Box className={propsClasses}>
         <Paper className={classes.borderRadiusMobile}>
-          <Box
-            display="flex"
-            justifyContent="center"
-            alignItems="center"
-            p="1rem 2rem"
-            position="relative"
-          >
-            <Box position="absolute" left="20px">
-              <IconButton
-                aria-label="back"
-                edge="start"
-                onClick={() => {
-                  if (previousEvent) {
-                    history.push(`/tripPage/${tripId}/planning?survey=${previousEvent.id}`)
-                    setCurrentEvent(previousEvent)
-                    setPreviousEvent()
-                    setCurrentView('survey')
-                  } else {
-                    history.push(`/tripPage/${tripId}/planning`)
-                    setCurrentEvent()
-                    setCurrentView('planning')
-                  }
-                }}
-              >
-                <ArrowBackIosIcon sx={{ transform: 'translate(5px ,0)' }} />
-              </IconButton>
-            </Box>
-            <Typography variant="h5">
-              <Box fontWeight="bold" component="span">
-                Évènement
-              </Box>
-            </Typography>
-            {canEdit && (
-              <Box position="absolute" right="20px">
+          <Box sx={{ position: matchesXs && 'sticky', top: '0px', zIndex: 10000 }}>
+            <Box
+              display="flex"
+              justifyContent="center"
+              alignItems="center"
+              p="1rem 2rem"
+              position="relative"
+              backgroundColor="white"
+            >
+              <Box position="absolute" left="20px">
                 <IconButton
-                  size="large"
-                  id="basic-button"
-                  aria-controls="basic-menu"
-                  aria-haspopup="true"
-                  aria-expanded={open ? 'true' : undefined}
-                  onClick={handleClick}
-                >
-                  <MoreHoriz />
-                </IconButton>
-                <Menu
-                  id="basic-menu"
-                  anchorEl={anchorEl}
-                  open={open}
-                  onClose={handleClose}
-                  MenuListProps={{
-                    'aria-labelledby': 'basic-button',
+                  aria-label="back"
+                  edge="start"
+                  onClick={() => {
+                    if (previousEvent) {
+                      history.push(`/tripPage/${tripId}/planning?survey=${previousEvent.id}`)
+                      setCurrentEvent(previousEvent)
+                      setPreviousEvent()
+                      setCurrentView('survey')
+                    } else {
+                      history.push(`/tripPage/${tripId}/planning`)
+                      setCurrentEvent()
+                      setCurrentView('planning')
+                    }
                   }}
                 >
-                  <MenuItem
-                    onClick={() => {
-                      setEventType(previousEvent ? previousEvent.type : currentEvent.type)
-                      setEditMode(true)
-                      setCurrentView('creator')
-                      handleClose()
-                    }}
-                  >
-                    Modifier l&rsquo;évènement
-                  </MenuItem>
-                  <MenuItem
-                    onClick={() => {
-                      setIsDeleteDialogOpen(true)
-                      handleClose()
-                    }}
-                  >
-                    Supprimer l&apos;évènement
-                  </MenuItem>
-                </Menu>
+                  <ArrowBackIosIcon sx={{ transform: 'translate(5px ,0)' }} />
+                </IconButton>
               </Box>
-            )}
+              <Typography variant="h5">
+                <Box fontWeight="bold" component="span">
+                  Évènement
+                </Box>
+              </Typography>
+              {canEdit && (
+                <Box position="absolute" right="20px">
+                  <IconButton
+                    size="large"
+                    id="basic-button"
+                    aria-controls="basic-menu"
+                    aria-haspopup="true"
+                    aria-expanded={open ? 'true' : undefined}
+                    onClick={handleClick}
+                  >
+                    <MoreHoriz />
+                  </IconButton>
+                  <Menu
+                    id="basic-menu"
+                    anchorEl={anchorEl}
+                    open={open}
+                    onClose={handleClose}
+                    MenuListProps={{
+                      'aria-labelledby': 'basic-button',
+                    }}
+                  >
+                    <MenuItem
+                      onClick={() => {
+                        setEventType(previousEvent ? previousEvent.type : currentEvent.type)
+                        setEditMode(true)
+                        setCurrentView('creator')
+                        handleClose()
+                      }}
+                    >
+                      Modifier l&rsquo;évènement
+                    </MenuItem>
+                    <MenuItem
+                      onClick={() => {
+                        setIsDeleteDialogOpen(true)
+                        handleClose()
+                      }}
+                    >
+                      Supprimer l&apos;évènement
+                    </MenuItem>
+                  </Menu>
+                </Box>
+              )}
+            </Box>
+            <Divider />
           </Box>
-          <Divider />
-          <Container disableGutters>
+          <Container sx={{ position: 'inherit', zIndex: 2 }} disableGutters>
             <Box p={4} mb={3}>
               <Box display="flex" justifyContent="space-between" alignItems="center">
-                <Typography variant="h1">{currentEvent.title}</Typography>
+                <Typography component="h1" sx={{ fontSize: '28px' }}>
+                  {currentEvent.title}
+                </Typography>
               </Box>
               <Box display="flex" alignItems="center">
                 <RoomRoundedIcon fontSize="small" color="disabled" />

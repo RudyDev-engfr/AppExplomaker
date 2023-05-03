@@ -10,30 +10,18 @@ const useStyles = makeStyles(theme => ({
   mainHeaderContainer: {
     backgroundColor: theme.palette.primary.main,
     width: '100vw',
-    height: '150px',
+    height: '188px',
     borderRadius: '20px 20px 0 0 ',
     paddingTop: '10px',
     position: 'sticky',
     zIndex: 1001,
-    top: '-100px',
+    top: '-140px',
   },
 }))
 const MobileTripPageHeader = () => {
   const { currentActiveTab, setCurrentActiveTab } = useContext(TripContext)
   const classes = useStyles()
   const { tripData } = useContext(TripContext)
-  const [boxOffsetY, setBoxOffsetY] = useState(0)
-
-  useEffect(() => {
-    const boxElement = document.querySelector('.my-box-class')
-    const handleScroll = () => {
-      setBoxOffsetY(boxElement.offsetTop)
-    }
-    window.addEventListener('scroll', handleScroll)
-    return () => {
-      window.removeEventListener('scroll', handleScroll)
-    }
-  }, [])
 
   return (
     <Box className={classes.mainHeaderContainer}>
@@ -44,14 +32,16 @@ const MobileTripPageHeader = () => {
         sx={{
           color: 'white',
           fontSize: '28px',
+          lineHeight: '40px',
           fontWeight: 700,
           padding: '40px 40px 5px 40px',
+          minHeight: '125px',
         }}
       >
         {tripData?.title}
       </Typography>
       <Box
-        className={`my-box-class ${classes.tripPageTabsContainer}`}
+        className={classes.tripPageTabsContainer}
         sx={{
           position: 'sticky',
           top: 0,

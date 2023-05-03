@@ -90,7 +90,7 @@ const useStyles = makeStyles(theme => ({
     zIndex: '2',
     [theme.breakpoints.down('sm')]: {
       position: 'sticky',
-      top: '0px',
+      top: '-140px',
       zIndex: '10',
       borderRadius: '40px 40px 0 0',
       boxShadow: '0px 4px 10px rgba(0, 0, 0, 0.08), 0px 1px 3px rgba(0, 0, 0, 0.1)',
@@ -177,9 +177,10 @@ const useStyles = makeStyles(theme => ({
     [theme.breakpoints.down('sm')]: {
       gridRowStart: 'mapArea',
       gridRowEnd: 'previewArea',
-      minHeight: 'calc(100vh - 100px)',
-      maxHeight: 'calc(100vh - 100px)',
+      minHeight: '100vh',
+      maxHeight: '100vh',
       zIndex: '10000',
+      margin: '0',
       borderRadius: '30px 30px 0 0',
       '&::-webkit-scrollbar': {
         display: 'none',
@@ -205,9 +206,12 @@ const useStyles = makeStyles(theme => ({
       "previewArea"`,
       marginTop: 'unset',
       borderRadius: 'unset',
-      minHeight: 'calc(100vh - 260px)',
-      maxHeight: 'calc(100vh - 260px)',
-      zIndex: '1000',
+      // minHeight: 'calc(100vh - 260px)',
+      minHeight: 'unset',
+      // maxHeight: 'calc(100vh - 260px)',
+      maxHeight: 'unset',
+      zIndex: '1',
+      margin: '0',
       '&::-webkit-scrollbar': {
         display: 'none',
       },
@@ -366,6 +370,17 @@ const Planning = ({ tripData, tripId, canEdit }) => {
     }`
 
   useEffect(() => {
+    if (days.length > 0 && typeof selectedDateOnPlanning !== 'undefined') {
+      days.forEach(day => {
+        if (isSameDay(selectedDateOnPlanning, day)) {
+          console.log('igotit')
+          setSelectedDateOnPlanning(day)
+        }
+      })
+    }
+  }, [])
+
+  useEffect(() => {
     if (tripId) {
       firestore
         .collection('trips')
@@ -390,12 +405,18 @@ const Planning = ({ tripData, tripId, canEdit }) => {
     ) {
       setCurrentDateRange(rCTFF(tripData.dateRange, 'dd MMMM'))
       const tempInterval = rCTFF(tripData.dateRange)
-      setDays(
-        eachDayOfInterval({
-          start: tempInterval[0],
-          end: tempInterval[1],
-        })
-      )
+      if (
+        days.length < 1 ||
+        !isSameDay(tripData.dateRange[0], days[0]) ||
+        !isSameDay(tripData.dateRange[1], days[days.length - 1])
+      ) {
+        setDays(
+          eachDayOfInterval({
+            start: tempInterval[0],
+            end: tempInterval[1],
+          })
+        )
+      }
     }
   }, [tripData.dateRange])
 
@@ -855,14 +876,7 @@ const Planning = ({ tripData, tripId, canEdit }) => {
           />
         )}
         <Paper variant="outlined" square className={classes.calendarArea}>
-          {matchesXs && (
-            // <Box className={classes.mobilePlanningTitle}>
-            //   <Box display="flex" justifyContent="center" marginTop="10px">
-            //     <img src={lineMobile} alt="" />
-            //   </Box>
-            // </Box>
-            <MobileTripPageHeader />
-          )}
+          {matchesXs && <MobileTripPageHeader />}
           <Box
             sx={{
               display: 'grid',
@@ -875,7 +889,6 @@ const Planning = ({ tripData, tripId, canEdit }) => {
                 onClick={() => {
                   setIsNewDatesSectionOpen(false)
                   setSelectedDateOnPlanning('')
-                  // setCurrentView('planning')
                   setCurrentView('chronoFeed')
                 }}
                 elevation={0}

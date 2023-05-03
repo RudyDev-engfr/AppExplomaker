@@ -101,7 +101,7 @@ const DesktopPreview = ({ tripData, generatedAvatars }) => {
         <Box display="flex" alignItems="center">
           <img src={person} alt="" className={classes.mobileIcon} />
           <Typography className={classes.subtitle}>
-            {tripData.editors.length} participant{tripData.editors.length > 1 ? 's' : ''}
+            {tripData.editors.length} contributeur{tripData.editors.length > 1 ? 's' : ''}
           </Typography>
         </Box>
         <Box

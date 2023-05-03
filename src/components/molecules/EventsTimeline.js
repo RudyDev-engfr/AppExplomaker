@@ -35,11 +35,11 @@ const useStyles = makeStyles(theme => ({
 }))
 const EventsTimeline = ({ currentEvents, canEdit, handleOpenDropdown }) => {
   const classes = useStyles()
-  const { setEvent, selectedDate } = useContext(PlanningContext)
+  const { setEvent, selectedDateOnPlanning } = useContext(PlanningContext)
   const { setCurrentEvent } = useContext(TripContext)
 
   function compareDates(objet1, objet2) {
-    const today = new Date(selectedDate)
+    const today = new Date(selectedDateOnPlanning)
     if (!objet1.startTime || !objet1.endTime || !objet2.startTime || !objet2.endTime) {
       // Si l'un des objets n'a pas de date de début ou de fin, le placer en dernier
       if (!objet1.startTime || !objet1.endTime) {
@@ -89,11 +89,30 @@ const EventsTimeline = ({ currentEvents, canEdit, handleOpenDropdown }) => {
                   />
                 </Box>
                 <Typography sx={{ fontSize: '14px', textAlign: 'center' }}>
-                  {isSameDay(stringToDate(event?.startTime, 'yyyy-MM-dd HH:mm'), selectedDate)
-                    ? isSameDay(stringToDate(event?.endTime, 'yyyy-MM-dd HH:mm'), selectedDate)
-                      ? event?.type === EVENT_TYPES[0] && 'Nuit'
-                      : dateToString(stringToDate(event?.startTime, 'yyyy-MM-dd HH:mm'), 'HH:mm')
-                    : dateToString(stringToDate(event?.endTime, 'yyyy-MM-dd HH:mm'), 'HH:mm')}
+                  {event.type !== EVENT_TYPES[0] &&
+                    (isSameDay(
+                      stringToDate(event?.startTime, 'yyyy-MM-dd HH:mm'),
+                      selectedDateOnPlanning
+                    )
+                      ? isSameDay(
+                          stringToDate(event?.endTime, 'yyyy-MM-dd HH:mm'),
+                          selectedDateOnPlanning
+                        )
+                        ? dateToString(stringToDate(event?.startTime, 'yyyy-MM-dd HH:mm'), 'HH:mm')
+                        : 'Jour'
+                      : '')}
+                  {event.type === EVENT_TYPES[0] &&
+                    (isSameDay(
+                      stringToDate(event?.startTime, 'yyyy-MM-dd HH:mm'),
+                      selectedDateOnPlanning
+                    )
+                      ? dateToString(stringToDate(event?.startTime, 'yyyy-MM-dd HH:mm'), 'HH:mm')
+                      : isSameDay(
+                          stringToDate(event?.endTime, 'yyyy-MM-dd HH:mm'),
+                          selectedDateOnPlanning
+                        )
+                      ? dateToString(stringToDate(event?.endTime, 'yyyy-MM-dd HH:mm'), 'HH:mm')
+                      : 'Nuit')}
                 </Typography>
               </Box>
               <TimelineConnector />

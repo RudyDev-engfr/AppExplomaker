@@ -187,7 +187,8 @@ const TripPageNav = ({
   const theme = useTheme()
   const isXs = useMediaQuery(theme.breakpoints.down('sm'))
 
-  const { setTypeCreator } = useContext(TripContext)
+  const { setTypeCreator, currentActiveMobileNavTab, setCurrentActiveMobileNavTab } =
+    useContext(TripContext)
   const { setNotificationsToNewStateOnTrip } = useContext(FirebaseContext)
   const { user } = useContext(SessionContext)
 
@@ -404,7 +405,7 @@ const TripPageNav = ({
           centered
           variant="fullWidth"
           fixedTabs
-          value={currentActiveTab}
+          value={currentActiveMobileNavTab}
           TabIndicatorProps={{ sx: { display: 'none' } }}
         >
           <Tab
@@ -448,9 +449,11 @@ const TripPageNav = ({
             value="tripSettings"
             sx={{ padding: '0', minWidth: '20vw !important', marginRight: '8vw' }}
           />
-          <Box sx={{ maxHeight: '80px', height: '80px', paddingBottom: '5px' }}>
+
+          <Box sx={{ maxHeight: '80px', height: '80px', paddingBottom: '5px' }} value={2}>
             <FabDial actions={addActions} tripId={tripId} />
           </Box>
+
           {/* <Tab
           icon={<img src={currentActiveTab === 'photos' ? photoGreen : photo} alt="" />}
           label={

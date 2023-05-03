@@ -20,7 +20,7 @@ const PlanningFeed = ({ propsClasses, setCurrentView }) => {
 
   const matchesXs = useMediaQuery(theme.breakpoints.down('sm'))
 
-  const { days, singleDayPlannedEvents, setSelectedDate, setIsNewDatesSectionOpen } =
+  const { days, singleDayPlannedEvents, setSelectedDateOnPlanning, setIsNewDatesSectionOpen } =
     useContext(PlanningContext)
 
   function compare(a, b) {
@@ -68,7 +68,7 @@ const PlanningFeed = ({ propsClasses, setCurrentView }) => {
               </Typography>
               <IconButton
                 onClick={() => {
-                  setSelectedDate(day)
+                  setSelectedDateOnPlanning(day)
                   setIsNewDatesSectionOpen(false)
                   setCurrentView('planning')
                 }}

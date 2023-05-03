@@ -37,6 +37,7 @@ const TripContextProvider = ({ children }) => {
   // used in preview, desktopPreview
   const [currentDateRange, setCurrentDateRange] = useState(['', ''])
   const [currentActiveTab, setCurrentActiveTab] = useState('')
+  const [currentActiveMobileNavTab, setCurrentActiveMobileNavTab] = useState('preview')
 
   const setTypeCreator = type => () => {
     setEventType(type)
@@ -104,12 +105,12 @@ const TripContextProvider = ({ children }) => {
   }, [tripData])
 
   useEffect(() => {
-    console.log('les dates du voyage dans le trip context', currentDateRange)
-  }, [currentDateRange])
+    console.log('showmelestate1', selectedDateOnPlanning)
+  }, [selectedDateOnPlanning])
 
   useEffect(() => {
-    console.log('tripData du useEffect planning', tripData)
-  }, [tripData])
+    console.log('showmelestate2', days)
+  }, [days])
 
   return (
     <TripContext.Provider
@@ -138,6 +139,8 @@ const TripContextProvider = ({ children }) => {
         setEventType,
         currentActiveTab,
         setCurrentActiveTab,
+        currentActiveMobileNavTab,
+        setCurrentActiveMobileNavTab,
       }}
     >
       {children}

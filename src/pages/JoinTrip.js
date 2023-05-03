@@ -225,7 +225,7 @@ const JoinTrip = () => {
   ) : (
     <>
       <Head
-        title={tripData.title}
+        title={tripData?.title}
         description={`Rejoindre le séjour | ${
           dateRange?.length > 0 ? `${dateRange[0]} - ${dateRange[1]}` : 'Je ne sais pas encore'
         }`}
@@ -252,7 +252,7 @@ const JoinTrip = () => {
                         component="img"
                         src={src}
                       />
-                      <Box className={classes.pictureDescription}>{imageTitle}</Box>
+                      <Box className={classes.pictureDescription}>{imageTitle ?? ''}</Box>
                     </Box>
                   ))}
                 </Carousel>
@@ -311,7 +311,7 @@ const JoinTrip = () => {
               align={matchesXs ? 'center' : 'left'}
               color={matchesXs ? 'inherit' : 'default'}
             >
-              Bienvenue sur “{tripData.title}”
+              Bienvenue sur “{tripData?.title}”
             </Typography>
             {tripData.travelersDetails.filter(traveler => typeof traveler.id === 'undefined')
               .length > 0 ? (

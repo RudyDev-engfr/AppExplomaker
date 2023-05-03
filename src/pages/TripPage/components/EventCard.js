@@ -46,6 +46,10 @@ const useStyles = makeStyles(theme => ({
     fontSize: '18px',
     fontWeight: '500',
     marginBottom: theme.spacing(1),
+    whiteSpace: 'nowrap',
+    textOverflow: 'ellipsis',
+    overflow: 'hidden',
+    maxWidth: '270px',
   },
 }))
 
@@ -181,11 +185,7 @@ const EventCard = ({
                 </CardActions>
               )}
               {currentEvent.title && (
-                <Typography className={classes.title}>
-                  {currentEvent.title.length > 39
-                    ? `${currentEvent.title.substring(0, 39)}...`
-                    : currentEvent.title}
-                </Typography>
+                <Typography className={classes.title}>{currentEvent.title}</Typography>
               )}
               {currentEvent?.description && (
                 <Typography
