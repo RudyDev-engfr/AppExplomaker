@@ -407,8 +407,8 @@ const Planning = ({ tripData, tripId, canEdit }) => {
       const tempInterval = rCTFF(tripData.dateRange)
       if (
         days.length < 1 ||
-        !isSameDay(tripData.dateRange[0], days[0]) ||
-        !isSameDay(tripData.dateRange[1], days[days.length - 1])
+        !isSameDay(tempInterval[0], days[0]) ||
+        !isSameDay(tempInterval[1], days[days.length - 1])
       ) {
         setDays(
           eachDayOfInterval({
