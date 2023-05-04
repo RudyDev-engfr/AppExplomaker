@@ -79,7 +79,7 @@ const PlanningContextProvider = ({ children }) => {
             if (plannedEvent.isSurvey) {
               for (
                 let propositionIndex = 0;
-                propositionIndex < plannedEvent.propositions.length;
+                propositionIndex < plannedEvent.propositions?.length;
                 propositionIndex += 1
               ) {
                 const currentArrivalDateTime = startOfDay(
@@ -137,7 +137,7 @@ const PlanningContextProvider = ({ children }) => {
             } else {
               for (
                 let transportIndex = 0;
-                transportIndex < plannedEvent.flights.length;
+                transportIndex < plannedEvent.flights?.length;
                 transportIndex += 1
               ) {
                 if (
@@ -194,7 +194,7 @@ const PlanningContextProvider = ({ children }) => {
             } else {
               for (
                 let transportIndex = 0;
-                transportIndex < plannedEvent.transports.length;
+                transportIndex < plannedEvent.transports?.length;
                 transportIndex += 1
               ) {
                 const currentStartDateTime = startOfDay(
@@ -269,7 +269,7 @@ const PlanningContextProvider = ({ children }) => {
   useEffect(() => {
     const tempMarkers = []
     if (isNewDatesSectionOpen) {
-      if (withoutDatesEvents.surveys.length < 1 && withoutDatesEvents.events.length < 1) {
+      if (withoutDatesEvents.surveys?.length < 1 && withoutDatesEvents.events?.length < 1) {
         setIsNewDatesSectionOpen(false)
       } else {
         const tempCurrentTransportMarkers = []
@@ -669,7 +669,7 @@ const PlanningContextProvider = ({ children }) => {
   }, [currentEvents, isNewDatesSectionOpen, withoutDatesEvents, currentView, currentEventId])
 
   useEffect(() => {
-    if (plannedEvents.length > 0) {
+    if (plannedEvents?.length > 0) {
       const singleDayEventsArray = []
       let singleDate
       plannedEvents
@@ -685,7 +685,7 @@ const PlanningContextProvider = ({ children }) => {
                   end: stringToDate(proposition.endTime, 'yyyy-MM-dd HH:mm'),
                 })
 
-                if (plannedEventInterval.length > 0) {
+                if (plannedEventInterval?.length > 0) {
                   plannedEventInterval.forEach(eachDayOfEvent => {
                     const tempPlannedProposition = structuredClone(proposition)
                     if (
@@ -721,7 +721,7 @@ const PlanningContextProvider = ({ children }) => {
               start: stringToDate(plannedEvent.startTime, 'yyyy-MM-dd HH:mm'),
               end: stringToDate(plannedEvent.endTime, 'yyyy-MM-dd HH:mm'),
             })
-            if (plannedEventInterval.length > 0) {
+            if (plannedEventInterval?.length > 0) {
               plannedEventInterval.forEach(eachDayOfEvent => {
                 const tempPlannedEvent = structuredClone(plannedEvent)
                 if (
@@ -748,7 +748,7 @@ const PlanningContextProvider = ({ children }) => {
             }
           }
 
-          if (singleDayEventsArray.length > 0) {
+          if (singleDayEventsArray?.length > 0) {
             setSingleDayPlannedEvents(singleDayEventsArray)
           }
         })
@@ -946,7 +946,7 @@ const PlanningContextProvider = ({ children }) => {
       const tempTransportCoordinates = []
       for (
         let geocodeIndex = 0;
-        geocodeIndex < currentTransports.length * 2 - 1;
+        geocodeIndex < currentTransports?.length * 2 - 1;
         geocodeIndex += 2
       ) {
         const currentTransportIndex = tempTransportIndex

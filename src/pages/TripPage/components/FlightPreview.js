@@ -35,8 +35,8 @@ const useStyles = makeStyles(theme => ({
     display: 'flex',
     justifyContent: 'center',
     alignItems: 'center',
-    width: '75px',
-    height: '85px',
+    width: '50px',
+    height: '57px',
     backgroundColor: theme.palette.primary.ultraLight,
     borderRadius: '50% 50% 0 0',
   },
@@ -44,14 +44,14 @@ const useStyles = makeStyles(theme => ({
     display: 'flex',
     justifyContent: 'center',
     alignItems: 'center',
-    width: '75px',
-    height: '85px',
+    width: '50px',
+    height: '57px',
     backgroundColor: theme.palette.primary.ultraLight,
     borderRadius: '0 0 50% 50%',
   },
   planeIconTransit: {
-    width: '60px',
-    height: '60px',
+    width: '40px',
+    height: '40px',
   },
   planeIconBack: {
     display: 'flex',
@@ -64,11 +64,28 @@ const useStyles = makeStyles(theme => ({
     color: theme.palette.primary.main,
   },
   flightGrid: {
-    marginRight: '2rem',
     display: 'grid',
-    gridTemplateColumns: '25% 50% 25%',
-    columnGap: '10px',
+    gridTemplateColumns: '20% 60% 20%',
+    height: '57px',
+    // columnGap: '10px',
     alignItems: 'center',
+  },
+  airportLabelTypo: {
+    fontSize: '14px',
+    fontWeight: 700,
+  },
+  iataCodeTypo: {
+    fontSize: '12px',
+  },
+  hourTypo: {
+    fontSize: '24px',
+    fontWeight: 400,
+    lineHeight: '30px',
+    fontFamily: 'Vesper Libre',
+  },
+  durationTypo: {
+    fontSize: '12px',
+    color: theme.palette.grey['82'],
   },
 }))
 
@@ -82,47 +99,34 @@ const FlightPreview = ({ flightArray }) => {
   return (
     <>
       {/* --------------------------- First Departure ------------------------------- */}
-      <Box className={classes.flightGrid} justifyContent="space-between" sx={{ marginTop: '1rem' }}>
+      <Box className={classes.flightGrid} justifyContent="space-between" sx={{ marginTop: '15px' }}>
         <Box className={classes.planeIconBack}>
           <FlightTakeoffIcon className={classes.planeIcon} />
         </Box>
         <Box>
-          <Typography>
-            <Box component="span" fontWeight="bold">
+          <Typography className={classes.airportLabelTypo}>
+            {flightArray[0].data.airports[0].label}
+          </Typography>
+          <Box>
+            <Typography className={classes.iataCodeTypo}>
               {flightArray[0].data.airports[0].iataCode}
-            </Box>
-          </Typography>
-          <Typography sx={{ fontSize: '14px' }}>{flightArray[0].data.airports[0].label}</Typography>
-          <Typography>
-            <Link
-              href={`http://maps.google.com/?q=${flightArray[0].data.airports[0].geocode.latitude},${flightArray[0].data.airports[0].geocode.longitude}`}
-              target="_blank"
-              color="primary"
-            >
-              Itinéraire
-            </Link>
-          </Typography>
+            </Typography>
+          </Box>
         </Box>
         <Box className={classes.fontRight}>
-          <Typography variant="h4">
-            <Box component="span" fontWeight="bold">
-              {format(
-                applyTimezoneOffsetFromAmadeus(
-                  firstFlightFirstDeparture,
-                  flightArray[0].data.airports[0].timeZoneOffset
-                ),
-                'HH:mm'
-              )}
-            </Box>
+          <Typography component="h4" className={classes.hourTypo}>
+            {format(
+              applyTimezoneOffsetFromAmadeus(
+                firstFlightFirstDeparture,
+                flightArray[0].data.airports[0].timeZoneOffset
+              ),
+              'HH:mm'
+            )}
           </Typography>
-          <Typography
-            variant="body2"
-            color="textSecondary"
-            sx={{ fontSize: '14px', color: theme.palette.grey['82'] }}
-          >
+          <Typography variant="body2" className={classes.durationTypo}>
             Vol:
             {flightArray[0].data.airports.length > 2
-              ? `${flightArray[0].data.legs[0].hours} h ${flightArray[0].data.legs[0].minutes} minutes`
+              ? `${flightArray[0].data.legs[0].hours} h ${flightArray[0].data.legs[0].minutes} min`
               : formatDuration(
                   intervalToDuration({
                     start: rCTFF(flightArray[0].data.timings[0]),
@@ -168,26 +172,20 @@ const FlightPreview = ({ flightArray }) => {
                   />
                 </Box>
                 <Box>
-                  <Typography>
-                    <Box component="span" fontWeight="bold">
-                      {airport.iataCode}
-                    </Box>
-                  </Typography>
-                  <Typography>{airport.label}</Typography>
+                  <Typography className={classes.airportLabelTypo}>{airport.label}</Typography>
+                  <Typography className={classes.iataCodeTypo}>{airport.iataCode}</Typography>
                 </Box>
                 <Box className={classes.fontRight}>
-                  <Typography variant="h4">
-                    <Box component="span" fontWeight="bold">
-                      {addOrSubTravelTime(
-                        firstFlightFirstDeparture,
-                        flightArray[0].data.legs[0],
-                        'HH:mm',
-                        true,
-                        airport.timeZoneOffset
-                      )}
-                    </Box>
+                  <Typography component="h4" classes={classes.hourTypo}>
+                    {addOrSubTravelTime(
+                      firstFlightFirstDeparture,
+                      flightArray[0].data.legs[0],
+                      'HH:mm',
+                      true,
+                      airport.timeZoneOffset
+                    )}
                   </Typography>
-                  <Typography variant="body2" color="textSecondary">
+                  <Typography variant="body2" className={classes.durationTypo}>
                     {`Escale: ${formatDuration(
                       renderStopoverTime(
                         rCTFF(firstFlightFirstDeparture),
@@ -218,26 +216,20 @@ const FlightPreview = ({ flightArray }) => {
                   />
                 </Box>
                 <Box>
-                  <Typography>
-                    <Box component="span" fontWeight="bold">
-                      {airport.iataCode}
-                    </Box>
-                  </Typography>
-                  <Typography>{airport.label}</Typography>
+                  <Typography className={classes.airportLabelTypo}>{airport.label}</Typography>
+                  <Typography className={classes.iataCodeTypo}>{airport.iataCode}</Typography>
                 </Box>
                 <Box className={classes.fontRight}>
-                  <Typography variant="h4">
-                    <Box component="span" fontWeight="bold">
-                      {addOrSubTravelTime(
-                        flightArray[flightArray.length - 1].data.timings[1],
-                        flightArray[flightArray.length - 1].data.legs[1],
-                        'HH:mm',
-                        false,
-                        airport.timeZoneOffset
-                      )}
-                    </Box>
+                  <Typography component="h4" className={classes.hourTypo}>
+                    {addOrSubTravelTime(
+                      flightArray[flightArray.length - 1].data.timings[1],
+                      flightArray[flightArray.length - 1].data.legs[1],
+                      'HH:mm',
+                      false,
+                      airport.timeZoneOffset
+                    )}
                   </Typography>
-                  <Typography variant="body2" color="textSecondary">
+                  <Typography variant="body2" className={classes.durationTypo}>
                     {`Vol: ${
                       flightArray[0].data.legs[flightArray[0].data.legs.length - 1].hours
                     } h ${

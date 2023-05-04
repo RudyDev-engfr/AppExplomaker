@@ -332,7 +332,15 @@ const EventPreview = ({
               </Box>
               <Typography variant="h5">
                 <Box fontWeight="bold" component="span">
-                  Évènement
+                  {currentEventType === EVENT_TYPES[0]
+                    ? 'Hébergement'
+                    : currentEventType === EVENT_TYPES[1]
+                    ? 'Vol'
+                    : currentEventType === EVENT_TYPES[2]
+                    ? 'Restaurant'
+                    : currentEventType === EVENT_TYPES[3]
+                    ? 'Transport'
+                    : currentEventType === EVENT_TYPES[4] && 'Exploration'}
                 </Box>
               </Typography>
               {canEdit && (
@@ -398,6 +406,17 @@ const EventPreview = ({
                     currentEvent.flights[0].data.airports[0].label}
                   {currentEventType === EVENT_TYPES[3] && currentEvent.transports[0].start.label}
                 </Typography>
+                {currentEventType === EVENT_TYPES[1] && (
+                  <Typography sx={{ paddingLeft: '15px' }}>
+                    <Link
+                      href={`http://maps.google.com/?q=${currentEvent.flights[0].data.airports[0].geocode.latitude},${currentEvent.flights[0].data.airports[0].geocode.longitude}`}
+                      target="_blank"
+                      color="primary"
+                    >
+                      Itinéraire
+                    </Link>
+                  </Typography>
+                )}
               </Box>
               {currentEventType !== EVENT_TYPES[1] && (
                 <Box

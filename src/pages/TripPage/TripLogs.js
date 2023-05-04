@@ -40,7 +40,6 @@ const useStyles = makeStyles(theme => ({
   },
   paper: {
     padding: '30px',
-    margin: '20px 0',
     overflowY: 'auto',
     [theme.breakpoints.down('sm')]: {
       padding: '30px',

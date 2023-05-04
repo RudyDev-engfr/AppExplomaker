@@ -229,7 +229,6 @@ const EventCreator = ({
     tempEventsMarkers,
     days,
   } = useContext(PlanningContext)
-  const { setSelectedDateOnPlanning } = useContext(TripContext)
 
   const tripStartDate = rCTFF(dateRange[0])
   const tripEndDate = rCTFF(dateRange[1])
@@ -473,7 +472,7 @@ const EventCreator = ({
         setPrice(currentEvent.price / currentEvent.participatingTravelers.length)
         setCurrency(currentEvent.currency)
       } else if (eventType === EVENT_TYPES[4]) {
-        setSelectedDate(stringToDate(currentEvent.date, 'yyyy-MM-dd'))
+        setSelectedDate(stringToDate(currentEvent.date))
         setSelectedStartTime(stringToDate(currentEvent.startTime))
         setSelectedEndTime(stringToDate(currentEvent.endTime))
         setLocation({ ...currentEvent.location })
@@ -934,7 +933,15 @@ const EventCreator = ({
             createNotificationsOnTrip(user, tripData, tripId, 'surveyCreate', 2, tempEvent)
           } else {
             createNotificationsOnTrip(user, tripData, tripId, 'eventCreate', 2, tempEvent)
+            if (selectedDateFromPlanning === '') {
+              days.forEach(day => {
+                if (isSameDay(stringToDate(tempEvent.startTime, 'yyyy-MM-dd HH:mm'), day)) {
+                  setSelectedDateFromPlanning(day)
+                }
+              })
+            }
             setCurrentView('planning')
+
             setCurrentEvent('')
           }
         })
@@ -1303,7 +1310,9 @@ const EventCreator = ({
               </>
             )}
             <Box sx={{ display: 'flex', justifyContent: 'flex-start', marginBottom: '15px' }}>
-              <AdvancedModeButton advancedMode={advancedMode} setAdvancedMode={setAdvancedMode} />
+              {eventType !== EVENT_TYPES[3] && (
+                <AdvancedModeButton advancedMode={advancedMode} setAdvancedMode={setAdvancedMode} />
+              )}
             </Box>
             <TextField
               label="Titre"
@@ -1424,6 +1433,14 @@ const EventCreator = ({
                   </Button>
                 </Box>
                 <Divider className={classes.marginBottom} />
+                {eventType === EVENT_TYPES[3] && (
+                  <Box sx={{ marginBottom: '15px' }}>
+                    <AdvancedModeButton
+                      advancedMode={advancedMode}
+                      setAdvancedMode={setAdvancedMode}
+                    />
+                  </Box>
+                )}
               </>
             )}
             {(eventType === EVENT_TYPES[0] ||

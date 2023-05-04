@@ -51,6 +51,7 @@ import { useHistory, useLocation } from 'react-router-dom'
 import queryString from 'query-string'
 import Carousel from 'react-multi-carousel'
 import 'react-multi-carousel/lib/styles.css'
+import capitalize from 'lodash.capitalize'
 
 import { getEventStartDate, getWidth, rCTFF, stringToDate } from '../../helper/functions'
 import EventCreator from './components/EventCreator'
@@ -171,9 +172,10 @@ const useStyles = makeStyles(theme => ({
     overflowX: 'hidden',
     minHeight: 'calc(100vh - 100px - 20px)',
     maxHeight: 'calc(100vh - 100px - 20px)',
-    margin: '20px 20px 0',
+    padding: '20px 20px 0',
     placeItems: 'center',
     borderRadius: '10px 10px 0 0',
+    backgroundColor: theme.palette.grey.f7,
     [theme.breakpoints.down('sm')]: {
       gridRowStart: 'mapArea',
       gridRowEnd: 'previewArea',
@@ -181,6 +183,7 @@ const useStyles = makeStyles(theme => ({
       maxHeight: '100vh',
       zIndex: '10000',
       margin: '0',
+      backgroundColor: 'white',
       borderRadius: '30px 30px 0 0',
       '&::-webkit-scrollbar': {
         display: 'none',
@@ -425,6 +428,7 @@ const Planning = ({ tripData, tripId, canEdit }) => {
   //     days.forEach(day => {
   //       if (isToday(day) && !isMounted && planningMapRef.current) {
   //         setSelectedDateOnPlanning(day)
+  //         setCurrentView('planning')
   //       }
   //     })
   //   }
@@ -542,7 +546,7 @@ const Planning = ({ tripData, tripId, canEdit }) => {
             if (plannedEvent.isSurvey) {
               for (
                 let propositionIndex = 0;
-                propositionIndex < plannedEvent.propositions.length;
+                propositionIndex < plannedEvent.propositions?.length;
                 propositionIndex += 1
               ) {
                 const currentArrivalDateTime = startOfDay(
@@ -1055,14 +1059,21 @@ const Planning = ({ tripData, tripId, canEdit }) => {
                   >
                     <ArrowBackIos />
                   </IconButton>
-                  <Typography variant="h5">
-                    <Box fontWeight="bold" component="span">
-                      {isNewDatesSectionOpen
-                        ? 'Archives'
-                        : selectedDateOnPlanning === ''
-                        ? 'Aperçu de ton séjour'
-                        : format(selectedDateOnPlanning, 'd MMMM', { locale: frLocale })}
-                    </Box>
+                  <Typography
+                    component="h5"
+                    sx={{
+                      fontSize: '20px',
+                      fontWeight: 500,
+                      lineHeight: '33px',
+                    }}
+                  >
+                    {isNewDatesSectionOpen
+                      ? 'Archives'
+                      : selectedDateOnPlanning === ''
+                      ? 'Aperçu de ton séjour'
+                      : capitalize(
+                          format(selectedDateOnPlanning, 'EEEE dd MMMM', { locale: frLocale })
+                        )}
                   </Typography>
                 </Box>
                 {typeof currentDateRange[0] === 'undefined' ? (
