@@ -86,7 +86,7 @@ const useStyles = makeStyles(theme => ({
   },
 
   flightGrid: {
-    marginRight: '2rem',
+    // marginRight: '2rem',
     display: 'grid',
     gridTemplateColumns: '25% 50% 25%',
     columnGap: '10px',
@@ -389,7 +389,7 @@ const EventPreview = ({
             <Divider />
           </Box>
           <Container sx={{ position: 'inherit', zIndex: 2 }} disableGutters>
-            <Box p={4} mb={3}>
+            <Box sx={{ padding: '30px 15px 30px 30px', marginBottom: '20px' }}>
               <Box display="flex" justifyContent="space-between" alignItems="center">
                 <Typography component="h1" sx={{ fontSize: '28px' }}>
                   {currentEvent.title}

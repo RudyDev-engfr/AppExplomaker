@@ -12,8 +12,10 @@ import frLocale from 'date-fns/locale/fr'
 import {
   addOrSubTravelTime,
   applyTimezoneOffsetFromAmadeus,
+  dateToString,
   rCTFF,
   renderStopoverTime,
+  stringToDate,
 } from '../../../helper/functions'
 
 import TransitPlane from '../../../images/transitPlane.svg'
@@ -24,7 +26,7 @@ const useStyles = makeStyles(theme => ({
     display: 'flex',
     justifyContent: 'center',
     alignItems: 'center',
-    width: '75px',
+    width: '50px',
     margin: '1rem 0',
   },
   planeIcon: {
@@ -36,7 +38,7 @@ const useStyles = makeStyles(theme => ({
     justifyContent: 'center',
     alignItems: 'center',
     width: '50px',
-    height: '57px',
+    height: '60px',
     backgroundColor: theme.palette.primary.ultraLight,
     borderRadius: '50% 50% 0 0',
   },
@@ -45,7 +47,7 @@ const useStyles = makeStyles(theme => ({
     justifyContent: 'center',
     alignItems: 'center',
     width: '50px',
-    height: '57px',
+    height: '60px',
     backgroundColor: theme.palette.primary.ultraLight,
     borderRadius: '0 0 50% 50%',
   },
@@ -66,7 +68,7 @@ const useStyles = makeStyles(theme => ({
   flightGrid: {
     display: 'grid',
     gridTemplateColumns: '20% 60% 20%',
-    height: '57px',
+    height: '60px',
     // columnGap: '10px',
     alignItems: 'center',
   },
@@ -80,7 +82,7 @@ const useStyles = makeStyles(theme => ({
   hourTypo: {
     fontSize: '24px',
     fontWeight: 400,
-    lineHeight: '30px',
+    lineHeight: 1.25,
     fontFamily: 'Vesper Libre',
   },
   durationTypo: {
@@ -115,13 +117,7 @@ const FlightPreview = ({ flightArray }) => {
         </Box>
         <Box className={classes.fontRight}>
           <Typography component="h4" className={classes.hourTypo}>
-            {format(
-              applyTimezoneOffsetFromAmadeus(
-                firstFlightFirstDeparture,
-                flightArray[0].data.airports[0].timeZoneOffset
-              ),
-              'HH:mm'
-            )}
+            {dateToString(rCTFF(flightArray[0].data.timings[0]), 'HH:mm')}
           </Typography>
           <Typography variant="body2" className={classes.durationTypo}>
             Vol:
@@ -176,7 +172,7 @@ const FlightPreview = ({ flightArray }) => {
                   <Typography className={classes.iataCodeTypo}>{airport.iataCode}</Typography>
                 </Box>
                 <Box className={classes.fontRight}>
-                  <Typography component="h4" classes={classes.hourTypo}>
+                  <Typography component="h4" className={classes.hourTypo}>
                     {addOrSubTravelTime(
                       firstFlightFirstDeparture,
                       flightArray[0].data.legs[0],
@@ -261,12 +257,10 @@ const FlightPreview = ({ flightArray }) => {
               </Typography>
             </Box>
             <Box className={classes.fontRight}>
-              <Typography variant="h4">
-                <Box component="span" fontWeight="bold">
-                  {rCTFF(flightArray[0].data.timings[1], 'HH:mm')}
-                </Box>
+              <Typography component="h4" className={classes.hourTypo}>
+                {rCTFF(flightArray[0].data.timings[1], 'HH:mm')}
               </Typography>
-              <Typography variant="body2" color="textSecondary">
+              <Typography variant="body2" className={classes.durationTypo}>
                 {`Escale : 
                 ${formatDuration(
                   intervalToDuration({
@@ -318,10 +312,8 @@ const FlightPreview = ({ flightArray }) => {
                     <Typography>{data.airports[0].label}</Typography>
                   </Box>
                   <Box className={classes.fontRight}>
-                    <Typography variant="h4">
-                      <Box component="span" fontWeight="bold">
-                        {rCTFF(data.timings[0], 'HH:mm')}
-                      </Box>
+                    <Typography component="h4" className={classes.hourTypo}>
+                      {(stringToDate(dateToString(data.timings[0])), 'HH:mm')}
                     </Typography>
                     <Typography variant="body2" color="textSecondary">
                       Vol:
@@ -688,28 +680,24 @@ const FlightPreview = ({ flightArray }) => {
           <FlightLandIcon className={classes.planeIcon} />
         </Box>
         <Box>
-          <Typography>
-            <Box component="span" fontWeight="bold">
-              {
-                flightArray[flightArray.length - 1].data.airports[
-                  flightArray[flightArray.length - 1].data.airports.length - 1
-                ].iataCode
-              }
-            </Box>
-          </Typography>
-          <Typography>
+          <Typography className={classes.airportLabelTypo}>
             {
               flightArray[flightArray.length - 1].data.airports[
                 flightArray[flightArray.length - 1].data.airports.length - 1
               ].label
             }
           </Typography>
+          <Typography className={classes.iataCodeTypo}>
+            {
+              flightArray[flightArray.length - 1].data.airports[
+                flightArray[flightArray.length - 1].data.airports.length - 1
+              ].iataCode
+            }
+          </Typography>
         </Box>
         <Box className={classes.fontRight}>
-          <Typography variant="h4">
-            <Box component="span" fontWeight="bold">
-              {rCTFF(flightArray[flightArray.length - 1].data.timings[1], 'HH:mm')}
-            </Box>
+          <Typography component="h4" className={classes.hourTypo}>
+            {rCTFF(flightArray[flightArray.length - 1].data.timings[1], 'HH:mm')}
           </Typography>
         </Box>
       </Box>
