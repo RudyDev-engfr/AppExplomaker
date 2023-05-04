@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import makeStyles from '@mui/styles/makeStyles'
 import Box from '@mui/material/Box'
 import Typography from '@mui/material/Typography'
@@ -98,6 +98,10 @@ const FlightPreview = ({ flightArray }) => {
   const firstFlightFirstDeparture = flightArray[0].data.timings[0]
   const lastFlightLastArrival = flightArray[flightArray.length - 1].data.timings[1]
 
+  useEffect(() => {
+    console.log('premier départ', dateToString(rCTFF(flightArray[0].data.timings[0]), 'HH:mm'))
+  }, [flightArray])
+
   return (
     <>
       {/* --------------------------- First Departure ------------------------------- */}
@@ -117,7 +121,7 @@ const FlightPreview = ({ flightArray }) => {
         </Box>
         <Box className={classes.fontRight}>
           <Typography component="h4" className={classes.hourTypo}>
-            {dateToString(rCTFF(flightArray[0].data.timings[0]), 'HH:mm')}
+            {/* {dateToString(flightArray[0].data.timings[0], 'HH:mm')} */}
           </Typography>
           <Typography variant="body2" className={classes.durationTypo}>
             Vol:
