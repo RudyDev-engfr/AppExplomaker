@@ -18,7 +18,6 @@ import EditBtn from '../../components/atoms/EditBtn'
 import Loader from '../../components/Loader'
 import { ROLES } from '../../helper/constants'
 
-import lineMobile from '../../images/icons/lineMobile.svg'
 import calendar from '../../images/icons/calendar.svg'
 import location from '../../images/icons/location.svg'
 import person from '../../images/icons/person.svg'
@@ -27,6 +26,8 @@ import { SessionContext } from '../../contexts/session'
 import MobileNotificationArea from '../../components/molecules/MobileNotificationArea'
 import DesktopPreview from './DesktopPreview'
 import { TripContext } from '../../contexts/trip'
+import MobileTripPageHeader from '../../components/molecules/MobileTripPageHeader'
+import AddCollaboratorsButton from '../../components/atoms/AddCollaboratorsButton'
 
 const useStyles = makeStyles(theme => ({
   slides: {
@@ -116,8 +117,7 @@ const useStyles = makeStyles(theme => ({
     padding: '30px 30px 70px',
     position: 'relative',
     [theme.breakpoints.down('sm')]: {
-      width: 'calc(100% - 40px)',
-      margin: '0 20px 30px',
+      width: '100%',
     },
   },
   doubleCol: {
@@ -129,17 +129,17 @@ const useStyles = makeStyles(theme => ({
     width: 'calc(50% - 10px)',
     '&:first-child': { marginRight: '20px' },
     [theme.breakpoints.down('sm')]: {
-      width: 'calc(100% - 40px)',
-      margin: '0 20px 30px',
+      width: '100%',
       '&:first-child': { marginRight: '0' },
+      marginBottom: '20px',
     },
   },
   colPaperTrav: {
     width: 'calc(50% - 10px)',
     '&:first-child': { marginRight: '20px' },
     [theme.breakpoints.down('sm')]: {
-      width: 'calc(100% - 40px)',
-      margin: '0 20px 120px',
+      width: '100%',
+      marginBottom: '120px',
       '&:first-child': { marginRight: '0' },
     },
   },
@@ -171,7 +171,6 @@ const useStyles = makeStyles(theme => ({
       paddingTop: '10px',
       background: '#fff',
       boxShadow: '-3px 12px 30px -8px rgba(78, 56, 56, 0.1)',
-      borderRadius: '40px 40px 0 0',
       width: '100%',
     },
   },
@@ -206,7 +205,6 @@ const useStyles = makeStyles(theme => ({
   mobileContent: {
     [theme.breakpoints.down('sm')]: {
       height: 'calc(100% - 300px)',
-      marginTop: '25px',
     },
   },
   // mobilePaperContent: {
@@ -239,7 +237,8 @@ const Preview = ({
 
   const { dictionary } = useContext(FirebaseContext)
   const { user } = useContext(SessionContext)
-  const { currentDateRange, setCurrentDateRange } = useContext(TripContext)
+  const { currentDateRange, setCurrentDateRange, days, setSelectedDateOnPlanning } =
+    useContext(TripContext)
 
   const [generatedAvatars, setGeneratedAvatars] = useState([])
   const [currentNotifications, setCurrentNotifications] = useState([])
@@ -297,6 +296,8 @@ const Preview = ({
                 tripId={tripId}
                 currentNotifications={currentNotifications}
                 setRefreshNotif={setRefreshNotif}
+                days={days}
+                setSelectedDateOnPlanning={setSelectedDateOnPlanning}
               />
             ) : (
               <NotificationArea
@@ -355,10 +356,8 @@ const Preview = ({
       </Box>
       <Box className={classes.mobileContainer}>
         {/* main header block */}
+        {matchesXs && <MobileTripPageHeader />}
         <Box className={classes.mobileHeader}>
-          <Box display="flex" justifyContent="center">
-            <img src={lineMobile} alt="" />
-          </Box>
           <Box className={classes.mobileHeaderInner}>
             <Box className={classes.mobileHeaderInnerHeader}>
               <Typography className={classes.mobileHeaderInnerTitle}>{tripData.title}</Typography>
@@ -375,9 +374,16 @@ const Preview = ({
                 <img src={location} alt="" className={classes.mobileIcon} />
                 {!tripData.noDestination && tripData.destination.label}
               </Box>
-              <Box className={classes.mobileHeaderRow}>
-                <img src={person} alt="" className={classes.mobileIcon} /> {tripData.editors.length}{' '}
-                contributeurs
+              <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                <Box className={classes.mobileHeaderRow}>
+                  <img src={person} alt="" className={classes.mobileIcon} />
+                  <Typography sx={{ fontSize: '14px' }}>
+                    {tripData.editors.length} contributeur{tripData.editors.length > 1 && 's'}
+                  </Typography>
+                </Box>
+                <Box sx={{ paddingRight: '10px' }}>
+                  <AddCollaboratorsButton tripId={tripId} size="30px" iconSize="20px" />
+                </Box>
               </Box>
             </div>
           </Box>

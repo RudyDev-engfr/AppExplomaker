@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import { useHistory } from 'react-router-dom'
 import DashboardOutlinedIcon from '@mui/icons-material/DashboardOutlined'
 import StarBorderIcon from '@mui/icons-material/StarBorder'
@@ -10,6 +10,7 @@ import {
   Box,
   Button,
   Dialog,
+  Fab,
   Paper,
   Slide,
   Tab,
@@ -22,6 +23,19 @@ import makeStyles from '@mui/styles/makeStyles'
 import clsx from 'clsx'
 import FavoriteIcon from '@mui/icons-material/Favorite'
 import FeedIcon from '@mui/icons-material/Feed'
+import {
+  Add,
+  AirplanemodeActiveRounded,
+  Chat,
+  DirectionsBusFilled,
+  DisplaySettings,
+  ExploreRounded,
+  HomeRounded,
+  Logout,
+  Notifications,
+  Person,
+  RestaurantMenuRounded,
+} from '@mui/icons-material'
 
 import logoFull from '../../../images/icons/logoFull.svg'
 import planning from '../../../images/icons/planning.svg'
@@ -34,6 +48,15 @@ import apercu from '../../../images/icons/apercu.svg'
 import apercuGreen from '../../../images/icons/apercuGreen.svg'
 import MobilePlus from './MobilePlus'
 import TitleArea from './TitleArea'
+import { TripContext } from '../../../contexts/trip'
+import FabDial from '../../../components/atoms/FabDial'
+import { EVENT_TYPES } from '../../../helper/constants'
+import MobileNotificationArea, {
+  MobileNotificationModal,
+} from '../../../components/molecules/MobileNotificationArea'
+import { FirebaseContext } from '../../../contexts/firebase'
+import { SessionContext } from '../../../contexts/session'
+import { buildNotificationsOnTripForUser } from '../../../helper/functions'
 
 const Transition = React.forwardRef((props, ref) => <Slide direction="up" ref={ref} {...props} />)
 
@@ -131,8 +154,8 @@ const useStyles = makeStyles(theme => ({
     position: 'fixed',
     bottom: '0',
     width: '100%',
-    height: '90px',
-    padding: `${theme.spacing(1.5)} ${theme.spacing(0.5)} ${theme.spacing(1.5)} !important`,
+    height: '80px',
+    padding: `0 4px 12px 4px !important`,
     zIndex: '10000',
   },
   spanNav: {
@@ -154,6 +177,9 @@ const TripPageNav = ({
   currentPlanningNotifications,
   canEdit,
   setOpenModal,
+  openModal,
+  isChatOpen,
+  setIsChatOpen,
 }) => {
   const history = useHistory()
   const classes = useStyles()
@@ -161,7 +187,17 @@ const TripPageNav = ({
   const theme = useTheme()
   const isXs = useMediaQuery(theme.breakpoints.down('sm'))
 
+  const { setTypeCreator, currentActiveMobileNavTab, setCurrentActiveMobileNavTab } =
+    useContext(TripContext)
+  const { setNotificationsToNewStateOnTrip } = useContext(FirebaseContext)
+  const { user } = useContext(SessionContext)
+
   const [isMobilePlusOpen, setIsMobilePlusOpen] = useState(false)
+  const [open, setOpen] = useState(false)
+  const [refreshNotif, setRefreshNotif] = useState(false)
+  const [currentNotifications, setCurrentNotifications] = useState([])
+  const handleOpen = () => setOpen(true)
+  const handleClose = () => setOpen(false)
 
   const handleMobileNavigation = target => {
     if (isMobilePlusOpen) {
@@ -169,6 +205,31 @@ const TripPageNav = ({
     }
     setCurrentActiveTab(target)
   }
+
+  useEffect(() => {
+    if (tripData && user && refreshNotif) {
+      const tempNotif = buildNotificationsOnTripForUser(user, tripId)
+      setCurrentNotifications(tempNotif)
+      setRefreshNotif(false)
+    }
+    console.log('le voyage avec ses notifs', user.notifications)
+  }, [tripData, user, refreshNotif])
+
+  const addActions = [
+    {
+      icon: <HomeRounded />,
+      name: 'Hébergement',
+      callback: setTypeCreator(EVENT_TYPES[0]),
+    },
+    { icon: <AirplanemodeActiveRounded />, name: 'Vols', callback: setTypeCreator(EVENT_TYPES[1]) },
+    { icon: <DirectionsBusFilled />, name: 'Transports', callback: setTypeCreator(EVENT_TYPES[3]) },
+    {
+      icon: <RestaurantMenuRounded />,
+      name: 'Restaurant',
+      callback: setTypeCreator(EVENT_TYPES[4]),
+    },
+    { icon: <ExploreRounded />, name: 'Exploration', callback: setTypeCreator(EVENT_TYPES[2]) },
+  ]
 
   return !isXs ? (
     <Paper className={classes.container}>
@@ -343,64 +404,55 @@ const TripPageNav = ({
         <Tabs
           centered
           variant="fullWidth"
-          value={currentActiveTab}
-          sx={{ [theme.breakpoints.down('sm')]: { '& button': { minWidth: '20vw !important' } } }}
+          fixedTabs
+          value={currentActiveMobileNavTab}
           TabIndicatorProps={{ sx: { display: 'none' } }}
         >
           <Tab
             icon={
-              <img
-                src={!isMobilePlusOpen && currentActiveTab === 'preview' ? apercuGreen : apercu}
-                alt=""
+              <Logout
+                sx={{
+                  color: theme.palette.secondary.likes,
+                  fontSize: '35px',
+                  webkitTransform: 'scaleX(-1)',
+                  transform: 'scaleX(-1)',
+                }}
               />
             }
-            label={
-              <Box
-                component="span"
-                className={clsx(classes.spanNav, {
-                  [classes.activeMobileTabStyle]:
-                    !isMobilePlusOpen && currentActiveTab === 'preview',
-                })}
-              >
-                Aperçu
-              </Box>
-            }
-            onClick={() => handleMobileNavigation('preview')}
-            value="preview"
+            onClick={() => history.push('/')}
+            value="myTrips"
+            sx={{ padding: '0', minWidth: '20vw !important' }}
           />
-          <Badge
-            color="secondary"
-            overlap="circular"
-            component="div"
-            badgeContent={
-              currentPlanningNotifications.filter(notification => notification.state === 1).length
+          {/* <Tab
+            icon={
+              <Person
+                sx={{
+                  color: openModal === 'editEditors' && theme.palette.primary.main,
+                  fontSize: '35px',
+                }}
+              />
             }
-            sx={{ color: 'unset !important', opacity: 100, bgcolor: 'unset' }}
-          >
-            <Tab
-              icon={
-                <img
-                  src={
-                    !isMobilePlusOpen && currentActiveTab === 'planning' ? planningGreen : planning
-                  }
-                  alt=""
-                />
-              }
-              label={
-                <Box
-                  component="span"
-                  className={clsx(classes.spanNav, {
-                    [classes.activeMobileTabStyle]:
-                      !isMobilePlusOpen && currentActiveTab === 'planning',
-                  })}
-                >
-                  Planning
-                </Box>
-              }
-              onClick={() => handleMobileNavigation('planning')}
-              value="planning"
-            />
-          </Badge>
+            onClick={() => setOpenModal('editEditors')}
+            value="editEditors"
+            sx={{ marginRight: '8vw', padding: '0', minWidth: '20vw !important' }}
+          /> */}
+          <Tab
+            icon={
+              <DisplaySettings
+                sx={{
+                  fontSize: '35px',
+                  color: openModal === 'general' && theme.palette.primary.main,
+                }}
+              />
+            }
+            onClick={() => setOpenModal('general')}
+            value="tripSettings"
+            sx={{ padding: '0', minWidth: '20vw !important', marginRight: '8vw' }}
+          />
+
+          <Box sx={{ maxHeight: '80px', height: '80px', paddingBottom: '5px' }} value={2}>
+            <FabDial actions={addActions} tripId={tripId} />
+          </Box>
 
           {/* <Tab
           icon={<img src={currentActiveTab === 'photos' ? photoGreen : photo} alt="" />}
@@ -418,41 +470,39 @@ const TripPageNav = ({
           value="photos"
         /> */}
           <Tab
-            icon={<FavoriteIcon />}
-            label={
-              <Box
-                component="span"
-                className={clsx(classes.spanNav, {
-                  [classes.activeMobileTabStyle]:
-                    !isMobilePlusOpen && currentActiveTab === 'envies',
-                })}
-              >
-                Envies
-              </Box>
-            }
-            onClick={() => handleMobileNavigation('envies')}
-            value="envies"
-          />
-          <Tab
-            icon={<img src={isMobilePlusOpen ? plusGreen : plus} alt="" />}
-            label={
-              <Box
-                className={clsx(classes.spanNav, {
-                  [classes.activeMobileTabStyle]: isMobilePlusOpen,
-                })}
-                component="span"
-              >
-                Plus
-              </Box>
+            icon={
+              <Chat sx={{ color: isChatOpen && theme.palette.primary.main, fontSize: '35px' }} />
             }
             onClick={() => {
-              setIsMobilePlusOpen(true)
+              setIsChatOpen(true)
             }}
-            value="plus"
+            value="openChat"
+            sx={{ padding: '0', minWidth: '20vw !important', marginLeft: '8vw' }}
+          />
+          <Tab
+            onClick={() => {
+              setRefreshNotif(true)
+              handleOpen()
+              setNotificationsToNewStateOnTrip(user, tripId, 2)
+            }}
+            icon={
+              <Notifications
+                sx={{
+                  color: openModal === 'editEditors' && theme.palette.primary.main,
+                  fontSize: '35px',
+                }}
+              />
+            }
+            value="myNotifications"
+            sx={{ padding: '0', minWidth: '20vw !important' }}
           />
         </Tabs>
       </Paper>
-
+      <MobileNotificationModal
+        open={open}
+        setOpen={setOpen}
+        currentNotifications={currentNotifications}
+      />
       <Dialog
         fullScreen
         open={isMobilePlusOpen}

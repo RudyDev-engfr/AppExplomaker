@@ -21,6 +21,7 @@ import { arrayShuffle } from '../../helper/functions'
 import { SessionContext } from '../../contexts/session'
 
 import arrowBack from '../../images/icons/arrow-back.svg'
+import MobileTripPageHeader from '../../components/molecules/MobileTripPageHeader'
 
 const useStyles = makeStyles(theme => ({
   paper: {
@@ -172,16 +173,19 @@ const Envies = ({ tripId, tripWishes, recommendedWishes, canEdit, tripTravelers 
   return (
     <Box sx={{ marginBottom: '110px' }}>
       {matchesXs && (
-        <Box className={classes.mobileTitleContainer}>
-          <IconButton
-            className={classes.mobileTitleIcon}
-            size="large"
-            onClick={() => history.goBack()}
-          >
-            <img src={arrowBack} alt="" />
-          </IconButton>
-          <Typography className={classes.mobileTitleTypo}>Envies du séjour</Typography>
-        </Box>
+        <>
+          <MobileTripPageHeader isSticky />
+          {/* <Box className={classes.mobileTitleContainer}>
+            <IconButton
+              className={classes.mobileTitleIcon}
+              size="large"
+              onClick={() => history.goBack()}
+            >
+              <img src={arrowBack} alt="" />
+            </IconButton>
+            <Typography className={classes.mobileTitleTypo}>Envies du séjour</Typography>
+          </Box> */}
+        </>
       )}
       <Paper className={classes.paper}>
         <Typography className={classes.title}>

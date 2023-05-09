@@ -57,6 +57,24 @@ export function dateToString(date, displayFormat = 'yyyy-MM-dd') {
   return format(tempDate, displayFormat, { locale: frLocale })
 }
 
+export function formatDateInTimezone(receivedTimestamp, timezone, formatString) {
+  // // timestamp de Firebase
+  // const firebaseTimestamp = receivedTimestamp
+
+  // console.log('Firebase timestamp :', firebaseTimestamp)
+
+  // // conversion en objet Date
+  // const date = new Date(firebaseTimestamp.seconds * 1000 + firebaseTimestamp.nanoseconds / 1000000)
+  const date = new Date(receivedTimestamp)
+
+  console.log('Date :', date)
+
+  // formatage de la date en string avec l'heure correspondant au fuseau horaire de base
+  const dateString = format(date, 'yyyy-MM-dd HH:mm')
+
+  console.log('Date formatée :', dateString) // affiche '2023-05-06 10:15'
+}
+
 export function dateTimeToString(dateTime) {
   const tempDateTime = dateTime
   return format(tempDateTime, 'yyyy-MM-dd HH:mm', { locale: frLocale })
@@ -142,7 +160,7 @@ export function getEventStartDate(event) {
 
 export const applyTimezoneOffsetFromAmadeus = (date, timezoneOffsetFromAmadeus) => {
   let tempDate = rCTFF(date)
-  const offset = parseInt(timezoneOffsetFromAmadeus.substr(0, 3), 10) * 60
+  const offset = parseInt(timezoneOffsetFromAmadeus, 10) * 60
   const offsetSign = Math.sign(offset)
 
   if (offsetSign === -1) {
@@ -369,6 +387,9 @@ export const buildNotificationsOnTripForUser = (user, tripId) => {
         singleNotif.id = id
         singleNotif.owner = owner
         singleNotif.tripId = tripId
+        if (event) {
+          singleNotif.startTime = event.startTime
+        }
         // eslint-disable-next-line default-case
         switch (type) {
           case 'dateUpdate':
@@ -643,6 +664,13 @@ export const buildLogSejour = (tripId, tripData) => {
       .filter(notification => notification.tripId === tripId)
       .forEach(({ sejour, priority, state, type, creationDate, owner, event, id, previous }) => {
         const singleNotif = {}
+        if (event) {
+          singleNotif.startTime = event.startTime
+        } else if (event && event?.propositions) {
+          singleNotif.startTime = event.propositions[0].startTime
+        } else {
+          singleNotif.startTime = null
+        }
         singleNotif.owner = owner
         singleNotif.id = id
         const notifBody = buildNotifTimerAndState(creationDate, state)

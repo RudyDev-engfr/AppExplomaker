@@ -1,10 +1,10 @@
 import React from 'react'
 import { IconButton } from '@mui/material'
 import { toast } from 'react-toastify'
-import { Add } from '@mui/icons-material'
+import { PersonAddAlt1 } from '@mui/icons-material'
 import { useTheme } from '@mui/styles'
 
-const AddCollaboratorsButton = ({ tripId }) => {
+const AddCollaboratorsButton = ({ tripId, size = '44px', iconSize = '26px' }) => {
   const theme = useTheme()
   return (
     <IconButton
@@ -17,13 +17,18 @@ const AddCollaboratorsButton = ({ tripId }) => {
       sx={{
         backgroundColor: theme.palette.primary.main,
         borderRadius: ' 50px',
-        width: '48px',
-        height: '48px',
+        width: size,
+        height: size,
         marginRight: '-10px',
         zIndex: 1000,
+        '&:hover': {
+          backgroundColor: theme.palette.primary.main,
+          color: 'white',
+        },
+        border: '2px solid white',
       }}
     >
-      <Add sx={{ color: 'white', fontSize: '30px' }} />
+      <PersonAddAlt1 sx={{ color: 'white', fontSize: iconSize }} />
     </IconButton>
   )
 }

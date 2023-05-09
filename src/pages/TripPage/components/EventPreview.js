@@ -15,6 +15,7 @@ import {
   MenuItem,
   Paper,
   Typography,
+  useMediaQuery,
 } from '@mui/material'
 import makeStyles from '@mui/styles/makeStyles'
 import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos'
@@ -31,6 +32,7 @@ import EuroIcon from '@mui/icons-material/Euro'
 import { v4 as uuidv4 } from 'uuid'
 import { ArrowBack, ArrowForward, Close, Info } from '@mui/icons-material'
 import { toast } from 'react-toastify'
+import { useTheme } from '@mui/styles'
 import Carousel from 'react-material-ui-carousel'
 import { useHistory } from 'react-router-dom'
 import { format, formatDuration, intervalToDuration, isSameDay } from 'date-fns'
@@ -76,15 +78,15 @@ const useStyles = makeStyles(theme => ({
     display: 'flex',
     justifyContent: 'center',
     alignItems: 'center',
-    width: '75px',
-    height: '75px',
+    width: '50px',
+    height: '50px',
     borderRadius: '50%',
     backgroundColor: theme.palette.primary.ultraLight,
     color: theme.palette.primary.main,
   },
 
   flightGrid: {
-    marginRight: '2rem',
+    // marginRight: '2rem',
     display: 'grid',
     gridTemplateColumns: '25% 50% 25%',
     columnGap: '10px',
@@ -118,7 +120,7 @@ const useStyles = makeStyles(theme => ({
   },
   greyBtn: {
     backgroundColor: theme.palette.grey.f7,
-    padding: '1rem 2rem',
+    padding: '15px',
   },
   deleteDialogTitle: {
     textAlign: 'center',
@@ -187,9 +189,12 @@ const EventPreview = ({
 }) => {
   const classes = useStyles()
   const history = useHistory()
+  const theme = useTheme()
+  const matchesXs = useMediaQuery(theme.breakpoints.down('sm'))
   const { firestore, createNotificationsOnTrip } = useContext(FirebaseContext)
   const { user } = useContext(SessionContext)
-  const { setNeedMapRefresh } = useContext(PlanningContext)
+  const { setNeedMapRefresh, days, selectedDateOnPlanning, setSelectedDateOnPlanning } =
+    useContext(PlanningContext)
 
   const [isLoading, setIsLoading] = useState(false)
   const [tripData, setTripData] = useState()
@@ -222,10 +227,12 @@ const EventPreview = ({
   }, [])
 
   useEffect(() => {
-    console.log('montre moi', findIcon(currentEvent.icon, currentEventType))
-    console.log('event courant', currentEvent)
-    console.log('type devent courant', currentEventType)
-  }, [currentEvent, currentEventType])
+    days.forEach(day => {
+      if (isSameDay(stringToDate(currentEvent.startTime), day)) {
+        setSelectedDateOnPlanning(day)
+      }
+    })
+  }, [currentEvent, days])
 
   useEffect(() => {
     setCurrentEventType(currentEvent.type)
@@ -294,86 +301,99 @@ const EventPreview = ({
     <>
       <Box className={propsClasses}>
         <Paper className={classes.borderRadiusMobile}>
-          <Box
-            display="flex"
-            justifyContent="center"
-            alignItems="center"
-            p="1rem 2rem"
-            position="relative"
-          >
-            <Box position="absolute" left="20px">
-              <IconButton
-                aria-label="back"
-                edge="start"
-                onClick={() => {
-                  if (previousEvent) {
-                    history.push(`/tripPage/${tripId}/planning?survey=${previousEvent.id}`)
-                    setCurrentEvent(previousEvent)
-                    setPreviousEvent()
-                    setCurrentView('survey')
-                  } else {
-                    history.push(`/tripPage/${tripId}/planning`)
-                    setCurrentEvent()
-                    setCurrentView('planning')
-                  }
-                }}
-              >
-                <ArrowBackIosIcon sx={{ transform: 'translate(5px ,0)' }} />
-              </IconButton>
-            </Box>
-            <Typography variant="h5">
-              <Box fontWeight="bold" component="span">
-                Évènement
-              </Box>
-            </Typography>
-            {canEdit && (
-              <Box position="absolute" right="20px">
+          <Box sx={{ position: matchesXs && 'sticky', top: '0px', zIndex: 10000 }}>
+            <Box
+              display="flex"
+              justifyContent="center"
+              alignItems="center"
+              p="1rem 2rem"
+              position="relative"
+              backgroundColor="white"
+            >
+              <Box position="absolute" left="20px">
                 <IconButton
-                  size="large"
-                  id="basic-button"
-                  aria-controls="basic-menu"
-                  aria-haspopup="true"
-                  aria-expanded={open ? 'true' : undefined}
-                  onClick={handleClick}
-                >
-                  <MoreHoriz />
-                </IconButton>
-                <Menu
-                  id="basic-menu"
-                  anchorEl={anchorEl}
-                  open={open}
-                  onClose={handleClose}
-                  MenuListProps={{
-                    'aria-labelledby': 'basic-button',
+                  aria-label="back"
+                  edge="start"
+                  onClick={() => {
+                    if (previousEvent) {
+                      history.push(`/tripPage/${tripId}/planning?survey=${previousEvent.id}`)
+                      setCurrentEvent(previousEvent)
+                      setPreviousEvent()
+                      setCurrentView('survey')
+                    } else {
+                      history.push(`/tripPage/${tripId}/planning`)
+                      setCurrentEvent()
+                      setCurrentView('planning')
+                    }
                   }}
                 >
-                  <MenuItem
-                    onClick={() => {
-                      setEventType(previousEvent ? previousEvent.type : currentEvent.type)
-                      setEditMode(true)
-                      setCurrentView('creator')
-                      handleClose()
-                    }}
-                  >
-                    Modifier l&rsquo;évènement
-                  </MenuItem>
-                  <MenuItem
-                    onClick={() => {
-                      setIsDeleteDialogOpen(true)
-                      handleClose()
-                    }}
-                  >
-                    Supprimer l&apos;évènement
-                  </MenuItem>
-                </Menu>
+                  <ArrowBackIosIcon sx={{ transform: 'translate(5px ,0)' }} />
+                </IconButton>
               </Box>
-            )}
+              <Typography variant="h5">
+                <Box fontWeight="bold" component="span">
+                  {currentEventType === EVENT_TYPES[0]
+                    ? 'Hébergement'
+                    : currentEventType === EVENT_TYPES[1]
+                    ? 'Vol'
+                    : currentEventType === EVENT_TYPES[2]
+                    ? 'Restaurant'
+                    : currentEventType === EVENT_TYPES[3]
+                    ? 'Transport'
+                    : currentEventType === EVENT_TYPES[4] && 'Exploration'}
+                </Box>
+              </Typography>
+              {canEdit && (
+                <Box position="absolute" right="20px">
+                  <IconButton
+                    size="large"
+                    id="basic-button"
+                    aria-controls="basic-menu"
+                    aria-haspopup="true"
+                    aria-expanded={open ? 'true' : undefined}
+                    onClick={handleClick}
+                  >
+                    <MoreHoriz />
+                  </IconButton>
+                  <Menu
+                    id="basic-menu"
+                    anchorEl={anchorEl}
+                    open={open}
+                    onClose={handleClose}
+                    MenuListProps={{
+                      'aria-labelledby': 'basic-button',
+                    }}
+                  >
+                    <MenuItem
+                      onClick={() => {
+                        setEventType(previousEvent ? previousEvent.type : currentEvent.type)
+                        setEditMode(true)
+                        setCurrentView('creator')
+                        handleClose()
+                      }}
+                    >
+                      Modifier l&rsquo;évènement
+                    </MenuItem>
+                    <MenuItem
+                      onClick={() => {
+                        setIsDeleteDialogOpen(true)
+                        handleClose()
+                      }}
+                    >
+                      Supprimer l&apos;évènement
+                    </MenuItem>
+                  </Menu>
+                </Box>
+              )}
+            </Box>
+            <Divider />
           </Box>
-          <Divider />
-          <Container disableGutters>
-            <Box p={4} mb={3}>
+          <Container sx={{ position: 'inherit', zIndex: 2 }} disableGutters>
+            <Box sx={{ padding: '30px 15px 30px 30px', marginBottom: '20px' }}>
               <Box display="flex" justifyContent="space-between" alignItems="center">
-                <Typography variant="h1">{currentEvent.title}</Typography>
+                <Typography component="h1" sx={{ fontSize: '28px' }}>
+                  {currentEvent.title}
+                </Typography>
               </Box>
               <Box display="flex" alignItems="center">
                 <RoomRoundedIcon fontSize="small" color="disabled" />
@@ -386,6 +406,17 @@ const EventPreview = ({
                     currentEvent.flights[0].data.airports[0].label}
                   {currentEventType === EVENT_TYPES[3] && currentEvent.transports[0].start.label}
                 </Typography>
+                {currentEventType === EVENT_TYPES[1] && (
+                  <Typography sx={{ paddingLeft: '15px' }}>
+                    <Link
+                      href={`http://maps.google.com/?q=${currentEvent.flights[0].data.airports[0].geocode.latitude},${currentEvent.flights[0].data.airports[0].geocode.longitude}`}
+                      target="_blank"
+                      color="primary"
+                    >
+                      Itinéraire
+                    </Link>
+                  </Typography>
+                )}
               </Box>
               {currentEventType !== EVENT_TYPES[1] && (
                 <Box
@@ -412,9 +443,11 @@ const EventPreview = ({
                         },
                       }}
                     >
-                      {currentEvent.location.photos.map(photo => (
-                        <img key={photo} className={classes.photo} src={photo} alt="" />
-                      ))}
+                      {currentEvent.location.photos
+                        .filter((photo, index) => index < 4)
+                        .map(photo => (
+                          <img key={photo} className={classes.photo} src={photo} alt="" />
+                        ))}
                     </Carousel>
                   ) : (
                     <PlanningCardIcon
@@ -526,9 +559,13 @@ const EventPreview = ({
                   </Box>
                   <Box mb="1rem">
                     <Typography>
-                      {`${format(stringToDate(currentEvent.date, 'yyyy-MM-dd'), 'EEEE dd MMMM', {
-                        locale: frLocale,
-                      })} • ${format(stringToDate(currentEvent.startTime), 'HH:mm', {
+                      {`${format(
+                        stringToDate(currentEvent.startTime, 'yyyy-MM-dd HH:mm'),
+                        'EEEE dd MMMM',
+                        {
+                          locale: frLocale,
+                        }
+                      )} • ${format(stringToDate(currentEvent.startTime), 'HH:mm', {
                         locale: frLocale,
                       })} - ${format(stringToDate(currentEvent.endTime), 'HH:mm', {
                         locale: frLocale,
@@ -546,12 +583,12 @@ const EventPreview = ({
                       </Typography>
                       <Box mt={1}>
                         <Typography sx={{ fontWeight: 'bold' }}>
-                          {format(stringToDate(currentEvent.startTime), 'EEEE dd MMMM', {
+                          {format(stringToDate(currentEvent.startTime), 'EEE dd MMM', {
                             locale: frLocale,
                           })}
                         </Typography>
                         <Typography>
-                          {format(stringToDate(currentEvent.endTime), 'HH:mm', {
+                          {format(stringToDate(currentEvent.startTime), 'HH:mm', {
                             locale: frLocale,
                           })}
                         </Typography>

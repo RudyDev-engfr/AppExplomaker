@@ -16,6 +16,9 @@ const useStyles = makeStyles(theme => ({
     [theme.breakpoints.down('sm')]: {
       display: 'none',
     },
+    '@media (max-width: 1060px)': {
+      padding: '15px 50px 15px 15px',
+    },
   },
 }))
 const TitleArea = ({

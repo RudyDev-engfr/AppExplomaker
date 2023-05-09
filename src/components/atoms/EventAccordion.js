@@ -3,10 +3,21 @@ import { Launch } from '@mui/icons-material'
 import { Box, IconButton, Typography } from '@mui/material'
 import { useTheme } from '@mui/styles'
 import { useHistory } from 'react-router-dom'
+import { isSameDay } from 'date-fns'
+import { stringToDate } from '../../helper/functions'
 
-const EventAccordion = ({ notification }) => {
+const EventAccordion = ({ notification, days, setSelectedDateOnPlanning, setCurrentView }) => {
   const theme = useTheme()
   const history = useHistory()
+
+  const setRefreshActiveDate = singleNotification => {
+    days.forEach(day => {
+      if (isSameDay(stringToDate(notification.startTime, 'yyyy-MM-dd HH:mm'), day)) {
+        setSelectedDateOnPlanning(day)
+        console.log('wtf')
+      }
+    })
+  }
 
   return (
     <Box
@@ -34,7 +45,12 @@ const EventAccordion = ({ notification }) => {
             color: 'white',
           },
         }}
-        onClick={() => history.push(notification.url)}
+        onClick={() => {
+          if (notification?.eventType) {
+            setRefreshActiveDate(notification)
+          }
+          history.push(notification.url)
+        }}
       >
         <Launch />
       </IconButton>

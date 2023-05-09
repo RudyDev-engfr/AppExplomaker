@@ -1,6 +1,6 @@
 import React, { useContext, useEffect } from 'react'
 import { Box, Button, Typography } from '@mui/material'
-import { makeStyles } from '@mui/styles'
+import { makeStyles, useTheme } from '@mui/styles'
 import { format } from 'date-fns'
 import { useHistory, useParams } from 'react-router-dom'
 import { stringToDate } from '../../helper/functions'
@@ -22,7 +22,6 @@ const useStyles = makeStyles(theme => ({
     justifyContent: 'flex-start',
     padding: '8px 15px',
     alignItems: 'center',
-    backgroundColor: 'white',
     borderRadius: '10px',
     textTransform: 'none',
     color: theme.palette.grey['33'],
@@ -31,9 +30,13 @@ const useStyles = makeStyles(theme => ({
     marginRight: '15px',
     fontSize: '12px',
     color: theme.palette.grey['82'],
+    whiteSpace: 'nowrap',
   },
   eventTitleTypo: {
     fontWeight: 400,
+    textOverflow: 'ellipsis',
+    overflow: 'hidden',
+    whiteSpace: 'nowrap',
   },
   iconContainer: {
     padding: '6px',
@@ -47,11 +50,13 @@ const useStyles = makeStyles(theme => ({
   },
 }))
 
-const MiniEventCard = ({ plannedEvent, setCurrentView }) => {
+const MiniEventCard = ({ plannedEvent, setCurrentView, surveyId, plannedSurvey, day }) => {
   const classes = useStyles()
   const history = useHistory()
+  const theme = useTheme()
   const { tripId } = useParams()
-  const { currentEventId, setCurrentEventId } = useContext(PlanningContext)
+  const { currentEventId, setCurrentEventId, setSurvey, setSelectedDateOnPlanning } =
+    useContext(PlanningContext)
   const { setCurrentEvent } = useContext(TripContext)
 
   useEffect(() => {
@@ -68,7 +73,11 @@ const MiniEventCard = ({ plannedEvent, setCurrentView }) => {
     <Box
       className={classes.root}
       onMouseEnter={() => {
-        setCurrentEventId(plannedEvent.id)
+        if (surveyId) {
+          setCurrentEventId(surveyId)
+        } else {
+          setCurrentEventId(plannedEvent.id)
+        }
       }}
       onMouseLeave={() => {
         setCurrentEventId()
@@ -86,13 +95,26 @@ const MiniEventCard = ({ plannedEvent, setCurrentView }) => {
           }}
         />
       </Box>
-      <Button className={classes.miniaEventTypoContainer} onClick={() => setEvent(plannedEvent)}>
+      <Button
+        className={classes.miniaEventTypoContainer}
+        sx={{
+          backgroundColor: surveyId ? `${theme.palette.primary.ultraLight} !important ` : 'white',
+        }}
+        onClick={() => {
+          setSelectedDateOnPlanning(day)
+          if (surveyId && plannedSurvey) {
+            setSurvey(plannedSurvey)
+          } else {
+            setEvent(plannedEvent)
+          }
+        }}
+      >
         <Typography className={classes.hourTypo}>
           {plannedEvent.itsAllDayLong && plannedEvent.type === EVENT_TYPES[0]
             ? 'Nuit'
             : plannedEvent.itsAllDayLong
             ? 'Jour'
-            : format(stringToDate(plannedEvent.fakeDate, 'yyyy-MM-dd HH:mm'), "HH 'h' mm")}
+            : format(stringToDate(plannedEvent.fakeDate, 'yyyy-MM-dd HH:mm'), "HH'h'mm")}
         </Typography>
         <Typography className={classes.eventTitleTypo}>{plannedEvent.title}</Typography>
       </Button>

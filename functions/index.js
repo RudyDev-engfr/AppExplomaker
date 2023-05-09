@@ -2,6 +2,7 @@
 const functions = require('firebase-functions')
 const admin = require('firebase-admin')
 const fetch = require('node-fetch')
+const { parseISO, format } = require('date-fns')
 const cors = require('cors')({ origin: true })
 
 admin.initializeApp()
@@ -36,6 +37,22 @@ function arrayShuffle(array) {
   }
 
   return tempArray
+}
+
+function dateToString(date) {
+  const input = date
+
+  // Supprimez le décalage horaire de la chaîne de caractères
+  const inputWithoutTimezone = `${input.slice(0, -6)}Z`
+
+  // Parsez la chaîne de caractères pour créer un objet Date en UTC
+  const toDate = parseISO(inputWithoutTimezone)
+
+  // Formatez la date en chaîne de caractères avec le format souhaité
+  const formattedDate = format(toDate, 'yyyy-MM-dd HH:mm')
+
+  console.log(formattedDate) // "2023-05-06 12:15"
+  return `${formattedDate}`
 }
 
 exports.checkFlightNumber = functions.https.onRequest((request, response) => {
@@ -73,11 +90,14 @@ exports.checkFlightNumber = functions.https.onRequest((request, response) => {
             .then(nextResponse => nextResponse.text())
             .then(results => {
               const parsedResults = JSON.parse(results).data[0]
+              console.log('toute la réponse amadeus', parsedResults)
               if (typeof parsedResults.flightPoints !== 'undefined') {
                 const airportsIataCodes = []
                 const legs = []
                 const departureDateTime = parsedResults.flightPoints[0].departure.timings[0].value
+
                 const arrivalDateTime = parsedResults.flightPoints[1].arrival.timings[0].value
+
                 parsedResults.legs.forEach(leg => {
                   const tempDuration = {}
                   airportsIataCodes.push(leg.boardPointIataCode)
@@ -159,7 +179,10 @@ exports.checkFlightNumber = functions.https.onRequest((request, response) => {
                     response.status(200).send(
                       JSON.stringify({
                         airports,
-                        timings: [departureDateTime, arrivalDateTime],
+                        timings: [
+                          `${dateToString(departureDateTime)}`,
+                          `${dateToString(arrivalDateTime)}`,
+                        ],
                         legs,
                       })
                     )

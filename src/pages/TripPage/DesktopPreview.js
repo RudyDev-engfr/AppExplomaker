@@ -53,7 +53,13 @@ const DesktopPreview = ({ tripData, generatedAvatars }) => {
           <ShareIcon />
         </IconButton> */}
       </Box>
-      <Box sx={{ display: 'grid', alignItems: 'center', gridTemplate: '1fr / 1fr 1fr 1fr 2fr' }}>
+      <Box
+        sx={{
+          display: 'grid',
+          alignItems: 'center',
+          gridTemplate: '1fr / 1fr 1fr 1fr fit-content(40%)',
+        }}
+      >
         <Box display="flex" alignItems="center">
           <img src={calendar} alt="" className={classes.mobileIcon} />
           {currentDateRange[0] !== '' ? (
@@ -95,7 +101,7 @@ const DesktopPreview = ({ tripData, generatedAvatars }) => {
         <Box display="flex" alignItems="center">
           <img src={person} alt="" className={classes.mobileIcon} />
           <Typography className={classes.subtitle}>
-            {tripData.editors.length} participant{tripData.editors.length > 1 ? 's' : ''}
+            {tripData.editors.length} contributeur{tripData.editors.length > 1 ? 's' : ''}
           </Typography>
         </Box>
         <Box

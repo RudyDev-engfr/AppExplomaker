@@ -4,6 +4,7 @@ import 'react-toastify/dist/ReactToastify.css'
 import { BrowserRouter } from 'react-router-dom'
 import { ToastContainer } from 'react-toastify'
 import Box from '@mui/material/Box'
+import { useMediaQuery } from '@mui/material'
 
 import { FirebaseContext, useAuth } from '../contexts/firebase'
 import { SessionContext } from '../contexts/session'
@@ -15,6 +16,7 @@ import beta from '../images/beta.svg'
 const mapsLibraries = ['places']
 
 const App = () => {
+  const matchesXs = useMediaQuery('(max-width:600px)')
   const { setUser, user } = useContext(SessionContext)
   const { firestore, database, setLocalUsers, isDictionaryLoaded, timestampRef } =
     useContext(FirebaseContext)
@@ -97,7 +99,7 @@ const App = () => {
           <Routes />
         </BrowserRouter>
         <ToastContainer
-          position="bottom-right"
+          position={matchesXs ? 'top-center' : 'bottom-right'}
           autoClose={5000}
           hideProgressBar={false}
           newestOnTop={false}

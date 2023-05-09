@@ -12,11 +12,14 @@ import {
   MenuItem,
   Paper,
   Select,
+  Switch,
   TextField,
+  Tooltip,
   Typography,
   useMediaQuery,
   useTheme,
 } from '@mui/material'
+import Fade from '@mui/material/Fade'
 import makeStyles from '@mui/styles/makeStyles'
 import CloseRoundedIcon from '@mui/icons-material/CloseRounded'
 import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos'
@@ -39,6 +42,7 @@ import {
   setMinutes,
   setHours,
   startOfDay,
+  isSameDay,
 } from 'date-fns'
 import clsx from 'clsx'
 import { useHistory } from 'react-router-dom'
@@ -60,6 +64,8 @@ import IconModal from '../../../components/atoms/IconModal'
 import { PlanningContext } from '../../../contexts/planning'
 
 import plusCircle from '../../../images/icons/plusCircle.svg'
+import AdvancedModeButton, { AdvancedSwitch } from '../../../components/atoms/AdvancedModeButton'
+import { TripContext } from '../../../contexts/trip'
 
 const useStyles = makeStyles(theme => ({
   marginBottom: {
@@ -134,8 +140,8 @@ const useStyles = makeStyles(theme => ({
     height: '36px',
     padding: '8px 12px',
     borderRadius: '5px',
-    marginBottom: '30px',
-    alignSelf: 'flex-start',
+    width: 'fit-content',
+    marginBottom: '20px',
   },
 
   durationAccomodationText: {
@@ -196,6 +202,7 @@ const EventCreator = ({
   travelers,
   dateRange,
   selectedDateFromPlanning,
+  setSelectedDateFromPlanning,
   isNewProposition,
   setIsNewProposition,
   currentEvent,
@@ -220,6 +227,7 @@ const EventCreator = ({
     handleTempEventsMarkers,
     getPlaceDetails,
     tempEventsMarkers,
+    days,
   } = useContext(PlanningContext)
 
   const tripStartDate = rCTFF(dateRange[0])
@@ -240,7 +248,7 @@ const EventCreator = ({
   )
   const [arrivalDateTimeError, setArrivalDateTimeError] = useState(false)
   const [selectedDepartureDateTime, setSelectedDepartureDateTime] = useState(
-    selectedDateFromPlanning || tripStartDate
+    selectedDateFromPlanning || add(tripStartDate, { hours: 16 })
   )
   const [departureDateTimeError, setDepartureDateTimeError] = useState(false)
   const [selectedDate, setSelectedDate] = useState(selectedDateFromPlanning || tripStartDate)
@@ -261,6 +269,7 @@ const EventCreator = ({
   const [isPropositionInEdition, setIsPropositionInEdition] = useState(false)
   const [openModalIconSlider, setOpenModalIconSlider] = useState(false)
   const [tripData, setTripData] = useState()
+  const [advancedMode, setAdvancedMode] = useState(false)
 
   const generateParticipatingTravelers = () => {
     const tempTravelers = travelers
@@ -285,7 +294,24 @@ const EventCreator = ({
     if (eventType === EVENT_TYPES[1]) {
       handleTempFlightMarkers(flights)
     }
+    if (flights[0].date && selectedDateFromPlanning && eventType === EVENT_TYPES[1]) {
+      days.forEach(day => {
+        if (isSameDay(flights[0].date, day)) {
+          setSelectedDateFromPlanning(day)
+        }
+      })
+    }
   }, [flights])
+
+  useEffect(() => {
+    if (transports[0].startTime && selectedDateFromPlanning && eventType === EVENT_TYPES[3]) {
+      days.forEach(day => {
+        if (isSameDay(transports[0].startTime, day)) {
+          setSelectedDateFromPlanning(day)
+        }
+      })
+    }
+  }, [transports])
 
   useEffect(() => {
     if (
@@ -330,9 +356,50 @@ const EventCreator = ({
 
   useEffect(() => {
     if (!editMode) {
-      setSelectedDepartureDateTime(add(selectedArrivalDateTime, { hours: 16 }))
+      if (
+        isSameDay(selectedArrivalDateTime, selectedDepartureDateTime) ||
+        isBefore(selectedDepartureDateTime, selectedArrivalDateTime)
+      ) {
+        setSelectedDepartureDateTime(add(selectedDateFromPlanning, { days: 1, hours: 10 }))
+      } else {
+        setSelectedDepartureDateTime(add(selectedArrivalDateTime, { hours: 16 }))
+      }
     }
   }, [selectedArrivalDateTime])
+
+  useEffect(() => {
+    console.log('temps de partir', selectedDepartureDateTime)
+  }, [selectedDepartureDateTime])
+
+  useEffect(() => {
+    if (
+      selectedArrivalDateTime &&
+      selectedDateFromPlanning &&
+      !isSameDay(selectedArrivalDateTime, selectedDateFromPlanning) &&
+      eventType === EVENT_TYPES[0]
+    ) {
+      days.forEach(day => {
+        if (isSameDay(selectedArrivalDateTime, day)) {
+          setSelectedDateFromPlanning(day)
+        }
+      })
+    }
+  }, [selectedArrivalDateTime, selectedDateFromPlanning])
+
+  useEffect(() => {
+    if (
+      selectedDate &&
+      selectedDateFromPlanning &&
+      !isSameDay(selectedDate, selectedDateFromPlanning) &&
+      (eventType === EVENT_TYPES[2] || eventType === EVENT_TYPES[4])
+    ) {
+      days.forEach(day => {
+        if (isSameDay(selectedDate, day)) {
+          setSelectedDateFromPlanning(day)
+        }
+      })
+    }
+  }, [selectedDate])
 
   useEffect(() => {
     if (selectedDateFromPlanning && eventType === EVENT_TYPES[0] && !editMode) {
@@ -380,7 +447,7 @@ const EventCreator = ({
           currentEvent.flights.map(flight => ({
             ...flight,
             date: rCTFF(flight.date),
-            data: { ...flight.data, timings: flight.data.timings.map(timing => rCTFF(timing)) },
+            data: { ...flight.data, timings: flight.data.timings.map(timing => timing) },
           }))
         )
         setPrice(currentEvent.price / currentEvent.participatingTravelers.length)
@@ -405,7 +472,7 @@ const EventCreator = ({
         setPrice(currentEvent.price / currentEvent.participatingTravelers.length)
         setCurrency(currentEvent.currency)
       } else if (eventType === EVENT_TYPES[4]) {
-        setSelectedDate(stringToDate(currentEvent.date, 'yyyy-MM-dd'))
+        setSelectedDate(stringToDate(currentEvent.date))
         setSelectedStartTime(stringToDate(currentEvent.startTime))
         setSelectedEndTime(stringToDate(currentEvent.endTime))
         setLocation({ ...currentEvent.location })
@@ -664,7 +731,7 @@ const EventCreator = ({
       icon: selectedIcon,
     }
 
-    const tempDate = dateToString(selectedDate)
+    const tempDate = dateToString(selectedDate, 'yyyy-MM-dd HH:mm')
     const tempStartTime = dateTimeToString(selectedStartTime)
     const tempEndTime = dateTimeToString(selectedEndTime)
     // eslint-disable-next-line default-case
@@ -692,11 +759,9 @@ const EventCreator = ({
       case EVENT_TYPES[1]:
         const tempFlights = flights.map(flight => {
           const tempData = { ...flight.data }
-          tempData.timings[0] = new timestampRef.fromDate(new Date(tempData.timings[0])) // DepartureDateTime
-          tempData.timings[1] = new timestampRef.fromDate(new Date(tempData.timings[1])) // ArrivalDateTime
           return {
             ...flight,
-            date: new timestampRef.fromDate(flight.tempData.timings[0]),
+            date: flight.data.timings[0],
             data: tempData, // DepartureDateTime, ArrivalDateTime, DepartureAirport, ArrivalAirport
             website,
           }
@@ -714,6 +779,8 @@ const EventCreator = ({
           totalPriceMode,
           website,
           date: tempFlights[0].date,
+          startTime: flights[0].data.timings[0],
+          endTime: flights[flights.length - 1].data.timings[1],
         }
         break
       case EVENT_TYPES[2]:
@@ -861,7 +928,16 @@ const EventCreator = ({
             createNotificationsOnTrip(user, tripData, tripId, 'surveyCreate', 2, tempEvent)
           } else {
             createNotificationsOnTrip(user, tripData, tripId, 'eventCreate', 2, tempEvent)
+            if (selectedDateFromPlanning === '') {
+              days.forEach(day => {
+                if (isSameDay(stringToDate(tempEvent.startTime, 'yyyy-MM-dd HH:mm'), day)) {
+                  setSelectedDateFromPlanning(day)
+                }
+              })
+            }
             setCurrentView('planning')
+
+            setCurrentEvent('')
           }
         })
     }
@@ -893,6 +969,7 @@ const EventCreator = ({
       requestOptions
     )
     const data = await results.json()
+    console.log('data', data)
     return data
   }
 
@@ -914,7 +991,7 @@ const EventCreator = ({
             display: 'flex',
             justifyContent: 'space-between',
             alignItems: 'center',
-            padding: '1rem 2rem',
+            padding: '15px',
           }}
         >
           {matchesXs ? (
@@ -977,13 +1054,15 @@ const EventCreator = ({
         </Box>
         <Divider />
       </Box>
+
       <Box
         sx={{
           display: 'flex',
           justifyContent: 'space-between',
           alignItems: 'center',
+          position: 'relative',
           [theme.breakpoints.down('sm')]: {
-            marginTop: '90px',
+            marginTop: '80px',
           },
         }}
       >
@@ -995,6 +1074,7 @@ const EventCreator = ({
           sx={{
             [theme.breakpoints.down('sm')]: {
               maxWidth: '100vw',
+              minWidth: '100vw',
             },
           }}
         >
@@ -1011,11 +1091,13 @@ const EventCreator = ({
               eventType === EVENT_TYPES[4]) && (
               <>
                 {matchesXs && (
-                  <IconSlider
-                    eventType={eventType}
-                    selectedIcon={selectedIcon}
-                    setSelectedIcon={setSelectedIcon}
-                  />
+                  <Box sx={{ display: 'flex', justifyContent: 'center' }}>
+                    <IconSlider
+                      eventType={eventType}
+                      selectedIcon={selectedIcon}
+                      setSelectedIcon={setSelectedIcon}
+                    />
+                  </Box>
                 )}
                 <Box display="flex" alignItems="center" className={classes.marginBottom}>
                   <GooglePlacesAutocomplete
@@ -1189,7 +1271,7 @@ const EventCreator = ({
                     format="dd/MM/yyyy HH:mm"
                     className={classes.dateTimePicker}
                     ampm={false}
-                    minDate={add(selectedArrivalDateTime, { days: 1 })}
+                    minDate={add(selectedArrivalDateTime, { minutes: 1 })}
                     maxDate={tripEndDate}
                     value={selectedDepartureDateTime}
                     onChange={event => {
@@ -1223,6 +1305,11 @@ const EventCreator = ({
                 </Box>
               </>
             )}
+            <Box sx={{ display: 'flex', justifyContent: 'flex-start', marginBottom: '15px' }}>
+              {eventType !== EVENT_TYPES[3] && (
+                <AdvancedModeButton advancedMode={advancedMode} setAdvancedMode={setAdvancedMode} />
+              )}
+            </Box>
             <TextField
               label="Titre"
               variant="filled"
@@ -1231,6 +1318,7 @@ const EventCreator = ({
               onChange={event => setTitle(event.target.value)}
               className={clsx(classes.titleInput, classes.marginBottom)}
               InputLabelProps={{ className: classes.textFieldLabel }}
+              sx={{ display: !advancedMode && 'none' }}
             />
             {(eventType === EVENT_TYPES[0] ||
               eventType === EVENT_TYPES[2] ||
@@ -1247,6 +1335,7 @@ const EventCreator = ({
                 InputProps={{
                   classes: { root: classes.rootMultilineInput, filledInput: classes.filledInput },
                 }}
+                sx={{ display: !advancedMode && 'none' }}
               />
             )}
             <TextField
@@ -1257,6 +1346,7 @@ const EventCreator = ({
               fullWidth
               onChange={event => setWebsite(event.target.value)}
               type="url"
+              sx={{ display: !advancedMode && 'none' }}
             />
             {eventType === EVENT_TYPES[1] && (
               <>
@@ -1339,6 +1429,14 @@ const EventCreator = ({
                   </Button>
                 </Box>
                 <Divider className={classes.marginBottom} />
+                {eventType === EVENT_TYPES[3] && (
+                  <Box sx={{ marginBottom: '15px' }}>
+                    <AdvancedModeButton
+                      advancedMode={advancedMode}
+                      setAdvancedMode={setAdvancedMode}
+                    />
+                  </Box>
+                )}
               </>
             )}
             {(eventType === EVENT_TYPES[0] ||
@@ -1346,7 +1444,10 @@ const EventCreator = ({
               eventType === EVENT_TYPES[2] ||
               eventType === EVENT_TYPES[3] ||
               eventType === EVENT_TYPES[4]) && (
-              <Box className={clsx(classes.marginBottom, classes.gridContainer)}>
+              <Box
+                className={clsx(classes.marginBottom, classes.gridContainer)}
+                sx={{ display: !advancedMode && 'none !important' }}
+              >
                 <TextField
                   label="Prix - optionnel"
                   variant="filled"
@@ -1392,89 +1493,121 @@ const EventCreator = ({
                 </ButtonGroup>
               </Box>
             )}
-            <Typography gutterBottom>
-              <Box fontWeight="bold" component="span">
-                Participants
-              </Box>
-            </Typography>
-            <Box mb={2}>
-              <Typography variant="body2" color="textSecondary">
-                {
-                  participatingTravelers.filter(isTravelerParticipating => isTravelerParticipating)
-                    .length
-                }{' '}
-                sélectionné
-                {participatingTravelers.filter(isTravelerParticipating => isTravelerParticipating)
-                  .length > 1 && 's'}{' '}
-                <Button
-                  onClick={() =>
-                    setParticipatingTravelers(travelers.filter(traveler => !traveler.isNotTraveler))
-                  }
-                  sx={{ textTransform: 'none', color: theme.palette.grey.black }}
-                  disableRipple
-                >
-                  - Tous
-                </Button>{' '}
-                <Button
-                  onClick={() => setParticipatingTravelers([])}
-                  sx={{ textTransform: 'none', color: theme.palette.grey.black }}
-                  disableRipple
-                >
-                  - Aucun
-                </Button>
+            <Box sx={{ display: !advancedMode && 'none' }}>
+              <Typography gutterBottom>
+                <Box fontWeight="bold" component="span">
+                  Participants
+                </Box>
               </Typography>
-            </Box>
-            <Box display="flex" flexWrap="wrap" pb={5}>
-              {travelers
-                .filter(traveler => !traveler.isNotTraveler)
-                .map((traveler, travelerIndex) => (
-                  <Fragment key={uuidv4()}>
-                    <Button
-                      variant="contained"
-                      endIcon={
-                        participatingTravelers[travelerIndex] ? <ClearRoundedIcon /> : <AddIcon />
-                      }
-                      className={clsx(classes.travelerBtn, {
-                        [classes.selectedTravelerBtn]: participatingTravelers[travelerIndex],
-                      })}
-                      onClick={() => {
-                        const tempParticipatingTravelers = [...participatingTravelers]
-                        tempParticipatingTravelers[travelerIndex] =
-                          !participatingTravelers[travelerIndex]
-                        setParticipatingTravelers(tempParticipatingTravelers)
-                      }}
-                    >
-                      {traveler.name}
-                    </Button>
-                  </Fragment>
-                ))}
+              <Box mb={2}>
+                <Typography variant="body2" color="textSecondary">
+                  {
+                    participatingTravelers.filter(
+                      isTravelerParticipating => isTravelerParticipating
+                    ).length
+                  }{' '}
+                  sélectionné
+                  {participatingTravelers.filter(isTravelerParticipating => isTravelerParticipating)
+                    .length > 1 && 's'}{' '}
+                  <Button
+                    onClick={() =>
+                      setParticipatingTravelers(
+                        travelers.filter(traveler => !traveler.isNotTraveler)
+                      )
+                    }
+                    sx={{ textTransform: 'none', color: theme.palette.grey.black }}
+                    disableRipple
+                  >
+                    - Tous
+                  </Button>
+                  <Button
+                    onClick={() => setParticipatingTravelers([])}
+                    sx={{ textTransform: 'none', color: theme.palette.grey.black }}
+                    disableRipple
+                  >
+                    - Aucun
+                  </Button>
+                </Typography>
+              </Box>
+              <Box display="flex" flexWrap="wrap" pb={5}>
+                {travelers
+                  .filter(traveler => !traveler.isNotTraveler)
+                  .map((traveler, travelerIndex) => (
+                    <Fragment key={uuidv4()}>
+                      <Button
+                        variant="contained"
+                        endIcon={
+                          participatingTravelers[travelerIndex] ? <ClearRoundedIcon /> : <AddIcon />
+                        }
+                        className={clsx(classes.travelerBtn, {
+                          [classes.selectedTravelerBtn]: participatingTravelers[travelerIndex],
+                        })}
+                        onClick={() => {
+                          const tempParticipatingTravelers = [...participatingTravelers]
+                          tempParticipatingTravelers[travelerIndex] =
+                            !participatingTravelers[travelerIndex]
+                          setParticipatingTravelers(tempParticipatingTravelers)
+                        }}
+                      >
+                        {traveler.name}
+                      </Button>
+                    </Fragment>
+                  ))}
+              </Box>
             </Box>
           </Box>
           <Divider />
           <Box
             sx={{
-              margin: '2rem 2rem',
-              [theme.breakpoints.down('sm')]: {
-                margin: '0 30px 30px 30px',
-              },
+              margin: '30px 30px 30px 20px',
+              [theme.breakpoints.down('sm')]: {},
             }}
-            pt={5}
           >
-            {!isNewProposition && !isPropositionInEdition && (
-              <FormControlLabel
-                className={classes.marginBottom}
-                control={
-                  <Checkbox
-                    checked={isSurvey}
-                    onChange={() => setIsSurvey(!isSurvey)}
-                    color="primary"
-                    sx={{ position: 'relative', left: '-10px' }}
+            {!isNewProposition &&
+              !isPropositionInEdition &&
+              (!matchesXs ? (
+                <Tooltip
+                  title="Proposer d’autres options pour cet évènement (jusqu’à 3 options). Les participants pourront voter pour leur option préférée."
+                  TransitionComponent={Fade}
+                  TransitionProps={{ timeout: 600 }}
+                  sx={{ fontSize: '14px', marginBottom: '0' }}
+                  placement="top"
+                >
+                  <FormControlLabel
+                    className={classes.marginBottom}
+                    control={
+                      <AdvancedSwitch
+                        checked={isSurvey}
+                        onChange={() => setIsSurvey(!isSurvey)}
+                        color="primary"
+                        sx={{
+                          position: 'relative',
+                          left: !matchesXs && '-10px',
+                        }}
+                      />
+                    }
+                    label="Proposer en sondage"
+                    sx={{ position: 'relative', left: '20px', alignItems: 'center' }}
                   />
-                }
-                label="Proposer d’autres options pour cet évènement (jusqu’à 3 options). Les participants pourront voter pour leur option préférée."
-                sx={{ position: 'relative', left: '20px', alignItems: 'flex-start' }}
-              />
-            )}
+                </Tooltip>
+              ) : (
+                <FormControlLabel
+                  className={classes.marginBottom}
+                  control={
+                    <AdvancedSwitch
+                      checked={isSurvey}
+                      onChange={() => setIsSurvey(!isSurvey)}
+                      color="primary"
+                      sx={{
+                        position: 'relative',
+                        left: '-10px',
+                      }}
+                    />
+                  }
+                  label="Proposer en sondage"
+                  sx={{ position: 'relative', left: '20px', alignItems: 'center' }}
+                />
+              ))}
             <Button
               type="submit"
               variant="contained"

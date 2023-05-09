@@ -20,7 +20,7 @@ const PlanningFeed = ({ propsClasses, setCurrentView }) => {
 
   const matchesXs = useMediaQuery(theme.breakpoints.down('sm'))
 
-  const { days, singleDayPlannedEvents, setSelectedDate, setIsNewDatesSectionOpen } =
+  const { days, singleDayPlannedEvents, setSelectedDateOnPlanning, setIsNewDatesSectionOpen } =
     useContext(PlanningContext)
 
   function compare(a, b) {
@@ -49,25 +49,9 @@ const PlanningFeed = ({ propsClasses, setCurrentView }) => {
     console.log('la liste des events par jour finale', singleDayPlannedEvents)
   }, [singleDayPlannedEvents])
 
-  return matchesXs ? (
-    <Box className={classes.mobileMainContainer}>
-      {days.map(day => (
-        <Box key={day}>
-          <Typography>{dateToString(day)}</Typography>
-          {singleDayPlannedEvents
-            .filter(
-              plannedEvent => !plannedEvent.needNewDates && stringToDate(plannedEvent.date) === day
-            )
-            .filter(plannedEvent => plannedEvent.type !== EVENT_TYPES[1] && !plannedEvent.isSurvey)
-            .map(event => (
-              <Box>{event.title}</Box>
-            ))}
-        </Box>
-      ))}
-    </Box>
-  ) : (
-    <Box className={propsClasses} sx={{ padding: '35px 30px 15px 30px' }}>
-      {days?.length > 1 &&
+  return (
+    <Box className={propsClasses} sx={{ padding: '20px' }}>
+      {days?.length >= 1 &&
         days.map(day => (
           <Box key={day} sx={{ marginBottom: '25px' }}>
             <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
@@ -84,7 +68,7 @@ const PlanningFeed = ({ propsClasses, setCurrentView }) => {
               </Typography>
               <IconButton
                 onClick={() => {
-                  setSelectedDate(day)
+                  setSelectedDateOnPlanning(day)
                   setIsNewDatesSectionOpen(false)
                   setCurrentView('planning')
                 }}
@@ -98,16 +82,14 @@ const PlanningFeed = ({ propsClasses, setCurrentView }) => {
                 <ManageSearch />
               </IconButton>
             </Box>
-            {singleDayPlannedEvents?.length > 1 &&
+            {singleDayPlannedEvents?.length >= 1 &&
               singleDayPlannedEvents
                 .filter(
-                  plannedEvent => plannedEvent.type !== EVENT_TYPES[1] && !plannedEvent.isSurvey
-                )
-                .filter(plannedEvent =>
-                  isSameDay(
-                    stringToDate(plannedEvent.fakeDate, 'yyyy-MM-dd HH:mm').getTime(),
-                    stringToDate(dateToString(day), 'yyyy-MM-dd').getTime()
-                  )
+                  plannedEvent =>
+                    isSameDay(
+                      stringToDate(plannedEvent.fakeDate, 'yyyy-MM-dd HH:mm').getTime(),
+                      stringToDate(dateToString(day), 'yyyy-MM-dd').getTime()
+                    ) && !plannedEvent.isSurvey
                 )
                 .sort(compare)
                 .map(plannedEvent => (
@@ -115,8 +97,32 @@ const PlanningFeed = ({ propsClasses, setCurrentView }) => {
                     plannedEvent={plannedEvent}
                     key={plannedEvent.title}
                     setCurrentView={setCurrentView}
+                    day={day}
                   />
                 ))}
+            {singleDayPlannedEvents?.length >= 1 &&
+              singleDayPlannedEvents
+                .filter(plannedEvent => plannedEvent.isSurvey)
+                .map(plannedSurvey =>
+                  plannedSurvey.propositions
+                    .filter(plannedProposition =>
+                      isSameDay(
+                        stringToDate(plannedProposition.fakeDate, 'yyyy-MM-dd HH:mm').getTime(),
+                        stringToDate(dateToString(day), 'yyyy-MM-dd').getTime()
+                      )
+                    )
+                    .sort(compare)
+                    .map(plannedProposition => (
+                      <MiniEventCard
+                        plannedEvent={plannedProposition}
+                        plannedSurvey={plannedSurvey}
+                        key={plannedProposition.title}
+                        setCurrentView={setCurrentView}
+                        surveyId={plannedSurvey.id}
+                        day={day}
+                      />
+                    ))
+                )}
           </Box>
         ))}
     </Box>
