@@ -76,6 +76,23 @@ const EventsTimeline = ({ currentEvents, canEdit, handleOpenDropdown }) => {
             <TimelineSeparator>
               <TimelineConnector classes={{ root: classes.MuiTimelineConnectorDashed }} />
               <Box sx={{ padding: '8px 0' }}>
+                <Typography sx={{ fontSize: '14px', textAlign: 'center', marginBottom: '10px' }}>
+                  {event.type === EVENT_TYPES[1] &&
+                    (isSameDay(
+                      stringToDate(event?.startTime, 'yyyy-MM-dd HH:mm'),
+                      selectedDateOnPlanning
+                    )
+                      ? isSameDay(
+                          stringToDate(event?.endTime, 'yyyy-MM-dd HH:mm'),
+                          selectedDateOnPlanning
+                        )
+                        ? dateToString(stringToDate(event?.startTime, 'yyyy-MM-dd HH:mm'), 'HH:mm')
+                        : `Départ ${dateToString(
+                            stringToDate(event?.startTime, 'yyyy-MM-dd HH:mm'),
+                            'HH:mm'
+                          )}`
+                      : '')}
+                </Typography>
                 <Box className={classes.iconContainer}>
                   <Box
                     component="img"
@@ -90,6 +107,7 @@ const EventsTimeline = ({ currentEvents, canEdit, handleOpenDropdown }) => {
                 </Box>
                 <Typography sx={{ fontSize: '14px', textAlign: 'center' }}>
                   {event.type !== EVENT_TYPES[0] &&
+                    event.type !== EVENT_TYPES[1] &&
                     (isSameDay(
                       stringToDate(event?.startTime, 'yyyy-MM-dd HH:mm'),
                       selectedDateOnPlanning
@@ -113,6 +131,21 @@ const EventsTimeline = ({ currentEvents, canEdit, handleOpenDropdown }) => {
                         )
                       ? dateToString(stringToDate(event?.endTime, 'yyyy-MM-dd HH:mm'), 'HH:mm')
                       : 'Nuit')}
+                  {event.type === EVENT_TYPES[1] &&
+                    (isSameDay(
+                      stringToDate(event?.endTime, 'yyyy-MM-dd HH:mm'),
+                      selectedDateOnPlanning
+                    )
+                      ? isSameDay(
+                          stringToDate(event?.startTime, 'yyyy-MM-dd HH:mm'),
+                          selectedDateOnPlanning
+                        )
+                        ? dateToString(stringToDate(event?.endTime, 'yyyy-MM-dd HH:mm'), 'HH:mm')
+                        : `Arrivée ${dateToString(
+                            stringToDate(event?.endTime, 'yyyy-MM-dd HH:mm'),
+                            'HH:mm'
+                          )}`
+                      : '')}
                 </Typography>
               </Box>
               <TimelineConnector />

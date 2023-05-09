@@ -447,7 +447,7 @@ const EventCreator = ({
           currentEvent.flights.map(flight => ({
             ...flight,
             date: rCTFF(flight.date),
-            data: { ...flight.data, timings: flight.data.timings.map(timing => rCTFF(timing)) },
+            data: { ...flight.data, timings: flight.data.timings.map(timing => timing) },
           }))
         )
         setPrice(currentEvent.price / currentEvent.participatingTravelers.length)
@@ -759,11 +759,9 @@ const EventCreator = ({
       case EVENT_TYPES[1]:
         const tempFlights = flights.map(flight => {
           const tempData = { ...flight.data }
-          tempData.timings[0] = new timestampRef.fromDate(new Date(tempData.timings[0])) // DepartureDateTime
-          tempData.timings[1] = new timestampRef.fromDate(new Date(tempData.timings[1])) // ArrivalDateTime
           return {
             ...flight,
-            date: dateToString(rCTFF(flight.data.timings[0]), 'yyyy-MM-dd HH:mm'),
+            date: flight.data.timings[0],
             data: tempData, // DepartureDateTime, ArrivalDateTime, DepartureAirport, ArrivalAirport
             website,
           }
@@ -781,11 +779,8 @@ const EventCreator = ({
           totalPriceMode,
           website,
           date: tempFlights[0].date,
-          startTime: dateToString(rCTFF(flights[0].data.timings[0]), 'yyyy-MM-dd HH:mm'),
-          endTime: dateToString(
-            rCTFF(flights[flights.length - 1].data.timings[1]),
-            'yyyy-MM-dd HH:mm'
-          ),
+          startTime: flights[0].data.timings[0],
+          endTime: flights[flights.length - 1].data.timings[1],
         }
         break
       case EVENT_TYPES[2]:
@@ -974,6 +969,7 @@ const EventCreator = ({
       requestOptions
     )
     const data = await results.json()
+    console.log('data', data)
     return data
   }
 

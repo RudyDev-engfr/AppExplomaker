@@ -13,6 +13,7 @@ import {
   addOrSubTravelTime,
   applyTimezoneOffsetFromAmadeus,
   dateToString,
+  formatDateInTimezone,
   rCTFF,
   renderStopoverTime,
   stringToDate,
@@ -98,10 +99,6 @@ const FlightPreview = ({ flightArray }) => {
   const firstFlightFirstDeparture = flightArray[0].data.timings[0]
   const lastFlightLastArrival = flightArray[flightArray.length - 1].data.timings[1]
 
-  useEffect(() => {
-    console.log('premier départ', dateToString(rCTFF(flightArray[0].data.timings[0]), 'HH:mm'))
-  }, [flightArray])
-
   return (
     <>
       {/* --------------------------- First Departure ------------------------------- */}
@@ -121,11 +118,14 @@ const FlightPreview = ({ flightArray }) => {
         </Box>
         <Box className={classes.fontRight}>
           <Typography component="h4" className={classes.hourTypo}>
-            {/* {dateToString(flightArray[0].data.timings[0], 'HH:mm')} */}
+            {dateToString(
+              stringToDate(flightArray[0].data.timings[0], 'yyyy-MM-dd HH:mm'),
+              'HH:mm'
+            )}
           </Typography>
           <Typography variant="body2" className={classes.durationTypo}>
             Vol:
-            {flightArray[0].data.airports.length > 2
+            {flightArray[0].data.legs.length > 1
               ? `${flightArray[0].data.legs[0].hours} h ${flightArray[0].data.legs[0].minutes} min`
               : formatDuration(
                   intervalToDuration({
