@@ -23,8 +23,9 @@ const useStyles = makeStyles(theme => ({
   iconContainer: {
     padding: '10px 12px',
     borderRadius: '50px',
-    width: '40px',
-    height: '40px',
+    width: '48px',
+    height: '48px',
+    // IMPORTANT 41PX EST CHOISI PRECISEMENT POUR QUE LA TIMELINE FONCTIONNE PARFAITEMENT
     backgroundColor: theme.palette.primary.main,
     display: 'flex',
     alignItems: 'center',
@@ -77,7 +78,7 @@ const EventsTimeline = ({ currentEvents, canEdit, handleOpenDropdown }) => {
               <TimelineConnector classes={{ root: classes.MuiTimelineConnectorDashed }} />
               <Box sx={{ padding: '8px 0' }}>
                 <Typography sx={{ fontSize: '14px', textAlign: 'center', marginBottom: '10px' }}>
-                  {event.type === EVENT_TYPES[1] &&
+                  {(event.type === EVENT_TYPES[1] || event.type === EVENT_TYPES[3]) &&
                     (isSameDay(
                       stringToDate(event?.startTime, 'yyyy-MM-dd HH:mm'),
                       selectedDateOnPlanning
@@ -92,6 +93,26 @@ const EventsTimeline = ({ currentEvents, canEdit, handleOpenDropdown }) => {
                             'HH:mm'
                           )}`
                       : '')}
+                  {(event.type === EVENT_TYPES[2] || event.type === EVENT_TYPES[4]) &&
+                    (isSameDay(
+                      stringToDate(event?.startTime, 'yyyy-MM-dd HH:mm'),
+                      selectedDateOnPlanning
+                    )
+                      ? dateToString(stringToDate(event?.startTime, 'yyyy-MM-dd HH:mm'), 'HH:mm')
+                      : '')}
+                  {event.type === EVENT_TYPES[0] &&
+                    (isSameDay(
+                      stringToDate(event?.startTime, 'yyyy-MM-dd HH:mm'),
+                      selectedDateOnPlanning
+                    )
+                      ? `Arrivée ${dateToString(
+                          stringToDate(event?.startTime, 'yyyy-MM-dd HH:mm'),
+                          'HH:mm'
+                        )}`
+                      : !isSameDay(
+                          stringToDate(event?.endTime, 'yyyy-MM-dd HH:mm'),
+                          selectedDateOnPlanning
+                        ) && 'Nuit')}
                 </Typography>
                 <Box className={classes.iconContainer}>
                   <Box
@@ -106,32 +127,7 @@ const EventsTimeline = ({ currentEvents, canEdit, handleOpenDropdown }) => {
                   />
                 </Box>
                 <Typography sx={{ fontSize: '14px', textAlign: 'center' }}>
-                  {event.type !== EVENT_TYPES[0] &&
-                    event.type !== EVENT_TYPES[1] &&
-                    (isSameDay(
-                      stringToDate(event?.startTime, 'yyyy-MM-dd HH:mm'),
-                      selectedDateOnPlanning
-                    )
-                      ? isSameDay(
-                          stringToDate(event?.endTime, 'yyyy-MM-dd HH:mm'),
-                          selectedDateOnPlanning
-                        )
-                        ? dateToString(stringToDate(event?.startTime, 'yyyy-MM-dd HH:mm'), 'HH:mm')
-                        : 'Jour'
-                      : '')}
-                  {event.type === EVENT_TYPES[0] &&
-                    (isSameDay(
-                      stringToDate(event?.startTime, 'yyyy-MM-dd HH:mm'),
-                      selectedDateOnPlanning
-                    )
-                      ? dateToString(stringToDate(event?.startTime, 'yyyy-MM-dd HH:mm'), 'HH:mm')
-                      : isSameDay(
-                          stringToDate(event?.endTime, 'yyyy-MM-dd HH:mm'),
-                          selectedDateOnPlanning
-                        )
-                      ? dateToString(stringToDate(event?.endTime, 'yyyy-MM-dd HH:mm'), 'HH:mm')
-                      : 'Nuit')}
-                  {event.type === EVENT_TYPES[1] &&
+                  {(event.type === EVENT_TYPES[1] || event.type === EVENT_TYPES[3]) &&
                     (isSameDay(
                       stringToDate(event?.endTime, 'yyyy-MM-dd HH:mm'),
                       selectedDateOnPlanning
@@ -145,6 +141,23 @@ const EventsTimeline = ({ currentEvents, canEdit, handleOpenDropdown }) => {
                             stringToDate(event?.endTime, 'yyyy-MM-dd HH:mm'),
                             'HH:mm'
                           )}`
+                      : '')}
+                  {(event.type === EVENT_TYPES[2] || event.type === EVENT_TYPES[4]) &&
+                    (isSameDay(
+                      stringToDate(event?.endTime, 'yyyy-MM-dd HH:mm'),
+                      selectedDateOnPlanning
+                    )
+                      ? dateToString(stringToDate(event?.endTime, 'yyyy-MM-dd HH:mm'), 'HH:mm')
+                      : '')}
+                  {event.type === EVENT_TYPES[0] &&
+                    (isSameDay(
+                      stringToDate(event?.endTime, 'yyyy-MM-dd HH:mm'),
+                      selectedDateOnPlanning
+                    )
+                      ? `Départ ${dateToString(
+                          stringToDate(event?.endTime, 'yyyy-MM-dd HH:mm'),
+                          'HH:mm'
+                        )}`
                       : '')}
                 </Typography>
               </Box>

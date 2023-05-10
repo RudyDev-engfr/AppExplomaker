@@ -134,42 +134,6 @@ const EventCard = ({
                         )}`}
                   </Typography>
                 )} */}
-              {eventType === EVENT_TYPES[3] && (
-                <Typography color="primary" className={classes.date}>
-                  {isSameDay(
-                    stringToDate(currentEvent.transports[0].startTime),
-                    stringToDate(
-                      currentEvent.transports[currentEvent.transports.length - 1].endTime
-                    )
-                  )
-                    ? `${format(
-                        stringToDate(currentEvent.transports[0].startTime),
-                        isWithoutDate ? 'd MMMM | HH:mm' : 'HH:mm',
-                        {
-                          locale: frLocale,
-                        }
-                      )} - ${format(
-                        stringToDate(
-                          currentEvent.transports[currentEvent.transports.length - 1].endTime
-                        ),
-                        'HH:mm',
-                        {
-                          locale: frLocale,
-                        }
-                      )}`
-                    : `${format(stringToDate(currentEvent.transports[0].startTime), 'd MMMM', {
-                        locale: frLocale,
-                      })} - ${format(
-                        stringToDate(
-                          currentEvent.transports[currentEvent.transports.length - 1].endTime
-                        ),
-                        'd MMMM',
-                        {
-                          locale: frLocale,
-                        }
-                      )}`}
-                </Typography>
-              )}
               {canEdit && (
                 <CardActions sx={{ padding: '0', position: 'absolute', right: '2%', top: '2%' }}>
                   <IconButton
@@ -217,16 +181,20 @@ const EventCard = ({
                       ? `${currentEvent.flights.length - 1} escale${
                           currentEvent.flights.length - 1 > 1 ? 's' : ''
                         }`
+                      : currentEvent.flights[0].data.legs.length > 1
+                      ? `${currentEvent.flights[0].data.legs.length - 1} escale${
+                          currentEvent.flights[0].data.legs.length - 1 > 1 ? 's' : ''
+                        }`
                       : 'Vol direct'}
                   </Typography>
-                  <Typography>{`Arrivée prévue : ${
+                  {/* <Typography>{`Arrivée prévue : ${
                     currentEvent.flights[currentEvent.flights.length - 1].data.timings[1]
                       ? rCTFF(
                           currentEvent.flights[currentEvent.flights.length - 1].data?.timings[1],
                           'HH:mm'
                         )
                       : "Heure d'arrivée non disponible"
-                  }`}</Typography>
+                  }`}</Typography> */}
                 </Box>
               )}
               <CustomAvatar

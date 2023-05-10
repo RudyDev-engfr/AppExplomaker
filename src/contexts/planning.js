@@ -255,10 +255,14 @@ const PlanningContextProvider = ({ children }) => {
 
   useEffect(() => {
     if (currentView === 'chronoFeed' && singleDayPlannedEvents?.length > 1) {
+      const uniqueIds = new Set()
       setCurrentEvents({
-        surveys: singleDayPlannedEvents.filter(
-          plannedEvent => plannedEvent.isSurvey && !plannedEvent.itsAllDayLong
-        ),
+        surveys: singleDayPlannedEvents.filter(plannedEvent => {
+          if (plannedEvent.isSurvey) {
+            return true
+          }
+          return false
+        }),
         events: singleDayPlannedEvents.filter(
           plannedEvent => !plannedEvent.itsAllDayLong && !plannedEvent.isSurvey
         ),

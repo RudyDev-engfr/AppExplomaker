@@ -1047,7 +1047,7 @@ const Planning = ({ tripData, tripId, canEdit }) => {
         {currentView === 'planning' && (
           <>
             <Paper className={classes.previewPaper}>
-              <Container>
+              <Container sx={{ paddingLeft: '15px !important' }}>
                 <Box sx={{ margin: '32px 0', display: 'flex', alignItems: 'center' }}>
                   <IconButton
                     onClick={() => {
