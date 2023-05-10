@@ -102,27 +102,23 @@ const PlanningFeed = ({ propsClasses, setCurrentView }) => {
                 ))}
             {singleDayPlannedEvents?.length >= 1 &&
               singleDayPlannedEvents
-                .filter(plannedEvent => plannedEvent.isSurvey)
-                .map(plannedSurvey =>
-                  plannedSurvey.propositions
-                    .filter(plannedProposition =>
-                      isSameDay(
-                        stringToDate(plannedProposition.fakeDate, 'yyyy-MM-dd HH:mm').getTime(),
-                        stringToDate(dateToString(day), 'yyyy-MM-dd').getTime()
-                      )
-                    )
-                    .sort(compare)
-                    .map(plannedProposition => (
-                      <MiniEventCard
-                        plannedEvent={plannedProposition}
-                        plannedSurvey={plannedSurvey}
-                        key={plannedProposition.title}
-                        setCurrentView={setCurrentView}
-                        surveyId={plannedSurvey.id}
-                        day={day}
-                      />
-                    ))
-                )}
+                ?.filter(plannedEvent => plannedEvent?.isSurvey)
+                .filter(plannedProposition =>
+                  isSameDay(
+                    stringToDate(plannedProposition.fakeDate, 'yyyy-MM-dd HH:mm').getTime(),
+                    stringToDate(dateToString(day), 'yyyy-MM-dd').getTime()
+                  )
+                )
+                .sort(compare)
+                .map(plannedProposition => (
+                  <MiniEventCard
+                    plannedEvent={plannedProposition}
+                    key={plannedProposition.title}
+                    setCurrentView={setCurrentView}
+                    eventId={plannedProposition.id}
+                    day={day}
+                  />
+                ))}
           </Box>
         ))}
     </Box>

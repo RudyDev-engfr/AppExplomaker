@@ -98,7 +98,9 @@ const MiniEventCard = ({ plannedEvent, setCurrentView, surveyId, plannedSurvey, 
       <Button
         className={classes.miniaEventTypoContainer}
         sx={{
-          backgroundColor: surveyId ? `${theme.palette.primary.ultraLight} !important ` : 'white',
+          backgroundColor: plannedEvent.isSurvey
+            ? `${theme.palette.primary.ultraLight} !important `
+            : 'white',
         }}
         onClick={() => {
           setSelectedDateOnPlanning(day)

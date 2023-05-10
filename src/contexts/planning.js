@@ -257,7 +257,7 @@ const PlanningContextProvider = ({ children }) => {
     if (currentView === 'chronoFeed' && singleDayPlannedEvents?.length > 1) {
       const uniqueIds = new Set()
       setCurrentEvents({
-        surveys: singleDayPlannedEvents.filter(plannedEvent => {
+        surveys: plannedEvents.filter(plannedEvent => {
           if (plannedEvent.isSurvey) {
             return true
           }
@@ -714,12 +714,12 @@ const PlanningContextProvider = ({ children }) => {
                     tempPlannedProposition.type = plannedEvent.type
                     tempPlannedProposition.isSurvey = true
                     tempPropositions.push(tempPlannedProposition)
+                    singleDayEventsArray.push(tempPlannedProposition)
                   })
                 }
               })
             }
-            tempPlannedSurvey.propositions = tempPropositions
-            singleDayEventsArray.push(tempPlannedSurvey)
+            // tempPlannedSurvey.propositions = tempPropositions
           } else {
             const plannedEventInterval = eachDayOfInterval({
               start: stringToDate(plannedEvent.startTime, 'yyyy-MM-dd HH:mm'),
