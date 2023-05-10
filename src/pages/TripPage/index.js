@@ -87,6 +87,7 @@ import TripLogs from './TripLogs'
 import usePrevious from '../../hooks/usePrevious'
 import { TripContext } from '../../contexts/trip'
 import MobileTripPageHeader from '../../components/molecules/MobileTripPageHeader'
+import SocialNavbar from './SocialNavbar'
 
 const notifications = [
   {
@@ -2232,6 +2233,7 @@ const TripPage = () => {
           </Fab>
         </Box>
       )}
+      {canEdit && !matchesXs && <SocialNavbar />}
     </>
   )
 }
