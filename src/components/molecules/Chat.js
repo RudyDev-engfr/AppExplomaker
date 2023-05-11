@@ -28,6 +28,7 @@ const useStyles = makeStyles(theme => ({
   basePaper: {
     width: '350px',
     borderLeft: 'unset',
+    maxHeight: '100vh',
     [theme.breakpoints.down('sm')]: {
       width: '100vw',
       height: '100vh',
@@ -154,17 +155,23 @@ const Chat = ({ isChatOpen, setIsChatOpen, chats, tripId }) => {
     <Drawer
       variant="persistent"
       anchor="right"
-      open={isChatOpen}
+      open={isChatOpen === 'userChat'}
       PaperProps={{ className: classes.basePaper }}
     >
-      <Box display="flex" flexDirection="column" alignItems="center" mt={4}>
+      <Box display="flex" flexDirection="column" alignItems="center">
         <Box
           display="flex"
           flexDirection={matchesXs ? 'row' : 'column'}
           alignItems="center"
           width="100%"
           justifyContent={matchesXs ? 'space-evenly' : 'normal'}
+          sx={{ maxHeight: '140px' }}
         >
+          {!matchesXs && (
+            <Box
+              sx={{ height: '64px', width: '100%', backgroundColor: theme.palette.primary.main }}
+            />
+          )}
           {matchesXs && (
             <Box position="absolute" left="20px">
               <IconButton
@@ -178,9 +185,10 @@ const Chat = ({ isChatOpen, setIsChatOpen, chats, tripId }) => {
               </IconButton>
             </Box>
           )}
-
-          <Typography variant="h4">Messages</Typography>
-          <Box display="flex" mt={matchesXs ? 0 : 2}>
+          <Box sx={{ paddingTop: '30px' }}>
+            <Typography variant="h4">Discussion</Typography>
+          </Box>
+          {/* <Box display="flex">
             {chatNames.map((chatName, index) => (
               <IconButton
                 key={uuidv4()}
@@ -191,7 +199,7 @@ const Chat = ({ isChatOpen, setIsChatOpen, chats, tripId }) => {
                 })}
                 size="large"
               >
-                {/* index === 0 ? (
+                index === 0 ? (
                 <img
                   style={
                     openChat === chatName
@@ -206,11 +214,11 @@ const Chat = ({ isChatOpen, setIsChatOpen, chats, tripId }) => {
                 />
               ) : (
                 <PersonRounded />
-              ) */}
+              ) 
                 <PersonRounded />
               </IconButton>
             ))}
-          </Box>
+          </Box> */}
         </Box>
         <Paper elevation={0} className={classes.chatsPaper}>
           <Paper className={classes.chatHeader}>
@@ -263,7 +271,7 @@ const Chat = ({ isChatOpen, setIsChatOpen, chats, tripId }) => {
   )
 }
 
-const ChatBox = ({ messages, dummy }) => {
+export const ChatBox = ({ messages, dummy }) => {
   const [currentMessages, setCurrentMessages] = useState([])
 
   useEffect(() => {
@@ -294,7 +302,7 @@ const ChatBox = ({ messages, dummy }) => {
   )
 }
 
-const ChatMessage = ({ createdAt, userId, text = '', groupDate }) => {
+export const ChatMessage = ({ createdAt, userId, text = '', groupDate }) => {
   const classes = useStyles()
   const theme = useTheme()
   const { user } = useContext(SessionContext)

@@ -88,6 +88,7 @@ import usePrevious from '../../hooks/usePrevious'
 import { TripContext } from '../../contexts/trip'
 import MobileTripPageHeader from '../../components/molecules/MobileTripPageHeader'
 import SocialNavbar from './SocialNavbar'
+import AIChatWindow from '../../components/AI/AIChatWindow'
 
 const notifications = [
   {
@@ -775,13 +776,13 @@ const TripPage = () => {
     }
   }, [currentActiveTab])
 
-  useEffect(() => {
-    if (matches1600 && isChatOpen) {
-      setIsChatOpen(false)
-    } else if (canEdit && !matchesXs && !matches1600) {
-      setIsChatOpen(true)
-    }
-  }, [matches1600, matchesXs])
+  // useEffect(() => {
+  //   if (matches1600 && isChatOpen) {
+  //     setIsChatOpen(false)
+  //   } else if (canEdit && !matchesXs && !matches1600) {
+  //     setIsChatOpen(true)
+  //   }
+  // }, [matches1600, matchesXs])
 
   useEffect(() => {
     if (tripData) {
@@ -1014,7 +1015,20 @@ const TripPage = () => {
         )}
       />
       {canEdit && (
-        <Chat isChatOpen={isChatOpen} chats={chats} tripId={tripId} setIsChatOpen={setIsChatOpen} />
+        <>
+          <Chat
+            isChatOpen={isChatOpen}
+            chats={chats}
+            tripId={tripId}
+            setIsChatOpen={setIsChatOpen}
+          />
+          <AIChatWindow
+            isChatOpen={isChatOpen}
+            chats={chats}
+            tripId={tripId}
+            setIsChatOpen={setIsChatOpen}
+          />
+        </>
       )}
       <Box component="section" className={classes.content}>
         <Box
@@ -2220,7 +2234,7 @@ const TripPage = () => {
           </div>
         </div>
       </Modal>
-      {canEdit && !matchesXs && (
+      {/* {canEdit && !matchesXs && (
         <Box
           display={matchesXs ? 'block' : 'none'}
           className={clsx(classes.chatBtn, {
@@ -2232,7 +2246,7 @@ const TripPage = () => {
             <ForumRounded />
           </Fab>
         </Box>
-      )}
+      )} */}
       {canEdit && !matchesXs && <SocialNavbar />}
     </>
   )

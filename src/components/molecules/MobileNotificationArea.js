@@ -33,38 +33,38 @@ const MobileNotificationArea = ({
 
   return (
     <>
-      <Badge
-        badgeContent={
-          isMyTrips
-            ? user.notifications.filter(notification => notification?.state === 1).length
-            : user?.notifications.filter(
-                notification => notification?.tripId === tripId && notification?.state === 1
-              ).length
-        }
-        color="secondary"
-      >
-        <IconButton
-          onClick={() => {
-            setRefreshNotif(true)
-            handleOpen()
-            setNotificationsToNewStateOnTrip(user, tripId, 2)
-          }}
-          sx={{
+      <IconButton
+        onClick={() => {
+          setRefreshNotif(true)
+          handleOpen()
+          setNotificationsToNewStateOnTrip(user, tripId, 2)
+        }}
+        sx={{
+          backgroundColor:
+            user?.notifications?.filter(notification => notification.state === 1).length > 0
+              ? theme.palette.primary.ultraLight
+              : 'white',
+          '&:hover': {
             backgroundColor:
               user?.notifications?.filter(notification => notification.state === 1).length > 0
                 ? theme.palette.primary.ultraLight
                 : 'white',
-            '&:hover': {
-              backgroundColor:
-                user?.notifications?.filter(notification => notification.state === 1).length > 0
-                  ? theme.palette.primary.ultraLight
-                  : 'white',
-            },
-          }}
+          },
+        }}
+      >
+        <Badge
+          badgeContent={
+            isMyTrips
+              ? user.notifications.filter(notification => notification?.state === 1).length
+              : user?.notifications.filter(
+                  notification => notification?.tripId === tripId && notification?.state === 1
+                ).length
+          }
+          color="secondary"
         >
           <Notifications />
-        </IconButton>
-      </Badge>
+        </Badge>
+      </IconButton>
       <MobileNotificationModal open={open} setOpen={setOpen} />
     </>
   )

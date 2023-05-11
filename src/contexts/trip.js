@@ -3,7 +3,7 @@ import { useTheme } from '@mui/styles'
 import React, { useState, useEffect, createContext, useContext } from 'react'
 import { useParams } from 'react-router-dom'
 import { toast } from 'react-toastify'
-import { rCTFF } from '../helper/functions'
+import { buildNotificationsOnTripForUser, rCTFF } from '../helper/functions'
 
 import { FirebaseContext } from './firebase'
 import { SessionContext } from './session'
@@ -16,10 +16,16 @@ const TripContextProvider = ({ children }) => {
   // const { user } = useContext(SessionContext)
   // const { tripId } = useParams()
   const theme = useTheme()
+  const { tripId } = useParams()
   const matchesXs = useMediaQuery(theme.breakpoints.down('sm'))
   const matches1600 = useMediaQuery('(max-width:1600px)')
+  const { user } = useContext(SessionContext)
   const [deleteEventNotifications, setDeleteEventNotifications] = useState(false)
   const [tripData, setTripData] = useState()
+
+  // use to handle Notifications
+  const [currentNotifications, setCurrentNotifications] = useState([])
+  const [refreshNotif, setRefreshNotif] = useState(false)
 
   // use to handle events
   const [eventType, setEventType] = useState()
@@ -29,7 +35,7 @@ const TripContextProvider = ({ children }) => {
   const [currentView, setCurrentView] = useState('chronoFeed')
   const [selectedDateOnPlanning, setSelectedDateOnPlanning] = useState('')
 
-  const [isChatOpen, setIsChatOpen] = useState(!matchesXs && !matches1600)
+  const [isChatOpen, setIsChatOpen] = useState('')
 
   const [currentEvent, setCurrentEvent] = useState()
   const [openModal, setOpenModal] = useState('')
@@ -90,6 +96,14 @@ const TripContextProvider = ({ children }) => {
   //     setAllowDeleteNotif(false)
   //   }
   // }, [allowDeleteNotif])
+  useEffect(() => {
+    if (tripData && user && refreshNotif) {
+      const tempNotif = buildNotificationsOnTripForUser(user, tripId)
+      setCurrentNotifications(tempNotif)
+      setRefreshNotif(false)
+    }
+    console.log('le voyage avec ses notifs', user.notifications)
+  }, [tripData, user, refreshNotif])
 
   useEffect(() => {
     if (
@@ -141,6 +155,10 @@ const TripContextProvider = ({ children }) => {
         setCurrentActiveTab,
         currentActiveMobileNavTab,
         setCurrentActiveMobileNavTab,
+        currentNotifications,
+        setCurrentNotifications,
+        refreshNotif,
+        setRefreshNotif,
       }}
     >
       {children}

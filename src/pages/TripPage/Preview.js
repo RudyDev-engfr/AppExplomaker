@@ -237,21 +237,18 @@ const Preview = ({
 
   const { dictionary } = useContext(FirebaseContext)
   const { user } = useContext(SessionContext)
-  const { currentDateRange, setCurrentDateRange, days, setSelectedDateOnPlanning } =
-    useContext(TripContext)
+  const {
+    currentDateRange,
+    setCurrentDateRange,
+    days,
+    setSelectedDateOnPlanning,
+    currentNotifications,
+    setCurrentNotifications,
+    refreshNotif,
+    setRefreshNotif,
+  } = useContext(TripContext)
 
   const [generatedAvatars, setGeneratedAvatars] = useState([])
-  const [currentNotifications, setCurrentNotifications] = useState([])
-  const [refreshNotif, setRefreshNotif] = useState(false)
-
-  useEffect(() => {
-    if (tripData && user && refreshNotif) {
-      const tempNotif = buildNotificationsOnTripForUser(user, tripId)
-      setCurrentNotifications(tempNotif)
-      setRefreshNotif(false)
-    }
-    console.log('le voyage avec ses notifs', user.notifications)
-  }, [tripData, user, refreshNotif])
 
   useEffect(() => {
     console.log('les notifs que je veux afficher', currentNotifications)
