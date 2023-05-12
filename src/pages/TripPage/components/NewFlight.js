@@ -18,18 +18,20 @@ const useStyles = makeStyles(theme => ({
     display: 'grid',
     gridTemplate: 'auto / 1fr 1fr',
     gridGap: theme.spacing(2.5),
-    padding: theme.spacing(2),
     backgroundColor: theme.palette.grey.f7,
     borderRadius: '10px',
   },
   flightNumberInput: {
     maxHeight: '56px',
   },
-  bold: {
-    fontWeight: 'bold',
-  },
   gridButton: {
     gridColumn: '1 / 3',
+    color: 'white',
+    backgroundColor: theme.palette.primary.main,
+    '&:hover': {
+      color: 'white',
+      backgroundColor: theme.palette.primary.main,
+    },
   },
   flightDataTextfield: {
     gridColumn: '1 / 3',
@@ -123,7 +125,20 @@ const NewFlight = ({
 
   return (
     <Box className={classes.marginBottom}>
-      <Typography variant="h3" className={classes.bold}>
+      <Typography
+        component="h3"
+        sx={{
+          fontSize: '28px',
+          fontWeight: '400',
+          marginBottom: '20px',
+          fontFamily: 'Vesper Libre',
+          [theme.breakpoints.down('sm')]: {
+            fontFamily: theme.typography.fontFamily,
+            fontSize: '28px',
+            marginBottom: '20px',
+          },
+        }}
+      >
         Vol{shouldHaveNumber && ` nº${index + 1}`}
       </Typography>
       <Box className={classes.gridContainer}>
@@ -162,8 +177,16 @@ const NewFlight = ({
             onClick={() => handleChange(fetchFlight(index), 'data')}
             disabled={number.length < 3 || !needFetch}
             className={classes.gridButton}
+            sx={{
+              width: '140px',
+              justifySelf: 'center',
+              '&.Mui-disabled': {
+                backgroundColor: theme.palette.grey.f7,
+                border: '1px solid lightgrey',
+              },
+            }}
           >
-            {isFetching ? <CircularProgress color="primary" size={24} /> : 'Valider le vol'}
+            {isFetching ? <CircularProgress sx={{ color: 'white' }} size={24} /> : 'Valider le vol'}
           </Button>
         )}
         {displayHelperText === 'flightNotFound' && (

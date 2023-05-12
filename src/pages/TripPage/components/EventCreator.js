@@ -964,8 +964,8 @@ const EventCreator = ({
 
     const results = await fetch(
       window.location.hostname === 'localhost'
-        ? 'http://localhost:5001/explomaker-3010b/us-central1/checkFlightNumber'
-        : 'https://us-central1-explomaker-3010b.cloudfunctions.net/checkFlightNumber',
+        ? 'http://localhost:5001/explomaker-3010b/us-central1/getFlightInformations'
+        : 'https://us-central1-explomaker-3010b.cloudfunctions.net/getFlightInformations',
       requestOptions
     )
     const data = await results.json()
@@ -991,7 +991,12 @@ const EventCreator = ({
             display: 'flex',
             justifyContent: 'space-between',
             alignItems: 'center',
+            backgroundColor: 'white',
             padding: '15px',
+            [theme.breakpoints.down('sm')]: {
+              padding: '15px',
+              paddingRight: '45px',
+            },
           }}
         >
           {matchesXs ? (
@@ -1017,7 +1022,7 @@ const EventCreator = ({
               <ArrowBackIosIcon style={{ transform: 'translate(5px ,0)' }} />
             </IconButton>
           )}
-          <Typography variant="h5" align="center" sx={{ fontWeight: 'bold' }}>
+          <Typography variant="h5" align="center" sx={{ fontWeight: 'bold', padding: '0' }}>
             {editMode ? 'Modifier' : 'Ajouter'} un
             {isNewProposition || isPropositionInEdition
               ? "e proposition d'"
@@ -1080,9 +1085,9 @@ const EventCreator = ({
         >
           <Box
             sx={{
-              margin: '2rem 2rem',
+              padding: '15px',
               [theme.breakpoints.down('sm')]: {
-                margin: '20px 30px',
+                padding: '0 30px 30px 15px',
               },
             }}
           >

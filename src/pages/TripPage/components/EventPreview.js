@@ -426,7 +426,7 @@ const EventPreview = ({
                   justifyContent="flex-start"
                   flexWrap="wrap"
                 >
-                  {currentEvent.location?.photos?.length ? (
+                  {currentEvent?.location?.photos?.length > 0 ? (
                     <Carousel
                       swipe
                       animation="slide"
@@ -450,11 +450,13 @@ const EventPreview = ({
                         ))}
                     </Carousel>
                   ) : (
-                    <PlanningCardIcon
-                      icon={currentEvent.icon}
-                      eventType={currentEventType}
-                      size="100px"
-                    />
+                    <Box className={classes.cardIconContainer}>
+                      <PlanningCardIcon
+                        icon={currentEvent.icon}
+                        eventType={currentEventType}
+                        size="100px"
+                      />
+                    </Box>
                   )}
                 </Box>
               )}

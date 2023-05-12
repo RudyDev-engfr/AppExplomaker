@@ -13,7 +13,7 @@ const useStyles = makeStyles(theme => ({
     zIndex: 100000,
     top: '0',
     right: '0',
-    width: '180px',
+    width: '200px',
     boxShadow: 'unset',
   },
 }))
@@ -39,7 +39,6 @@ const SocialNavbar = () => {
         >
           <MenuIcon />
         </IconButton> */}
-        <Box sx={{ flexGrow: 1 }} />
         <Box sx={{ display: { xs: 'none', md: 'flex' } }}>
           <IconButton
             size="large"
@@ -51,23 +50,29 @@ const SocialNavbar = () => {
                 setIsChatOpen('AIChat')
               }
             }}
+            sx={{
+              color: isChatOpen === 'AIChat' ? theme.palette.primary.main : 'white',
+              backgroundColor: isChatOpen === 'AIChat' ? 'white' : theme.palette.primary.main,
+              '&:hover': {
+                color: isChatOpen === 'AIChat' ? theme.palette.primary.main : 'white',
+                backgroundColor: isChatOpen === 'AIChat' ? 'white' : theme.palette.primary.main,
+              },
+              width: '48px',
+              height: '48px',
+            }}
           >
             <Badge color="error">
               <SmartToy />
             </Badge>
           </IconButton>
-          <IconButton size="large" color="inherit">
-            <Badge color="error">
-              <NotificationArea
-                tripData={tripData}
-                currentNotifications={currentNotifications}
-                setRefreshNotif={setRefreshNotif}
-                tripId={tripId}
-                isChatOpen={isChatOpen}
-                setIsChatOpen={setIsChatOpen}
-              />
-            </Badge>
-          </IconButton>
+          <NotificationArea
+            tripData={tripData}
+            currentNotifications={currentNotifications}
+            setRefreshNotif={setRefreshNotif}
+            tripId={tripId}
+            isChatOpen={isChatOpen}
+            setIsChatOpen={setIsChatOpen}
+          />
           <IconButton
             onClick={() => {
               if (isChatOpen === 'userChat') {
@@ -77,6 +82,16 @@ const SocialNavbar = () => {
               }
             }}
             color="inherit"
+            sx={{
+              color: isChatOpen === 'userChat' ? theme.palette.primary.main : 'white',
+              backgroundColor: isChatOpen === 'userChat' ? 'white' : theme.palette.primary.main,
+              '&:hover': {
+                color: isChatOpen === 'userChat' ? theme.palette.primary.main : 'white',
+                backgroundColor: isChatOpen === 'userChat' ? 'white' : theme.palette.primary.main,
+              },
+              width: '48px',
+              height: '48px',
+            }}
           >
             <ForumOutlined />
           </IconButton>

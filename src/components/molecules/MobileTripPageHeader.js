@@ -36,9 +36,10 @@ const MobileTripPageHeader = () => {
           fontWeight: 700,
           padding: '40px 40px 5px 40px',
           minHeight: '125px',
+          maxHeight: '125px',
         }}
       >
-        {tripData?.title}
+        {tripData?.title?.length > 60 ? tripData?.title : tripData?.title?.substring(0, 50)}
       </Typography>
       <Box
         className={classes.tripPageTabsContainer}

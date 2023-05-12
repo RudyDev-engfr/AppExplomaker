@@ -78,38 +78,18 @@ const NotificationArea = ({
           aria-haspopup="true"
           onClick={handleClickNotif}
           sx={{
-            backgroundColor: isMyTrips
-              ? user?.notifications?.filter(notification => notification.state === 1).length > 0
-                ? theme.palette.primary.main
-                : 'white'
-              : user?.notifications?.filter(
-                  notification => notification?.state === 1 && notification?.tripId === tripId
-                ).length > 0
-              ? theme.palette.primary.main
-              : 'white',
+            color: isChatOpen === 'notifications' ? theme.palette.primary.main : 'white',
+            backgroundColor: isChatOpen === 'notifications' ? 'white' : theme.palette.primary.main,
             '&:hover': {
-              backgroundColor: isMyTrips
-                ? user?.notifications?.filter(notification => notification.state === 1).length > 0
-                  ? theme.palette.primary.main
-                  : 'white'
-                : user?.notifications?.filter(
-                    notification => notification?.state === 1 && notification?.tripId === tripId
-                  ).length > 0
-                ? theme.palette.primary.main
-                : 'white',
+              color: isChatOpen === 'notifications' ? theme.palette.primary.main : 'white',
+              backgroundColor:
+                isChatOpen === 'notifications' ? 'white' : theme.palette.primary.main,
             },
+            width: '48px',
+            height: '48px',
           }}
         >
-          <Notifications
-            sx={{
-              color: isMyTrips
-                ? user?.notifications?.filter(notification => notification.state === 1).length >
-                    0 && 'white'
-                : user?.notifications?.filter(
-                    notification => notification.state === 1 && notification.tripId === tripId
-                  ).length > 0 && 'white',
-            }}
-          />
+          <Notifications />
         </IconButton>
       </Badge>
       <NotificationAreaDrawer

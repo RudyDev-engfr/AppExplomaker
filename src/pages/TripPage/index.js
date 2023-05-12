@@ -1035,7 +1035,7 @@ const TripPage = () => {
           className={classes.innerContent}
           sx={{
             position: 'relative',
-            padding: canEdit ? '0 350px' : '0 0 0 350px',
+            padding: '0 0 0 350px',
             margin: '0 auto',
             '@media (max-width: 1600px)': {
               maxWidth: '100%',

@@ -45,7 +45,7 @@ const PlanningCardIcon = ({ icon, eventType, size = '30px', photo = false }) => 
     <Box className={classes.container}>
       <Box
         component="img"
-        src={photo}
+        src={photo || currentIcon}
         alt={icon}
         className={photo ? classes.photo : classes.icon}
         sx={{

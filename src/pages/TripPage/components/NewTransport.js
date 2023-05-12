@@ -88,8 +88,8 @@ const NewTransport = ({
       <Typography
         variant="h3"
         sx={{
-          fontSize: '30px',
-          fontWeight: '500',
+          fontSize: '28px',
+          fontWeight: '400',
           [theme.breakpoints.down('sm')]: {
             fontFamily: theme.typography.fontFamily,
             fontSize: '28px',
