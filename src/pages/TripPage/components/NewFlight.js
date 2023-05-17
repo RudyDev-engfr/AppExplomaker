@@ -1,5 +1,14 @@
 import React, { useContext, useEffect, useState } from 'react'
-import { Box, Button, CircularProgress, TextField, Typography, useTheme } from '@mui/material'
+import {
+  Box,
+  Button,
+  CircularProgress,
+  IconButton,
+  TextField,
+  Typography,
+  useTheme,
+} from '@mui/material'
+import { Remove } from '@mui/icons-material'
 import makeStyles from '@mui/styles/makeStyles'
 import DatePicker from '@mui/lab/DatePicker'
 import Info from '@mui/icons-material/Info'
@@ -11,15 +20,13 @@ import { PlanningContext } from '../../../contexts/planning'
 import { EVENT_TYPES } from '../../../helper/constants'
 
 const useStyles = makeStyles(theme => ({
-  marginBottom: {
-    marginBottom: theme.spacing(4),
-  },
   gridContainer: {
-    display: 'grid',
-    gridTemplate: 'auto / 1fr 1fr',
-    gridGap: theme.spacing(2.5),
+    display: 'flex',
+    flexDirection: 'column',
+    gridGap: '20px',
     backgroundColor: theme.palette.grey.f7,
     borderRadius: '10px',
+    padding: '30px 15px',
   },
   flightNumberInput: {
     maxHeight: '56px',
@@ -33,6 +40,10 @@ const useStyles = makeStyles(theme => ({
       backgroundColor: theme.palette.primary.main,
     },
   },
+  flightInfoTypo: {
+    gridColumn: '1 / 3',
+    color: theme.palette.grey['33'],
+  },
   flightDataTextfield: {
     gridColumn: '1 / 3',
   },
@@ -44,6 +55,7 @@ const useStyles = makeStyles(theme => ({
     padding: theme.spacing(2),
     gridColumn: '1 / 3',
     justifySelf: 'center',
+    alignSelf: 'center',
     borderRadius: '10px',
   },
   helperFlightNotFound: {
@@ -62,6 +74,7 @@ const NewFlight = ({
   shouldHaveNumber,
   date,
   number,
+  flights,
   setFlights,
   index,
   dateRange,
@@ -124,23 +137,48 @@ const NewFlight = ({
   }
 
   return (
-    <Box className={classes.marginBottom}>
-      <Typography
-        component="h3"
+    <Box>
+      <Box
         sx={{
-          fontSize: '28px',
-          fontWeight: '400',
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center',
           marginBottom: '20px',
-          fontFamily: 'Vesper Libre',
-          [theme.breakpoints.down('sm')]: {
-            fontFamily: theme.typography.fontFamily,
-            fontSize: '28px',
-            marginBottom: '20px',
-          },
         }}
       >
-        Vol{shouldHaveNumber && ` nº${index + 1}`}
-      </Typography>
+        {/* <Typography
+          component="h3"
+          sx={{
+            fontSize: '28px',
+            fontWeight: '400',
+            fontFamily: 'Vesper Libre',
+            [theme.breakpoints.down('sm')]: {
+              fontFamily: theme.typography.fontFamily,
+              fontSize: '28px',
+            },
+          }}
+        >
+          Vol{shouldHaveNumber && ` nº${index + 1}`}
+        </Typography> */}
+        {index > 0 && (
+          <Box sx={{ display: 'flex', alignItems: 'center' }}>
+            <IconButton
+              aria-label="delete flight"
+              onClick={() =>
+                setFlights(flights.filter((flight, flightIndex) => flightIndex !== index))
+              }
+              sx={{ padding: '0', mr: 2 }}
+            >
+              <Remove />
+            </IconButton>
+            <Typography
+              sx={{ fontSize: '17px', [theme.breakpoints.down('sm')]: { fontSize: '14px' } }}
+            >
+              Retirer ce vol
+            </Typography>
+          </Box>
+        )}
+      </Box>
       <Box className={classes.gridContainer}>
         <DatePicker
           label="Date du vol"
@@ -167,7 +205,7 @@ const NewFlight = ({
             <Typography
               variant="body2"
               sx={{ fontSize: '1rem', textAlign: 'center' }}
-              className={classes.gridButton}
+              className={classes.flightInfoTypo}
             >
               Vol trouvé
             </Typography>
@@ -184,6 +222,7 @@ const NewFlight = ({
                 backgroundColor: theme.palette.grey.f7,
                 border: '1px solid lightgrey',
               },
+              alignSelf: 'center',
             }}
           >
             {isFetching ? <CircularProgress sx={{ color: 'white' }} size={24} /> : 'Valider le vol'}
@@ -195,7 +234,7 @@ const NewFlight = ({
             <Typography
               variant="body2"
               sx={{ fontSize: '1rem', textAlign: 'center', color: theme.palette.secondary.main }}
-              className={classes.gridButton}
+              className={classes.flightInfoTypo}
             >
               Vol non trouvé
             </Typography>
@@ -204,7 +243,7 @@ const NewFlight = ({
 
         {currentFlightData && !needFetch && displayHelperText === 'flightFound' && (
           <>
-            <TextField
+            {/* <TextField
               readOnly
               value={currentFlightData.airports[0].label}
               label="Lieu de départ"
@@ -221,54 +260,68 @@ const NewFlight = ({
               renderInput={params => (
                 <TextField {...params} readOnly className={classes.flightDataTextfield} />
               )}
-            />
-            {currentFlightData.airports.length > 2 &&
-              currentFlightData.airports
-                .filter(
-                  (airport, airportIndex, airportArray) =>
-                    airportIndex !== 0 && airportIndex !== airportArray.length - 1
-                )
-                .map(airport => (
-                  <>
-                    <DateTimePicker
-                      inputVariant="filled"
-                      placeholder="__/__/____ __:__"
-                      format="dd/MM/yyyy HH:mm"
-                      ampm={false}
-                      disableOpenPicker
-                      value={add(rCTFF(currentFlightData.timings[0]), {
-                        hours: currentFlightData.legs[0].hours,
-                        minutes: currentFlightData.legs[0].minutes,
-                      })}
-                      label="Heure d'arrivée"
-                      renderInput={params => (
-                        <TextField {...params} readOnly className={classes.flightDataTextfield} />
-                      )}
-                    />
-                    <TextField
-                      readOnly
-                      value={airport.label}
-                      label="Lieu d'escale"
-                      className={classes.flightDataTextfield}
-                    />
-                    <DateTimePicker
-                      inputVariant="filled"
-                      placeholder="__/__/____ __:__"
-                      format="dd/MM/yyyy HH:mm"
-                      ampm={false}
-                      disableOpenPicker
-                      value={sub(rCTFF(currentFlightData.timings[1]), {
-                        hours: currentFlightData.legs[1].hours,
-                        minutes: currentFlightData.legs[1].minutes,
-                      })}
-                      label="Heure de départ"
-                      renderInput={params => (
-                        <TextField {...params} readOnly className={classes.flightDataTextfield} />
-                      )}
-                    />
-                  </>
-                ))}
-            <TextField
+            /> */}
+            {currentFlightData.legs.map((leg, legIndex) => (
+              <>
+                {legIndex === 0 && (
+                  <TextField
+                    readOnly
+                    value={
+                      flightData.airports
+                        .map(airport => {
+                          if (airport.iataCode === leg.departureIata) {
+                            return airport.label
+                          }
+                          return ''
+                        })
+                        .filter(label => label !== '')[0]
+                    }
+                    label="Lieu d'escale"
+                    className={classes.flightDataTextfield}
+                  />
+                )}
+                <DateTimePicker
+                  inputVariant="filled"
+                  placeholder="__/__/____ __:__"
+                  format="dd/MM/yyyy HH:mm"
+                  ampm={false}
+                  disableOpenPicker
+                  value={leg.departure_time}
+                  label="Heure de départ"
+                  renderInput={params => (
+                    <TextField {...params} readOnly className={classes.flightDataTextfield} />
+                  )}
+                />
+                <DateTimePicker
+                  inputVariant="filled"
+                  placeholder="__/__/____ __:__"
+                  format="dd/MM/yyyy HH:mm"
+                  ampm={false}
+                  disableOpenPicker
+                  value={leg.arrival_time}
+                  label="Heure d'arrivée"
+                  renderInput={params => (
+                    <TextField {...params} readOnly className={classes.flightDataTextfield} />
+                  )}
+                />
+                <TextField
+                  readOnly
+                  value={
+                    flightData.airports
+                      .map(airport => {
+                        if (airport.iataCode === leg.arrivalIata) {
+                          return airport.label
+                        }
+                        return ''
+                      })
+                      .filter(label => label !== '')[0]
+                  }
+                  label="Lieu d'escale"
+                  className={classes.flightDataTextfield}
+                />
+              </>
+            ))}
+            {/* <TextField
               readOnly
               value={currentFlightData.airports[currentFlightData.airports.length - 1].label}
               label="Lieu d'arrivée"
@@ -285,7 +338,7 @@ const NewFlight = ({
               renderInput={params => (
                 <TextField {...params} readOnly className={classes.flightDataTextfield} />
               )}
-            />
+            /> */}
           </>
         )}
       </Box>

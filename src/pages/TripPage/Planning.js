@@ -81,7 +81,8 @@ const useStyles = makeStyles(theme => ({
   calendarArea: {
     gridArea: 'calendarArea',
     display: 'grid',
-    gridTemplate: '1fr / 1fr',
+    gridTemplate: '1fr / 1fr 200px',
+    columnGap: '20px',
     alignItems: 'center',
     backgroundColor: '#FFFFFF',
     overflowY: 'auto',
@@ -175,7 +176,7 @@ const useStyles = makeStyles(theme => ({
     padding: '20px 20px 0',
     placeItems: 'center',
     borderRadius: '10px 10px 0 0',
-    backgroundColor: theme.palette.grey.f7,
+    backgroundColor: 'white',
     [theme.breakpoints.down('sm')]: {
       gridRowStart: 'mapArea',
       gridRowEnd: 'previewArea',
@@ -183,8 +184,9 @@ const useStyles = makeStyles(theme => ({
       maxHeight: '100vh',
       zIndex: '10000',
       margin: '0',
+      padding: '0',
+      paddingBottom: '80px',
       backgroundColor: 'white',
-      borderRadius: '30px 30px 0 0',
       '&::-webkit-scrollbar': {
         display: 'none',
       },

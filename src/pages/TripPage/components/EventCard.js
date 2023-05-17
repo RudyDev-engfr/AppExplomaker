@@ -176,7 +176,14 @@ const EventCard = ({
               )}
               {eventType === EVENT_TYPES[1] && (
                 <Box sx={{ marginBottom: theme.spacing(1) }}>
-                  <Typography className={classes.title} sx={{ marginBottom: '0!important' }}>
+                  <Typography
+                    sx={{
+                      marginBottom: '0!important',
+                      fontSize: '14px',
+                      fontWeight: '400',
+                      lineHeight: '18px',
+                    }}
+                  >
                     {currentEvent.flights.length > 1
                       ? `${currentEvent.flights.length - 1} escale${
                           currentEvent.flights.length - 1 > 1 ? 's' : ''

@@ -28,7 +28,7 @@ const useStyles = makeStyles(theme => ({
     justifyContent: 'center',
     alignItems: 'center',
     width: '50px',
-    margin: '1rem 0',
+    padding: '5px 0',
   },
   planeIcon: {
     fontSize: '30px',
@@ -101,32 +101,45 @@ const FlightPreview = ({ flightArray }) => {
 
   return (
     <>
-      {/* --------------------------- First Departure ------------------------------- */}
-      <Box className={classes.flightGrid} justifyContent="space-between" sx={{ marginTop: '15px' }}>
-        <Box className={classes.planeIconBack}>
-          <FlightTakeoffIcon className={classes.planeIcon} />
-        </Box>
-        <Box>
-          <Typography className={classes.airportLabelTypo}>
-            {flightArray[0].data.airports[0].label}
-          </Typography>
-          <Box>
-            <Typography className={classes.iataCodeTypo}>
-              {flightArray[0].data.airports[0].iataCode}
-            </Typography>
-          </Box>
-        </Box>
-        <Box className={classes.fontRight}>
-          <Typography component="h4" className={classes.hourTypo}>
-            {dateToString(
-              stringToDate(flightArray[0].data.timings[0], 'yyyy-MM-dd HH:mm'),
-              'HH:mm'
-            )}
-          </Typography>
-          <Typography variant="body2" className={classes.durationTypo}>
-            Vol:
-            {flightArray[0].data.legs.length > 1
-              ? `${flightArray[0].data.legs[0].hours} h ${flightArray[0].data.legs[0].minutes} min`
+      {flightArray.map((flight, flightIndex, currentFlightArray) =>
+        flight.data.legs.map((leg, legIndex, legArray) => (
+          <Box key={leg.departure_time}>
+            {flightIndex === 0 && legIndex === 0 && (
+              <>
+                {/* --------------------------- First Departure ------------------------------- */}
+                <Box
+                  className={classes.flightGrid}
+                  justifyContent="space-between"
+                  sx={{ marginTop: '15px' }}
+                >
+                  <Box className={classes.planeIconBack}>
+                    <FlightTakeoffIcon className={classes.planeIcon} />
+                  </Box>
+                  <Box>
+                    <Typography className={classes.airportLabelTypo}>
+                      {
+                        flight.data.airports
+                          .map(airport => {
+                            if (airport.iataCode === leg.departureIata) {
+                              return airport.label
+                            }
+                            return ''
+                          })
+                          .filter(label => label !== '')[0]
+                      }
+                    </Typography>
+                    <Box>
+                      <Typography className={classes.iataCodeTypo}>{leg.departureIata}</Typography>
+                    </Box>
+                  </Box>
+                  <Box className={classes.fontRight}>
+                    <Typography component="h4" className={classes.hourTypo}>
+                      {dateToString(stringToDate(leg.departure_time, 'yyyy-MM-dd HH:mm'), 'HH:mm')}
+                    </Typography>
+                    {/* <Typography variant="body2" className={classes.durationTypo}>
+                      Vol:
+                      {flightArray[0].data.legs.length > 1
+              ? `${flightArray[0].data.legs[0].duration.hours} h ${flightArray[0].data.legs[0].duration.minutes} min`
               : formatDuration(
                   intervalToDuration({
                     start: rCTFF(flightArray[0].data.timings[0]),
@@ -143,50 +156,55 @@ const FlightPreview = ({ flightArray }) => {
                   .replace('heure', 'h')
                   .replace('minutes', 'min')
                   .replace('minute', 'min')}
-          </Typography>
-        </Box>
-      </Box>
-      <Box className={classes.line}>
-        <img src={Line} alt="line" />
-      </Box>
-      {flightArray[0].data.airports.length > 2 &&
-        flightArray[0].data.airports
-          .filter((airport, airportIndex, currentAirports) => {
-            if (airportIndex === currentAirports.length - 1) {
-              return false
-            }
-            if (airportIndex === 0) {
-              return false
-            }
-            return true
-          })
-          .map((airport, airportIndex) => (
-            <>
-              {/* ---------------------------Implicite Arrival ------------------------------- */}
-              <Box className={classes.flightGrid} justifyContent="space-between">
-                <Box className={classes.planebackgTransit1}>
-                  <img
-                    className={classes.planeIconTransit}
-                    src={TransitPlane}
-                    alt="transit plane"
-                  />
+                    </Typography> */}
+                    {/* TODO A modifier */}
+                  </Box>
                 </Box>
-                <Box>
-                  <Typography className={classes.airportLabelTypo}>{airport.label}</Typography>
-                  <Typography className={classes.iataCodeTypo}>{airport.iataCode}</Typography>
+                <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                  <Box className={classes.line} sx={{ marginRight: '15px' }}>
+                    <img src={Line} alt="line" />
+                  </Box>
+                  <Box>
+                    <Typography className={classes.durationTypo}>
+                      temps de vol: {leg.duration.hours} h {leg.duration.minutes} min
+                    </Typography>
+                  </Box>
                 </Box>
-                <Box className={classes.fontRight}>
-                  <Typography component="h4" className={classes.hourTypo}>
-                    {addOrSubTravelTime(
-                      firstFlightFirstDeparture,
-                      flightArray[0].data.legs[0],
-                      'HH:mm',
-                      true,
-                      airport.timeZoneOffset
-                    )}
-                  </Typography>
-                  <Typography variant="body2" className={classes.durationTypo}>
-                    {`Escale: ${formatDuration(
+              </>
+            )}
+            {(flight.data.legs.length > 1 || currentFlightArray.length > 1) &&
+              legIndex === 0 &&
+              flightIndex === 0 && (
+                <Box className={classes.flightGrid} justifyContent="space-between">
+                  {/* ---------------------------Implicite Arrival ------------------------------- */}
+                  <Box className={classes.planebackgTransit1}>
+                    <img
+                      className={classes.planeIconTransit}
+                      src={TransitPlane}
+                      alt="transit plane"
+                    />
+                  </Box>
+                  <Box>
+                    <Typography className={classes.airportLabelTypo}>
+                      {
+                        flight.data.airports
+                          .map(airport => {
+                            if (airport.iataCode === leg.arrivalIata) {
+                              return airport.label
+                            }
+                            return ''
+                          })
+                          .filter(label => label !== '')[0]
+                      }
+                    </Typography>
+                    <Typography className={classes.iataCodeTypo}>{leg.arrivalIata}</Typography>
+                  </Box>
+                  <Box className={classes.fontRight}>
+                    <Typography component="h4" className={classes.hourTypo}>
+                      {dateToString(stringToDate(leg.arrival_time, 'yyyy-MM-dd HH:mm'), 'HH:mm')}
+                    </Typography>
+                    <Typography variant="body2" className={classes.durationTypo}>
+                      {/* {`Escale: ${formatDuration(
                       renderStopoverTime(
                         rCTFF(firstFlightFirstDeparture),
                         rCTFF(lastFlightLastArrival),
@@ -202,70 +220,151 @@ const FlightPreview = ({ flightArray }) => {
                       .replace('heures', 'h')
                       .replace('heure', 'h')
                       .replace('minutes', 'min')
-                      .replace('minute', 'min')}`}
-                  </Typography>
+                      .replace('minute', 'min')}`} */}
+                      {/* TODO à modifier */}
+                    </Typography>
+                  </Box>
                 </Box>
-              </Box>
-              {/* ---------------------------  Implicite Departure ------------------------------- */}
-              <Box className={classes.flightGrid} justifyContent="space-between">
-                <Box className={classes.planebackgTransit2}>
-                  <img
-                    className={classes.planeIconTransit}
-                    src={TransitPlane}
-                    alt="transit plane"
-                  />
-                </Box>
-                <Box>
-                  <Typography className={classes.airportLabelTypo}>{airport.label}</Typography>
-                  <Typography className={classes.iataCodeTypo}>{airport.iataCode}</Typography>
-                </Box>
-                <Box className={classes.fontRight}>
-                  <Typography component="h4" className={classes.hourTypo}>
-                    {addOrSubTravelTime(
-                      flightArray[flightArray.length - 1].data.timings[1],
-                      flightArray[flightArray.length - 1].data.legs[1],
-                      'HH:mm',
-                      false,
-                      airport.timeZoneOffset
-                    )}
-                  </Typography>
-                  <Typography variant="body2" className={classes.durationTypo}>
-                    {`Vol: ${
-                      flightArray[0].data.legs[flightArray[0].data.legs.length - 1].hours
-                    } h ${
+              )}
+            {currentFlightArray.length > 1 &&
+              flightArray[0].data.legs.length === 1 &&
+              flightIndex > 0 && (
+                <>
+                  {/* ---------------------------  Implicite Departure ------------------------------- */}
+                  <Box className={classes.flightGrid} justifyContent="space-between">
+                    <Box className={classes.planebackgTransit2}>
+                      <img
+                        className={classes.planeIconTransit}
+                        src={TransitPlane}
+                        alt="transit plane"
+                      />
+                    </Box>
+                    <Box>
+                      <Typography className={classes.airportLabelTypo}>
+                        {
+                          flight.data.airports
+                            .map(airport => {
+                              if (airport.iataCode === leg.departureIata) {
+                                return airport.label
+                              }
+                              return ''
+                            })
+                            .filter(label => label !== '')[0]
+                        }
+                      </Typography>
+                      <Typography className={classes.iataCodeTypo}>{leg.departureIata}</Typography>
+                    </Box>
+                    <Box className={classes.fontRight}>
+                      <Typography component="h4" className={classes.hourTypo}>
+                        {dateToString(
+                          stringToDate(leg.departure_time, 'yyyy-MM-dd HH:mm'),
+                          'HH:mm'
+                        )}
+                      </Typography>
+                      <Typography variant="body2" className={classes.durationTypo}>
+                        {/* {`Vol: ${flightArray[0].data.legs[flightArray[0].data.legs.length - 1].hours} h ${
                       flightArray[0].data.legs[flightArray[0].data.legs.length - 1].minutes
-                    } min`}
-                  </Typography>
+                    } min`} */}
+                      </Typography>
+                    </Box>
+                  </Box>
+                  <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                    <Box className={classes.line} sx={{ marginRight: '15px' }}>
+                      <img src={Line} alt="line" />
+                    </Box>
+                    <Box>
+                      <Typography className={classes.durationTypo}>
+                        temps de vol: {leg.duration.hours} h {leg.duration.minutes} min
+                      </Typography>
+                    </Box>
+                  </Box>
+                </>
+              )}
+            {legIndex !== 0 && (
+              <>
+                {/* ---------------------------  Implicite Departure ------------------------------- */}
+                <Box className={classes.flightGrid} justifyContent="space-between">
+                  <Box className={classes.planebackgTransit2}>
+                    <img
+                      className={classes.planeIconTransit}
+                      src={TransitPlane}
+                      alt="transit plane"
+                    />
+                  </Box>
+                  <Box>
+                    <Typography className={classes.airportLabelTypo}>
+                      {
+                        flight.data.airports
+                          .map(airport => {
+                            if (airport.iataCode === leg.departureIata) {
+                              return airport.label
+                            }
+                            return ''
+                          })
+                          .filter(label => label !== '')[0]
+                      }
+                    </Typography>
+                    <Typography className={classes.iataCodeTypo}>{leg.departureIata}</Typography>
+                  </Box>
+                  <Box className={classes.fontRight}>
+                    <Typography component="h4" className={classes.hourTypo}>
+                      {dateToString(stringToDate(leg.departure_time, 'yyyy-MM-dd HH:mm'), 'HH:mm')}
+                    </Typography>
+                    <Typography variant="body2" className={classes.durationTypo}>
+                      {/* {`Vol: ${flightArray[0].data.legs[flightArray[0].data.legs.length - 1].hours} h ${
+                    flightArray[0].data.legs[flightArray[0].data.legs.length - 1].minutes
+                  } min`} */}
+                    </Typography>
+                  </Box>
                 </Box>
-              </Box>
-              <Box className={classes.line}>
-                <img src={Line} alt="line" />
-              </Box>
-            </>
-          ))}
-      {flightArray.length > 1 && (
-        <>
-          {/* --------------------------- First Arrival ------------------------------- */}
-          <Box className={classes.flightGrid} justifyContent="space-between">
-            <Box className={classes.planebackgTransit1}>
-              <img className={classes.planeIconTransit} src={TransitPlane} alt="transit plane" />
-            </Box>
-            <Box>
-              <Typography>
-                <Box component="span" fontWeight="bold">
-                  {flightArray[0].data.airports[flightArray[0].data.airports.length - 1].iataCode}
+                <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                  <Box className={classes.line} sx={{ marginRight: '15px' }}>
+                    <img src={Line} alt="line" />
+                  </Box>
+                  <Box>
+                    <Typography className={classes.durationTypo}>
+                      temps de vol: {leg.duration.hours > 0 && `${leg.duration.hours} h`}{' '}
+                      {leg.duration.minutes > 0 && `${leg.duration.minutes} min`}
+                    </Typography>
+                  </Box>
                 </Box>
-              </Typography>
-              <Typography>
-                {flightArray[0].data.airports[flightArray[0].data.airports.length - 1].label}
-              </Typography>
-            </Box>
-            <Box className={classes.fontRight}>
-              <Typography component="h4" className={classes.hourTypo}>
-                {rCTFF(flightArray[0].data.timings[1], 'HH:mm')}
-              </Typography>
-              <Typography variant="body2" className={classes.durationTypo}>
-                {`Escale : 
+              </>
+            )}
+
+            {legIndex !== legArray.length - 1 && legIndex !== 0 && (
+              <>
+                {/* --------------------------- Arrival ------------------------------- */}
+                <Box className={classes.flightGrid} justifyContent="space-between">
+                  <Box className={classes.planebackgTransit1}>
+                    <img
+                      className={classes.planeIconTransit}
+                      src={TransitPlane}
+                      alt="transit plane"
+                    />
+                  </Box>
+                  <Box>
+                    <Typography className={classes.airportLabelTypo}>
+                      {
+                        flight.data.airports
+                          .map(airport => {
+                            if (airport.iataCode === leg.arrivalIata) {
+                              return airport.label
+                            }
+                            return ''
+                          })
+                          .filter(label => label !== '')[0]
+                      }
+                    </Typography>
+                    <Typography>
+                      <Box className={classes.iataCodeTypo}>{leg.arrivalIata}</Box>
+                    </Typography>
+                  </Box>
+                  <Box className={classes.fontRight}>
+                    <Typography component="h4" className={classes.hourTypo}>
+                      {dateToString(stringToDate(leg.arrival_time, 'yyyy-MM-dd HH:mm'), 'HH:mm')}
+                    </Typography>
+                    <Typography variant="body2" className={classes.durationTypo}>
+                      {/* {`Escale : 
                 ${formatDuration(
                   intervalToDuration({
                     start: rCTFF(flightArray[0].data.timings[1]),
@@ -281,430 +380,61 @@ const FlightPreview = ({ flightArray }) => {
                   .replace('heures', 'h')
                   .replace('heure', 'h')
                   .replace('minutes', 'min')
-                  .replace('minute', 'min')}`}
-              </Typography>
-            </Box>
-          </Box>
-
-          {flightArray
-            .filter((flight, flightIndex, currentFlights) => {
-              if (flightIndex === currentFlights.length - 1) {
-                return false
-              }
-              if (flightIndex === 0) {
-                return false
-              }
-              return true
-            })
-            .map(({ data }, flightIndex, currentMapFlights) => (
-              <>
-                {/* --------------------------- Departure ------------------------------- */}
-                <Box className={classes.flightGrid} justifyContent="space-between">
-                  <Box className={classes.planebackgTransit2}>
-                    <img
-                      className={classes.planeIconTransit}
-                      src={TransitPlane}
-                      alt="transit plane"
-                    />
-                  </Box>
-                  <Box>
-                    <Typography>
-                      <Box component="span" fontWeight="bold">
-                        {data.airports[0].iataCode}
-                      </Box>
-                    </Typography>
-                    <Typography>{data.airports[0].label}</Typography>
-                  </Box>
-                  <Box className={classes.fontRight}>
-                    <Typography component="h4" className={classes.hourTypo}>
-                      {(stringToDate(dateToString(data.timings[0])), 'HH:mm')}
-                    </Typography>
-                    <Typography variant="body2" color="textSecondary">
-                      Vol:
-                      {formatDuration(
-                        intervalToDuration({
-                          start: rCTFF(data.timings[0]),
-                          end: rCTFF(data.timings[1]),
-                        }),
-                        {
-                          format: ['days', 'hours', 'minutes'],
-                          locale: frLocale,
-                        }
-                      )
-                        .replace('jours', 'j')
-                        .replace('jour', 'j')
-                        .replace('heures', 'h')
-                        .replace('heure', 'h')
-                        .replace('minutes', 'min')
-                        .replace('minute', 'min')}
-                    </Typography>
-                  </Box>
-                </Box>
-                <Box className={classes.line}>
-                  <img src={Line} alt="line" />
-                  <Checkbox />
-                </Box>
-                {data.airports.length > 2 &&
-                  data.airports
-                    .filter((airport, airportIndex, currentAirports) => {
-                      if (airportIndex === currentAirports.length - 1) {
-                        return false
-                      }
-                      if (airportIndex === 0) {
-                        return false
-                      }
-                      return true
-                    })
-                    .map((airport, airportIndex) => (
-                      <>
-                        {/* ---------------------------Implicite Arrival ------------------------------- */}
-                        <Box className={classes.flightGrid} justifyContent="space-between">
-                          <Box className={classes.planebackgTransit1}>
-                            <img
-                              className={classes.planeIconTransit}
-                              src={TransitPlane}
-                              alt="transit plane"
-                            />
-                          </Box>
-                          <Box>
-                            <Typography>
-                              <Box component="span" fontWeight="bold">
-                                {airport.iataCode}
-                              </Box>
-                            </Typography>
-                            <Typography>{airport.label}</Typography>
-                          </Box>
-                          <Box className={classes.fontRight}>
-                            <Typography variant="h4">
-                              <Box component="span" fontWeight="bold">
-                                {addOrSubTravelTime(
-                                  data.timings[0],
-                                  data.legs[0],
-                                  'HH:mm',
-                                  true,
-                                  airport.timeZoneOffset
-                                )}
-                              </Box>
-                            </Typography>
-                            <Typography variant="body2" color="textSecondary">
-                              {`Escale: ${formatDuration(
-                                renderStopoverTime(
-                                  rCTFF(data.timings[0]),
-                                  rCTFF(data.timings[1]),
-                                  data.legs
-                                ),
-                                {
-                                  format: ['days', 'hours', 'minutes'],
-                                  locale: frLocale,
-                                }
-                              )
-                                .replace('jours', 'j')
-                                .replace('jour', 'j')
-                                .replace('heures', 'h')
-                                .replace('heure', 'h')
-                                .replace('minutes', 'min')
-                                .replace('minute', 'min')}`}
-                            </Typography>
-                          </Box>
-                        </Box>
-                        {/* ---------------------------  Implicite Departure ------------------------------- */}
-                        <Box className={classes.flightGrid} justifyContent="space-between">
-                          <Box className={classes.planebackgTransit2}>
-                            <img
-                              className={classes.planeIconTransit}
-                              src={TransitPlane}
-                              alt="transit plane"
-                            />
-                          </Box>
-                          <Box>
-                            <Typography>
-                              <Box component="span" fontWeight="bold">
-                                {airport.iataCode}
-                              </Box>
-                            </Typography>
-                            <Typography>{airport.label}</Typography>
-                          </Box>
-                          <Box className={classes.fontRight}>
-                            <Typography variant="h4">
-                              <Box component="span" fontWeight="bold">
-                                {addOrSubTravelTime(
-                                  data.timings[1],
-                                  data.legs[1],
-                                  'HH:mm',
-                                  false,
-                                  airport.timeZoneOffset
-                                )}
-                              </Box>
-                            </Typography>
-                            <Typography variant="body2" color="textSecondary">
-                              Vol:
-                              {formatDuration(
-                                intervalToDuration({
-                                  start: rCTFF(flightArray[0].data.timings[0]),
-                                  end: rCTFF(flightArray[0].data.timings[1]),
-                                }),
-                                {
-                                  format: ['days', 'hours', 'minutes'],
-                                  locale: frLocale,
-                                }
-                              )
-                                .replace('jours', 'j')
-                                .replace('jour', 'j')
-                                .replace('heures', 'h')
-                                .replace('heure', 'h')
-                                .replace('minutes', 'min')
-                                .replace('minute', 'min')}
-                            </Typography>
-                          </Box>
-                        </Box>
-                        <Box className={classes.line}>
-                          <img src={Line} alt="line" />
-                          <Checkbox />
-                        </Box>
-                      </>
-                    ))}
-                {/* --------------------------- Arrival ------------------------------- */}
-                <Box className={classes.flightGrid} justifyContent="space-between">
-                  <Box className={classes.planebackgTransit1}>
-                    <img
-                      className={classes.planeIconTransit}
-                      src={TransitPlane}
-                      alt="transit plane"
-                    />
-                  </Box>
-                  <Box>
-                    <Typography>
-                      <Box component="span" fontWeight="bold">
-                        {data.airports[1].iataCode}
-                      </Box>
-                    </Typography>
-                    <Typography>{data.airports[1].label}</Typography>
-                  </Box>
-                  <Box className={classes.fontRight}>
-                    <Typography variant="h4">
-                      <Box component="span" fontWeight="bold">
-                        {rCTFF(data.timings[1], 'HH:mm')}
-                      </Box>
-                    </Typography>
-                    <Typography variant="body2" color="textSecondary">
-                      {`Escale : 
-                ${formatDuration(
-                  intervalToDuration({
-                    start: rCTFF(data.timings[1]),
-                    end: rCTFF(
-                      flightIndex !== currentMapFlights.length - 1
-                        ? flightArray[flightIndex + 1].data.timings[0]
-                        : flightArray[flightArray.length - 1].data.timings[0]
-                    ),
-                  }),
-                  {
-                    format: ['days', 'hours', 'minutes'],
-                    locale: frLocale,
-                  }
-                )
-                  .replace('jours', 'j')
-                  .replace('jour', 'j')
-                  .replace('heures', 'h')
-                  .replace('heure', 'h')
-                  .replace('minutes', 'min')
-                  .replace('minute', 'min')}`}
+                  .replace('minute', 'min')}`} 
+                  TODO A MODIFIER */}
                     </Typography>
                   </Box>
                 </Box>
               </>
-            ))}
+            )}
 
-          {/* --------------------------- Last departure------------------------------- */}
-          <Box className={classes.flightGrid} justifyContent="space-between">
-            <Box className={classes.planebackgTransit2}>
-              <img className={classes.planeIconTransit} src={TransitPlane} alt="transit plane" />
-            </Box>
-            <Box>
-              <Typography>
-                <Box component="span" fontWeight="bold">
-                  {lastAirportArray[0].iataCode}
+            {flightIndex === currentFlightArray.length - 1 && legIndex === legArray.length - 1 && (
+              <>
+                {/* --------------------------- Last Arrival ------------------------------- */}
+                <Box className={classes.flightGrid} justifyContent="space-between">
+                  <Box className={classes.planeIconBack}>
+                    <FlightLandIcon className={classes.planeIcon} />
+                  </Box>
+                  <Box>
+                    <Typography className={classes.airportLabelTypo}>
+                      {
+                        flightArray[flightArray.length - 1].data.airports
+                          .map(airport => {
+                            if (
+                              airport.iataCode ===
+                              flightArray[flightArray.length - 1].data.legs[
+                                flightArray[flightArray.length - 1].data.legs.length - 1
+                              ].arrivalIata
+                            ) {
+                              return airport.label
+                            }
+                            return ''
+                          })
+                          .filter(label => label !== '')[0]
+                      }
+                    </Typography>
+                    <Typography className={classes.iataCodeTypo}>
+                      {
+                        flightArray[flightArray.length - 1].data.legs[
+                          flightArray[flightArray.length - 1].data.legs.length - 1
+                        ].arrivalIata
+                      }
+                    </Typography>
+                  </Box>
+                  <Box className={classes.fontRight}>
+                    <Typography component="h4" className={classes.hourTypo}>
+                      {dateToString(stringToDate(leg.arrival_time, 'yyyy-MM-dd HH:mm'), 'HH:mm')}
+                    </Typography>
+                  </Box>
                 </Box>
-              </Typography>
-              <Typography>{lastAirportArray[0].label}</Typography>
-            </Box>
-            <Box className={classes.fontRight}>
-              <Typography variant="h4">
-                <Box component="span" fontWeight="bold">
-                  {rCTFF(flightArray[flightArray.length - 1].data.timings[0], 'HH:mm')}
-                </Box>
-              </Typography>
-              <Typography variant="body2" color="textSecondary">
-                Vol:
-                {formatDuration(
-                  intervalToDuration({
-                    start: rCTFF(flightArray[flightArray.length - 1].data.timings[0]),
-                    end: rCTFF(flightArray[flightArray.length - 1].data.timings[1]),
-                  }),
-                  {
-                    format: ['days', 'hours', 'minutes'],
-                    locale: frLocale,
-                  }
-                )
-                  .replace('jours', 'j')
-                  .replace('jour', 'j')
-                  .replace('heures', 'h')
-                  .replace('heure', 'h')
-                  .replace('minutes', 'min')
-                  .replace('minute', 'min')}
-              </Typography>
-            </Box>
+              </>
+            )}
+            {/* <Typography>
+              vol {flightIndex} trajet {legIndex} non conditionné
+            </Typography> */}
           </Box>
-          <Box className={classes.line}>
-            <img src={Line} alt="line" />
-          </Box>
-        </>
+        ))
       )}
-      {flightArray[flightArray.length - 1].data.airports.length > 2 &&
-        flightArray.length > 1 &&
-        flightArray[flightArray.length - 1].data.airports
-          .filter((airport, airportIndex, currentAirports) => {
-            if (airportIndex === currentAirports.length - 1) {
-              return false
-            }
-            if (airportIndex === 0) {
-              return false
-            }
-            return true
-          })
-          .map((airport, airportIndex) => (
-            <>
-              {/* ---------------------------Implicite Arrival ------------------------------- */}
-              <Box className={classes.flightGrid} justifyContent="space-between">
-                <Box className={classes.planebackgTransit1}>
-                  <img
-                    className={classes.planeIconTransit}
-                    src={TransitPlane}
-                    alt="transit plane"
-                  />
-                </Box>
-                <Box>
-                  <Typography>
-                    <Box component="span" fontWeight="bold">
-                      {airport.iataCode}
-                    </Box>
-                  </Typography>
-                  <Typography>{airport.label}</Typography>
-                </Box>
-                <Box className={classes.fontRight}>
-                  <Typography variant="h4">
-                    <Box component="span" fontWeight="bold">
-                      {addOrSubTravelTime(
-                        flightArray[flightArray.length - 1].data.timings[0],
-                        flightArray[flightArray.length - 1].data.legs[0],
-                        'HH:mm',
-                        true,
-                        airport.timeZoneOffset
-                      )}
-                    </Box>
-                  </Typography>
-                  <Typography variant="body2" color="textSecondary">
-                    {`Escale: ${formatDuration(
-                      renderStopoverTime(
-                        rCTFF(flightArray[flightArray.length - 1].data.timings[0]),
-                        rCTFF(flightArray[flightArray.length - 1].data.timings[1]),
-                        flightArray[flightArray.length - 1].data.legs
-                      ),
-                      {
-                        format: ['days', 'hours', 'minutes'],
-                        locale: frLocale,
-                      }
-                    )
-                      .replace('jours', 'j')
-                      .replace('jour', 'j')
-                      .replace('heures', 'h')
-                      .replace('heure', 'h')
-                      .replace('minutes', 'min')
-                      .replace('minute', 'min')}`}
-                  </Typography>
-                </Box>
-              </Box>
-              {/* ---------------------------  Implicite Departure ------------------------------- */}
-              <Box className={classes.flightGrid} justifyContent="space-between">
-                <Box className={classes.planebackgTransit2}>
-                  <img
-                    className={classes.planeIconTransit}
-                    src={TransitPlane}
-                    alt="transit plane"
-                  />
-                </Box>
-                <Box>
-                  <Typography>
-                    <Box component="span" fontWeight="bold">
-                      {airport.iataCode}
-                    </Box>
-                  </Typography>
-                  <Typography>{airport.label}</Typography>
-                </Box>
-                <Box className={classes.fontRight}>
-                  <Typography variant="h4">
-                    <Box component="span" fontWeight="bold">
-                      {addOrSubTravelTime(
-                        flightArray[flightArray.length - 1].data.timings[1],
-                        flightArray[flightArray.length - 1].data.legs[1],
-                        'HH:mm',
-                        false,
-                        airport.timeZoneOffset
-                      )}
-                    </Box>
-                  </Typography>
-                  <Typography variant="body2" color="textSecondary">
-                    Vol:
-                    {formatDuration(
-                      intervalToDuration({
-                        start: rCTFF(flightArray[flightArray.length - 1].data.timings[0]),
-                        end: rCTFF(flightArray[flightArray.length - 1].data.timings[1]),
-                      }),
-                      {
-                        format: ['days', 'hours', 'minutes'],
-                        locale: frLocale,
-                      }
-                    )
-                      .replace('jours', 'j')
-                      .replace('jour', 'j')
-                      .replace('heures', 'h')
-                      .replace('heure', 'h')
-                      .replace('minutes', 'min')
-                      .replace('minute', 'min')}
-                  </Typography>
-                </Box>
-              </Box>
-              <Box className={classes.line}>
-                <img src={Line} alt="line" />
-              </Box>
-            </>
-          ))}
-      {/* --------------------------- Last Arrival ------------------------------- */}
-      <Box className={classes.flightGrid} m="1rem 0" justifyContent="space-between">
-        <Box className={classes.planeIconBack}>
-          <FlightLandIcon className={classes.planeIcon} />
-        </Box>
-        <Box>
-          <Typography className={classes.airportLabelTypo}>
-            {
-              flightArray[flightArray.length - 1].data.airports[
-                flightArray[flightArray.length - 1].data.airports.length - 1
-              ].label
-            }
-          </Typography>
-          <Typography className={classes.iataCodeTypo}>
-            {
-              flightArray[flightArray.length - 1].data.airports[
-                flightArray[flightArray.length - 1].data.airports.length - 1
-              ].iataCode
-            }
-          </Typography>
-        </Box>
-        <Box className={classes.fontRight}>
-          <Typography component="h4" className={classes.hourTypo}>
-            {rCTFF(flightArray[flightArray.length - 1].data.timings[1], 'HH:mm')}
-          </Typography>
-        </Box>
-      </Box>
     </>
   )
 }

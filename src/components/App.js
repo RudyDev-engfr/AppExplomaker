@@ -90,7 +90,7 @@ const App = () => {
             position: 'fixed',
             top: '-15px',
             left: '-15px',
-            zIndex: '1001',
+            zIndex: '999',
             pointerEvents: 'none',
             opacity: '0.6',
           }}

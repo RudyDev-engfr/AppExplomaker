@@ -166,6 +166,7 @@ const ConnectedNav = () => {
   const [anchorElNotif, setAnchorElNotif] = useState(null)
   const [refreshNotif, setRefreshNotif] = useState(false)
   const [currentActiveTab, setCurrentActiveTab] = useState('home')
+  const [isChatOpen, setIsChatOpen] = useState('')
 
   const open = Boolean(anchorEl)
   const openNotif = Boolean(anchorElNotif)
@@ -531,6 +532,8 @@ const ConnectedNav = () => {
                 currentNotifications={currentNotifications}
                 setRefreshNotif={setRefreshNotif}
                 isMyTrips
+                setIsChatOpen={setIsChatOpen}
+                isChatOpen={isChatOpen}
               />
             ) : (
               <MobileNotificationArea

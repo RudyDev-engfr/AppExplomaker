@@ -1,6 +1,6 @@
 import React, { useContext } from 'react'
 import { AppBar, Badge, Box, Drawer, IconButton, Toolbar, useMediaQuery } from '@mui/material'
-import { ForumOutlined, Notifications, SmartToy } from '@mui/icons-material'
+import { Forum, ForumOutlined, Help } from '@mui/icons-material'
 import { makeStyles, useTheme } from '@mui/styles'
 
 import { useParams } from 'react-router-dom'
@@ -13,8 +13,9 @@ const useStyles = makeStyles(theme => ({
     zIndex: 100000,
     top: '0',
     right: '0',
-    width: '200px',
+    width: '180px',
     boxShadow: 'unset',
+    borderRadius: '0 0 0 20px',
   },
 }))
 
@@ -62,17 +63,9 @@ const SocialNavbar = () => {
             }}
           >
             <Badge color="error">
-              <SmartToy />
+              <Help />
             </Badge>
           </IconButton>
-          <NotificationArea
-            tripData={tripData}
-            currentNotifications={currentNotifications}
-            setRefreshNotif={setRefreshNotif}
-            tripId={tripId}
-            isChatOpen={isChatOpen}
-            setIsChatOpen={setIsChatOpen}
-          />
           <IconButton
             onClick={() => {
               if (isChatOpen === 'userChat') {
@@ -93,8 +86,16 @@ const SocialNavbar = () => {
               height: '48px',
             }}
           >
-            <ForumOutlined />
+            <Forum />
           </IconButton>
+          <NotificationArea
+            tripData={tripData}
+            currentNotifications={currentNotifications}
+            setRefreshNotif={setRefreshNotif}
+            tripId={tripId}
+            isChatOpen={isChatOpen}
+            setIsChatOpen={setIsChatOpen}
+          />
         </Box>
       </Toolbar>
     </AppBar>

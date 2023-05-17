@@ -27,6 +27,10 @@ const useStyles = makeStyles(theme => ({
     height: '60px',
     borderRadius: '50px',
   },
+  badgeRoot: {
+    top: '-5px',
+    right: '-5px',
+  },
 }))
 const NotificationArea = ({
   tripId,
@@ -60,38 +64,38 @@ const NotificationArea = ({
 
   return (
     <>
-      <Badge
-        badgeContent={
-          isMyTrips
-            ? user.notifications?.filter(notification => notification?.state === 1).length
-            : user.notifications?.filter(
-                notification => notification?.tripId === tripId && notification?.state === 1
-              ).length
-        }
-        color="secondary"
-      >
-        <IconButton
-          aria-label="more"
-          id="notif-button"
-          aria-controls={openNotif ? 'notif-menu' : undefined}
-          aria-expanded={openNotif ? 'true' : undefined}
-          aria-haspopup="true"
-          onClick={handleClickNotif}
-          sx={{
+      <IconButton
+        aria-label="more"
+        id="notif-button"
+        aria-controls={openNotif ? 'notif-menu' : undefined}
+        aria-expanded={openNotif ? 'true' : undefined}
+        aria-haspopup="true"
+        onClick={handleClickNotif}
+        sx={{
+          color: isChatOpen === 'notifications' ? theme.palette.primary.main : 'white',
+          backgroundColor: isChatOpen === 'notifications' ? 'white' : theme.palette.primary.main,
+          '&:hover': {
             color: isChatOpen === 'notifications' ? theme.palette.primary.main : 'white',
             backgroundColor: isChatOpen === 'notifications' ? 'white' : theme.palette.primary.main,
-            '&:hover': {
-              color: isChatOpen === 'notifications' ? theme.palette.primary.main : 'white',
-              backgroundColor:
-                isChatOpen === 'notifications' ? 'white' : theme.palette.primary.main,
-            },
-            width: '48px',
-            height: '48px',
-          }}
+          },
+          width: '48px',
+          height: '48px',
+        }}
+      >
+        <Badge
+          badgeContent={
+            isMyTrips
+              ? user.notifications?.filter(notification => notification?.state === 1).length
+              : user.notifications?.filter(
+                  notification => notification?.tripId === tripId && notification?.state === 1
+                ).length
+          }
+          color="secondary"
+          classes={{ badge: classes.badgeRoot }}
         >
           <Notifications />
-        </IconButton>
-      </Badge>
+        </Badge>
+      </IconButton>
       <NotificationAreaDrawer
         openNotif={openNotif}
         anchorElNotif={anchorElNotif}
@@ -103,6 +107,7 @@ const NotificationArea = ({
         days={days}
         setSelectedDateOnPlanning={setSelectedDateOnPlanning}
         isChatOpen={isChatOpen}
+        setIsChatOpen={setIsChatOpen}
       />
     </>
   )
@@ -119,6 +124,7 @@ const NotificationAreaDrawer = ({
   days,
   setSelectedDateOnPlanning,
   isChatOpen,
+  setIsChatOpen,
 }) => {
   const classes = useStyles()
   const theme = useTheme()
@@ -127,6 +133,7 @@ const NotificationAreaDrawer = ({
 
   const handleCloseNotif = event => {
     setAnchorElNotif(null)
+    setIsChatOpen('')
   }
 
   return (

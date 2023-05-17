@@ -516,7 +516,7 @@ const PlanningContextProvider = ({ children }) => {
             survey.type === EVENT_TYPES[4]
         )
         .map(survey =>
-          survey.propositions.map((proposition, propositionIndex) => (
+          survey.propositions?.map((proposition, propositionIndex) => (
             <CustomMarker
               key={proposition.location.value.place_id}
               position={{ lat: proposition.location?.lat, lng: proposition.location?.lng }}
@@ -543,7 +543,7 @@ const PlanningContextProvider = ({ children }) => {
       const tempSurveyFlightMarkers = currentEvents?.surveys
         .filter(survey => survey.type === EVENT_TYPES[1])
         .map(survey =>
-          survey.propositions.map((flightProposition, flightPropositionIndex) =>
+          survey.propositions?.map((flightProposition, flightPropositionIndex) =>
             flightProposition.flights.map(flight => {
               const currentFlightIndex = tempFlightIndex
               tempTransportCoordinates.push([])

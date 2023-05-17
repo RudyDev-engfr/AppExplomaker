@@ -6,16 +6,13 @@ import EventNoteIcon from '@mui/icons-material/EventNote'
 /* import PhotoCameraOutlinedIcon from '@mui/icons-material/PhotoCameraOutlined' */
 import ArrowBackRoundedIcon from '@mui/icons-material/ArrowBackRounded'
 import {
-  Badge,
   Box,
   Button,
   Dialog,
-  Fab,
   Paper,
   Slide,
   Tab,
   Tabs,
-  Typography,
   useMediaQuery,
   useTheme,
 } from '@mui/material'
@@ -24,17 +21,15 @@ import clsx from 'clsx'
 import FavoriteIcon from '@mui/icons-material/Favorite'
 import FeedIcon from '@mui/icons-material/Feed'
 import {
-  Add,
   AirplanemodeActiveRounded,
   Chat,
   DirectionsBusFilled,
-  DisplaySettings,
   ExploreRounded,
   HomeRounded,
   Logout,
   Notifications,
-  Person,
   RestaurantMenuRounded,
+  Tune,
 } from '@mui/icons-material'
 
 import logoFull from '../../../images/icons/logoFull.svg'
@@ -438,7 +433,7 @@ const TripPageNav = ({
           /> */}
           <Tab
             icon={
-              <DisplaySettings
+              <Tune
                 sx={{
                   fontSize: '35px',
                   color: openModal === 'general' && theme.palette.primary.main,
@@ -471,12 +466,17 @@ const TripPageNav = ({
         /> */}
           <Tab
             icon={
-              <Chat sx={{ color: isChatOpen && theme.palette.primary.main, fontSize: '35px' }} />
+              <Chat
+                sx={{
+                  color: isChatOpen === 'userChat' && theme.palette.primary.main,
+                  fontSize: '35px',
+                }}
+              />
             }
             onClick={() => {
-              setIsChatOpen(true)
+              setIsChatOpen('userChat')
             }}
-            value="openChat"
+            value="userChat"
             sx={{ padding: '0', minWidth: '20vw !important', marginLeft: '8vw' }}
           />
           <Tab
