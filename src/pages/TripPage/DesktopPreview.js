@@ -15,7 +15,7 @@ import AddCollaboratorsButton from '../../components/atoms/AddCollaboratorsButto
 
 const useStyles = makeStyles(theme => ({
   generalInformationBlock: {
-    padding: '30px 0 30px 15px',
+    padding: '30px',
     backgroundColor: 'white',
   },
   subtitle: {

@@ -31,12 +31,15 @@ const MobileTripPageHeader = () => {
       <Typography
         sx={{
           color: 'white',
-          fontSize: '28px',
+          fontSize: '24px',
           lineHeight: '40px',
           fontWeight: 700,
-          padding: '40px 40px 5px 40px',
+          padding: '10px 40px 5px 40px',
           minHeight: '125px',
           maxHeight: '125px',
+          display: 'flex',
+          alignItems: 'flex-end',
+          wordBreak: 'break-all',
         }}
       >
         {tripData?.title?.length > 60 ? tripData?.title : tripData?.title?.substring(0, 50)}
