@@ -56,6 +56,7 @@ const useStyles = makeStyles(theme => ({
     gridTemplateColumns: 'repeat(auto-fill, 360px)',
     gridAutoRows: 'max-content',
     gridGap: '60px',
+    paddingBottom: '20px',
     [theme.breakpoints.down('sm')]: {
       placeItems: 'center',
       gridTemplateColumns: 'unset',
@@ -260,11 +261,7 @@ const MyTrips = () => {
                   </Box>
                 ) : (
                   <Box>
-                    <Box className={classes.row}>
-                      <Typography variant="h4" className={classes.xsTitle}>
-                        {pastTrips.length > 0 ? 'Aucun séjour à venir' : 'Aucun séjour'}
-                      </Typography>
-                    </Box>
+                    <Box className={classes.row} />
                     <Box className={classes.tripGrid}>
                       <Button
                         className={classes.addSejour}
@@ -325,11 +322,7 @@ const MyTrips = () => {
             </>
           ) : (
             <Box>
-              <Box className={classes.row}>
-                <Typography variant="h4" className={classes.xsTitle}>
-                  {pastTrips.length > 0 ? 'Aucun séjour à venir' : 'Aucun séjour'}
-                </Typography>
-              </Box>
+              <Box className={classes.row} />
               <Box className={classes.tripGrid}>
                 <Button
                   className={classes.addSejour}
