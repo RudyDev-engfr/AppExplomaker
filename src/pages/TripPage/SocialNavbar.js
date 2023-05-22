@@ -22,7 +22,7 @@ const useStyles = makeStyles(theme => ({
 const SocialNavbar = () => {
   const classes = useStyles()
   const theme = useTheme()
-  const { tripId } = useParams
+  const { tripId } = useParams()
   const matchesXs = useMediaQuery(theme.breakpoints.down('sm'))
   const { isChatOpen, setIsChatOpen, tripData, currentNotifications, setRefreshNotif } =
     useContext(TripContext)

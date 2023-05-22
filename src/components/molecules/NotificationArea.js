@@ -85,7 +85,9 @@ const NotificationArea = ({
         <Badge
           badgeContent={
             isMyTrips
-              ? user.notifications?.filter(notification => notification?.state === 1).length
+              ? user.notifications?.filter(
+                  notification => notification?.state === 1 && !notification.tripId
+                ).length
               : user.notifications?.filter(
                   notification => notification?.tripId === tripId && notification?.state === 1
                 ).length
