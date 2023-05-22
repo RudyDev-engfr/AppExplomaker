@@ -128,7 +128,7 @@ const getGenericSpot = setter => {
             ...picture,
             src: {
               ...picture.src,
-              original: `https://storage.googleapis.com/stateless-www-explomaker-fr/${picture.src.original}`,
+              original: `https://storage.googleapis.com/explomaker-data-stateless/${picture.src.original}`,
             },
           }))
         }
@@ -226,7 +226,7 @@ const FirebaseContextProvider = ({ children }) => {
                   ...picture,
                   src: {
                     ...picture.src,
-                    original: `https://storage.googleapis.com/stateless-www-explomaker-fr/${picture.src.original}`,
+                    original: `https://storage.googleapis.com/explomaker-data-stateless/${picture.src.original}`,
                   },
                 })
               )
@@ -257,7 +257,7 @@ const FirebaseContextProvider = ({ children }) => {
                 ...picture,
                 src: {
                   ...picture.src,
-                  original: `https://storage.googleapis.com/stateless-www-explomaker-fr/${picture.src.original}`,
+                  original: `https://storage.googleapis.com/explomaker-data-stateless/${picture.src.original}`,
                 },
               }))
             }

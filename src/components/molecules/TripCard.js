@@ -165,17 +165,18 @@ const TripCard = ({ bgImg, people, title, date, destination, tripId, startDate, 
                         justifyContent: 'center',
                         borderRadius: '10px',
                         position: 'absolute',
-                        right: '16px',
-                        bottom: '16px',
+                        right: '14px',
+                        bottom: '14px',
                         maxWidth: '130px',
                         maxHeight: '60px',
+                        padding: '5px',
+                        border: '3px solid white',
                       }}
-                      p={2}
                     >
                       <Typography
                         sx={{
                           color: 'white',
-                          fontSize: '22px',
+                          fontSize: '14px',
                           fontWeight: '700',
                           lineHeight: '28px',
                         }}

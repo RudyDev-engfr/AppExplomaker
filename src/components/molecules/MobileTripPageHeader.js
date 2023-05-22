@@ -34,7 +34,7 @@ const MobileTripPageHeader = () => {
           fontSize: '24px',
           lineHeight: '40px',
           fontWeight: 700,
-          padding: '10px 40px 5px 40px',
+          padding: '10px 20px 5px 20px',
           minHeight: '125px',
           maxHeight: '125px',
           display: 'flex',

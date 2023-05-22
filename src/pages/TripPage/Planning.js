@@ -81,7 +81,7 @@ const useStyles = makeStyles(theme => ({
   calendarArea: {
     gridArea: 'calendarArea',
     display: 'grid',
-    gridTemplate: '1fr / 1fr 200px',
+    gridTemplate: '64px / 1fr 180px',
     columnGap: '20px',
     alignItems: 'center',
     backgroundColor: '#FFFFFF',
@@ -114,7 +114,7 @@ const useStyles = makeStyles(theme => ({
     height: '100vh',
     display: 'grid',
     gridTemplateColumns: '200px 200px 1fr',
-    gridTemplateRows: '100px 1fr',
+    gridTemplateRows: '64px 1fr',
     gridTemplateAreas: `
     "calendarArea calendarArea calendarArea"
     "previewArea previewArea mapArea"
@@ -135,10 +135,10 @@ const useStyles = makeStyles(theme => ({
   },
   calendarTitle: {
     backgroundColor: '#F7F7F7',
-    height: '80px',
-    borderRadius: '30px',
+    height: '50px',
+    borderRadius: '10px',
     cursor: 'pointer',
-    minWidth: '55px',
+    minWidth: '50px',
     transition: 'all .2s',
     margin: '0 8px',
     '&:hover': {
@@ -1029,7 +1029,7 @@ const Planning = ({ tripData, tripId, canEdit }) => {
                         locale: frLocale,
                       })}
                     </Typography>
-                    <Typography
+                    {/* <Typography
                       sx={{
                         fontSize: '12px',
                         color: selectedDateOnPlanning === day ? 'inherit' : '#7B7B7B',
@@ -1038,7 +1038,7 @@ const Planning = ({ tripData, tripId, canEdit }) => {
                       {format(day, 'MMM', {
                         locale: frLocale,
                       }).replace('.', '')}
-                    </Typography>
+                    </Typography> */}
                   </Box>
                 </Paper>
               ))}
