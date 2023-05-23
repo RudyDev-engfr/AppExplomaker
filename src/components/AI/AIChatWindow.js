@@ -7,14 +7,19 @@ import {
   Grid,
   IconButton,
   Input,
+  InputAdornment,
   Paper,
+  TextField,
   Typography,
   useMediaQuery,
 } from '@mui/material'
 import { differenceInMinutes } from 'date-fns'
-import { Send } from '@mui/icons-material'
+import { EmojiEmotionsOutlined, Send } from '@mui/icons-material'
 import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos'
 import { makeStyles, useTheme } from '@mui/styles'
+
+import data from '@emoji-mart/data'
+import Picker from '@emoji-mart/react'
 
 import { FirebaseContext } from '../../contexts/firebase'
 import { SessionContext } from '../../contexts/session'
@@ -89,8 +94,14 @@ const AIChatWindow = ({ isChatOpen, setIsChatOpen, chats, tripId }) => {
   }
   const [openChat, setOpenChat] = useState(chatNames[0])
   const [isMounted, setIsMounted] = useState(false)
+  const [showEmojiPicker, setShowEmojiPicker] = useState(false)
 
-  const messagesRef = firestore.collection('trips').doc(tripId).collection('messages')
+  const addEmoji = e => {
+    const emoji = e.native
+    setMessageToSend(prev => prev + emoji)
+  }
+
+  const messagesRef = firestore.collection('trips').doc(tripId).collection('AIChat')
   const query = messagesRef.orderBy('createdAt').limit(25)
   const [messages] = useCollectionData(query, { idField: 'messageId' })
 
@@ -115,6 +126,10 @@ const AIChatWindow = ({ isChatOpen, setIsChatOpen, chats, tripId }) => {
       }, 500)
     }
   }, [dummy, messages])
+
+  useEffect(() => {
+    console.log(messageToSend)
+  }, [messageToSend])
 
   return (
     <Drawer
@@ -204,27 +219,48 @@ const AIChatWindow = ({ isChatOpen, setIsChatOpen, chats, tripId }) => {
               }}
             >
               <FormControl fullWidth>
-                <Input
-                  inputProps={{ className: classes.inputChat }}
+                {showEmojiPicker && <Picker onEmojiSelect={addEmoji} />}
+                <TextField
+                  InputProps={{
+                    className: classes.inputChat,
+                    startAdornment: (
+                      <InputAdornment position="start">
+                        <IconButton
+                          size="small"
+                          color="primary"
+                          onClick={() => setShowEmojiPicker(!showEmojiPicker)}
+                        >
+                          <EmojiEmotionsOutlined />
+                        </IconButton>
+                      </InputAdornment>
+                    ),
+                    endAdornment: (
+                      <InputAdornment position="end">
+                        <IconButton
+                          size="small"
+                          type="submit"
+                          disabled={!messageToSend}
+                          color="primary"
+                        >
+                          <Send />
+                        </IconButton>
+                      </InputAdornment>
+                    ),
+                    disableUnderline: true,
+                    multiline: true,
+                    onKeyDown: event => {
+                      if (event.key === 'Enter') {
+                        if (event.metaKey || event.ctrlKey || event.shiftKey) {
+                          // Allow the new line to be added by not preventing the default behavior
+                        } else {
+                          // event.preventDefault()
+                          handleSubmit(event)
+                        }
+                      }
+                    },
+                  }}
                   value={messageToSend}
                   onChange={e => setMessageToSend(e.target.value)}
-                  // startAdornment={
-                  //   <IconButton size="small" color="primary" variant="outlined" disabled>
-                  //     <Add />
-                  //   </IconButton>
-                  // }
-                  endAdornment={
-                    <IconButton
-                      size="small"
-                      type="submit"
-                      disabled={!messageToSend}
-                      color="primary"
-                    >
-                      <Send />
-                    </IconButton>
-                  }
-                  disableUnderline
-                  multiline
                   maxRows={15}
                 />
               </FormControl>
