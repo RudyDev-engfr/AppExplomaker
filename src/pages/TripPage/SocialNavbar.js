@@ -3,7 +3,7 @@ import { AppBar, Badge, Box, Drawer, IconButton, Toolbar, useMediaQuery } from '
 import { Forum, ForumOutlined, Help } from '@mui/icons-material'
 import { makeStyles, useTheme } from '@mui/styles'
 
-import { useParams } from 'react-router-dom'
+import { useLocation, useParams } from 'react-router-dom'
 import { SessionContext } from '../../contexts/session'
 import { TripContext } from '../../contexts/trip'
 import NotificationArea from '../../components/molecules/NotificationArea'
@@ -17,11 +17,19 @@ const useStyles = makeStyles(theme => ({
     boxShadow: 'unset',
     borderRadius: '0 0 0 20px',
   },
+  planningAppBarRoot: {
+    zIndex: 100000,
+    top: '0',
+    right: '0',
+    width: '180px',
+    boxShadow: 'unset',
+  },
 }))
 
 const SocialNavbar = () => {
   const classes = useStyles()
   const theme = useTheme()
+  const location = useLocation()
   const { tripId } = useParams()
   const matchesXs = useMediaQuery(theme.breakpoints.down('sm'))
   const { isChatOpen, setIsChatOpen, tripData, currentNotifications, setRefreshNotif } =
@@ -29,7 +37,15 @@ const SocialNavbar = () => {
   const { user } = useContext(SessionContext)
 
   return (
-    <AppBar position="fixed" anchor="top" classes={{ root: classes.AppBarRoot }}>
+    <AppBar
+      position="fixed"
+      anchor="top"
+      classes={{
+        root: location.pathname.includes('/planning')
+          ? classes.planningAppBarRoot
+          : classes.AppBarRoot,
+      }}
+    >
       <Toolbar>
         {/* <IconButton
           size="large"

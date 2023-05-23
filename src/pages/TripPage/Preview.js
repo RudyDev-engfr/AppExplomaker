@@ -286,26 +286,6 @@ const Preview = ({
   ) : (
     <>
       <Box className={classes.sliderBox}>
-        <Box position="absolute" top="0" right="0">
-          <Box position="absolute" top="20px" right="20px" zIndex="20">
-            {matchesXs ? (
-              <MobileNotificationArea
-                tripId={tripId}
-                currentNotifications={currentNotifications}
-                setRefreshNotif={setRefreshNotif}
-                days={days}
-                setSelectedDateOnPlanning={setSelectedDateOnPlanning}
-              />
-            ) : (
-              <NotificationArea
-                tripData={tripData}
-                currentNotifications={currentNotifications}
-                setRefreshNotif={setRefreshNotif}
-                tripId={tripId}
-              />
-            )}
-          </Box>
-        </Box>
         {carouselImages?.length > 0 ? (
           <Carousel
             className={classes.carousel}

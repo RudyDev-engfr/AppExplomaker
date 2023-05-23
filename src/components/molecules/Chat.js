@@ -19,7 +19,7 @@ import { useCollectionData } from 'react-firebase-hooks/firestore'
 import { differenceInMinutes } from 'date-fns'
 
 import data from '@emoji-mart/data'
-import { Picker } from 'emoji-mart'
+import Picker from '@emoji-mart/react'
 
 import { SessionContext } from '../../contexts/session'
 import { FirebaseContext } from '../../contexts/firebase'

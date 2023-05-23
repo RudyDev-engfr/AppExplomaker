@@ -32,6 +32,7 @@ const useStyles = makeStyles(theme => ({
     width: '500px',
     borderLeft: 'unset',
     maxHeight: '100vh',
+    boxShadow: '-5px 0px 15px -3px rgba(0,0,0,0.1)',
     [theme.breakpoints.down('sm')]: {
       width: '100vw',
       height: '100vh',
@@ -40,11 +41,10 @@ const useStyles = makeStyles(theme => ({
   },
   chatsPaper: {
     borderRadius: '18px',
-    margin: '24px 8px 0',
     backgroundColor: '#f7f7f7',
-    minHeight: 'calc(100vh - 170px)',
-    maxHeight: 'calc(100vh - 170px)',
-    width: 'calc(500px - 36px)',
+    minHeight: 'calc(100vh - 88px)',
+    maxHeight: 'calc(100vh - 88px)',
+    width: '100%',
     display: 'grid',
     gridTemplateColumns: '1fr',
     gridTemplateRows: '1fr minmax(45px, auto)',
@@ -64,7 +64,7 @@ const useStyles = makeStyles(theme => ({
   },
   messagePaper: {
     borderRadius: '0',
-    padding: '8px 16px',
+    padding: '15px 0',
     borderBottom: '1px solid lightgrey',
     maxWidth: '100%',
   },
@@ -75,6 +75,7 @@ const useStyles = makeStyles(theme => ({
     fontSize: '12px',
     color: theme.palette.grey['82'],
     marginBottom: '5px',
+    paddingLeft: '66px',
   },
 }))
 const AIChatWindow = ({ isChatOpen, setIsChatOpen, chats, tripId }) => {
@@ -95,6 +96,7 @@ const AIChatWindow = ({ isChatOpen, setIsChatOpen, chats, tripId }) => {
   const [openChat, setOpenChat] = useState(chatNames[0])
   const [isMounted, setIsMounted] = useState(false)
   const [showEmojiPicker, setShowEmojiPicker] = useState(false)
+  const [currentMessages, setCurrentMessages] = useState([])
 
   const addEmoji = e => {
     const emoji = e.native
@@ -117,6 +119,24 @@ const AIChatWindow = ({ isChatOpen, setIsChatOpen, chats, tripId }) => {
     setMessageToSend('')
     dummy.current?.scrollIntoView({ behavior: 'smooth' })
   }
+
+  useEffect(() => {
+    if (messages) {
+      const tempMessages = [...messages]
+      messages.forEach(({ createdAt, userId }, index) => {
+        if (index > 0) {
+          if (
+            userId === messages[index - 1]?.userId &&
+            messages[index - 1].createdAt &&
+            differenceInMinutes(rCTFF(createdAt), rCTFF(messages[index - 1].createdAt)) < 5
+          ) {
+            tempMessages[index].groupDate = true
+          }
+        }
+      })
+      setCurrentMessages(tempMessages)
+    }
+  }, [messages])
 
   useEffect(() => {
     if (!isMounted && messages?.length > 0 && dummy?.current?.scrollIntoView) {
@@ -209,7 +229,13 @@ const AIChatWindow = ({ isChatOpen, setIsChatOpen, chats, tripId }) => {
           </Box> */}
         </Box>
         <Paper elevation={0} className={classes.chatsPaper}>
-          <ChatBox data={chats[openChat]} messages={messages} dummy={dummy} />
+          <ChatBox
+            data={chats[openChat]}
+            messages={messages}
+            dummy={dummy}
+            currentMessages={currentMessages}
+            setCurrentMessages={setCurrentMessages}
+          />
           <form onSubmit={event => handleSubmit(event)}>
             <Box
               mx={1}
@@ -238,7 +264,10 @@ const AIChatWindow = ({ isChatOpen, setIsChatOpen, chats, tripId }) => {
                         <IconButton
                           size="small"
                           type="submit"
-                          disabled={!messageToSend}
+                          disabled={
+                            !messageToSend ||
+                            currentMessages[currentMessages.length - 1]?.userId === user.id
+                          }
                           color="primary"
                         >
                           <Send />
@@ -258,6 +287,7 @@ const AIChatWindow = ({ isChatOpen, setIsChatOpen, chats, tripId }) => {
                       }
                     },
                   }}
+                  disabled={currentMessages[currentMessages.length - 1]?.userId === user.id}
                   value={messageToSend}
                   onChange={e => setMessageToSend(e.target.value)}
                   maxRows={15}
@@ -271,36 +301,14 @@ const AIChatWindow = ({ isChatOpen, setIsChatOpen, chats, tripId }) => {
   )
 }
 
-const ChatBox = ({ messages, dummy }) => {
-  const [currentMessages, setCurrentMessages] = useState([])
-
-  useEffect(() => {
-    if (messages) {
-      const tempMessages = [...messages]
-      messages.forEach(({ createdAt, userId }, index) => {
-        if (index > 0) {
-          if (
-            userId === messages[index - 1].userId &&
-            messages[index - 1].createdAt &&
-            differenceInMinutes(rCTFF(createdAt), rCTFF(messages[index - 1].createdAt)) < 5
-          ) {
-            tempMessages[index].groupDate = true
-          }
-        }
-      })
-      setCurrentMessages(tempMessages)
-    }
-  }, [messages])
-
-  return (
-    <Box maxHeight="100%" minHeight="100%" overflow="auto">
-      {currentMessages.map(message => (
-        <ChatMessage key={message.messageId} {...message} />
-      ))}
-      <span ref={dummy} />
-    </Box>
-  )
-}
+const ChatBox = ({ messages, dummy, currentMessages, setCurrentMessages }) => (
+  <Box maxHeight="100%" minHeight="100%" overflow="auto">
+    {currentMessages.map(message => (
+      <ChatMessage key={message.messageId} {...message} />
+    ))}
+    <span ref={dummy} />
+  </Box>
+)
 
 const ChatMessage = ({ createdAt, userId, text = '', groupDate }) => {
   const classes = useStyles()
@@ -353,21 +361,23 @@ const ChatMessage = ({ createdAt, userId, text = '', groupDate }) => {
     <>
       <Grid container>
         <Grid item xs={12}>
-          {createdAt && !groupDate && (
-            <Box mb={1} ml={1.5}>
-              <CustomAvatar peopleIds={[userId]} />
-            </Box>
-          )}
           <Box sx={{ marginLeft: '8px' }}>
             <Paper className={classes.messagePaper}>
-              {createdAt && !groupDate && (
-                <Typography className={classes.dateMessage}>
-                  {rCTFF(createdAt, 'dd/MM HH:mm')}
+              <Box sx={{ display: 'flex', gridGap: '20px' }}>
+                {createdAt && !groupDate && (
+                  <Box mb={1} ml={1.5}>
+                    <CustomAvatar peopleIds={[userId]} width={30} height={30} />
+                  </Box>
+                )}
+                {createdAt && !groupDate && (
+                  <Typography className={classes.dateMessage}>
+                    {rCTFF(createdAt, 'dd/MM HH:mm')}
+                  </Typography>
+                )}
+                <Typography variant="body2" sx={{ wordWrap: 'break-all' }}>
+                  {text}
                 </Typography>
-              )}
-              <Typography variant="body2" sx={{ wordWrap: 'break-all' }}>
-                {text}
-              </Typography>
+              </Box>
             </Paper>
           </Box>
         </Grid>
