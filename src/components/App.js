@@ -5,7 +5,6 @@ import { BrowserRouter } from 'react-router-dom'
 import { ToastContainer } from 'react-toastify'
 import Box from '@mui/material/Box'
 import { useMediaQuery } from '@mui/material'
-
 import { FirebaseContext, useAuth } from '../contexts/firebase'
 import { SessionContext } from '../contexts/session'
 import Routes from './Router/Routes'

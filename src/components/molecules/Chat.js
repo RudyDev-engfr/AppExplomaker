@@ -17,6 +17,8 @@ import makeStyles from '@mui/styles/makeStyles'
 import { EmojiEmotionsOutlined, Send } from '@mui/icons-material'
 import { useCollectionData } from 'react-firebase-hooks/firestore'
 import { differenceInMinutes } from 'date-fns'
+
+import data from '@emoji-mart/data'
 import { Picker } from 'emoji-mart'
 
 import { SessionContext } from '../../contexts/session'
@@ -105,6 +107,11 @@ const useStyles = makeStyles(theme => ({
   textWhite: {
     color: '#FFFFFF',
   },
+  messageTypo: {
+    wordWrap: 'break-word',
+    textOverflow: 'clip',
+    whiteSpace: 'pre-line',
+  },
 }))
 
 const Chat = ({ isChatOpen, setIsChatOpen, chats, tripId }) => {
@@ -181,12 +188,15 @@ const Chat = ({ isChatOpen, setIsChatOpen, chats, tripId }) => {
                 backgroundColor: theme.palette.primary.main,
                 display: 'flex',
                 alignItems: 'center',
-                justifyContent: 'center',
-                paddingRight: '180px',
+                justifyContent: 'flex-start',
+                paddingLeft: '30px',
+                paddingTop: '10px',
                 color: theme.palette.secondary.contrastText,
               }}
             >
-              <Typography variant="h4">Discussion</Typography>
+              <Typography variant="h4" sx={{ fontSize: '28px' }}>
+                Discussion
+              </Typography>
             </Box>
           )}
           {matchesXs && (
@@ -363,7 +373,7 @@ const ChatMessage = ({ createdAt, userId, text = '', groupDate }) => {
                   backgroundColor: '#006A75',
                 }}
               >
-                <Typography variant="body2" className={classes.textWhite}>
+                <Typography variant="body2" className={classes.messageTypo} sx={{ color: 'white' }}>
                   {text}
                 </Typography>
               </Paper>

@@ -170,21 +170,21 @@ const NotificationAreaDrawer = ({
             backgroundColor: theme.palette.primary.main,
             display: 'flex',
             alignItems: 'center',
-            justifyContent: 'center',
-            paddingRight: '150px',
+            justifyContent: 'flex-start',
+            paddingLeft: '30px',
+            paddingTop: '10px',
             color: theme.palette.secondary.contrastText,
           }}
         >
-          {' '}
           <Typography
-            component="h5"
-            variant="h5"
+            component="h4"
+            variant="h4"
             align="center"
             sx={{
               fontFamily: 'Vesper Libre',
               fontWeight: 400,
-              fontSize: '34px',
-              lineHeight: 1.235,
+              fontSize: '28px',
+              lineHeight: 1.17,
             }}
           >
             Mes Notifications

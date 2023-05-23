@@ -18,8 +18,8 @@ import { EmojiEmotionsOutlined, Send } from '@mui/icons-material'
 import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos'
 import { makeStyles, useTheme } from '@mui/styles'
 
-import data from '@emoji-mart/data'
 import Picker from '@emoji-mart/react'
+import data from '@emoji-mart/data'
 
 import { FirebaseContext } from '../../contexts/firebase'
 import { SessionContext } from '../../contexts/session'
@@ -151,12 +151,15 @@ const AIChatWindow = ({ isChatOpen, setIsChatOpen, chats, tripId }) => {
                 backgroundColor: theme.palette.primary.main,
                 display: 'flex',
                 alignItems: 'center',
-                justifyContent: 'center',
-                paddingRight: '180px',
+                justifyContent: 'flex-start',
+                paddingLeft: '30px',
+                paddingTop: '10px',
                 color: theme.palette.secondary.contrastText,
               }}
             >
-              <Typography variant="h4">L&apos;Assistant</Typography>
+              <Typography variant="h4" sx={{ fontSize: '28px' }}>
+                L&apos;Assistant
+              </Typography>
             </Box>
           )}
           {matchesXs && (
@@ -333,6 +336,7 @@ const ChatMessage = ({ createdAt, userId, text = '', groupDate }) => {
                       wordWrap: 'break-word',
                       textOverflow: 'clip',
                       maxWidth: 'calc(100% - 80px)',
+                      whiteSpace: 'pre-line',
                     }}
                   >
                     {text}
