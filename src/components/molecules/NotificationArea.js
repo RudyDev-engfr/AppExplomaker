@@ -165,7 +165,8 @@ const NotificationAreaDrawer = ({
       {!matchesXs && (
         <Box
           sx={{
-            height: '64px',
+            height: '65px',
+            borderBottom: '1px solid white',
             width: '100%',
             backgroundColor: theme.palette.primary.main,
             display: 'flex',
@@ -194,6 +195,8 @@ const NotificationAreaDrawer = ({
       <Paper
         sx={{
           width: '500px',
+          borderRadius: 'unset',
+          boxShadow: 'none',
         }}
       >
         <Box
@@ -335,10 +338,11 @@ const NotificationAreaDrawer = ({
                 width: '100%',
                 display: 'flex',
                 justifyContent: 'center',
+                paddingTop: '15px',
                 paddingBottom: '15px',
               }}
             >
-              <Typography>Pas de notification</Typography>
+              <Typography>Pas d&apos;activité pour le moment</Typography>
             </Box>
           )}
         </Box>

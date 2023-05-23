@@ -40,10 +40,9 @@ const useStyles = makeStyles(theme => ({
     },
   },
   chatsPaper: {
-    borderRadius: '18px',
     backgroundColor: '#f7f7f7',
-    minHeight: 'calc(100vh - 88px)',
-    maxHeight: 'calc(100vh - 88px)',
+    minHeight: 'calc(100vh - 65px)',
+    maxHeight: 'calc(100vh - 65px)',
     width: '100%',
     display: 'grid',
     gridTemplateColumns: '1fr',
@@ -58,9 +57,8 @@ const useStyles = makeStyles(theme => ({
   },
   inputChat: {
     backgroundColor: '#fff',
-    borderRadius: '20px',
-    padding: '.5rem 1rem',
-    margin: '0 .5rem',
+    borderRadius: '0',
+    borderLeft: '1px solid white',
   },
   messagePaper: {
     borderRadius: '0',
@@ -166,7 +164,7 @@ const AIChatWindow = ({ isChatOpen, setIsChatOpen, chats, tripId }) => {
           {!matchesXs && (
             <Box
               sx={{
-                height: '64px',
+                height: '65px',
                 width: '100%',
                 backgroundColor: theme.palette.primary.main,
                 display: 'flex',
@@ -175,6 +173,7 @@ const AIChatWindow = ({ isChatOpen, setIsChatOpen, chats, tripId }) => {
                 paddingLeft: '30px',
                 paddingTop: '10px',
                 color: theme.palette.secondary.contrastText,
+                borderBottom: '1px solid white',
               }}
             >
               <Typography variant="h4" sx={{ fontSize: '28px' }}>
@@ -238,7 +237,6 @@ const AIChatWindow = ({ isChatOpen, setIsChatOpen, chats, tripId }) => {
           />
           <form onSubmit={event => handleSubmit(event)}>
             <Box
-              mx={1}
               sx={{
                 [theme.breakpoints.down('sm')]: { position: 'fixed', bottom: '0', width: '90%' },
               }}
@@ -246,6 +244,7 @@ const AIChatWindow = ({ isChatOpen, setIsChatOpen, chats, tripId }) => {
               <FormControl fullWidth>
                 {showEmojiPicker && <Picker onEmojiSelect={addEmoji} />}
                 <TextField
+                  fullWidth
                   InputProps={{
                     className: classes.inputChat,
                     startAdornment: (
@@ -291,6 +290,13 @@ const AIChatWindow = ({ isChatOpen, setIsChatOpen, chats, tripId }) => {
                   value={messageToSend}
                   onChange={e => setMessageToSend(e.target.value)}
                   maxRows={15}
+                  sx={{
+                    '& .MuiOutlinedInput-notchedOutline': {
+                      borderLeft: 'none',
+                      borderRight: 'none',
+                      borderBottom: 'none',
+                    },
+                  }}
                 />
               </FormControl>
             </Box>
@@ -315,68 +321,53 @@ const ChatMessage = ({ createdAt, userId, text = '', groupDate }) => {
   const theme = useTheme()
   const { user } = useContext(SessionContext)
 
-  if (userId === user.id) {
-    return (
-      <>
-        <Grid container alignItems="flex-end">
-          <Grid item xs={12}>
-            <Box position="relative">
-              <Paper
-                className={classes.messagePaper}
-                sx={{
-                  backgroundColor: theme.palette.secondary.contrastText,
-                }}
-              >
-                {createdAt && !groupDate && (
-                  <Typography className={classes.dateMessage}>
-                    {rCTFF(createdAt, 'dd/MM HH:mm')}
-                  </Typography>
-                )}
-                <Box sx={{ display: 'flex', gridGap: '20px' }}>
-                  {createdAt && !groupDate && (
-                    <Box ml={1.5}>
-                      <CustomAvatar peopleIds={[userId]} width={30} height={30} />
-                    </Box>
-                  )}
-                  <Typography
-                    variant="body2"
-                    sx={{
-                      wordWrap: 'break-word',
-                      textOverflow: 'clip',
-                      maxWidth: 'calc(100% - 80px)',
-                      whiteSpace: 'pre-line',
-                    }}
-                  >
-                    {text}
-                  </Typography>
-                </Box>
-              </Paper>
-            </Box>
-          </Grid>
-        </Grid>
-      </>
-    )
-  }
   return (
     <>
-      <Grid container>
+      <Grid container alignItems="flex-end">
         <Grid item xs={12}>
-          <Box sx={{ marginLeft: '8px' }}>
-            <Paper className={classes.messagePaper}>
+          <Box position="relative">
+            <Paper
+              className={classes.messagePaper}
+              sx={{
+                backgroundColor:
+                  userId === user.id
+                    ? theme.palette.secondary.contrastText
+                    : theme.palette.primary.main,
+                color:
+                  userId === user.id
+                    ? theme.palette.grey['33']
+                    : theme.palette.secondary.contrastText,
+              }}
+            >
+              {createdAt && !groupDate && (
+                <Typography
+                  className={classes.dateMessage}
+                  sx={{
+                    color:
+                      userId === user.id
+                        ? theme.palette.grey['33']
+                        : theme.palette.secondary.contrastText,
+                  }}
+                >
+                  {rCTFF(createdAt, 'dd/MM HH:mm')}
+                </Typography>
+              )}
               <Box sx={{ display: 'flex', gridGap: '20px' }}>
                 {createdAt && !groupDate && (
-                  <Box mb={1} ml={1.5}>
+                  <Box ml={1.5}>
                     <CustomAvatar peopleIds={[userId]} width={30} height={30} />
                   </Box>
                 )}
-                {createdAt && !groupDate && (
-                  <Typography className={classes.dateMessage}>
-                    {rCTFF(createdAt, 'dd/MM HH:mm')}
-                  </Typography>
-                )}
-                <Typography variant="body2" sx={{ wordWrap: 'break-all' }}>
-                  {text}
-                </Typography>
+                <Typography
+                  variant="body2"
+                  sx={{
+                    wordWrap: 'break-word',
+                    textOverflow: 'clip',
+                    maxWidth: 'calc(100% - 80px)',
+                    whiteSpace: 'pre-line',
+                  }}
+                  dangerouslySetInnerHTML={{ __html: text }}
+                />
               </Box>
             </Paper>
           </Box>

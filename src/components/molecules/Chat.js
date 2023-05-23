@@ -38,12 +38,11 @@ const useStyles = makeStyles(theme => ({
     },
   },
   chatsPaper: {
-    borderRadius: '18px',
-    margin: '24px 8px 0',
+    borderRadius: 'unset',
     backgroundColor: '#f7f7f7',
-    minHeight: 'calc(100vh - 170px)',
-    maxHeight: 'calc(100vh - 170px)',
-    width: 'calc(500px - 36px)',
+    minHeight: 'calc(100vh - 65px)',
+    maxHeight: 'calc(100vh - 65px)',
+    width: '500px',
     display: 'grid',
     gridTemplateColumns: '1fr',
     gridTemplateRows: 'minmax(94px, auto) 1fr minmax(45px, auto)',
@@ -58,7 +57,7 @@ const useStyles = makeStyles(theme => ({
   chatHeader: {
     backgroundColor: 'white',
     border: '1px solid #F7F7F7',
-    borderRadius: '20px 20px 0 0',
+    borderRadius: 'unset',
     display: 'flex',
     flexDirection: 'column',
     justifyContent: 'space-between',
@@ -183,7 +182,8 @@ const Chat = ({ isChatOpen, setIsChatOpen, chats, tripId }) => {
           {!matchesXs && (
             <Box
               sx={{
-                height: '64px',
+                height: '65px',
+                borderBottom: '1px solid white',
                 width: '100%',
                 backgroundColor: theme.palette.primary.main,
                 display: 'flex',
@@ -338,7 +338,7 @@ const ChatBox = ({ messages, dummy }) => {
   }, [messages])
 
   return (
-    <Box maxHeight="100%" minHeight="100%" overflow="auto">
+    <Box maxHeight="100%" minHeight="100%" overflow="auto" sx={{ borderRadius: 'unset' }}>
       {currentMessages.map(message => (
         <ChatMessage key={message.messageId} {...message} />
       ))}
