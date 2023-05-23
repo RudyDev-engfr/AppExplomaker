@@ -101,7 +101,7 @@ const AIChatWindow = ({ isChatOpen, setIsChatOpen, chats, tripId }) => {
     setMessageToSend(prev => prev + emoji)
   }
 
-  const messagesRef = firestore.collection('trips').doc(tripId).collection('AIChat')
+  const messagesRef = firestore.collection('trips').doc(tripId).collection('Assistant')
   const query = messagesRef.orderBy('createdAt').limit(25)
   const [messages] = useCollectionData(query, { idField: 'messageId' })
 
@@ -126,10 +126,6 @@ const AIChatWindow = ({ isChatOpen, setIsChatOpen, chats, tripId }) => {
       }, 500)
     }
   }, [dummy, messages])
-
-  useEffect(() => {
-    console.log(messageToSend)
-  }, [messageToSend])
 
   return (
     <Drawer

@@ -6,18 +6,18 @@ import {
   IconButton,
   Paper,
   Typography,
-  Input,
   Grid,
   useTheme,
   useMediaQuery,
+  TextField,
+  InputAdornment,
 } from '@mui/material'
 import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos'
 import makeStyles from '@mui/styles/makeStyles'
-import { Add, PersonRounded, Send } from '@mui/icons-material'
+import { EmojiEmotionsOutlined, Send } from '@mui/icons-material'
 import { useCollectionData } from 'react-firebase-hooks/firestore'
 import { differenceInMinutes } from 'date-fns'
-import { v4 as uuidv4 } from 'uuid'
-import clsx from 'clsx'
+import { Picker } from 'emoji-mart'
 
 import { SessionContext } from '../../contexts/session'
 import { FirebaseContext } from '../../contexts/firebase'
@@ -69,27 +69,27 @@ const useStyles = makeStyles(theme => ({
       border: 'unset',
     },
   },
-  chatIcon: {
-    width: '50px',
-    transition: 'all 0.2s',
-    backgroundColor: '#f7f7f7',
-    color: '#bdbdbd',
-    '&:hover': {
-      background: '#009d8c',
-      color: '#fff',
-    },
-    '& img': {
-      maxWidth: '80%',
-      filter:
-        'invert(47%) sepia(60%) saturate(1204%) hue-rotate(137deg) brightness(82%) contrast(102%)',
-    },
-    '&:hover img': {
-      filter:
-        'invert(100%) sepia(100%) saturate(0%) hue-rotate(288deg) brightness(102%) contrast(102%)',
-    },
-  },
-  activeChat: { backgroundColor: '#009d8c', color: 'white' },
-  firstIcon: { marginRight: '.75rem' },
+  // chatIcon: {
+  //   width: '50px',
+  //   transition: 'all 0.2s',
+  //   backgroundColor: '#f7f7f7',
+  //   color: '#bdbdbd',
+  //   '&:hover': {
+  //     background: '#009d8c',
+  //     color: '#fff',
+  //   },
+  //   '& img': {
+  //     maxWidth: '80%',
+  //     filter:
+  //       'invert(47%) sepia(60%) saturate(1204%) hue-rotate(137deg) brightness(82%) contrast(102%)',
+  //   },
+  //   '&:hover img': {
+  //     filter:
+  //       'invert(100%) sepia(100%) saturate(0%) hue-rotate(288deg) brightness(102%) contrast(102%)',
+  //   },
+  // },
+  // activeChat: { backgroundColor: '#009d8c', color: 'white' },
+  // firstIcon: { marginRight: '.75rem' },
   messagePaper: {
     borderRadius: '10px',
     wordWrap: 'break-word',
@@ -128,6 +128,12 @@ const Chat = ({ isChatOpen, setIsChatOpen, chats, tripId }) => {
   const messagesRef = firestore.collection('trips').doc(tripId).collection('messages')
   const query = messagesRef.orderBy('createdAt').limit(25)
   const [messages] = useCollectionData(query, { idField: 'messageId' })
+  const [showEmojiPicker, setShowEmojiPicker] = useState(false)
+
+  const addEmoji = e => {
+    const emoji = e.native
+    setMessageToSend(prev => prev + emoji)
+  }
 
   const handleSubmit = async event => {
     event.preventDefault()
@@ -247,27 +253,48 @@ const Chat = ({ isChatOpen, setIsChatOpen, chats, tripId }) => {
               }}
             >
               <FormControl fullWidth>
-                <Input
-                  inputProps={{ className: classes.inputChat }}
+                {showEmojiPicker && <Picker onEmojiSelect={addEmoji} />}
+                <TextField
+                  InputProps={{
+                    className: classes.inputChat,
+                    startAdornment: (
+                      <InputAdornment position="start">
+                        <IconButton
+                          size="small"
+                          color="primary"
+                          onClick={() => setShowEmojiPicker(!showEmojiPicker)}
+                        >
+                          <EmojiEmotionsOutlined />
+                        </IconButton>
+                      </InputAdornment>
+                    ),
+                    endAdornment: (
+                      <InputAdornment position="end">
+                        <IconButton
+                          size="small"
+                          type="submit"
+                          disabled={!messageToSend}
+                          color="primary"
+                        >
+                          <Send />
+                        </IconButton>
+                      </InputAdornment>
+                    ),
+                    disableUnderline: true,
+                    multiline: true,
+                    onKeyDown: event => {
+                      if (event.key === 'Enter') {
+                        if (event.metaKey || event.ctrlKey || event.shiftKey) {
+                          // Allow the new line to be added by not preventing the default behavior
+                        } else {
+                          // event.preventDefault()
+                          handleSubmit(event)
+                        }
+                      }
+                    },
+                  }}
                   value={messageToSend}
                   onChange={e => setMessageToSend(e.target.value)}
-                  startAdornment={
-                    <IconButton size="small" color="primary" variant="outlined" disabled>
-                      <Add />
-                    </IconButton>
-                  }
-                  endAdornment={
-                    <IconButton
-                      size="small"
-                      type="submit"
-                      disabled={!messageToSend}
-                      color="primary"
-                    >
-                      <Send />
-                    </IconButton>
-                  }
-                  disableUnderline
-                  multiline
                   maxRows={15}
                 />
               </FormControl>
