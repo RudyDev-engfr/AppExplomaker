@@ -26,7 +26,7 @@ import { rCTFF } from '../../helper/functions'
 
 const useStyles = makeStyles(theme => ({
   basePaper: {
-    width: '350px',
+    width: '500px',
     borderLeft: 'unset',
     maxHeight: '100vh',
     [theme.breakpoints.down('sm')]: {
@@ -41,7 +41,7 @@ const useStyles = makeStyles(theme => ({
     backgroundColor: '#f7f7f7',
     minHeight: 'calc(100vh - 170px)',
     maxHeight: 'calc(100vh - 170px)',
-    width: 'calc(350px - 36px)',
+    width: 'calc(500px - 36px)',
     display: 'grid',
     gridTemplateColumns: '1fr',
     gridTemplateRows: 'minmax(94px, auto) 1fr minmax(45px, auto)',
@@ -169,8 +169,19 @@ const Chat = ({ isChatOpen, setIsChatOpen, chats, tripId }) => {
         >
           {!matchesXs && (
             <Box
-              sx={{ height: '64px', width: '100%', backgroundColor: theme.palette.primary.main }}
-            />
+              sx={{
+                height: '64px',
+                width: '100%',
+                backgroundColor: theme.palette.primary.main,
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                paddingRight: '180px',
+                color: theme.palette.secondary.contrastText,
+              }}
+            >
+              <Typography variant="h4">Discussion</Typography>
+            </Box>
           )}
           {matchesXs && (
             <Box position="absolute" left="20px">
@@ -185,9 +196,6 @@ const Chat = ({ isChatOpen, setIsChatOpen, chats, tripId }) => {
               </IconButton>
             </Box>
           )}
-          <Box sx={{ paddingTop: '30px' }}>
-            <Typography variant="h4">Discussion</Typography>
-          </Box>
           {/* <Box display="flex">
             {chatNames.map((chatName, index) => (
               <IconButton

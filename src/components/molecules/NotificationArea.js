@@ -163,14 +163,19 @@ const NotificationAreaDrawer = ({
       anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
     >
       {!matchesXs && (
-        <Box sx={{ height: '64px', width: '100%', backgroundColor: theme.palette.primary.main }} />
-      )}
-      <Paper
-        sx={{
-          width: '500px',
-        }}
-      >
-        <Box sx={{ padding: '30px' }}>
+        <Box
+          sx={{
+            height: '64px',
+            width: '100%',
+            backgroundColor: theme.palette.primary.main,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            paddingRight: '150px',
+            color: theme.palette.secondary.contrastText,
+          }}
+        >
+          {' '}
           <Typography
             component="h5"
             variant="h5"
@@ -185,6 +190,12 @@ const NotificationAreaDrawer = ({
             Mes Notifications
           </Typography>
         </Box>
+      )}
+      <Paper
+        sx={{
+          width: '500px',
+        }}
+      >
         <Box
           sx={{
             overflowY: currentNotifications?.length > 0 ? 'auto' : 'none',

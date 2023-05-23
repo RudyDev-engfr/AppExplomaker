@@ -133,8 +133,19 @@ const AIChatWindow = ({ isChatOpen, setIsChatOpen, chats, tripId }) => {
         >
           {!matchesXs && (
             <Box
-              sx={{ height: '64px', width: '100%', backgroundColor: theme.palette.primary.main }}
-            />
+              sx={{
+                height: '64px',
+                width: '100%',
+                backgroundColor: theme.palette.primary.main,
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                paddingRight: '180px',
+                color: theme.palette.secondary.contrastText,
+              }}
+            >
+              <Typography variant="h4">L&apos;Assistant</Typography>
+            </Box>
           )}
           {matchesXs && (
             <Box position="absolute" left="20px">
@@ -149,9 +160,7 @@ const AIChatWindow = ({ isChatOpen, setIsChatOpen, chats, tripId }) => {
               </IconButton>
             </Box>
           )}
-          <Box sx={{ paddingTop: '30px' }}>
-            <Typography variant="h4">L&apos;Assistant</Typography>
-          </Box>
+
           {/* <Box display="flex">
             {chatNames.map((chatName, index) => (
               <IconButton
