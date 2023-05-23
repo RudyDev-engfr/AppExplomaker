@@ -279,7 +279,7 @@ const Chat = ({ isChatOpen, setIsChatOpen, chats, tripId }) => {
   )
 }
 
-export const ChatBox = ({ messages, dummy }) => {
+const ChatBox = ({ messages, dummy }) => {
   const [currentMessages, setCurrentMessages] = useState([])
 
   useEffect(() => {
@@ -310,7 +310,7 @@ export const ChatBox = ({ messages, dummy }) => {
   )
 }
 
-export const ChatMessage = ({ createdAt, userId, text = '', groupDate }) => {
+const ChatMessage = ({ createdAt, userId, text = '', groupDate }) => {
   const classes = useStyles()
   const theme = useTheme()
   const { user } = useContext(SessionContext)
