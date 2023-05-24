@@ -21,6 +21,7 @@ const TripContextProvider = ({ children }) => {
   const matches1600 = useMediaQuery('(max-width:1600px)')
   const { user } = useContext(SessionContext)
   const [deleteEventNotifications, setDeleteEventNotifications] = useState(false)
+  const [hasClicked, setHasClicked] = useState(false)
   const [tripData, setTripData] = useState()
 
   // use to handle Notifications
@@ -119,6 +120,14 @@ const TripContextProvider = ({ children }) => {
   }, [tripData])
 
   useEffect(() => {
+    if (hasClicked) {
+      setTimeout(() => {
+        setHasClicked(false)
+      }, 2000)
+    }
+  }, [hasClicked])
+
+  useEffect(() => {
     console.log('showmelestate1', selectedDateOnPlanning)
   }, [selectedDateOnPlanning])
 
@@ -159,6 +168,8 @@ const TripContextProvider = ({ children }) => {
         setCurrentNotifications,
         refreshNotif,
         setRefreshNotif,
+        hasClicked,
+        setHasClicked,
       }}
     >
       {children}

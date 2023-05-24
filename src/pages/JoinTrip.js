@@ -119,6 +119,15 @@ const JoinTrip = () => {
   const [currentTripSpot, setCurrentTripSpot] = useState([])
   // eslint-disable-next-line no-unused-vars
   const [currentTripImages, setCurrentTripImages] = useState(0)
+  const [hasClicked, setHasClicked] = useState(false)
+
+  useEffect(() => {
+    if (hasClicked) {
+      setTimeout(() => {
+        setHasClicked(false)
+      }, 2000)
+    }
+  }, [hasClicked])
 
   useEffect(() => {
     firestore
@@ -206,6 +215,7 @@ const JoinTrip = () => {
   }
 
   const handleTravelerSelection = (isTraveler = true) => {
+    setHasClicked(true)
     if (user.isLoggedIn) {
       updateTraveler(user.id, isTraveler)
       history.push(`/tripPage/${tripId}`)
@@ -397,6 +407,7 @@ const JoinTrip = () => {
                     },
                   }}
                   onClick={() => handleTravelerSelection(false)}
+                  disabled={hasClicked}
                 >
                   Je ne suis pas l&quot;un des voyageur de ce séjour
                 </Button>
@@ -418,7 +429,7 @@ const JoinTrip = () => {
                       },
                     },
                   }}
-                  disabled={!selectedTraveler}
+                  disabled={!selectedTraveler || hasClicked}
                   disableElevation={matchesXs}
                   onClick={() => handleTravelerSelection()}
                 >
@@ -431,6 +442,7 @@ const JoinTrip = () => {
                 dateRange={dateRange}
                 onClick={() => handleTravelerSelection(false)}
                 isJoin
+                hasClicked={hasClicked}
               />
             )}
           </Box>

@@ -230,6 +230,8 @@ const EventCreator = ({
     days,
   } = useContext(PlanningContext)
 
+  const { hasClicked, setHasClicked } = useContext(TripContext)
+
   const tripStartDate = rCTFF(dateRange[0])
   const tripEndDate = rCTFF(dateRange[1])
   const [daysInterval, setDaysInterval] = useState(0)
@@ -684,6 +686,7 @@ const EventCreator = ({
 
   const handleSubmit = async event => {
     event.preventDefault()
+    setHasClicked(true)
     let currentPlaceDetails
     if (
       eventType === EVENT_TYPES[0] ||
@@ -1611,7 +1614,7 @@ const EventCreator = ({
               type="submit"
               variant="contained"
               fullWidth
-              disabled={!isFormValid()}
+              disabled={!isFormValid() || hasClicked}
               className={classes.submitBtn}
             >
               {editMode ? 'Modifier' : 'Créer'} l
