@@ -3,10 +3,16 @@ import { Avatar, Badge, Box, IconButton, Modal, Paper, Typography } from '@mui/m
 import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos'
 import { makeStyles, useTheme } from '@mui/styles'
 import React, { useContext, useEffect, useState } from 'react'
+import { useHistory } from 'react-router-dom'
+import { isSameDay } from 'date-fns'
+
 import { FirebaseContext } from '../../contexts/firebase'
 import { SessionContext } from '../../contexts/session'
+import { TripContext } from '../../contexts/trip'
+
 import findIcon from '../../helper/icons'
 import CustomAvatar from '../atoms/CustomAvatar'
+import { stringToDate } from '../../helper/functions'
 
 const useStyles = makeStyles(theme => ({
   notificationTitle: {
@@ -19,7 +25,7 @@ const useStyles = makeStyles(theme => ({
 const MobileNotificationArea = ({
   isMyTrips = false,
   tripId,
-
+  currentNotifications,
   setRefreshNotif,
 }) => {
   const classes = useStyles()
@@ -27,6 +33,7 @@ const MobileNotificationArea = ({
 
   const { user } = useContext(SessionContext)
   const { setNotificationsToNewStateOnTrip } = useContext(FirebaseContext)
+  const { days, setSelectedDateOnPlanning } = useContext(TripContext)
 
   const [open, setOpen] = useState(false)
   const handleOpen = () => setOpen(true)
@@ -39,18 +46,18 @@ const MobileNotificationArea = ({
           handleOpen()
           setNotificationsToNewStateOnTrip(user, tripId, 2)
         }}
-        sx={{
-          backgroundColor:
-            user?.notifications?.filter(notification => notification.state === 1).length > 0
-              ? theme.palette.primary.ultraLight
-              : 'white',
-          '&:hover': {
-            backgroundColor:
-              user?.notifications?.filter(notification => notification.state === 1).length > 0
-                ? theme.palette.primary.ultraLight
-                : 'white',
-          },
-        }}
+        // sx={{
+        //   backgroundColor:
+        //     user?.notifications?.filter(notification => notification.state === 1).length > 0
+        //       ? theme.palette.primary.ultraLight
+        //       : 'white',
+        //   '&:hover': {
+        //     backgroundColor:
+        //       user?.notifications?.filter(notification => notification.state === 1).length > 0
+        //         ? theme.palette.primary.ultraLight
+        //         : 'white',
+        //   },
+        // }}
       >
         <Badge
           badgeContent={
@@ -62,17 +69,37 @@ const MobileNotificationArea = ({
           }
           color="secondary"
         >
-          <Notifications />
+          <Notifications sx={{ fontSize: '35px' }} />
         </Badge>
       </IconButton>
-      <MobileNotificationModal open={open} setOpen={setOpen} />
+      <MobileNotificationModal
+        open={open}
+        setOpen={setOpen}
+        currentNotifications={currentNotifications}
+        setNotificationsToNewStateOnTrip={setNotificationsToNewStateOnTrip}
+        user={user}
+        days={days}
+        setSelectedDateOnPlanning={setSelectedDateOnPlanning}
+      />
     </>
   )
 }
 
-export const MobileNotificationModal = ({ open, setOpen, currentNotifications }) => {
+export const MobileNotificationModal = ({
+  open,
+  setOpen,
+  currentNotifications,
+  setNotificationsToNewStateOnTrip,
+  user,
+  days,
+  setSelectedDateOnPlanning,
+}) => {
   const classes = useStyles()
   const theme = useTheme()
+  const history = useHistory()
+
+  const { setCurrentView, setCurrentEvent } = useContext(TripContext)
+
   const handleClose = () => setOpen(false)
 
   return (
@@ -133,6 +160,22 @@ export const MobileNotificationModal = ({ open, setOpen, currentNotifications })
                   notification.state === 1 ? theme.palette.primary.ultraLight : 'white',
               }}
               key={notification.id}
+              onClick={() => {
+                if (notification.id) {
+                  setNotificationsToNewStateOnTrip(user, 3, notification.id)
+                }
+                handleClose()
+                history.push(notification.url)
+                setCurrentEvent(notification.event)
+                setCurrentView('preview')
+                if (notification?.eventType) {
+                  days.forEach(day => {
+                    if (isSameDay(stringToDate(notification.startTime, 'yyyy-MM-dd HH:mm'), day)) {
+                      setSelectedDateOnPlanning(day)
+                    }
+                  })
+                }
+              }}
             >
               <Box sx={{ position: 'relative' }}>
                 <CustomAvatar

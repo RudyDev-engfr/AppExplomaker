@@ -389,6 +389,7 @@ export const buildNotificationsOnTripForUser = (user, tripId) => {
         singleNotif.tripId = tripId
         if (event) {
           singleNotif.startTime = event.startTime
+          singleNotif.event = event
         }
         // eslint-disable-next-line default-case
         switch (type) {

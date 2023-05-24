@@ -396,7 +396,7 @@ const EventPreview = ({
               <Box display="flex" justifyContent="space-between" alignItems="center">
                 <Box sx={{ marginBottom: '20px' }}>
                   <Typography component="h1" sx={{ fontSize: '28px' }}>
-                    {currentEvent.title}
+                    {currentEvent?.title}
                   </Typography>
                 </Box>
               </Box>

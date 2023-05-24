@@ -191,6 +191,7 @@ const TripPageNav = ({
   const [open, setOpen] = useState(false)
   const [refreshNotif, setRefreshNotif] = useState(false)
   const [currentNotifications, setCurrentNotifications] = useState([])
+
   const handleOpen = () => setOpen(true)
   const handleClose = () => setOpen(false)
 
@@ -400,7 +401,7 @@ const TripPageNav = ({
           centered
           variant="fullWidth"
           fixedTabs
-          value={currentActiveMobileNavTab}
+          // value={currentActiveMobileNavTab}
           TabIndicatorProps={{ sx: { display: 'none' } }}
         >
           <Tab
@@ -486,11 +487,16 @@ const TripPageNav = ({
               setNotificationsToNewStateOnTrip(user, tripId, 2)
             }}
             icon={
-              <Notifications
-                sx={{
-                  color: openModal === 'editEditors' && theme.palette.primary.main,
-                  fontSize: '35px',
-                }}
+              // <Notifications
+              //   sx={{
+              //     color: openModal === 'editEditors' && theme.palette.primary.main,
+              //     fontSize: '35px',
+              //   }}
+              // />
+              <MobileNotificationArea
+                currentNotifications={currentNotifications}
+                tripId={tripId}
+                setRefreshNotif={setRefreshNotif}
               />
             }
             value="myNotifications"
@@ -498,11 +504,6 @@ const TripPageNav = ({
           />
         </Tabs>
       </Paper>
-      <MobileNotificationModal
-        open={open}
-        setOpen={setOpen}
-        currentNotifications={currentNotifications}
-      />
       <Dialog
         fullScreen
         open={isMobilePlusOpen}
