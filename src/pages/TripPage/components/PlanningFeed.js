@@ -6,6 +6,7 @@ import { format, isSameDay } from 'date-fns'
 import frLocale from 'date-fns/locale/fr'
 import capitalize from 'lodash.capitalize'
 import { ManageSearch } from '@mui/icons-material'
+import { v4 as uuidv4 } from 'uuid'
 
 import { PlanningContext } from '../../../contexts/planning'
 import { dateToString, stringToDate } from '../../../helper/functions'
@@ -95,7 +96,7 @@ const PlanningFeed = ({ propsClasses, setCurrentView }) => {
                 .map(plannedEvent => (
                   <MiniEventCard
                     plannedEvent={plannedEvent}
-                    key={plannedEvent.title}
+                    key={`${uuidv4()}-${plannedEvent.title}`}
                     setCurrentView={setCurrentView}
                     day={day}
                   />

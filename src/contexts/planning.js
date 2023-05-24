@@ -555,7 +555,7 @@ const PlanningContextProvider = ({ children }) => {
                 })
                 return (
                   <CustomMarker
-                    key={flightProposition.id}
+                    key={`${uuidv4()} - ${flightProposition.id}`}
                     position={{
                       lat: airport.geocode.latitude,
                       lng: airport.geocode.longitude,
@@ -598,7 +598,7 @@ const PlanningContextProvider = ({ children }) => {
 
               return (
                 <CustomMarker
-                  key={`${event.id}-${flight.data.airports[airportIndex].iataCode}`}
+                  key={`${uuidv4()} -${event.id}-${flight.data.airports[airportIndex].iataCode}`}
                   position={{
                     lat: airport.geocode.latitude,
                     lng: airport.geocode.longitude,
@@ -631,7 +631,7 @@ const PlanningContextProvider = ({ children }) => {
         )
         .map(event => (
           <CustomMarker
-            key={event.id}
+            key={`${uuidv4()} - ${event.id}`}
             position={{ lat: event.location?.lat, lng: event.location?.lng }}
             clickable
             onClick={() => {
@@ -1013,7 +1013,7 @@ const PlanningContextProvider = ({ children }) => {
 
           return (
             <CustomMarker
-              key={`${flight.tempId}-${airport.iataCode}`}
+              key={`${uuidv4()} - ${flight.tempId}-${airport.iataCode}`}
               position={{
                 lat: airport.geocode.latitude,
                 lng: airport.geocode.longitude,

@@ -89,6 +89,7 @@ import { TripContext } from '../../contexts/trip'
 import MobileTripPageHeader from '../../components/molecules/MobileTripPageHeader'
 import SocialNavbar from './SocialNavbar'
 import AIChatWindow from '../../components/AI/AIChatWindow'
+import AddCollaboratorsButton from '../../components/atoms/AddCollaboratorsButton'
 
 const notifications = [
   {
@@ -337,6 +338,7 @@ const useStyles = makeStyles(theme => ({
     fontSize: '24px',
     fontFamily: theme.typography.h1.fontFamily,
     fontWeight: '500',
+    textAlign: 'center',
     [theme.breakpoints.down('sm')]: {
       fontSize: '22px',
       fontFamily: theme.typography.fontFamily,
@@ -397,7 +399,7 @@ const useStyles = makeStyles(theme => ({
   gridContributeurs: {
     margin: '20px 0',
     display: 'grid',
-    gridTemplate: '1fr / max-content 1fr 130px 130px min-content',
+    gridTemplate: '1fr / max-content 1fr 130px min-content',
     gridGap: '10px',
     alignItems: 'center',
   },
@@ -444,7 +446,8 @@ const useStyles = makeStyles(theme => ({
   btnCopyContainer: {
     borderRadius: '10px',
     margin: '15px 0',
-    padding: '20px 0',
+    padding: '20px 15px',
+    justifySelf: 'center',
   },
   typoCopyBtn: {
     fontSize: '16px',
@@ -468,7 +471,6 @@ const useStyles = makeStyles(theme => ({
     borderRadius: '10px',
   },
   accordionDetailsGrid: {
-    margin: '20px 0',
     display: 'grid',
     gridTemplate: 'auto / auto',
     gridAutoRows: '60px',
@@ -589,7 +591,6 @@ const TripPage = () => {
   const [currentBudget, setCurrentBudget] = useState('')
   const [currency, setCurrency] = useState('')
   const [ageOptions, setAgeOptions] = useState([])
-  const [modeOptions, setModeOptions] = useState([])
   const [isShowingRemovedContributors, setIsShowingRemovedContributors] = useState(true)
   const [recommendedWishes, setRecommendedWishes] = useState([])
   // eslint-disable-next-line no-unused-vars
@@ -681,10 +682,6 @@ const TripPage = () => {
               setIsAdmin(false)
               setCanEdit(true)
               break
-            case ROLES.Read:
-              setIsAdmin(false)
-              setCanEdit(false)
-              break
             default:
               setIsAdmin(false)
               setCanEdit(false)
@@ -724,9 +721,6 @@ const TripPage = () => {
   useEffect(() => {
     if (dictionary.travelers_age) {
       setAgeOptions(dictionary.travelers_age)
-    }
-    if (dictionary.user_mode) {
-      setModeOptions(dictionary.user_mode)
     }
   }, [dictionary])
 
@@ -1439,27 +1433,24 @@ const TripPage = () => {
         modalBack
         submitHandler={() => setOpenModal('general')}
         preventCloseOnSubmit
+        title="Contributeurs"
       >
-        <Box className={classes.contributeurDescription}>
-          <Typography className={classes.contributeurTitle}>Contributeurs</Typography>
-          <Typography sx={{ [theme.breakpoints.down('sm')]: { fontSize: '14px' } }}>
-            Invite tes partenaires de voyage pour pouvoir échanger, et voter pour les propositions
-            faites par votre conseiller Explomaker !
+        <Box
+          sx={{
+            display: 'flex',
+            alignItems: 'center',
+            padding: '15px',
+            backgroundColor: theme.palette.primary.ultraLight,
+            borderRadius: '10px',
+            marginTop: matchesXs && '10px',
+          }}
+        >
+          <Box sx={{ marginRight: '10px' }}>
+            <Info color="primary" />
+          </Box>
+          <Typography variant="body2">
+            Tous les contributeurs peuvent voir et modifier le séjour
           </Typography>
-          {isAdmin && (
-            <FormControlLabel
-              label="Montrer les contributeurs retirés"
-              sx={{ '& .MuiFormControlLabel-label': { fontSize: '14px' } }}
-              control={
-                <Checkbox
-                  checked={isShowingRemovedContributors}
-                  onChange={event => {
-                    setIsShowingRemovedContributors(event.target.checked)
-                  }}
-                />
-              }
-            />
-          )}
         </Box>
         {tripData.travelersDetails
           .filter(travelerDetails => typeof travelerDetails.id !== 'undefined')
@@ -1502,44 +1493,6 @@ const TripPage = () => {
                       </Box>
                     </AccordionSummary>
                     <AccordionDetails classes={{ root: classes.accordionDetailsGrid }}>
-                      <Box width="100%" className={classes.accordionDetailsGridRow}>
-                        {tripData.owner !== travelerDetails.id &&
-                          tripData.editors.includes(travelerDetails.id) && (
-                            <ButtonGroup
-                              value={travelerDetails.role}
-                              fullWidth
-                              sx={{ height: '60px' }}
-                            >
-                              {modeOptions.map(option => (
-                                <Button
-                                  key={option.value}
-                                  fullWidth
-                                  value={option.value}
-                                  variant={
-                                    travelerDetails.role === option.value ? 'contained' : 'outlined'
-                                  }
-                                  onClick={event => {
-                                    const previousTravelers = [...tripData.travelersDetails]
-                                    const tempTravelers = previousTravelers.map(traveler => {
-                                      const tempTraveler = { ...traveler }
-                                      if (tempTraveler.id === travelerDetails.id) {
-                                        tempTraveler.role = event.target.value
-                                      }
-                                      return tempTraveler
-                                    })
-                                    updateTrip(tripId, { travelersDetails: tempTravelers })
-                                  }}
-                                  classes={{
-                                    outlined: classes.travelerRoleOptionOutlined,
-                                    contained: classes.travelerRoleOptionContained,
-                                  }}
-                                >
-                                  {option.label}
-                                </Button>
-                              ))}
-                            </ButtonGroup>
-                          )}
-                      </Box>
                       <Box
                         className={clsx(
                           classes.accordionDetailsGridRow,
@@ -1587,7 +1540,7 @@ const TripPage = () => {
                                 const tempTravelers = previousTravelers.map(traveler => {
                                   const tempTraveler = { ...traveler }
                                   if (tempTraveler.id === travelerDetails.id) {
-                                    tempTraveler.role = ROLES.Read
+                                    tempTraveler.role = ROLES.Write
                                   }
                                   return tempTraveler
                                 })
@@ -1616,12 +1569,6 @@ const TripPage = () => {
                         {tripData.owner === travelerDetails.id && 'Propriétaire'}
                       </Typography>
                     </Box>
-                    <Typography>
-                      {
-                        modeOptions.filter(option => option.value === travelerDetails.role)[0]
-                          ?.label
-                      }
-                    </Typography>
                   </Box>
                   <Divider />
                 </>
@@ -1635,50 +1582,6 @@ const TripPage = () => {
                     <Typography variant="subtitle2">
                       {tripData.owner === travelerDetails.id && 'Propriétaire'}
                     </Typography>
-                  </Box>
-                  <Box>
-                    {isAdmin ? (
-                      tripData.owner !== travelerDetails.id &&
-                      tripData.editors.includes(travelerDetails.id) && (
-                        <TextField
-                          hiddenLabel
-                          fullWidth
-                          select
-                          variant="filled"
-                          value={travelerDetails.role}
-                          InputProps={{ classes: { root: classes.contriFormControl } }}
-                          SelectProps={{ MenuProps: { className: classes.menuSelect } }}
-                          onChange={event => {
-                            const previousTravelers = [...tripData.travelersDetails]
-                            const tempTravelers = previousTravelers.map(traveler => {
-                              const tempTraveler = { ...traveler }
-                              if (tempTraveler.id === travelerDetails.id) {
-                                tempTraveler.role = event.target.value
-                              }
-                              return tempTraveler
-                            })
-                            updateTrip(tripId, { travelersDetails: tempTravelers })
-                          }}
-                        >
-                          {modeOptions.map(option => (
-                            <MenuItem
-                              key={uuidv4()}
-                              value={option.value}
-                              ListItemClasses={{ root: classes.listMenuItem }}
-                            >
-                              {option.label}
-                            </MenuItem>
-                          ))}
-                        </TextField>
-                      )
-                    ) : (
-                      <Typography>
-                        {
-                          modeOptions.filter(option => option.value === travelerDetails.role)[0]
-                            ?.label
-                        }
-                      </Typography>
-                    )}
                   </Box>
                   {isAdmin && (
                     <Box className={classes.ctnContributeurRedButton}>
@@ -1718,7 +1621,7 @@ const TripPage = () => {
                               const tempTravelers = previousTravelers.map(traveler => {
                                 const tempTraveler = { ...traveler }
                                 if (tempTraveler.id === travelerDetails.id) {
-                                  tempTraveler.role = ROLES.Read
+                                  tempTraveler.role = ROLES.Write
                                 }
                                 return tempTraveler
                               })
@@ -1740,11 +1643,37 @@ const TripPage = () => {
               </React.Fragment>
             )
           )}
+        {isAdmin && tripData.travelersDetails.some(traveler => traveler.role === ROLES.Removed) && (
+          <FormControlLabel
+            label="Montrer les contributeurs retirés"
+            sx={{ '& .MuiFormControlLabel-label': { fontSize: '14px' } }}
+            control={
+              <Checkbox
+                checked={isShowingRemovedContributors}
+                onChange={event => {
+                  setIsShowingRemovedContributors(event.target.checked)
+                }}
+              />
+            }
+          />
+        )}
         {isAdmin && (
           <>
-            <Box display="flex" alignItems="center" mt={2}>
-              <IconButton
-                sx={{ padding: '0', mr: 2 }}
+            <Box
+              display="flex"
+              alignItems="center"
+              sx={{ marginTop: '15px', display: 'flex', alignItems: 'center' }}
+            >
+              <Box sx={{ marginRight: '15px' }}>
+                <AddCollaboratorsButton tripId={tripId} isEditorModal />
+              </Box>
+              <Typography>Inviter un nouveau contributeur</Typography>
+            </Box>
+            <Box sx={{ display: 'flex', justifyContent: 'center' }}>
+              <Button
+                className={classes.btnCopyContainer}
+                variant="outlined"
+                startIcon={<FileCopyRoundedIcon color="primary" />}
                 onClick={() => {
                   navigator.clipboard.writeText(
                     `https://${window.location.href.split('/')[2]}/join/${tripId}`
@@ -1752,46 +1681,14 @@ const TripPage = () => {
                   toast.success('Lien copié !')
                 }}
               >
-                <img src={plusCircle} alt="" />
-              </IconButton>
-              <Typography>Inviter un nouveau contributeur</Typography>
-            </Box>
-            <Button
-              className={classes.btnCopyContainer}
-              variant="outlined"
-              fullWidth
-              startIcon={<FileCopyRoundedIcon color="primary" />}
-              onClick={() => {
-                navigator.clipboard.writeText(
-                  `https://${window.location.href.split('/')[2]}/join/${tripId}`
-                )
-                toast.success('Lien copié !')
-              }}
-            >
-              {matchesXs ? (
-                <Typography className={classes.typoCopyBtn}>
-                  Copier lien d&apos;invitation
-                </Typography>
-              ) : (
-                <Typography className={classes.typoCopyBtn}>{`https://${
-                  window.location.href.split('/')[2]
-                }/join/${tripId}`}</Typography>
-              )}
-            </Button>
-            <Box
-              display="flex"
-              alignItems="center"
-              p={2}
-              bgcolor="primary.ultraLight"
-              borderRadius="10px"
-            >
-              <Box mr={1}>
-                <Info color="primary" />
-              </Box>
-              <Typography variant="body2">
-                Tous les utilisateurs disposant de ce lien peuvent voir et modifier le séjour
-                (connexion requise)
-              </Typography>
+                {matchesXs ? (
+                  <Typography className={classes.typoCopyBtn}>
+                    Copier lien d&apos;invitation
+                  </Typography>
+                ) : (
+                  <Typography className={classes.typoCopyBtn}>LIEN D&apos;INVITATION</Typography>
+                )}
+              </Button>
             </Box>
           </>
         )}

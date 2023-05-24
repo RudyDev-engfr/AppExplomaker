@@ -176,7 +176,7 @@ const JoinTrip = () => {
         tempTraveler.travelerId = uuidv4()
         if (tempTraveler.name === selectedTraveler) {
           tempTraveler.id = userId
-          tempTraveler.role = ROLES.Read
+          tempTraveler.role = ROLES.Write
         }
         return tempTraveler
       })
@@ -187,7 +187,7 @@ const JoinTrip = () => {
       tempTravelers.push({
         id: userId,
         travelerId: uuidv4(),
-        role: ROLES.Read,
+        role: ROLES.Write,
         name: travelerName,
         isNotTraveler: true,
       })
