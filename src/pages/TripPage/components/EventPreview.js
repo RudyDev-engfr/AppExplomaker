@@ -49,6 +49,7 @@ import mainWhite from '../../../images/eventCreator/flight/mainWhite.svg'
 import FlightPreview from './FlightPreview'
 import { PlanningContext } from '../../../contexts/planning'
 import { SessionContext } from '../../../contexts/session'
+import { TripContext } from '../../../contexts/trip'
 
 const useStyles = makeStyles(theme => ({
   iconBackground: {
@@ -196,11 +197,11 @@ const EventPreview = ({
   const { user } = useContext(SessionContext)
   const { setNeedMapRefresh, days, selectedDateOnPlanning, setSelectedDateOnPlanning } =
     useContext(PlanningContext)
+  const { currentEventType, setCurrentEventType } = useContext(TripContext)
 
   const [isLoading, setIsLoading] = useState(false)
   const [tripData, setTripData] = useState()
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false)
-  const [currentEventType, setCurrentEventType] = useState('')
   // Menu Button Logic
   const [anchorEl, setAnchorEl] = React.useState(null)
   const open = Boolean(anchorEl)
@@ -236,7 +237,13 @@ const EventPreview = ({
   }, [currentEvent, days])
 
   useEffect(() => {
-    setCurrentEventType(currentEvent.type)
+    console.log('currentEventType', currentEventType)
+  }, [currentEventType])
+
+  useEffect(() => {
+    if (currentEvent.type) {
+      setCurrentEventType(currentEvent.type)
+    }
     if (previousEvent?.isSurvey) {
       setCurrentEventType(previousEvent.type)
     }
@@ -304,13 +311,13 @@ const EventPreview = ({
         <Paper className={classes.borderRadiusMobile}>
           <Box sx={{ position: matchesXs && 'sticky', top: '0px', zIndex: 10000 }}>
             <Box
-              display="flex"
-              justifyContent="center"
-              alignItems="center"
-              p="1rem 2rem"
-              position="relative"
               sx={{
                 backgroundColor: 'white',
+                padding: '15px 30px',
+                display: 'flex',
+                justifyContent: 'center',
+                alignItems: 'center',
+                position: 'relative',
               }}
             >
               <Box position="absolute" left="20px">

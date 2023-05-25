@@ -30,6 +30,8 @@ const TripContextProvider = ({ children }) => {
 
   // use to handle events
   const [eventType, setEventType] = useState()
+  const [currentEventId, setCurrentEventId] = useState()
+  const [currentEventType, setCurrentEventType] = useState('')
 
   // used to handle date from events Notifications
   const [days, setDays] = useState([])
@@ -168,8 +170,12 @@ const TripContextProvider = ({ children }) => {
         setCurrentNotifications,
         refreshNotif,
         setRefreshNotif,
+        currentEventId,
+        setCurrentEventId,
         hasClicked,
         setHasClicked,
+        currentEventType,
+        setCurrentEventType,
       }}
     >
       {children}

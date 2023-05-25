@@ -401,7 +401,7 @@ const TripPageNav = ({
           centered
           variant="fullWidth"
           fixedTabs
-          // value={currentActiveMobileNavTab}
+          value={0}
           TabIndicatorProps={{ sx: { display: 'none' } }}
         >
           <Tab
@@ -416,7 +416,7 @@ const TripPageNav = ({
               />
             }
             onClick={() => history.push('/')}
-            value="myTrips"
+            // value="myTrips"
             sx={{ padding: '0', minWidth: '20vw !important' }}
           />
           {/* <Tab
@@ -442,11 +442,11 @@ const TripPageNav = ({
               />
             }
             onClick={() => setOpenModal('general')}
-            value="tripSettings"
+            // value="tripSettings"
             sx={{ padding: '0', minWidth: '20vw !important', marginRight: '8vw' }}
           />
 
-          <Box sx={{ maxHeight: '80px', height: '80px', paddingBottom: '5px' }} value={2}>
+          <Box sx={{ maxHeight: '80px', height: '80px', paddingBottom: '5px' }}>
             <FabDial actions={addActions} tripId={tripId} />
           </Box>
 
@@ -477,7 +477,7 @@ const TripPageNav = ({
             onClick={() => {
               setIsChatOpen('userChat')
             }}
-            value="userChat"
+            // value="userChat"
             sx={{ padding: '0', minWidth: '20vw !important', marginLeft: '8vw' }}
           />
           <Tab
@@ -499,7 +499,7 @@ const TripPageNav = ({
                 setRefreshNotif={setRefreshNotif}
               />
             }
-            value="myNotifications"
+            // value="myNotifications"
             sx={{ padding: '0', minWidth: '20vw !important' }}
           />
         </Tabs>

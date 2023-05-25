@@ -367,6 +367,12 @@ const Planning = ({ tripData, tripId, canEdit }) => {
   const [editMode, setEditMode] = useState(false)
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false)
 
+  useEffect(() => {
+    console.log('currentEvent', currentEvent)
+    console.log('currentEventId', currentEventId)
+    console.log('currentView', currentView)
+  }, [currentEventId, currentEvent, currentView])
+
   const buildFlightTitle = flights =>
     `Vol de ${flights[0].data.airports[0].label} vers ${
       flights[flights.length - 1].data.airports[
@@ -378,7 +384,6 @@ const Planning = ({ tripData, tripId, canEdit }) => {
     if (days.length > 0 && typeof selectedDateOnPlanning !== 'undefined') {
       days.forEach(day => {
         if (isSameDay(selectedDateOnPlanning, day)) {
-          console.log('igotit')
           setSelectedDateOnPlanning(day)
         }
       })

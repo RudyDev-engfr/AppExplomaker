@@ -28,6 +28,8 @@ const PlanningContextProvider = ({ children }) => {
     eventType,
     setEventType,
     setTypeCreator,
+    currentEventId,
+    setCurrentEventId,
   } = useContext(TripContext)
   const [currentMarkers, setCurrentMarkers] = useState([])
   const [transportMarkers, setTransportMarkers] = useState({
@@ -54,7 +56,6 @@ const PlanningContextProvider = ({ children }) => {
   // used to construct planningFeed
   const [singleDayPlannedEvents, setSingleDayPlannedEvents] = useState()
 
-  const [currentEventId, setCurrentEventId] = useState()
   const [needMapRefresh, setNeedMapRefresh] = useState(true)
 
   const planningMapRef = useRef(null)

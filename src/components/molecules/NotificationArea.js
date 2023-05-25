@@ -20,6 +20,7 @@ import { FirebaseContext } from '../../contexts/firebase'
 import CustomAvatar from '../atoms/CustomAvatar'
 import kenya1 from '../../images/inherit/Kenya 1.png'
 import { stringToDate } from '../../helper/functions'
+import { TripContext } from '../../contexts/trip'
 
 const useStyles = makeStyles(theme => ({
   notificationImage: {
@@ -38,7 +39,6 @@ const NotificationArea = ({
   isMyTrips = false,
   setRefreshNotif,
   days,
-  setSelectedDateOnPlanning,
   isChatOpen,
   setIsChatOpen,
 }) => {
@@ -48,6 +48,7 @@ const NotificationArea = ({
   const { setNotificationsToNewState, setNotificationsToNewStateOnTrip } =
     useContext(FirebaseContext)
   const { user } = useContext(SessionContext)
+  const { setSelectedDateOnPlanning } = useContext(TripContext)
   const [anchorElNotif, setAnchorElNotif] = useState(null)
 
   const openNotif = Boolean(anchorElNotif)
@@ -402,10 +403,44 @@ const NotificationAreaDrawer = ({
   const theme = useTheme()
   const matchesXs = useMediaQuery(theme.breakpoints.down('sm'))
   const history = useHistory()
+  const { setCurrentEventType, setCurrentEvent, setCurrentView, setNotificationsToNewStateOnTrip } =
+    useContext(TripContext)
 
   const handleCloseNotif = event => {
     setAnchorElNotif(null)
     setIsChatOpen('')
+  }
+
+  const onClickNotif = notification => {
+    history.push(notification.url)
+    if (notification?.startTime || notification?.event?.propositions[0]?.startTime) {
+      days.forEach(day => {
+        const tempTime = notification.startTime || notification.event.propositions[0].startTime
+        console.log('tempTime', tempTime)
+        if (isSameDay(stringToDate(tempTime, 'yyyy-MM-dd HH:mm'), day)) {
+          setSelectedDateOnPlanning(day)
+        }
+      })
+    }
+    if (notification?.event?.type) {
+      setCurrentEventType(notification.event?.type)
+    } else {
+      setCurrentEventType(notification?.eventType)
+    }
+    if (notification.event.propositions) {
+      setCurrentEvent(notification.event)
+      // setCurrentEventId(notification.event.id)
+    }
+    if (notification.event.isSurvey) {
+      setCurrentView('survey')
+      console.log('je suis un survey')
+    } else {
+      setCurrentView('preview')
+      console.log('je suis un preview')
+    }
+    if (notification.id) {
+      setNotificationsToNewStateOnTrip(user, 3, notification.id)
+    }
   }
 
   return (
@@ -496,21 +531,7 @@ const NotificationAreaDrawer = ({
                     borderTop: index === 0 && '1px solid lightgrey',
                   }}
                   key={notification.id}
-                  onClick={() => {
-                    if (notification.id) {
-                      setNotificationsToNewState(user, 3, notification.id)
-                    }
-                    history.push(notification.url)
-                    if (notification?.eventType) {
-                      days.forEach(day => {
-                        if (
-                          isSameDay(stringToDate(notification.startTime, 'yyyy-MM-dd HH:mm'), day)
-                        ) {
-                          setSelectedDateOnPlanning(day)
-                        }
-                      })
-                    }
-                  }}
+                  onClick={() => onClickNotif(notification)}
                 >
                   {isMyTrips ? (
                     <Box sx={{ position: 'relative' }}>

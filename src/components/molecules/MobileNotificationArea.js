@@ -98,9 +98,43 @@ export const MobileNotificationModal = ({
   const theme = useTheme()
   const history = useHistory()
 
-  const { setCurrentView, setCurrentEvent } = useContext(TripContext)
+  const { setCurrentView, setCurrentEventId, setCurrentEvent, setCurrentEventType } =
+    useContext(TripContext)
 
   const handleClose = () => setOpen(false)
+
+  const onClickNotif = notification => {
+    history.push(notification.url)
+    if (notification?.startTime || notification?.event?.propositions[0]?.startTime) {
+      days.forEach(day => {
+        const tempTime = notification.startTime || notification.event.propositions[0].startTime
+        console.log('tempTime', tempTime)
+        if (isSameDay(stringToDate(tempTime, 'yyyy-MM-dd HH:mm'), day)) {
+          setSelectedDateOnPlanning(day)
+        }
+      })
+    }
+    if (notification?.event?.type) {
+      setCurrentEventType(notification.event?.type)
+    } else {
+      setCurrentEventType(notification?.eventType)
+    }
+    if (notification.event.propositions) {
+      setCurrentEvent(notification.event)
+      // setCurrentEventId(notification.event.id)
+    }
+    if (notification.event.isSurvey) {
+      setCurrentView('survey')
+      console.log('je suis un survey')
+    } else {
+      setCurrentView('preview')
+      console.log('je suis un preview')
+    }
+    if (notification.id) {
+      setNotificationsToNewStateOnTrip(user, 3, notification.id)
+    }
+    handleClose()
+  }
 
   return (
     <Modal
@@ -160,22 +194,7 @@ export const MobileNotificationModal = ({
                   notification.state === 1 ? theme.palette.primary.ultraLight : 'white',
               }}
               key={notification.id}
-              onClick={() => {
-                if (notification.id) {
-                  setNotificationsToNewStateOnTrip(user, 3, notification.id)
-                }
-                handleClose()
-                history.push(notification.url)
-                setCurrentEvent(notification.event)
-                setCurrentView('preview')
-                if (notification?.eventType) {
-                  days.forEach(day => {
-                    if (isSameDay(stringToDate(notification.startTime, 'yyyy-MM-dd HH:mm'), day)) {
-                      setSelectedDateOnPlanning(day)
-                    }
-                  })
-                }
-              }}
+              onClick={() => onClickNotif(notification)}
             >
               <Box sx={{ position: 'relative' }}>
                 <CustomAvatar
