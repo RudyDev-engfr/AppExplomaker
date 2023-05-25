@@ -265,7 +265,8 @@ const AIChatWindow = ({ isChatOpen, setIsChatOpen, chats, tripId }) => {
                           type="submit"
                           disabled={
                             !messageToSend ||
-                            currentMessages[currentMessages.length - 1]?.userId === user.id
+                            currentMessages[currentMessages.length - 1]?.userId !== user.id ||
+                            currentMessages[currentMessages.length - 1]?.questionType === 'temp'
                           }
                           color="primary"
                         >
@@ -286,7 +287,10 @@ const AIChatWindow = ({ isChatOpen, setIsChatOpen, chats, tripId }) => {
                       }
                     },
                   }}
-                  disabled={currentMessages[currentMessages.length - 1]?.userId === user.id}
+                  disabled={
+                    currentMessages[currentMessages.length - 1]?.userId === user.id ||
+                    currentMessages[currentMessages.length - 1]?.questionType === 'temp'
+                  }
                   value={messageToSend}
                   onChange={e => setMessageToSend(e.target.value)}
                   maxRows={15}
@@ -330,11 +334,11 @@ const ChatMessage = ({ createdAt, userId, text = '', groupDate }) => {
               className={classes.messagePaper}
               sx={{
                 backgroundColor:
-                  userId === user.id
+                  userId !== 'VK0TN3JqdNSiAU039WNoilgeREq2'
                     ? theme.palette.secondary.contrastText
                     : theme.palette.primary.main,
                 color:
-                  userId === user.id
+                  userId !== 'VK0TN3JqdNSiAU039WNoilgeREq2'
                     ? theme.palette.grey['33']
                     : theme.palette.secondary.contrastText,
               }}
@@ -344,7 +348,7 @@ const ChatMessage = ({ createdAt, userId, text = '', groupDate }) => {
                   className={classes.dateMessage}
                   sx={{
                     color:
-                      userId === user.id
+                      userId !== 'VK0TN3JqdNSiAU039WNoilgeREq2'
                         ? theme.palette.grey['33']
                         : theme.palette.secondary.contrastText,
                   }}
