@@ -1657,7 +1657,7 @@ const TripPage = () => {
             }
           />
         )}
-        {isAdmin && (
+        {canEdit && (
           <>
             <Box
               display="flex"

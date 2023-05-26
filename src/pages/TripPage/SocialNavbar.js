@@ -32,8 +32,14 @@ const SocialNavbar = () => {
   const location = useLocation()
   const { tripId } = useParams()
   const matchesXs = useMediaQuery(theme.breakpoints.down('sm'))
-  const { isChatOpen, setIsChatOpen, tripData, currentNotifications, setRefreshNotif } =
-    useContext(TripContext)
+  const {
+    isChatOpen,
+    setIsChatOpen,
+    tripData,
+    currentNotifications,
+    setRefreshNotif,
+    setSelectedDateOnPlanning,
+  } = useContext(TripContext)
   const { user } = useContext(SessionContext)
 
   return (
@@ -111,6 +117,7 @@ const SocialNavbar = () => {
             tripId={tripId}
             isChatOpen={isChatOpen}
             setIsChatOpen={setIsChatOpen}
+            setSelectedDateOnPlanning={setSelectedDateOnPlanning}
           />
         </Box>
       </Toolbar>

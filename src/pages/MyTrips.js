@@ -70,8 +70,10 @@ const useStyles = makeStyles(theme => ({
     marginBottom: theme.spacing(3),
   },
   xsTripPage: {
+    backgroundColor: theme.palette.primary.vertPerse,
     [theme.breakpoints.down('sm')]: {
-      margin: '30px',
+      padding: '30px',
+      margin: '0',
       paddingBottom: '30px',
     },
   },
@@ -200,9 +202,9 @@ const MyTrips = () => {
       <Nav setOpenModal={setOpenModal} />
       <Box
         maxWidth="1200px"
-        m="120px auto 0"
         minHeight="calc(100vh - 370px - 81px)"
         className={classes.xsTripPage}
+        sx={{ marginX: 'auto', marginTop: '81px', paddingTop: '40px' }}
       >
         <Box component="section">
           <Box mb={!user.isLoggedIn || nextTrips.length < 1 ? 5 : 0}>

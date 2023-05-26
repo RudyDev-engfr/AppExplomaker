@@ -147,7 +147,7 @@ export const MobileNotificationModal = ({
         sx={{
           width: '100vw',
           height: 'calc(100vh - 60px)',
-          padding: '60px 15px 30px 15px',
+          padding: '15px 15px 30px 15px',
           zIndex: 9999,
           borderRadius: 0,
           overflowY: 'auto',
@@ -157,11 +157,12 @@ export const MobileNotificationModal = ({
           sx={{
             display: 'flex',
             justifyContent: 'space-between',
+            alignItems: 'center',
             padding: '0 15px',
             marginBottom: '30px',
           }}
         >
-          <Typography variant="h4" sx={{ paddingLeft: '15px' }}>
+          <Typography variant="h4" sx={{ paddingLeft: '15px', fontSize: '25px' }}>
             Notifications
           </Typography>
           <Box position="absolute" left="20px">

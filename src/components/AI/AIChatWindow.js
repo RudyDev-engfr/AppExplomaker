@@ -2,6 +2,7 @@ import React, { useContext, useEffect, useRef, useState } from 'react'
 import { useCollectionData } from 'react-firebase-hooks/firestore'
 import {
   Box,
+  Divider,
   Drawer,
   FormControl,
   Grid,
@@ -26,6 +27,7 @@ import { SessionContext } from '../../contexts/session'
 import CustomAvatar from '../atoms/CustomAvatar'
 
 import { rCTFF } from '../../helper/functions'
+import { TripContext } from '../../contexts/trip'
 
 const useStyles = makeStyles(theme => ({
   basePaper: {
@@ -50,8 +52,8 @@ const useStyles = makeStyles(theme => ({
     [theme.breakpoints.down('sm')]: {
       margin: '24px 0 0 0',
       width: '100%',
-      minHeight: 'calc(100vh - 48px - 32px - 24px)',
-      maxHeight: 'calc(100vh - 48px - 32px - 24px)',
+      minHeight: 'calc(100vh - 80px)',
+      maxHeight: 'calc(100vh - 80px)',
       borderRadius: 'unset',
     },
   },
@@ -71,7 +73,6 @@ const useStyles = makeStyles(theme => ({
   },
   dateMessage: {
     fontSize: '12px',
-    color: theme.palette.grey['82'],
     marginBottom: '5px',
     paddingLeft: '66px',
   },
@@ -82,6 +83,7 @@ const AIChatWindow = ({ isChatOpen, setIsChatOpen, chats, tripId }) => {
   const matchesXs = useMediaQuery(theme.breakpoints.down('sm'))
   const { user } = useContext(SessionContext)
   const { firestore, timestampRef } = useContext(FirebaseContext)
+  const { hasClicked } = useContext(TripContext)
 
   const dummy = useRef()
   const [messageToSend, setMessageToSend] = useState('')
@@ -151,6 +153,7 @@ const AIChatWindow = ({ isChatOpen, setIsChatOpen, chats, tripId }) => {
       anchor="right"
       open={isChatOpen === 'AIChat'}
       PaperProps={{ className: classes.basePaper }}
+      disableScrollLock={false}
     >
       <Box display="flex" flexDirection="column" alignItems="center">
         <Box
@@ -158,7 +161,6 @@ const AIChatWindow = ({ isChatOpen, setIsChatOpen, chats, tripId }) => {
           flexDirection={matchesXs ? 'row' : 'column'}
           alignItems="center"
           width="100%"
-          justifyContent={matchesXs ? 'space-evenly' : 'normal'}
           sx={{ maxHeight: '140px' }}
         >
           {!matchesXs && (
@@ -176,22 +178,53 @@ const AIChatWindow = ({ isChatOpen, setIsChatOpen, chats, tripId }) => {
                 borderBottom: '1px solid white',
               }}
             >
-              <Typography variant="h4" sx={{ fontSize: '28px' }}>
+              <Typography variant="h4" sx={{ fontSize: '25px' }}>
                 L&apos;Assistant
               </Typography>
             </Box>
           )}
           {matchesXs && (
-            <Box position="absolute" left="20px">
-              <IconButton
-                aria-label="back"
-                edge="start"
-                onClick={() => {
-                  setIsChatOpen(false)
-                }}
+            <Box
+              display="flex"
+              flexDirection="column"
+              alignItems="center"
+              sx={{ height: '50px', paddingTop: '15px' }}
+            >
+              <Box
+                display="flex"
+                flexDirection={matchesXs ? 'row' : 'column'}
+                alignItems="center"
+                width="100%"
               >
-                <ArrowBackIosIcon sx={{ transform: 'translate(5px ,-5px)' }} />
-              </IconButton>
+                <Box position="absolute" left="20px">
+                  <IconButton
+                    aria-label="back"
+                    edge="start"
+                    onClick={() => {
+                      setIsChatOpen(false)
+                    }}
+                  >
+                    <ArrowBackIosIcon
+                      sx={{ transform: 'translate(5px ,-5px)', color: theme.palette.grey['33'] }}
+                    />
+                  </IconButton>
+                </Box>
+
+                <Typography variant="h4" sx={{ fontSize: '25px !important', paddingLeft: '50px' }}>
+                  L&apos;Assistant
+                </Typography>
+                <Box position="absolute" left="20px">
+                  <IconButton
+                    aria-label="back"
+                    edge="start"
+                    onClick={() => {
+                      setIsChatOpen(false)
+                    }}
+                  >
+                    <ArrowBackIosIcon sx={{ transform: 'translate(5px ,-5px)' }} />
+                  </IconButton>
+                </Box>
+              </Box>
             </Box>
           )}
 
@@ -238,7 +271,7 @@ const AIChatWindow = ({ isChatOpen, setIsChatOpen, chats, tripId }) => {
           <form onSubmit={event => handleSubmit(event)}>
             <Box
               sx={{
-                [theme.breakpoints.down('sm')]: { position: 'fixed', bottom: '0', width: '90%' },
+                [theme.breakpoints.down('sm')]: { position: 'fixed', bottom: '0', width: '100%' },
               }}
             >
               <FormControl fullWidth>
@@ -289,7 +322,8 @@ const AIChatWindow = ({ isChatOpen, setIsChatOpen, chats, tripId }) => {
                   }}
                   disabled={
                     currentMessages[currentMessages.length - 1]?.userId === user.id ||
-                    currentMessages[currentMessages.length - 1]?.questionType === 'temp'
+                    currentMessages[currentMessages.length - 1]?.questionType === 'temp' ||
+                    hasClicked
                   }
                   value={messageToSend}
                   onChange={e => setMessageToSend(e.target.value)}
@@ -320,7 +354,7 @@ const ChatBox = ({ messages, dummy, currentMessages, setCurrentMessages }) => (
   </Box>
 )
 
-const ChatMessage = ({ createdAt, userId, text = '', groupDate }) => {
+const ChatMessage = ({ createdAt, userId, text = '', groupDate, questionType }) => {
   const classes = useStyles()
   const theme = useTheme()
   const { user } = useContext(SessionContext)
@@ -343,7 +377,7 @@ const ChatMessage = ({ createdAt, userId, text = '', groupDate }) => {
                     : theme.palette.secondary.contrastText,
               }}
             >
-              {createdAt && !groupDate && (
+              {createdAt && !groupDate && questionType !== 'temp' && (
                 <Typography
                   className={classes.dateMessage}
                   sx={{

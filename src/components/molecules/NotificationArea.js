@@ -41,6 +41,7 @@ const NotificationArea = ({
   days,
   isChatOpen,
   setIsChatOpen,
+  setSelectedDateOnPlanning,
 }) => {
   const classes = useStyles()
   const theme = useTheme()
@@ -48,7 +49,6 @@ const NotificationArea = ({
   const { setNotificationsToNewState, setNotificationsToNewStateOnTrip } =
     useContext(FirebaseContext)
   const { user } = useContext(SessionContext)
-  const { setSelectedDateOnPlanning } = useContext(TripContext)
   const [anchorElNotif, setAnchorElNotif] = useState(null)
 
   const openNotif = Boolean(anchorElNotif)
@@ -211,7 +211,7 @@ const NotificationArea = ({
                           setNotificationsToNewState(user, 3, notification.id)
                         }
                         history.push(notification.url)
-                        if (notification?.eventType) {
+                        if (notification?.eventType && !isMyTrips) {
                           days.forEach(day => {
                             if (
                               isSameDay(

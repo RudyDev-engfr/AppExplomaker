@@ -25,6 +25,7 @@ import {
   Chat,
   DirectionsBusFilled,
   ExploreRounded,
+  Help,
   HomeRounded,
   Logout,
   Notifications,
@@ -434,15 +435,15 @@ const TripPageNav = ({
           /> */}
           <Tab
             icon={
-              <Tune
+              <Help
                 sx={{
                   fontSize: '35px',
-                  color: openModal === 'general' && theme.palette.primary.main,
+                  color: isChatOpen === 'AIChat' && theme.palette.primary.main,
                 }}
               />
             }
-            onClick={() => setOpenModal('general')}
-            // value="tripSettings"
+            onClick={() => setIsChatOpen('AIChat')}
+            // value="AIChatWindow"
             sx={{ padding: '0', minWidth: '20vw !important', marginRight: '8vw' }}
           />
 

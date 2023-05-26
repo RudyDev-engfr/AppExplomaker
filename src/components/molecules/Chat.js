@@ -169,6 +169,7 @@ const Chat = ({ isChatOpen, setIsChatOpen, chats, tripId }) => {
       anchor="right"
       open={isChatOpen === 'userChat'}
       PaperProps={{ className: classes.basePaper }}
+      disableScrollLock={false}
     >
       <Box display="flex" flexDirection="column" alignItems="center">
         <Box
@@ -200,16 +201,45 @@ const Chat = ({ isChatOpen, setIsChatOpen, chats, tripId }) => {
             </Box>
           )}
           {matchesXs && (
-            <Box position="absolute" left="20px">
-              <IconButton
-                aria-label="back"
-                edge="start"
-                onClick={() => {
-                  setIsChatOpen(false)
-                }}
+            <Box
+              display="flex"
+              flexDirection="column"
+              alignItems="center"
+              sx={{ height: '50px', paddingTop: '15px' }}
+            >
+              <Box
+                display="flex"
+                flexDirection={matchesXs ? 'row' : 'column'}
+                alignItems="center"
+                width="100%"
+                justifyContent={matchesXs ? 'space-evenly' : 'normal'}
               >
-                <ArrowBackIosIcon sx={{ transform: 'translate(5px ,-5px)' }} />
-              </IconButton>
+                <Box position="absolute" left="20px">
+                  <IconButton
+                    aria-label="back"
+                    edge="start"
+                    onClick={() => {
+                      setIsChatOpen(false)
+                    }}
+                  >
+                    <ArrowBackIosIcon sx={{ transform: 'translate(5px ,-5px)' }} />
+                  </IconButton>
+                </Box>
+                <Typography variant="h4" sx={{ fontSize: '25px', paddingLeft: '50px' }}>
+                  Messages
+                </Typography>
+                <Box position="absolute" left="20px">
+                  <IconButton
+                    aria-label="back"
+                    edge="start"
+                    onClick={() => {
+                      setIsChatOpen(false)
+                    }}
+                  >
+                    <ArrowBackIosIcon sx={{ transform: 'translate(5px ,-5px)' }} />
+                  </IconButton>
+                </Box>
+              </Box>
             </Box>
           )}
           {/* <Box display="flex">
