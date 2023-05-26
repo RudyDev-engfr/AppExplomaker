@@ -20,6 +20,7 @@ const TripContextProvider = ({ children }) => {
   const matchesXs = useMediaQuery(theme.breakpoints.down('sm'))
   const matches1600 = useMediaQuery('(max-width:1600px)')
   const { user } = useContext(SessionContext)
+  const { getUserById, firestore } = useContext(FirebaseContext)
   const [deleteEventNotifications, setDeleteEventNotifications] = useState(false)
   const [hasClicked, setHasClicked] = useState(false)
   const [tripData, setTripData] = useState()
@@ -47,11 +48,51 @@ const TripContextProvider = ({ children }) => {
   const [currentDateRange, setCurrentDateRange] = useState(['', ''])
   const [currentActiveTab, setCurrentActiveTab] = useState('')
   const [currentActiveMobileNavTab, setCurrentActiveMobileNavTab] = useState('preview')
+  const [currentTravelers, setCurrentTravelers] = useState([])
 
   const setTypeCreator = type => () => {
     setEventType(type)
     setCurrentView('creator')
   }
+
+  useEffect(() => {
+    console.log('voyageurs actuels', currentTravelers)
+  }, [currentTravelers])
+
+  useEffect(() => {
+    const batchGetUsers = []
+    tripData?.travelersDetails
+      .filter(traveler => traveler.id)
+      .forEach(peopleId => {
+        if (peopleId?.id) {
+          batchGetUsers.push(getUserById(peopleId.id))
+        } else if (peopleId?.name) {
+          batchGetUsers.push(new Promise(resolve => resolve({ firstname: peopleId.name })))
+        } else {
+          batchGetUsers.push(getUserById(peopleId))
+        }
+      })
+    Promise.all(batchGetUsers).then(response => {
+      if (response.length > 0) {
+        const tempTravelers = response.map(({ firstname, avatar, id }) => ({
+          firstname,
+          avatar,
+          id,
+        }))
+        setCurrentTravelers(tempTravelers)
+      }
+    })
+  }, [tripData])
+
+  useEffect(() => {
+    firestore
+      .collection('trips')
+      .doc(tripId)
+      .onSnapshot(doc => {
+        const tempDoc = doc.data()
+        setTripData(tempDoc)
+      })
+  }, [tripId])
 
   // const [allowDeleteNotif, setAllowDeleteNotif] = useState(false)
   // const [timingRefresh, setTimingRefresh] = useState(false)
@@ -176,6 +217,7 @@ const TripContextProvider = ({ children }) => {
         setHasClicked,
         currentEventType,
         setCurrentEventType,
+        currentTravelers,
       }}
     >
       {children}

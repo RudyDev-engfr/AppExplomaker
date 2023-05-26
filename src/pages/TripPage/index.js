@@ -574,6 +574,7 @@ const TripPage = () => {
     setIsChatOpen,
     currentActiveTab,
     setCurrentActiveTab,
+    currentTravelers,
   } = useContext(TripContext)
   const [isLoading, setIsLoading] = useState(true)
   const [carouselImages, setCarouselImages] = useState([])
@@ -1452,119 +1453,15 @@ const TripPage = () => {
             Tous les contributeurs peuvent voir et modifier le séjour
           </Typography>
         </Box>
-        {tripData.travelersDetails
-          .filter(travelerDetails => typeof travelerDetails.id !== 'undefined')
-          .filter(travelerDetails => {
-            if (isShowingRemovedContributors) {
-              return true
-            }
-            if (travelerDetails.role !== ROLES.Removed) {
-              return true
-            }
-            return false
-          })
-          .map(travelerDetails =>
-            matchesXs ? (
-              isAdmin ? (
-                tripData.owner === travelerDetails.id ? (
-                  <>
-                    <Box className={classes.gridContributeurs}>
-                      <CustomAvatar peopleIds={[travelerDetails.id]} />
-                      <Box>
-                        <Typography variant="h6">{travelerDetails.name}</Typography>
-                        <Typography variant="subtitle2">
-                          {tripData.owner === travelerDetails.id && 'Propriétaire'}
-                        </Typography>
-                      </Box>
-                    </Box>
-                    <Divider />
-                  </>
-                ) : (
-                  <Accordion key={travelerDetails.id}>
-                    <AccordionSummary expandIcon={<ExpandMore />} sx={{ padding: '0' }}>
-                      <Box marginRight="10px">
-                        <CustomAvatar peopleIds={[travelerDetails.id]} />
-                      </Box>
-                      <Box>
-                        <Typography variant="h6">{travelerDetails.name}</Typography>
-                        <Typography variant="subtitle2">
-                          {tripData.owner === travelerDetails.id && 'Propriétaire'}
-                        </Typography>
-                      </Box>
-                    </AccordionSummary>
-                    <AccordionDetails classes={{ root: classes.accordionDetailsGrid }}>
-                      <Box
-                        className={clsx(
-                          classes.accordionDetailsGridRow,
-                          classes.ctnContributeurRedButton
-                        )}
-                      >
-                        {tripData.owner !== travelerDetails.id &&
-                          (tripData.editors.includes(travelerDetails.id) ? (
-                            <>
-                              <Button
-                                fullWidth
-                                className={classes.contributeurRedButton}
-                                color="secondary"
-                                onClick={() => {
-                                  const previousTravelers = [...tripData.travelersDetails]
-                                  const tempTravelers = previousTravelers.map(traveler => {
-                                    const tempTraveler = { ...traveler }
-                                    if (tempTraveler.id === travelerDetails.id) {
-                                      tempTraveler.role = ROLES.Removed
-                                    }
-                                    return tempTraveler
-                                  })
-                                  const tempEditors = tripData.editors.filter(
-                                    editorId => editorId !== travelerDetails.id
-                                  )
-                                  updateTrip(tripId, {
-                                    editors: tempEditors,
-                                    travelersDetails: tempTravelers,
-                                  })
-                                }}
-                              >
-                                Retirer
-                              </Button>
-                            </>
-                          ) : (
-                            <Button
-                              fullWidth
-                              className={clsx(
-                                classes.accordionDetailsGridRow,
-                                classes.ctnContributeurRedButton
-                              )}
-                              color="secondary"
-                              onClick={() => {
-                                const previousTravelers = [...tripData.travelersDetails]
-                                const tempTravelers = previousTravelers.map(traveler => {
-                                  const tempTraveler = { ...traveler }
-                                  if (tempTraveler.id === travelerDetails.id) {
-                                    tempTraveler.role = ROLES.Write
-                                  }
-                                  return tempTraveler
-                                })
-                                const tempEditors = [...tripData.editors]
-                                tempEditors.push(travelerDetails.id)
-                                updateTrip(tripId, {
-                                  editors: tempEditors,
-                                  travelersDetails: tempTravelers,
-                                })
-                              }}
-                            >
-                              Réintégrer
-                            </Button>
-                          ))}
-                      </Box>
-                    </AccordionDetails>
-                  </Accordion>
-                )
-              ) : (
+        {currentTravelers.map(travelerDetails =>
+          matchesXs ? (
+            isAdmin ? (
+              tripData.owner === travelerDetails.id ? (
                 <>
                   <Box className={classes.gridContributeurs}>
                     <CustomAvatar peopleIds={[travelerDetails.id]} />
                     <Box>
-                      <Typography variant="h6">{travelerDetails.name}</Typography>
+                      <Typography variant="h6">{travelerDetails.firstname}</Typography>
                       <Typography variant="subtitle2">
                         {tripData.owner === travelerDetails.id && 'Propriétaire'}
                       </Typography>
@@ -1572,49 +1469,61 @@ const TripPage = () => {
                   </Box>
                   <Divider />
                 </>
-              )
-            ) : (
-              <React.Fragment key={uuidv4()}>
-                <Box className={classes.gridContributeurs}>
-                  <CustomAvatar peopleIds={[travelerDetails.id]} />
-                  <Box>
-                    <Typography variant="h6">{travelerDetails.name}</Typography>
-                    <Typography variant="subtitle2">
-                      {tripData.owner === travelerDetails.id && 'Propriétaire'}
-                    </Typography>
-                  </Box>
-                  {isAdmin && (
-                    <Box className={classes.ctnContributeurRedButton}>
+              ) : (
+                <Accordion key={travelerDetails.id}>
+                  <AccordionSummary expandIcon={<ExpandMore />} sx={{ padding: '0' }}>
+                    <Box marginRight="10px">
+                      <CustomAvatar peopleIds={[travelerDetails.id]} />
+                    </Box>
+                    <Box>
+                      <Typography variant="h6">{travelerDetails.firstname}</Typography>
+                      <Typography variant="subtitle2">
+                        {tripData.owner === travelerDetails.id && 'Propriétaire'}
+                      </Typography>
+                    </Box>
+                  </AccordionSummary>
+                  <AccordionDetails classes={{ root: classes.accordionDetailsGrid }}>
+                    <Box
+                      className={clsx(
+                        classes.accordionDetailsGridRow,
+                        classes.ctnContributeurRedButton
+                      )}
+                    >
                       {tripData.owner !== travelerDetails.id &&
                         (tripData.editors.includes(travelerDetails.id) ? (
-                          <Button
-                            fullWidth
-                            className={classes.contributeurRedButton}
-                            color="secondary"
-                            onClick={() => {
-                              const previousTravelers = [...tripData.travelersDetails]
-                              const tempTravelers = previousTravelers.map(traveler => {
-                                const tempTraveler = { ...traveler }
-                                if (tempTraveler.id === travelerDetails.id) {
-                                  tempTraveler.role = ROLES.Removed
-                                }
-                                return tempTraveler
-                              })
-                              const tempEditors = tripData.editors.filter(
-                                editorId => editorId !== travelerDetails.id
-                              )
-                              updateTrip(tripId, {
-                                editors: tempEditors,
-                                travelersDetails: tempTravelers,
-                              })
-                            }}
-                          >
-                            Retirer
-                          </Button>
+                          <>
+                            <Button
+                              fullWidth
+                              className={classes.contributeurRedButton}
+                              color="secondary"
+                              onClick={() => {
+                                const previousTravelers = [...tripData.travelersDetails]
+                                const tempTravelers = previousTravelers.map(traveler => {
+                                  const tempTraveler = { ...traveler }
+                                  if (tempTraveler.id === travelerDetails.id) {
+                                    tempTraveler.role = ROLES.Removed
+                                  }
+                                  return tempTraveler
+                                })
+                                const tempEditors = tripData.editors.filter(
+                                  editorId => editorId !== travelerDetails.id
+                                )
+                                updateTrip(tripId, {
+                                  editors: tempEditors,
+                                  travelersDetails: tempTravelers,
+                                })
+                              }}
+                            >
+                              Retirer
+                            </Button>
+                          </>
                         ) : (
                           <Button
                             fullWidth
-                            className={classes.contributeurRedButton}
+                            className={clsx(
+                              classes.accordionDetailsGridRow,
+                              classes.ctnContributeurRedButton
+                            )}
                             color="secondary"
                             onClick={() => {
                               const previousTravelers = [...tripData.travelersDetails]
@@ -1637,12 +1546,93 @@ const TripPage = () => {
                           </Button>
                         ))}
                     </Box>
-                  )}
+                  </AccordionDetails>
+                </Accordion>
+              )
+            ) : (
+              <>
+                <Box className={classes.gridContributeurs}>
+                  <CustomAvatar peopleIds={[travelerDetails.id]} />
+                  <Box>
+                    <Typography variant="h6">{travelerDetails.firstname}</Typography>
+                    <Typography variant="subtitle2">
+                      {tripData.owner === travelerDetails.id && 'Propriétaire'}
+                    </Typography>
+                  </Box>
                 </Box>
                 <Divider />
-              </React.Fragment>
+              </>
             )
-          )}
+          ) : (
+            <React.Fragment key={uuidv4()}>
+              <Box className={classes.gridContributeurs}>
+                <CustomAvatar peopleIds={[travelerDetails.id]} />
+                <Box>
+                  <Typography variant="h6">{travelerDetails.firstname}</Typography>
+                  <Typography variant="subtitle2">
+                    {tripData.owner === travelerDetails.id && 'Propriétaire'}
+                  </Typography>
+                </Box>
+                {isAdmin && (
+                  <Box className={classes.ctnContributeurRedButton}>
+                    {tripData.owner !== travelerDetails.id &&
+                      (tripData.editors.includes(travelerDetails.id) ? (
+                        <Button
+                          fullWidth
+                          className={classes.contributeurRedButton}
+                          color="secondary"
+                          onClick={() => {
+                            const previousTravelers = [...tripData.travelersDetails]
+                            const tempTravelers = previousTravelers.map(traveler => {
+                              const tempTraveler = { ...traveler }
+                              if (tempTraveler.id === travelerDetails.id) {
+                                tempTraveler.role = ROLES.Removed
+                              }
+                              return tempTraveler
+                            })
+                            const tempEditors = tripData.editors.filter(
+                              editorId => editorId !== travelerDetails.id
+                            )
+                            updateTrip(tripId, {
+                              editors: tempEditors,
+                              travelersDetails: tempTravelers,
+                            })
+                          }}
+                        >
+                          Retirer
+                        </Button>
+                      ) : (
+                        <Button
+                          fullWidth
+                          className={classes.contributeurRedButton}
+                          color="secondary"
+                          onClick={() => {
+                            const previousTravelers = [...tripData.travelersDetails]
+                            const tempTravelers = previousTravelers.map(traveler => {
+                              const tempTraveler = { ...traveler }
+                              if (tempTraveler.id === travelerDetails.id) {
+                                tempTraveler.role = ROLES.Write
+                              }
+                              return tempTraveler
+                            })
+                            const tempEditors = [...tripData.editors]
+                            tempEditors.push(travelerDetails.id)
+                            updateTrip(tripId, {
+                              editors: tempEditors,
+                              travelersDetails: tempTravelers,
+                            })
+                          }}
+                        >
+                          Réintégrer
+                        </Button>
+                      ))}
+                  </Box>
+                )}
+              </Box>
+              <Divider />
+            </React.Fragment>
+          )
+        )}
         {isAdmin && tripData.travelersDetails.some(traveler => traveler.role === ROLES.Removed) && (
           <FormControlLabel
             label="Montrer les contributeurs retirés"
