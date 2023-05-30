@@ -24,6 +24,7 @@ import {
   LogoutOutlined,
   Menu as MenuIcon,
   Notifications,
+  Search,
 } from '@mui/icons-material'
 import clsx from 'clsx'
 import React, { useContext, useEffect, useState } from 'react'
@@ -35,6 +36,7 @@ import { SessionContext } from '../../contexts/session'
 import logoFull from '../../images/icons/logoFull.svg'
 import logoGrey from '../../images/icons/logoGrey.svg'
 import inspi from '../../images/icons/inspiLine.svg'
+import searchIcon from '../../images/icons/search.svg'
 import profil from '../../images/icons/profil.svg'
 import favorite from '../../images/icons/favorite.svg'
 import { buildNotifications } from '../../helper/functions'
@@ -222,6 +224,20 @@ const ConnectedNav = () => {
   return matchesXs ? (
     <Paper variant="outlined" square className={classes.xsNav}>
       <Tabs centered variant="fullWidth" className={classes.tabs} value={currentActiveTab}>
+        {/* <Tab
+          icon={<img src={searchIcon} alt="" className={classes.tabsMobileImg} />}
+          label={
+            <Box component="span" className={classes.icons}>
+              Recherche
+            </Box>
+          }
+          sx={{ justifyContent: 'space-evenly' }}
+          onClick={() => {
+            setCurrentActiveTab('search')
+            window.location.href = 'https://explomaker.fr/results'
+          }}
+          value="search"
+        /> */}
         <Tab
           icon={<img src={inspi} alt="" className={classes.tabsMobileImg} />}
           label={
@@ -335,7 +351,24 @@ const ConnectedNav = () => {
                     <MenuItem
                       onClick={() => {
                         handleClose()
-                        window.location.href = 'https://explomaker.fr/inspiration'
+                        window.location.href = 'https://www.explomaker.fr/results'
+                      }}
+                    >
+                      <Box
+                        component="span"
+                        display="flex"
+                        alignItems="center"
+                        justifyContent="center"
+                        marginRight="14px"
+                      >
+                        <img src={searchIcon} alt="" className={classes.menuItemStyle} />
+                      </Box>
+                      Recherche
+                    </MenuItem>
+                    <MenuItem
+                      onClick={() => {
+                        handleClose()
+                        window.location.href = 'https://www.explomaker.fr/inspiration'
                       }}
                     >
                       <Box
