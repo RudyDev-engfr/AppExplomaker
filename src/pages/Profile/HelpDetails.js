@@ -20,14 +20,14 @@ import { useParams, useHistory } from 'react-router-dom'
 
 import { FirebaseContext } from '../../contexts/firebase'
 import Loader from '../../components/Loader'
-import Footer from '../../components/molecules/Footer'
+// import Footer from '../../components/molecules/Footer'
 import Nav from '../../components/molecules/Nav'
 
 const useStyles = makeStyles(theme => ({
   mainContainer: {
     backgroundColor: theme.palette.grey.f7,
     width: '100%',
-    minHeight: 'calc(100vh - 80px - 370px)',
+    minHeight: 'calc(100vh - 80px )',
     paddingTop: '1px',
     paddingBottom: '1px',
     marginTop: '80px',
@@ -211,7 +211,7 @@ const HelpDetails = () => {
           </Box>
         </Box>
       </Box>
-      <Footer />
+      {/* <Footer /> */}
     </>
   )
 }

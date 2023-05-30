@@ -12,7 +12,7 @@ import Nav from '../components/molecules/Nav'
 import TripCard from '../components/molecules/TripCard'
 import { SessionContext } from '../contexts/session'
 import { rCTFF } from '../helper/functions'
-import Footer from '../components/molecules/Footer'
+// import Footer from '../components/molecules/Footer'
 import AuthModals from '../components/molecules/AuthModals'
 import Loader from '../components/Loader'
 import TrendingDestinations from '../components/molecules/trendingDestinations/TrendingDestinations'
@@ -202,7 +202,7 @@ const MyTrips = () => {
       <Nav setOpenModal={setOpenModal} />
       <Box
         maxWidth="1200px"
-        minHeight="calc(100vh - 370px - 81px)"
+        minHeight="calc(100vh  - 81px)"
         className={classes.xsTripPage}
         sx={{ marginX: 'auto', marginTop: '81px', paddingTop: '40px' }}
       >
@@ -406,7 +406,7 @@ const MyTrips = () => {
         </Paper>
       </Modal> */}
       <AuthModals modalState={openModal} modalStateSetter={setOpenModal} />
-      <Footer />
+      {/* <Footer /> */}
     </>
   )
 }

@@ -55,19 +55,28 @@ const DesktopPreview = ({ tripData, generatedAvatars }) => {
       </Box>
       <Box
         sx={{
-          display: 'grid',
+          display: 'flex',
           alignItems: 'center',
-          gridTemplate: '1fr / 1fr 1fr 1fr fit-content(40%)',
+          width: '100%',
         }}
       >
-        <Box display="flex" alignItems="center">
+        <Box display="flex" alignItems="center" marginRight="40px">
           <img src={calendar} alt="" className={classes.mobileIcon} />
           {currentDateRange[0] !== '' ? (
-            <Typography className={classes.subtitle}>
-              {currentDateRange[0]}
-              {' - '}
-              {currentDateRange[1]}
-            </Typography>
+            <Button
+              onClick={() => setOpenModal('editDate')}
+              sx={{
+                textDecoration: 'none',
+                textTransform: 'none',
+                color: theme.palette.grey['33'],
+              }}
+            >
+              <Typography component="h4" className={classes.subtitle}>
+                {currentDateRange[0]}
+                {' - '}
+                {currentDateRange[1]}
+              </Typography>
+            </Button>
           ) : (
             <Button
               onClick={() => setOpenModal('editDate')}
@@ -81,10 +90,21 @@ const DesktopPreview = ({ tripData, generatedAvatars }) => {
             </Button>
           )}
         </Box>
-        <Box display="flex" alignItems="center">
+        <Box display="flex" alignItems="center" marginRight="40px">
           <img src={location} alt="" className={classes.mobileIcon} />
           {!tripData.noDestination ? (
-            <Typography className={classes.subtitle}>{tripData.destination.label}</Typography>
+            <Button
+              onClick={() => setOpenModal('editDestination')}
+              sx={{
+                textDecoration: 'none',
+                textTransform: 'none',
+                color: theme.palette.grey['33'],
+              }}
+            >
+              <Typography component="h4" className={classes.subtitle}>
+                {tripData.destination.label}
+              </Typography>
+            </Button>
           ) : (
             <Button
               onClick={() => setOpenModal('editDestination')}
@@ -100,15 +120,26 @@ const DesktopPreview = ({ tripData, generatedAvatars }) => {
         </Box>
         <Box display="flex" alignItems="center">
           <img src={person} alt="" className={classes.mobileIcon} />
-          <Typography className={classes.subtitle}>
-            {tripData.editors.length} contributeur{tripData.editors.length > 1 ? 's' : ''}
-          </Typography>
+          <Button
+            onClick={() => setOpenModal('editEditors')}
+            sx={{
+              textDecoration: 'none',
+              textTransform: 'none',
+              color: theme.palette.grey['33'],
+            }}
+          >
+            <Typography className={classes.subtitle}>
+              {tripData.editors.length} contributeur{tripData.editors.length > 1 ? 's' : ''}
+            </Typography>
+          </Button>
         </Box>
         <Box
           sx={{
+            marginLeft: '475px',
             alignSelf: 'flex-end',
             display: 'flex',
             alignItems: 'center',
+            justifySelf: 'flex-end',
             justifyContent: 'flex-end',
           }}
         >

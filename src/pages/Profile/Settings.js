@@ -131,18 +131,29 @@ const Settings = () => {
             Mes préférences
           </Typography>
           <Typography className={classes.titles}>Emails</Typography>
-          <Paper className={classes.paper}>
-            <Box display="flex" justifyContent="space-between" alignItems="center">
-              <Typography className={classes.papersTitle}>Exploletter</Typography>
-              <Switch checked={user.newsletter} target="newsletter" />
-            </Box>
-            <Typography className={classes.papersDescription}>
-              Reçois régulièrement des recommandations d’articles qui pourraient t’intéresser
-            </Typography>
-          </Paper>
+          <Box display="flex">
+            <Paper className={classes.paper}>
+              <Box display="flex" justifyContent="space-between" alignItems="center">
+                <Typography className={classes.papersTitle}>Exploletter</Typography>
+                <Switch checked={user.newsletter} target="newsletter" />
+              </Box>
+              <Typography className={classes.papersDescription}>
+                Reçois régulièrement des recommandations d’articles qui pourraient t’intéresser
+              </Typography>
+            </Paper>
+            <Paper className={classes.paper}>
+              <Box display="flex" justifyContent="space-between" alignItems="center">
+                <Typography className={classes.papersTitle}>L’actu de mes voyage</Typography>
+                <Switch checked={user.newsletter} target="newsletter" />
+              </Box>
+              <Typography className={classes.papersDescription}>
+                Reçois régulièrement des recommandations d’articles qui pourraient t’intéresser
+              </Typography>
+            </Paper>
+          </Box>
         </Box>
       </Box>
-      <Footer />
+      {/* <Footer /> */}
     </>
   )
 }
