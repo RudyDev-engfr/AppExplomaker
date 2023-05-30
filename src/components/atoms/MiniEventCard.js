@@ -104,11 +104,7 @@ const MiniEventCard = ({ plannedEvent, setCurrentView, surveyId, plannedSurvey, 
         }}
         onClick={() => {
           setSelectedDateOnPlanning(day)
-          if (surveyId && plannedSurvey) {
-            setSurvey(plannedSurvey)
-          } else {
-            setEvent(plannedEvent)
-          }
+          setEvent(plannedEvent)
         }}
       >
         <Typography className={classes.hourTypo}>

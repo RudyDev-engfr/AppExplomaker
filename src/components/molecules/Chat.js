@@ -45,13 +45,13 @@ const useStyles = makeStyles(theme => ({
     width: '500px',
     display: 'grid',
     gridTemplateColumns: '1fr',
-    gridTemplateRows: 'minmax(94px, auto) 1fr minmax(45px, auto)',
+    gridTemplateRows: 'minmax(84px, auto) 1fr minmax(45px, auto)',
     [theme.breakpoints.down('sm')]: {
-      margin: '24px 0 0 0',
       width: '100%',
-      minHeight: 'calc(100vh - 48px - 32px - 24px)',
-      maxHeight: 'calc(100vh - 48px - 32px - 24px)',
+      minHeight: 'calc(100vh - 50px - 56px)',
+      maxHeight: 'calc(100vh - 50px - 56px)',
       borderRadius: 'unset',
+      gridTemplateRows: 'minmax(84px, auto) 1fr',
     },
   },
   chatHeader: {
@@ -66,6 +66,7 @@ const useStyles = makeStyles(theme => ({
     [theme.breakpoints.down('sm')]: {
       width: '100%',
       borderRadius: 'unset',
+      padding: '10px 24px',
       flexDirection: 'row',
       border: 'unset',
     },
@@ -99,9 +100,8 @@ const useStyles = makeStyles(theme => ({
   },
   inputChat: {
     backgroundColor: '#fff',
-    borderRadius: '20px',
-    padding: '.5rem 1rem',
-    margin: '0 .5rem',
+    borderRadius: '0',
+    borderLeft: '1px solid white',
   },
   textWhite: {
     color: '#FFFFFF',
@@ -177,7 +177,6 @@ const Chat = ({ isChatOpen, setIsChatOpen, chats, tripId }) => {
           flexDirection={matchesXs ? 'row' : 'column'}
           alignItems="center"
           width="100%"
-          justifyContent={matchesXs ? 'space-evenly' : 'normal'}
           sx={{ maxHeight: '140px' }}
         >
           {!matchesXs && (
@@ -205,14 +204,18 @@ const Chat = ({ isChatOpen, setIsChatOpen, chats, tripId }) => {
               display="flex"
               flexDirection="column"
               alignItems="center"
-              sx={{ height: '50px', paddingTop: '15px' }}
+              sx={{
+                height: '50px',
+                paddingTop: '15px',
+                borderBottom: '2px solid #F7F7F7',
+                width: '100%',
+              }}
             >
               <Box
                 display="flex"
                 flexDirection={matchesXs ? 'row' : 'column'}
                 alignItems="center"
                 width="100%"
-                justifyContent={matchesXs ? 'space-evenly' : 'normal'}
               >
                 <Box position="absolute" left="20px">
                   <IconButton
@@ -226,19 +229,8 @@ const Chat = ({ isChatOpen, setIsChatOpen, chats, tripId }) => {
                   </IconButton>
                 </Box>
                 <Typography variant="h4" sx={{ fontSize: '25px', paddingLeft: '50px' }}>
-                  Messages
+                  Discussion
                 </Typography>
-                <Box position="absolute" left="20px">
-                  <IconButton
-                    aria-label="back"
-                    edge="start"
-                    onClick={() => {
-                      setIsChatOpen(false)
-                    }}
-                  >
-                    <ArrowBackIosIcon sx={{ transform: 'translate(5px ,-5px)' }} />
-                  </IconButton>
-                </Box>
               </Box>
             </Box>
           )}
@@ -287,14 +279,19 @@ const Chat = ({ isChatOpen, setIsChatOpen, chats, tripId }) => {
           <ChatBox data={chats[openChat]} messages={messages} dummy={dummy} />
           <form onSubmit={event => handleSubmit(event)}>
             <Box
-              mx={1}
               sx={{
-                [theme.breakpoints.down('sm')]: { position: 'fixed', bottom: '0', width: '90%' },
+                [theme.breakpoints.down('sm')]: {
+                  position: 'fixed',
+                  bottom: '0',
+                  width: '100%',
+                  left: '0',
+                },
               }}
             >
               <FormControl fullWidth>
                 {showEmojiPicker && <Picker onEmojiSelect={addEmoji} />}
                 <TextField
+                  fullWidth
                   InputProps={{
                     className: classes.inputChat,
                     startAdornment: (
@@ -336,6 +333,13 @@ const Chat = ({ isChatOpen, setIsChatOpen, chats, tripId }) => {
                   value={messageToSend}
                   onChange={e => setMessageToSend(e.target.value)}
                   maxRows={15}
+                  sx={{
+                    '& .MuiOutlinedInput-notchedOutline': {
+                      borderLeft: 'none',
+                      borderRight: 'none',
+                      borderBottom: 'none',
+                    },
+                  }}
                 />
               </FormControl>
             </Box>
@@ -368,7 +372,12 @@ const ChatBox = ({ messages, dummy }) => {
   }, [messages])
 
   return (
-    <Box maxHeight="100%" minHeight="100%" overflow="auto" sx={{ borderRadius: 'unset' }}>
+    <Box
+      maxHeight="100%"
+      minHeight="100%"
+      overflow="auto"
+      sx={{ borderRadius: 'unset', borderTop: '1px solid #F7F7F7' }}
+    >
       {currentMessages.map(message => (
         <ChatMessage key={message.messageId} {...message} />
       ))}
@@ -388,7 +397,7 @@ const ChatMessage = ({ createdAt, userId, text = '', groupDate }) => {
         {createdAt && !groupDate && (
           <Typography
             align="center"
-            sx={{ fontSize: '12px', color: theme.palette.grey.bd, mt: 1.5 }}
+            sx={{ fontSize: '12px', color: theme.palette.grey.bd, marginTop: '12px' }}
           >
             {rCTFF(createdAt, 'dd/MM HH:mm')}
           </Typography>

@@ -539,6 +539,7 @@ const ConnectedNav = () => {
               <MobileNotificationArea
                 currentNotifications={currentNotifications}
                 setRefreshNotif={setRefreshNotif}
+                isMyTrips
               />
             )}
           </Box>

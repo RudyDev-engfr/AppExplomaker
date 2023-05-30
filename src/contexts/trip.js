@@ -56,35 +56,6 @@ const TripContextProvider = ({ children }) => {
   }
 
   useEffect(() => {
-    console.log('voyageurs actuels', currentTravelers)
-  }, [currentTravelers])
-
-  useEffect(() => {
-    const batchGetUsers = []
-    tripData?.travelersDetails
-      .filter(traveler => traveler.id)
-      .forEach(peopleId => {
-        if (peopleId?.id) {
-          batchGetUsers.push(getUserById(peopleId.id))
-        } else if (peopleId?.name) {
-          batchGetUsers.push(new Promise(resolve => resolve({ firstname: peopleId.name })))
-        } else {
-          batchGetUsers.push(getUserById(peopleId))
-        }
-      })
-    Promise.all(batchGetUsers).then(response => {
-      if (response.length > 0) {
-        const tempTravelers = response.map(({ firstname, avatar, id }) => ({
-          firstname,
-          avatar,
-          id,
-        }))
-        setCurrentTravelers(tempTravelers)
-      }
-    })
-  }, [tripData])
-
-  useEffect(() => {
     firestore
       .collection('trips')
       .doc(tripId)
@@ -178,6 +149,30 @@ const TripContextProvider = ({ children }) => {
     console.log('showmelestate2', days)
   }, [days])
 
+  const updateTravelers = () => {
+    const batchGetUsers = []
+    tripData?.travelersDetails
+      .filter(traveler => traveler.id)
+      .forEach(peopleId => {
+        if (peopleId?.id) {
+          batchGetUsers.push(getUserById(peopleId.id))
+        } else if (peopleId?.name) {
+          batchGetUsers.push(new Promise(resolve => resolve({ firstname: peopleId.name })))
+        } else {
+          batchGetUsers.push(getUserById(peopleId))
+        }
+      })
+    Promise.all(batchGetUsers).then(response => {
+      if (response.length > 0) {
+        const tempTravelers = response.map(({ firstname, avatar, id }) => ({
+          firstname,
+          avatar,
+          id,
+        }))
+        setCurrentTravelers(tempTravelers)
+      }
+    })
+  }
   return (
     <TripContext.Provider
       value={{
@@ -218,6 +213,7 @@ const TripContextProvider = ({ children }) => {
         currentEventType,
         setCurrentEventType,
         currentTravelers,
+        updateTravelers,
       }}
     >
       {children}

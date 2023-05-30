@@ -50,7 +50,6 @@ const useStyles = makeStyles(theme => ({
     gridTemplateColumns: '1fr',
     gridTemplateRows: '1fr minmax(45px, auto)',
     [theme.breakpoints.down('sm')]: {
-      margin: '24px 0 0 0',
       width: '100%',
       minHeight: 'calc(100vh - 80px)',
       maxHeight: 'calc(100vh - 80px)',
@@ -188,7 +187,12 @@ const AIChatWindow = ({ isChatOpen, setIsChatOpen, chats, tripId }) => {
               display="flex"
               flexDirection="column"
               alignItems="center"
-              sx={{ height: '50px', paddingTop: '15px' }}
+              sx={{
+                height: '50px',
+                paddingTop: '15px',
+                borderBottom: '2px solid #F7F7F7',
+                width: '100%',
+              }}
             >
               <Box
                 display="flex"
@@ -196,20 +200,6 @@ const AIChatWindow = ({ isChatOpen, setIsChatOpen, chats, tripId }) => {
                 alignItems="center"
                 width="100%"
               >
-                <Box position="absolute" left="20px">
-                  <IconButton
-                    aria-label="back"
-                    edge="start"
-                    onClick={() => {
-                      setIsChatOpen(false)
-                    }}
-                  >
-                    <ArrowBackIosIcon
-                      sx={{ transform: 'translate(5px ,-5px)', color: theme.palette.grey['33'] }}
-                    />
-                  </IconButton>
-                </Box>
-
                 <Typography variant="h4" sx={{ fontSize: '25px !important', paddingLeft: '50px' }}>
                   L&apos;Assistant
                 </Typography>
@@ -298,7 +288,7 @@ const AIChatWindow = ({ isChatOpen, setIsChatOpen, chats, tripId }) => {
                           type="submit"
                           disabled={
                             !messageToSend ||
-                            currentMessages[currentMessages.length - 1]?.userId !== user.id ||
+                            currentMessages[currentMessages.length - 1]?.userId === user.id ||
                             currentMessages[currentMessages.length - 1]?.questionType === 'temp'
                           }
                           color="primary"

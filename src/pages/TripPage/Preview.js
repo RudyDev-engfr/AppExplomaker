@@ -38,9 +38,10 @@ const useStyles = makeStyles(theme => ({
       objectFit: 'cover',
       borderRadius: '0 0 20px 20px',
       [theme.breakpoints.down('sm')]: {
-        minHeight: '100vh',
+        minHeight: '480px',
         height: 'unset',
         borderRadius: 'unset',
+        objectFit: 'cover',
       },
     },
   },
@@ -58,7 +59,7 @@ const useStyles = makeStyles(theme => ({
     marginRight: theme.spacing(1),
     paddingBottom: '0.1rem',
   },
-  carousel: { zIndex: '0' },
+  carousel: { zIndex: '0', [theme.breakpoints.down('sm')]: { minHeight: '100vh' } },
   squaredIconBtn: {
     backgroundColor: theme.palette.primary.ultraLight,
     padding: '5px 15px',
@@ -154,7 +155,7 @@ const useStyles = makeStyles(theme => ({
   mobileContainer: {
     [theme.breakpoints.down('sm')]: {
       position: 'relative',
-      top: '481px',
+      top: '460px',
       width: '100%',
       borderRadius: '40px 40px 0 0',
       transition: '0.2s linear',
@@ -205,6 +206,7 @@ const useStyles = makeStyles(theme => ({
   mobileContent: {
     [theme.breakpoints.down('sm')]: {
       height: 'calc(100% - 300px)',
+      backgroundColor: 'white !important',
     },
   },
   // mobilePaperContent: {

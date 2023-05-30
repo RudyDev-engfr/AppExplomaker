@@ -165,6 +165,7 @@ const useStyles = makeStyles(theme => ({
     background: 'white',
     [theme.breakpoints.down('sm')]: {
       minHeight: 'calc(100vh - 80px)',
+      backgroundColor: 'white !veryimportant',
     },
   },
   rowPaper: {
@@ -575,6 +576,7 @@ const TripPage = () => {
     currentActiveTab,
     setCurrentActiveTab,
     currentTravelers,
+    updateTravelers,
   } = useContext(TripContext)
   const [isLoading, setIsLoading] = useState(true)
   const [carouselImages, setCarouselImages] = useState([])
@@ -606,6 +608,7 @@ const TripPage = () => {
 
   useEffect(() => {
     testUniqueSpot(setTestSpot)
+    updateTravelers()
   }, [])
 
   useEffect(() => {
@@ -1113,7 +1116,7 @@ const TripPage = () => {
                   position={matchesXs ? 'fixed' : 'absolute'}
                   right={matchesXs ? '50%' : matches1600 ? '-35px' : '-15px'}
                   bottom={matchesXs ? '110px' : matches1600 ? '85px' : '20px'}
-                  style={{ transform: matchesXs ? 'translate(50%, 0)' : 'none' }}
+                  sx={{ transform: matchesXs ? 'translate(50%, 0)' : 'none' }}
                 >
                   <Fab
                     color="primary"
@@ -1441,7 +1444,7 @@ const TripPage = () => {
             display: 'flex',
             alignItems: 'center',
             padding: '15px',
-            backgroundColor: theme.palette.primary.ultraLight,
+            backgroundColor: 'theme.palette.primary.ultraLight',
             borderRadius: '10px',
             marginTop: matchesXs && '10px',
           }}

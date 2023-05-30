@@ -386,9 +386,15 @@ const TripPageNav = ({
           className={classes.returnButton}
           onClick={() => history.push('/')}
           startIcon={
-            <Box mr={1.5} display="flex" alignItems="center">
-              <ArrowBackRoundedIcon />
-            </Box>
+            <Logout
+              sx={{
+                color: theme.palette.secondary.likes,
+                fontSize: '35px !important',
+                webkitTransform: 'scaleX(-1)',
+                transform: 'scaleX(-1)',
+                marginRight: '10px',
+              }}
+            />
           }
         >
           Mes séjours

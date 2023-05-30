@@ -122,7 +122,7 @@ const useStyles = makeStyles(theme => ({
     [theme.breakpoints.down('sm')]: {
       gridTemplateColumns: '1fr',
       height: 'unset',
-      gridTemplateRows: '250px max-content 1fr',
+      gridTemplateRows: '460px max-content 1fr',
       gridTemplateAreas: `
       "mapArea" 
       "calendarArea" 
@@ -161,10 +161,10 @@ const useStyles = makeStyles(theme => ({
     gridArea: 'mapArea',
     [theme.breakpoints.down('sm')]: {
       position: 'fixed',
-      top: '0',
+      top: '-10px',
       left: '0',
       width: '100%',
-      height: '290px',
+      height: '480px',
     },
   },
   eventCreator: {
@@ -196,10 +196,9 @@ const useStyles = makeStyles(theme => ({
     gridArea: 'previewArea',
     overflowY: 'auto',
     overflowX: 'hidden',
-    minHeight: 'calc(100vh - 100px)',
-    maxHeight: 'calc(100vh - 100px)',
+    minHeight: 'calc(100vh - 64px)',
+    maxHeight: 'calc(100vh - 64px)',
     placeItems: 'center',
-    borderRadius: '10px 10px 0 0',
     backgroundColor: theme.palette.grey.f7,
     zIndex: '1000',
     [theme.breakpoints.down('sm')]: {
@@ -238,8 +237,8 @@ const useStyles = makeStyles(theme => ({
   },
   FabClass: {
     position: 'absolute',
-    top: theme.spacing(2),
-    right: theme.spacing(3),
+    top: '15px',
+    right: '25px',
     [theme.breakpoints.down('sm')]: {
       position: 'fixed',
       top: 'unset',

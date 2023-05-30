@@ -1,5 +1,5 @@
 import { ArrowForward, Notifications } from '@mui/icons-material'
-import { Avatar, Badge, Box, IconButton, Modal, Paper, Typography } from '@mui/material'
+import { Avatar, Badge, Box, Drawer, IconButton, Modal, Paper, Typography } from '@mui/material'
 import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos'
 import { makeStyles, useTheme } from '@mui/styles'
 import React, { useContext, useEffect, useState } from 'react'
@@ -33,10 +33,16 @@ const MobileNotificationArea = ({
 
   const { user } = useContext(SessionContext)
   const { setNotificationsToNewStateOnTrip } = useContext(FirebaseContext)
-  const { days, setSelectedDateOnPlanning } = useContext(TripContext)
+  const { days, setSelectedDateOnPlanning, isChatOpen, setIsChatOpen } = useContext(TripContext)
 
   const [open, setOpen] = useState(false)
-  const handleOpen = () => setOpen(true)
+  const handleOpen = () => {
+    if (isMyTrips) {
+      setOpen(true)
+    } else {
+      setIsChatOpen('notifications')
+    }
+  }
 
   return (
     <>
@@ -80,6 +86,9 @@ const MobileNotificationArea = ({
         user={user}
         days={days}
         setSelectedDateOnPlanning={setSelectedDateOnPlanning}
+        isChatOpen={isChatOpen}
+        setIsChatOpen={setIsChatOpen}
+        isMyTrips={isMyTrips}
       />
     </>
   )
@@ -93,6 +102,9 @@ export const MobileNotificationModal = ({
   user,
   days,
   setSelectedDateOnPlanning,
+  isChatOpen,
+  setIsChatOpen,
+  isMyTrips,
 }) => {
   const classes = useStyles()
   const theme = useTheme()
@@ -101,7 +113,13 @@ export const MobileNotificationModal = ({
   const { setCurrentView, setCurrentEventId, setCurrentEvent, setCurrentEventType } =
     useContext(TripContext)
 
-  const handleClose = () => setOpen(false)
+  const handleClose = () => {
+    if (isMyTrips) {
+      setOpen(false)
+    } else {
+      setIsChatOpen(false)
+    }
+  }
 
   const onClickNotif = notification => {
     history.push(notification.url)
@@ -137,9 +155,10 @@ export const MobileNotificationModal = ({
   }
 
   return (
-    <Modal
-      open={open}
+    <Drawer
+      open={isMyTrips ? open : isChatOpen === 'notifications'}
       onClose={handleClose}
+      anchor="right"
       aria-labelledby="modal-notifications"
       aria-describedby="modal-show-notifications"
     >
@@ -159,7 +178,8 @@ export const MobileNotificationModal = ({
             justifyContent: 'space-between',
             alignItems: 'center',
             padding: '0 15px',
-            marginBottom: '30px',
+            borderBottom: '2px solid #F7F7F7',
+            width: '100%',
           }}
         >
           <Typography variant="h4" sx={{ paddingLeft: '15px', fontSize: '25px' }}>
@@ -177,67 +197,81 @@ export const MobileNotificationModal = ({
             </IconButton>
           </Box>
         </Box>
-        {currentNotifications
-          ?.slice(0)
-          .reverse()
-          .map(notification => (
-            <Box
-              sx={{
-                width: 'calc(100vw - 30px),',
-                height: '113px',
-                padding: '0 30px',
-                display: 'grid',
-                gridTemplate: '1fr / 110px 1fr',
-                alignItems: 'center',
-                marginBottom: '10px',
-                borderRadius: '20px',
-                backgroundColor:
-                  notification.state === 1 ? theme.palette.primary.ultraLight : 'white',
-              }}
-              key={notification.id}
-              onClick={() => onClickNotif(notification)}
-            >
-              <Box sx={{ position: 'relative' }}>
-                <CustomAvatar
-                  width={54}
-                  height={54}
-                  peopleIds={[notification.owner]}
-                  isNotification
-                />
-                <Box
-                  sx={{
-                    position: 'absolute',
-                    bottom: '-5px ',
-                    right: '50px',
-                    padding: '6px',
-                    borderRadius: '50px',
-                    width: '32px',
-                    height: '32px',
-                    backgroundColor: theme.palette.primary.main,
-                  }}
-                >
-                  <Box
-                    component="img"
-                    src={findIcon(notification.icon, notification.eventType)}
-                    sx={{
-                      filter:
-                        'brightness(0) saturate(100%) invert(92%) sepia(95%) saturate(0%) hue-rotate(332deg) brightness(114%) contrast(100%)',
-                      width: '20px',
-                      height: '20px',
-                    }}
+        {currentNotifications.length > 0 ? (
+          currentNotifications
+            ?.slice(0)
+            .reverse()
+            .map(notification => (
+              <Box
+                sx={{
+                  width: 'calc(100vw - 30px),',
+                  height: '113px',
+                  padding: '0 30px',
+                  display: 'grid',
+                  gridTemplate: '1fr / 110px 1fr',
+                  alignItems: 'center',
+                  marginBottom: '10px',
+                  borderRadius: '20px',
+                  backgroundColor:
+                    notification.state === 1 ? theme.palette.primary.ultraLight : 'white',
+                }}
+                key={notification.id}
+                onClick={() => onClickNotif(notification)}
+              >
+                <Box sx={{ position: 'relative' }}>
+                  <CustomAvatar
+                    width={54}
+                    height={54}
+                    peopleIds={[notification.owner]}
+                    isNotification
                   />
+                  <Box
+                    sx={{
+                      position: 'absolute',
+                      bottom: '-5px ',
+                      right: '50px',
+                      padding: '6px',
+                      borderRadius: '50px',
+                      width: '32px',
+                      height: '32px',
+                      backgroundColor: theme.palette.primary.main,
+                    }}
+                  >
+                    <Box
+                      component="img"
+                      src={findIcon(notification.icon, notification.eventType)}
+                      sx={{
+                        filter:
+                          'brightness(0) saturate(100%) invert(92%) sepia(95%) saturate(0%) hue-rotate(332deg) brightness(114%) contrast(100%)',
+                        width: '20px',
+                        height: '20px',
+                      }}
+                    />
+                  </Box>
+                </Box>
+                <Box>
+                  <Typography sx={{ fontSize: '13px' }}>{notification.content}</Typography>
+                  <Typography sx={{ fontSize: '13px', color: theme.palette.primary.main }}>
+                    {notification.timer}
+                  </Typography>
                 </Box>
               </Box>
-              <Box>
-                <Typography sx={{ fontSize: '13px' }}>{notification.content}</Typography>
-                <Typography sx={{ fontSize: '13px', color: theme.palette.primary.main }}>
-                  {notification.timer}
-                </Typography>
-              </Box>
-            </Box>
-          ))}
+            ))
+        ) : (
+          <Box
+            sx={{
+              width: '100%',
+              display: 'flex',
+              justifyContent: 'center',
+              paddingTop: '15px',
+              paddingBottom: '15px',
+            }}
+          >
+            <Typography>Pas d&apos;activité pour le moment</Typography>
+          </Box>
+        )}
       </Paper>
-    </Modal>
+    </Drawer>
   )
 }
 

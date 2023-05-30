@@ -1033,7 +1033,11 @@ const PlanningContextProvider = ({ children }) => {
 
   const setEvent = event => {
     setCurrentEvent(event)
-    history.push(`/tripPage/${tripId}/planning?event=${event.id}`)
+    if (event.isSurvey) {
+      history.push(`/tripPage/${tripId}/planning?survey=${event.id}`)
+    } else {
+      history.push(`/tripPage/${tripId}/planning?event=${event.id}`)
+    }
     setCurrentView('preview')
   }
 
