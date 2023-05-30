@@ -15,7 +15,7 @@ import NavigateNextRoundedIcon from '@mui/icons-material/NavigateNextRounded'
 import CloseRoundedIcon from '@mui/icons-material/CloseRounded'
 
 import { FirebaseContext } from '../../contexts/firebase'
-import Footer from '../../components/molecules/Footer'
+// import Footer from '../../components/molecules/Footer'
 import Nav from '../../components/molecules/Nav'
 import Head from '../../components/molecules/Head'
 
@@ -34,7 +34,7 @@ const useStyles = makeStyles(theme => ({
     paddingTop: '1px',
     paddingBottom: '1px',
     marginTop: '80px',
-    minHeight: 'calc(100vh - 80px - 370px)',
+    minHeight: 'calc(100vh - 80px)',
     [theme.breakpoints.down('sm')]: {
       paddingBottom: '20%',
       marginTop: 'unset',
@@ -308,7 +308,7 @@ const Help = () => {
           </Box>
         </Box>
       </Box>
-      <Footer />
+      {/* <Footer /> */}
     </>
   )
 }

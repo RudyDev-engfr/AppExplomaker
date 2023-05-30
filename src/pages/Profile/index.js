@@ -5,7 +5,7 @@ import { useHistory } from 'react-router-dom'
 import clsx from 'clsx'
 
 import { FirebaseContext } from '../../contexts/firebase'
-import Footer from '../../components/molecules/Footer'
+// import Footer from '../../components/molecules/Footer'
 import Nav from '../../components/molecules/Nav'
 import { SessionContext } from '../../contexts/session'
 import Head from '../../components/molecules/Head'
@@ -32,7 +32,7 @@ const useStyles = makeStyles(theme => ({
   container: {
     width: '1220px',
     margin: '50px auto',
-    minHeight: 'calc(100vh - 81px - 370px - 100px)',
+    minHeight: 'calc(100vh - 81px - 100px)',
     [theme.breakpoints.down('sm')]: {
       width: '100%',
       margin: '0',
@@ -276,7 +276,7 @@ const Profile = () => {
             )}
           </Box>
         </Box>
-        <Footer />
+        {/* <Footer /> */}
       </Box>
     </>
   )
