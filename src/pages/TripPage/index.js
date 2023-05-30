@@ -608,7 +608,6 @@ const TripPage = () => {
 
   useEffect(() => {
     testUniqueSpot(setTestSpot)
-    updateTravelers()
   }, [])
 
   useEffect(() => {

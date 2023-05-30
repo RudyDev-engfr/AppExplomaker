@@ -25,6 +25,7 @@ import { SessionContext } from '../../contexts/session'
 import { FirebaseContext } from '../../contexts/firebase'
 import CustomAvatar from '../atoms/CustomAvatar'
 import { rCTFF } from '../../helper/functions'
+import { TripContext } from '../../contexts/trip'
 
 const useStyles = makeStyles(theme => ({
   basePaper: {
@@ -119,6 +120,7 @@ const Chat = ({ isChatOpen, setIsChatOpen, chats, tripId }) => {
   const matchesXs = useMediaQuery(theme.breakpoints.down('sm'))
   const { user } = useContext(SessionContext)
   const { firestore, timestampRef } = useContext(FirebaseContext)
+  const { currentTravelers } = useContext(TripContext)
 
   const dummy = useRef()
   const [messageToSend, setMessageToSend] = useState('')
@@ -148,6 +150,9 @@ const Chat = ({ isChatOpen, setIsChatOpen, chats, tripId }) => {
       text: messageToSend,
       createdAt: new timestampRef.fromDate(new Date()),
       userId: id,
+      notifications: currentTravelers
+        .filter(traveler => traveler.id !== id)
+        .map(traveler => ({ userId: traveler.id, hasSeen: false })),
     })
 
     setMessageToSend('')

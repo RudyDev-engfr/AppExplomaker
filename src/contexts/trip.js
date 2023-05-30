@@ -2,7 +2,6 @@ import { useMediaQuery } from '@mui/material'
 import { useTheme } from '@mui/styles'
 import React, { useState, useEffect, createContext, useContext } from 'react'
 import { useParams } from 'react-router-dom'
-import { toast } from 'react-toastify'
 import { buildNotificationsOnTripForUser, rCTFF } from '../helper/functions'
 
 import { FirebaseContext } from './firebase'
@@ -54,6 +53,73 @@ const TripContextProvider = ({ children }) => {
     setEventType(type)
     setCurrentView('creator')
   }
+
+  const updateTravelers = () => {
+    const batchGetUsers = []
+    tripData?.travelersDetails
+      .filter(traveler => traveler.id)
+      .forEach(peopleId => {
+        if (peopleId?.id) {
+          batchGetUsers.push(getUserById(peopleId.id))
+        } else if (peopleId?.name) {
+          batchGetUsers.push(new Promise(resolve => resolve({ firstname: peopleId.name })))
+        } else {
+          batchGetUsers.push(getUserById(peopleId))
+        }
+      })
+    Promise.all(batchGetUsers).then(response => {
+      if (response.length > 0) {
+        const tempTravelers = response.map(({ firstname, avatar, id }) => ({
+          firstname,
+          avatar,
+          id,
+        }))
+        setCurrentTravelers(tempTravelers)
+      }
+    })
+  }
+
+  async function updateHasSeen(chatCollection) {
+    const batch = firestore.batch()
+
+    const collection = await firestore
+      .collection('trips')
+      .doc(tripId)
+      .collection(chatCollection)
+      .get()
+
+    if (collection.empty) {
+      console.log('No matching documents.')
+      return
+    }
+
+    collection.forEach(doc => {
+      const data = doc.data()
+      console.log('data', data)
+      const tempNotifications = data.notifications
+      let needsUpdate = false
+
+      // eslint-disable-next-line no-plusplus
+      for (let i = 0; i < tempNotifications.length; i++) {
+        if (tempNotifications[i].userId === user.id && !tempNotifications[i].hasSeen) {
+          tempNotifications[i].hasSeen = true
+          needsUpdate = true
+        }
+      }
+
+      if (needsUpdate) {
+        const docRef = firestore.collection('trips').doc(tripId).collection('messages').doc(doc.id)
+        batch.set(docRef, { ...data, tempNotifications }, { merge: true })
+      }
+    })
+
+    await batch.commit()
+    console.log('Batch update completed')
+  }
+
+  useEffect(() => {
+    updateTravelers()
+  }, [tripData])
 
   useEffect(() => {
     firestore
@@ -149,30 +215,6 @@ const TripContextProvider = ({ children }) => {
     console.log('showmelestate2', days)
   }, [days])
 
-  const updateTravelers = () => {
-    const batchGetUsers = []
-    tripData?.travelersDetails
-      .filter(traveler => traveler.id)
-      .forEach(peopleId => {
-        if (peopleId?.id) {
-          batchGetUsers.push(getUserById(peopleId.id))
-        } else if (peopleId?.name) {
-          batchGetUsers.push(new Promise(resolve => resolve({ firstname: peopleId.name })))
-        } else {
-          batchGetUsers.push(getUserById(peopleId))
-        }
-      })
-    Promise.all(batchGetUsers).then(response => {
-      if (response.length > 0) {
-        const tempTravelers = response.map(({ firstname, avatar, id }) => ({
-          firstname,
-          avatar,
-          id,
-        }))
-        setCurrentTravelers(tempTravelers)
-      }
-    })
-  }
   return (
     <TripContext.Provider
       value={{
@@ -214,6 +256,7 @@ const TripContextProvider = ({ children }) => {
         setCurrentEventType,
         currentTravelers,
         updateTravelers,
+        updateHasSeen,
       }}
     >
       {children}

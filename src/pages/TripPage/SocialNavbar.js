@@ -1,12 +1,14 @@
-import React, { useContext } from 'react'
+import React, { useContext, useEffect } from 'react'
 import { AppBar, Badge, Box, Drawer, IconButton, Toolbar, useMediaQuery } from '@mui/material'
 import { Forum, ForumOutlined, Help } from '@mui/icons-material'
 import { makeStyles, useTheme } from '@mui/styles'
+import { useCollectionData } from 'react-firebase-hooks/firestore'
 
 import { useLocation, useParams } from 'react-router-dom'
 import { SessionContext } from '../../contexts/session'
 import { TripContext } from '../../contexts/trip'
 import NotificationArea from '../../components/molecules/NotificationArea'
+import { FirebaseContext } from '../../contexts/firebase'
 
 const useStyles = makeStyles(theme => ({
   AppBarRoot: {
@@ -39,8 +41,32 @@ const SocialNavbar = () => {
     currentNotifications,
     setRefreshNotif,
     setSelectedDateOnPlanning,
+    updateHasSeen,
   } = useContext(TripContext)
   const { user } = useContext(SessionContext)
+  const { firestore } = useContext(FirebaseContext)
+  const messagesRef = firestore.collection('trips').doc(tripId).collection('messages')
+  const query = messagesRef.orderBy('createdAt')
+  const [messages] = useCollectionData(query, { idField: 'messageId' })
+
+  useEffect(() => {
+    console.log('messagesRef', messages)
+    console.log(
+      'le filtre',
+      messages?.filter(message => {
+        const hasUserSeen = message.notifications?.filter(notification => {
+          if (notification.userId === user.id && !notification.hasSeen) {
+            return true
+          }
+          return false
+        })
+        if (hasUserSeen?.length > 0) {
+          return true
+        }
+        return false
+      }).length
+    )
+  }, [messages])
 
   return (
     <AppBar
@@ -88,28 +114,48 @@ const SocialNavbar = () => {
               <Help />
             </Badge>
           </IconButton>
-          <IconButton
-            onClick={() => {
-              if (isChatOpen === 'userChat') {
-                setIsChatOpen('')
-              } else {
-                setIsChatOpen('userChat')
-              }
-            }}
-            color="inherit"
-            sx={{
-              color: isChatOpen === 'userChat' ? theme.palette.primary.main : 'white',
-              backgroundColor: isChatOpen === 'userChat' ? 'white' : theme.palette.primary.main,
-              '&:hover': {
+          <Badge
+            color="error"
+            badgeContent={
+              messages?.length > 0 &&
+              messages?.filter(message => {
+                const hasUserSeen = message.notifications?.filter(notification => {
+                  if (notification.userId === user.id && !notification.hasSeen) {
+                    return true
+                  }
+                  return false
+                })
+                if (hasUserSeen?.length > 0) {
+                  return true
+                }
+                return false
+              }).length
+            }
+          >
+            <IconButton
+              onClick={() => {
+                if (isChatOpen === 'userChat') {
+                  setIsChatOpen('')
+                } else {
+                  setIsChatOpen('userChat')
+                  updateHasSeen('messages')
+                }
+              }}
+              color="inherit"
+              sx={{
                 color: isChatOpen === 'userChat' ? theme.palette.primary.main : 'white',
                 backgroundColor: isChatOpen === 'userChat' ? 'white' : theme.palette.primary.main,
-              },
-              width: '48px',
-              height: '48px',
-            }}
-          >
-            <Forum />
-          </IconButton>
+                '&:hover': {
+                  color: isChatOpen === 'userChat' ? theme.palette.primary.main : 'white',
+                  backgroundColor: isChatOpen === 'userChat' ? 'white' : theme.palette.primary.main,
+                },
+                width: '48px',
+                height: '48px',
+              }}
+            >
+              <Forum />
+            </IconButton>
+          </Badge>
           <NotificationArea
             tripData={tripData}
             currentNotifications={currentNotifications}
