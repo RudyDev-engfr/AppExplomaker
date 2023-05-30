@@ -44,7 +44,7 @@ import {
   startOfDay,
 } from 'date-fns'
 import frLocale from 'date-fns/locale/fr'
-import ListRoundedIcon from '@mui/icons-material/ListRounded'
+import TimeLineIcon from '@mui/icons-material/Timeline'
 import { v4 as uuidv4 } from 'uuid'
 import clsx from 'clsx'
 import { useHistory, useLocation } from 'react-router-dom'
@@ -926,7 +926,7 @@ const Planning = ({ tripData, tripId, canEdit }) => {
                     height: '100%',
                   }}
                 >
-                  <ListRoundedIcon sx={{ fontSize: '30px' }} />
+                  <TimeLineIcon sx={{ fontSize: '30px' }} />
                 </Box>
               </Paper>
               {(withoutDatesEvents.surveys.length > 0 || withoutDatesEvents.events.length > 0) && (
