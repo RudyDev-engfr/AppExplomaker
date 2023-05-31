@@ -156,7 +156,7 @@ const useStyles = makeStyles(theme => ({
     [theme.breakpoints.down('sm')]: {
       position: 'relative',
       top: '460px',
-      width: '100%',
+      width: '100vw',
       borderRadius: '40px 40px 0 0',
       transition: '0.2s linear',
       backgroundColor: theme.palette.grey.f2,

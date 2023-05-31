@@ -131,6 +131,7 @@ const SocialNavbar = () => {
                 return false
               }).length
             }
+            invisible={messages?.length < 1}
           >
             <IconButton
               onClick={() => {

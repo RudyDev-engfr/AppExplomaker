@@ -1034,6 +1034,7 @@ const TripPage = () => {
             position: 'relative',
             padding: '0 0 0 350px',
             margin: '0 auto',
+
             '@media (max-width: 1600px)': {
               maxWidth: '100%',
               // padding: '0 20px 0 380px',
@@ -1049,6 +1050,9 @@ const TripPage = () => {
             '@media (max-width: 600px)': {
               padding: '0',
               width: '100%',
+            },
+            [theme.breakpoints.down('sm')]: {
+              padding: '0',
             },
           }}
         >
