@@ -128,7 +128,7 @@ const DesktopPreview = ({ tripData, generatedAvatars }) => {
               color: theme.palette.grey['33'],
             }}
           >
-            <Typography className={classes.subtitle}>
+            <Typography className={classes.subtitle} component="h4">
               {tripData.editors.length} contributeur{tripData.editors.length > 1 ? 's' : ''}
             </Typography>
           </Button>

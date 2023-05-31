@@ -133,6 +133,7 @@ const SecondStep = () => {
       birthdate: currentBirthdate,
       newsletter,
       password,
+      myTripLetter,
     } = signup
     auth
       .createUserWithEmailAndPassword(email, password)
@@ -147,6 +148,7 @@ const SecondStep = () => {
             lastname,
             birthdate: new timestampRef.fromDate(currentBirthdate),
             newsletter: newsletter || false,
+            myTripLetter: myTripLetter || false,
           })
           .then(async () => {
             await signInWithEmailAndPassword(email, password)
@@ -309,6 +311,20 @@ const SecondStep = () => {
               />
             }
             label="Si tu souhaites recevoir de l’inspiration, les bons plans et destinations du moment (une seule fois par semaine promis), inscrits toi à notre Newsletter !"
+          />
+        </Box>
+        <Box mt="20px">
+          <FormControlLabel
+            control={
+              <Checkbox
+                sx={{ '& svg': { fontSize: '40px' } }}
+                checked={signup.myTripLetter}
+                onChange={event => setSignup({ ...signup, myTripLetter: event.target.checked })}
+                name="myTripLetter"
+                color="primary"
+              />
+            }
+            label="Si tu souhaites recevoir les notification de tes séjours en cours, tu peux choisir à quelle fréquence!"
           />
         </Box>
         <Box mt={4} mb={1}>
