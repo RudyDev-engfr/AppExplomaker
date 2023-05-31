@@ -267,7 +267,7 @@ const Help = () => {
               component={Button}
               className={classes.papers}
               onClick={() => {
-                history.push('')
+                window.location.href = 'https://www.explomaker.fr/contact'
               }}
             >
               <Box className={classes.papersContent}>
@@ -288,7 +288,7 @@ const Help = () => {
               component={Button}
               className={classes.papers}
               onClick={() => {
-                history.push('')
+                window.location.href = 'https://www.explomaker.fr/cgu'
               }}
             >
               <Box className={classes.papersContent}>

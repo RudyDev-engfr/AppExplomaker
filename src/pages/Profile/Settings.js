@@ -144,11 +144,9 @@ const Settings = () => {
             <Paper className={classes.paper}>
               <Box display="flex" justifyContent="space-between" alignItems="center">
                 <Typography className={classes.papersTitle}>L’actu de mes voyage</Typography>
-                <Switch checked={user.newsletter} target="newsletter" />
+                <Switch checked={user.myTripLetter} target="myTripLetter" />
               </Box>
-              <Typography className={classes.papersDescription}>
-                Reçois régulièrement des recommandations d’articles qui pourraient t’intéresser
-              </Typography>
+              <Typography className={classes.papersDescription}>Reçois</Typography>
             </Paper>
           </Box>
         </Box>
