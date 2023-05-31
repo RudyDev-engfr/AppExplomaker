@@ -3,7 +3,7 @@ import { useTheme } from '@mui/styles'
 import React, { useState, useEffect, createContext, useContext } from 'react'
 import { useParams } from 'react-router-dom'
 import { toast } from 'react-toastify'
-import { rCTFF } from '../helper/functions'
+import { buildNotificationsOnTripForUser, rCTFF } from '../helper/functions'
 
 import { FirebaseContext } from './firebase'
 import { SessionContext } from './session'
@@ -16,20 +16,30 @@ const TripContextProvider = ({ children }) => {
   // const { user } = useContext(SessionContext)
   // const { tripId } = useParams()
   const theme = useTheme()
+  const { tripId } = useParams()
   const matchesXs = useMediaQuery(theme.breakpoints.down('sm'))
   const matches1600 = useMediaQuery('(max-width:1600px)')
+  const { user } = useContext(SessionContext)
+  const { getUserById, firestore } = useContext(FirebaseContext)
   const [deleteEventNotifications, setDeleteEventNotifications] = useState(false)
+  const [hasClicked, setHasClicked] = useState(false)
   const [tripData, setTripData] = useState()
+
+  // use to handle Notifications
+  const [currentNotifications, setCurrentNotifications] = useState([])
+  const [refreshNotif, setRefreshNotif] = useState(false)
 
   // use to handle events
   const [eventType, setEventType] = useState()
+  const [currentEventId, setCurrentEventId] = useState()
+  const [currentEventType, setCurrentEventType] = useState('')
 
   // used to handle date from events Notifications
   const [days, setDays] = useState([])
   const [currentView, setCurrentView] = useState('chronoFeed')
   const [selectedDateOnPlanning, setSelectedDateOnPlanning] = useState('')
 
-  const [isChatOpen, setIsChatOpen] = useState(!matchesXs && !matches1600)
+  const [isChatOpen, setIsChatOpen] = useState('')
 
   const [currentEvent, setCurrentEvent] = useState()
   const [openModal, setOpenModal] = useState('')
@@ -38,11 +48,51 @@ const TripContextProvider = ({ children }) => {
   const [currentDateRange, setCurrentDateRange] = useState(['', ''])
   const [currentActiveTab, setCurrentActiveTab] = useState('')
   const [currentActiveMobileNavTab, setCurrentActiveMobileNavTab] = useState('preview')
+  const [currentTravelers, setCurrentTravelers] = useState([])
 
   const setTypeCreator = type => () => {
     setEventType(type)
     setCurrentView('creator')
   }
+
+  useEffect(() => {
+    console.log('voyageurs actuels', currentTravelers)
+  }, [currentTravelers])
+
+  useEffect(() => {
+    const batchGetUsers = []
+    tripData?.travelersDetails
+      .filter(traveler => traveler.id)
+      .forEach(peopleId => {
+        if (peopleId?.id) {
+          batchGetUsers.push(getUserById(peopleId.id))
+        } else if (peopleId?.name) {
+          batchGetUsers.push(new Promise(resolve => resolve({ firstname: peopleId.name })))
+        } else {
+          batchGetUsers.push(getUserById(peopleId))
+        }
+      })
+    Promise.all(batchGetUsers).then(response => {
+      if (response.length > 0) {
+        const tempTravelers = response.map(({ firstname, avatar, id }) => ({
+          firstname,
+          avatar,
+          id,
+        }))
+        setCurrentTravelers(tempTravelers)
+      }
+    })
+  }, [tripData])
+
+  useEffect(() => {
+    firestore
+      .collection('trips')
+      .doc(tripId)
+      .onSnapshot(doc => {
+        const tempDoc = doc.data()
+        setTripData(tempDoc)
+      })
+  }, [tripId])
 
   // const [allowDeleteNotif, setAllowDeleteNotif] = useState(false)
   // const [timingRefresh, setTimingRefresh] = useState(false)
@@ -90,6 +140,14 @@ const TripContextProvider = ({ children }) => {
   //     setAllowDeleteNotif(false)
   //   }
   // }, [allowDeleteNotif])
+  useEffect(() => {
+    if (tripData && user && refreshNotif) {
+      const tempNotif = buildNotificationsOnTripForUser(user, tripId)
+      setCurrentNotifications(tempNotif)
+      setRefreshNotif(false)
+    }
+    console.log('le voyage avec ses notifs', user.notifications)
+  }, [tripData, user, refreshNotif])
 
   useEffect(() => {
     if (
@@ -103,6 +161,14 @@ const TripContextProvider = ({ children }) => {
       setCurrentDateRange(['', ''])
     }
   }, [tripData])
+
+  useEffect(() => {
+    if (hasClicked) {
+      setTimeout(() => {
+        setHasClicked(false)
+      }, 2000)
+    }
+  }, [hasClicked])
 
   useEffect(() => {
     console.log('showmelestate1', selectedDateOnPlanning)
@@ -141,6 +207,17 @@ const TripContextProvider = ({ children }) => {
         setCurrentActiveTab,
         currentActiveMobileNavTab,
         setCurrentActiveMobileNavTab,
+        currentNotifications,
+        setCurrentNotifications,
+        refreshNotif,
+        setRefreshNotif,
+        currentEventId,
+        setCurrentEventId,
+        hasClicked,
+        setHasClicked,
+        currentEventType,
+        setCurrentEventType,
+        currentTravelers,
       }}
     >
       {children}

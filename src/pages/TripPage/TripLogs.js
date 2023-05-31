@@ -115,6 +115,7 @@ const TripLogs = ({ tripData, tripId, canEdit }) => {
                         height: '115px',
                         borderRadius: '20px',
                         padding: matchesXs && '0 5px 0 0 !important',
+                        paddingRight: !matchesXs && '15px',
                         '&.Mui-expanded': {
                           borderRadius: '20px 20px 0 0 !important',
                         },
@@ -173,13 +174,13 @@ const TripLogs = ({ tripData, tripId, canEdit }) => {
                       width: '457px,',
                       height: '105px',
                       minHeight: '105px',
-                      padding: '0 30px',
                       display: 'grid',
                       gridTemplate: '1fr / 110px 1fr 40px',
                       alignItems: 'center',
                       marginBottom: '15px',
                       borderRadius: '20px',
                       backgroundColor: theme.palette.grey.f2,
+                      paddingRight: !matchesXs && '15px',
                     }}
                     key={notification.id}
                   >

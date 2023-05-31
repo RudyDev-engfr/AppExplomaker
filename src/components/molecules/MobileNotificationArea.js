@@ -3,10 +3,16 @@ import { Avatar, Badge, Box, IconButton, Modal, Paper, Typography } from '@mui/m
 import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos'
 import { makeStyles, useTheme } from '@mui/styles'
 import React, { useContext, useEffect, useState } from 'react'
+import { useHistory } from 'react-router-dom'
+import { isSameDay } from 'date-fns'
+
 import { FirebaseContext } from '../../contexts/firebase'
 import { SessionContext } from '../../contexts/session'
+import { TripContext } from '../../contexts/trip'
+
 import findIcon from '../../helper/icons'
 import CustomAvatar from '../atoms/CustomAvatar'
+import { stringToDate } from '../../helper/functions'
 
 const useStyles = makeStyles(theme => ({
   notificationTitle: {
@@ -19,7 +25,7 @@ const useStyles = makeStyles(theme => ({
 const MobileNotificationArea = ({
   isMyTrips = false,
   tripId,
-
+  currentNotifications,
   setRefreshNotif,
 }) => {
   const classes = useStyles()
@@ -27,53 +33,108 @@ const MobileNotificationArea = ({
 
   const { user } = useContext(SessionContext)
   const { setNotificationsToNewStateOnTrip } = useContext(FirebaseContext)
+  const { days, setSelectedDateOnPlanning } = useContext(TripContext)
 
   const [open, setOpen] = useState(false)
   const handleOpen = () => setOpen(true)
 
   return (
     <>
-      <Badge
-        badgeContent={
-          isMyTrips
-            ? user.notifications.filter(notification => notification?.state === 1).length
-            : user?.notifications.filter(
-                notification => notification?.tripId === tripId && notification?.state === 1
-              ).length
-        }
-        color="secondary"
+      <IconButton
+        onClick={() => {
+          setRefreshNotif(true)
+          handleOpen()
+          setNotificationsToNewStateOnTrip(user, tripId, 2)
+        }}
+        // sx={{
+        //   backgroundColor:
+        //     user?.notifications?.filter(notification => notification.state === 1).length > 0
+        //       ? theme.palette.primary.ultraLight
+        //       : 'white',
+        //   '&:hover': {
+        //     backgroundColor:
+        //       user?.notifications?.filter(notification => notification.state === 1).length > 0
+        //         ? theme.palette.primary.ultraLight
+        //         : 'white',
+        //   },
+        // }}
       >
-        <IconButton
-          onClick={() => {
-            setRefreshNotif(true)
-            handleOpen()
-            setNotificationsToNewStateOnTrip(user, tripId, 2)
-          }}
-          sx={{
-            backgroundColor:
-              user?.notifications?.filter(notification => notification.state === 1).length > 0
-                ? theme.palette.primary.ultraLight
-                : 'white',
-            '&:hover': {
-              backgroundColor:
-                user?.notifications?.filter(notification => notification.state === 1).length > 0
-                  ? theme.palette.primary.ultraLight
-                  : 'white',
-            },
-          }}
+        <Badge
+          badgeContent={
+            isMyTrips
+              ? user.notifications.filter(notification => notification?.state === 1).length
+              : user?.notifications.filter(
+                  notification => notification?.tripId === tripId && notification?.state === 1
+                ).length
+          }
+          color="secondary"
         >
-          <Notifications />
-        </IconButton>
-      </Badge>
-      <MobileNotificationModal open={open} setOpen={setOpen} />
+          <Notifications sx={{ fontSize: '35px' }} />
+        </Badge>
+      </IconButton>
+      <MobileNotificationModal
+        open={open}
+        setOpen={setOpen}
+        currentNotifications={currentNotifications}
+        setNotificationsToNewStateOnTrip={setNotificationsToNewStateOnTrip}
+        user={user}
+        days={days}
+        setSelectedDateOnPlanning={setSelectedDateOnPlanning}
+      />
     </>
   )
 }
 
-export const MobileNotificationModal = ({ open, setOpen, currentNotifications }) => {
+export const MobileNotificationModal = ({
+  open,
+  setOpen,
+  currentNotifications,
+  setNotificationsToNewStateOnTrip,
+  user,
+  days,
+  setSelectedDateOnPlanning,
+}) => {
   const classes = useStyles()
   const theme = useTheme()
+  const history = useHistory()
+
+  const { setCurrentView, setCurrentEventId, setCurrentEvent, setCurrentEventType } =
+    useContext(TripContext)
+
   const handleClose = () => setOpen(false)
+
+  const onClickNotif = notification => {
+    history.push(notification.url)
+    if (notification?.startTime || notification?.event?.propositions[0]?.startTime) {
+      days.forEach(day => {
+        const tempTime = notification.startTime || notification.event.propositions[0].startTime
+        console.log('tempTime', tempTime)
+        if (isSameDay(stringToDate(tempTime, 'yyyy-MM-dd HH:mm'), day)) {
+          setSelectedDateOnPlanning(day)
+        }
+      })
+    }
+    if (notification?.event?.type) {
+      setCurrentEventType(notification.event?.type)
+    } else {
+      setCurrentEventType(notification?.eventType)
+    }
+    if (notification.event.propositions) {
+      setCurrentEvent(notification.event)
+      // setCurrentEventId(notification.event.id)
+    }
+    if (notification.event.isSurvey) {
+      setCurrentView('survey')
+      console.log('je suis un survey')
+    } else {
+      setCurrentView('preview')
+      console.log('je suis un preview')
+    }
+    if (notification.id) {
+      setNotificationsToNewStateOnTrip(user, 3, notification.id)
+    }
+    handleClose()
+  }
 
   return (
     <Modal
@@ -86,7 +147,7 @@ export const MobileNotificationModal = ({ open, setOpen, currentNotifications })
         sx={{
           width: '100vw',
           height: 'calc(100vh - 60px)',
-          padding: '60px 15px 30px 15px',
+          padding: '15px 15px 30px 15px',
           zIndex: 9999,
           borderRadius: 0,
           overflowY: 'auto',
@@ -96,11 +157,12 @@ export const MobileNotificationModal = ({ open, setOpen, currentNotifications })
           sx={{
             display: 'flex',
             justifyContent: 'space-between',
+            alignItems: 'center',
             padding: '0 15px',
             marginBottom: '30px',
           }}
         >
-          <Typography variant="h4" sx={{ paddingLeft: '15px' }}>
+          <Typography variant="h4" sx={{ paddingLeft: '15px', fontSize: '25px' }}>
             Notifications
           </Typography>
           <Box position="absolute" left="20px">
@@ -133,6 +195,7 @@ export const MobileNotificationModal = ({ open, setOpen, currentNotifications })
                   notification.state === 1 ? theme.palette.primary.ultraLight : 'white',
               }}
               key={notification.id}
+              onClick={() => onClickNotif(notification)}
             >
               <Box sx={{ position: 'relative' }}>
                 <CustomAvatar

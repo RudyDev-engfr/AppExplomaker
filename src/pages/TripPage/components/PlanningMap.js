@@ -7,6 +7,7 @@ import React, {
   useState,
 } from 'react'
 import { GoogleMap, Marker, Polyline } from '@react-google-maps/api'
+import { v4 as uuidv4 } from 'uuid'
 
 import { PlanningContext } from '../../../contexts/planning'
 import usePrevious from '../../../hooks/usePrevious'
@@ -344,7 +345,7 @@ const PlanningMap = ({ latitude, longitude, zoom = 5, planningMapRef, isDraggabl
 
               return (
                 <Polyline
-                  key={tempKey}
+                  key={`${uuidv4()} - ${tempKey}`}
                   path={coordinates} // Réception d'un tableau non limité de lat/lng
                   geodesic={false}
                   options={{

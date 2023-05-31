@@ -237,21 +237,18 @@ const Preview = ({
 
   const { dictionary } = useContext(FirebaseContext)
   const { user } = useContext(SessionContext)
-  const { currentDateRange, setCurrentDateRange, days, setSelectedDateOnPlanning } =
-    useContext(TripContext)
+  const {
+    currentDateRange,
+    setCurrentDateRange,
+    days,
+    setSelectedDateOnPlanning,
+    currentNotifications,
+    setCurrentNotifications,
+    refreshNotif,
+    setRefreshNotif,
+  } = useContext(TripContext)
 
   const [generatedAvatars, setGeneratedAvatars] = useState([])
-  const [currentNotifications, setCurrentNotifications] = useState([])
-  const [refreshNotif, setRefreshNotif] = useState(false)
-
-  useEffect(() => {
-    if (tripData && user && refreshNotif) {
-      const tempNotif = buildNotificationsOnTripForUser(user, tripId)
-      setCurrentNotifications(tempNotif)
-      setRefreshNotif(false)
-    }
-    console.log('le voyage avec ses notifs', user.notifications)
-  }, [tripData, user, refreshNotif])
 
   useEffect(() => {
     console.log('les notifs que je veux afficher', currentNotifications)
@@ -289,26 +286,6 @@ const Preview = ({
   ) : (
     <>
       <Box className={classes.sliderBox}>
-        <Box position="absolute" top="0" right="0">
-          <Box position="absolute" top="20px" right="20px" zIndex="20">
-            {matchesXs ? (
-              <MobileNotificationArea
-                tripId={tripId}
-                currentNotifications={currentNotifications}
-                setRefreshNotif={setRefreshNotif}
-                days={days}
-                setSelectedDateOnPlanning={setSelectedDateOnPlanning}
-              />
-            ) : (
-              <NotificationArea
-                tripData={tripData}
-                currentNotifications={currentNotifications}
-                setRefreshNotif={setRefreshNotif}
-                tripId={tripId}
-              />
-            )}
-          </Box>
-        </Box>
         {carouselImages?.length > 0 ? (
           <Carousel
             className={classes.carousel}

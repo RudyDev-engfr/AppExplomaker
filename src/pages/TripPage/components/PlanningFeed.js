@@ -6,6 +6,7 @@ import { format, isSameDay } from 'date-fns'
 import frLocale from 'date-fns/locale/fr'
 import capitalize from 'lodash.capitalize'
 import { ManageSearch } from '@mui/icons-material'
+import { v4 as uuidv4 } from 'uuid'
 
 import { PlanningContext } from '../../../contexts/planning'
 import { dateToString, stringToDate } from '../../../helper/functions'
@@ -95,34 +96,30 @@ const PlanningFeed = ({ propsClasses, setCurrentView }) => {
                 .map(plannedEvent => (
                   <MiniEventCard
                     plannedEvent={plannedEvent}
-                    key={plannedEvent.title}
+                    key={`${uuidv4()}-${plannedEvent.title}`}
                     setCurrentView={setCurrentView}
                     day={day}
                   />
                 ))}
             {singleDayPlannedEvents?.length >= 1 &&
               singleDayPlannedEvents
-                .filter(plannedEvent => plannedEvent.isSurvey)
-                .map(plannedSurvey =>
-                  plannedSurvey.propositions
-                    .filter(plannedProposition =>
-                      isSameDay(
-                        stringToDate(plannedProposition.fakeDate, 'yyyy-MM-dd HH:mm').getTime(),
-                        stringToDate(dateToString(day), 'yyyy-MM-dd').getTime()
-                      )
-                    )
-                    .sort(compare)
-                    .map(plannedProposition => (
-                      <MiniEventCard
-                        plannedEvent={plannedProposition}
-                        plannedSurvey={plannedSurvey}
-                        key={plannedProposition.title}
-                        setCurrentView={setCurrentView}
-                        surveyId={plannedSurvey.id}
-                        day={day}
-                      />
-                    ))
-                )}
+                ?.filter(plannedEvent => plannedEvent?.isSurvey)
+                .filter(plannedProposition =>
+                  isSameDay(
+                    stringToDate(plannedProposition.fakeDate, 'yyyy-MM-dd HH:mm').getTime(),
+                    stringToDate(dateToString(day), 'yyyy-MM-dd').getTime()
+                  )
+                )
+                .sort(compare)
+                .map(plannedProposition => (
+                  <MiniEventCard
+                    plannedEvent={plannedProposition}
+                    key={plannedProposition.title}
+                    setCurrentView={setCurrentView}
+                    eventId={plannedProposition.id}
+                    day={day}
+                  />
+                ))}
           </Box>
         ))}
     </Box>

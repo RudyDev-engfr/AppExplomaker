@@ -5,7 +5,6 @@ import { BrowserRouter } from 'react-router-dom'
 import { ToastContainer } from 'react-toastify'
 import Box from '@mui/material/Box'
 import { useMediaQuery } from '@mui/material'
-
 import { FirebaseContext, useAuth } from '../contexts/firebase'
 import { SessionContext } from '../contexts/session'
 import Routes from './Router/Routes'
@@ -90,7 +89,7 @@ const App = () => {
             position: 'fixed',
             top: '-15px',
             left: '-15px',
-            zIndex: '1001',
+            zIndex: '999',
             pointerEvents: 'none',
             opacity: '0.6',
           }}

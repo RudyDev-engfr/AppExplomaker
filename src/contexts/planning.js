@@ -28,6 +28,8 @@ const PlanningContextProvider = ({ children }) => {
     eventType,
     setEventType,
     setTypeCreator,
+    currentEventId,
+    setCurrentEventId,
   } = useContext(TripContext)
   const [currentMarkers, setCurrentMarkers] = useState([])
   const [transportMarkers, setTransportMarkers] = useState({
@@ -54,7 +56,6 @@ const PlanningContextProvider = ({ children }) => {
   // used to construct planningFeed
   const [singleDayPlannedEvents, setSingleDayPlannedEvents] = useState()
 
-  const [currentEventId, setCurrentEventId] = useState()
   const [needMapRefresh, setNeedMapRefresh] = useState(true)
 
   const planningMapRef = useRef(null)
@@ -255,10 +256,14 @@ const PlanningContextProvider = ({ children }) => {
 
   useEffect(() => {
     if (currentView === 'chronoFeed' && singleDayPlannedEvents?.length > 1) {
+      const uniqueIds = new Set()
       setCurrentEvents({
-        surveys: singleDayPlannedEvents.filter(
-          plannedEvent => plannedEvent.isSurvey && !plannedEvent.itsAllDayLong
-        ),
+        surveys: plannedEvents.filter(plannedEvent => {
+          if (plannedEvent.isSurvey) {
+            return true
+          }
+          return false
+        }),
         events: singleDayPlannedEvents.filter(
           plannedEvent => !plannedEvent.itsAllDayLong && !plannedEvent.isSurvey
         ),
@@ -512,7 +517,7 @@ const PlanningContextProvider = ({ children }) => {
             survey.type === EVENT_TYPES[4]
         )
         .map(survey =>
-          survey.propositions.map((proposition, propositionIndex) => (
+          survey.propositions?.map((proposition, propositionIndex) => (
             <CustomMarker
               key={proposition.location.value.place_id}
               position={{ lat: proposition.location?.lat, lng: proposition.location?.lng }}
@@ -539,7 +544,7 @@ const PlanningContextProvider = ({ children }) => {
       const tempSurveyFlightMarkers = currentEvents?.surveys
         .filter(survey => survey.type === EVENT_TYPES[1])
         .map(survey =>
-          survey.propositions.map((flightProposition, flightPropositionIndex) =>
+          survey.propositions?.map((flightProposition, flightPropositionIndex) =>
             flightProposition.flights.map(flight => {
               const currentFlightIndex = tempFlightIndex
               tempTransportCoordinates.push([])
@@ -551,7 +556,7 @@ const PlanningContextProvider = ({ children }) => {
                 })
                 return (
                   <CustomMarker
-                    key={flightProposition.id}
+                    key={`${uuidv4()} - ${flightProposition.id}`}
                     position={{
                       lat: airport.geocode.latitude,
                       lng: airport.geocode.longitude,
@@ -594,7 +599,7 @@ const PlanningContextProvider = ({ children }) => {
 
               return (
                 <CustomMarker
-                  key={`${event.id}-${flight.data.airports[airportIndex].iataCode}`}
+                  key={`${uuidv4()} -${event.id}-${flight.data.airports[airportIndex].iataCode}`}
                   position={{
                     lat: airport.geocode.latitude,
                     lng: airport.geocode.longitude,
@@ -627,7 +632,7 @@ const PlanningContextProvider = ({ children }) => {
         )
         .map(event => (
           <CustomMarker
-            key={event.id}
+            key={`${uuidv4()} - ${event.id}`}
             position={{ lat: event.location?.lat, lng: event.location?.lng }}
             clickable
             onClick={() => {
@@ -710,12 +715,12 @@ const PlanningContextProvider = ({ children }) => {
                     tempPlannedProposition.type = plannedEvent.type
                     tempPlannedProposition.isSurvey = true
                     tempPropositions.push(tempPlannedProposition)
+                    singleDayEventsArray.push(tempPlannedProposition)
                   })
                 }
               })
             }
-            tempPlannedSurvey.propositions = tempPropositions
-            singleDayEventsArray.push(tempPlannedSurvey)
+            // tempPlannedSurvey.propositions = tempPropositions
           } else {
             const plannedEventInterval = eachDayOfInterval({
               start: stringToDate(plannedEvent.startTime, 'yyyy-MM-dd HH:mm'),
@@ -1009,7 +1014,7 @@ const PlanningContextProvider = ({ children }) => {
 
           return (
             <CustomMarker
-              key={`${flight.tempId}-${airport.iataCode}`}
+              key={`${uuidv4()} - ${flight.tempId}-${airport.iataCode}`}
               position={{
                 lat: airport.geocode.latitude,
                 lng: airport.geocode.longitude,

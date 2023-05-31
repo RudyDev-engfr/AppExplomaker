@@ -259,7 +259,7 @@ exports.updateTrip = functions.firestore.document('trips/{tripId}').onUpdate(cha
           const currentDoc = spotDoc[Object.keys(spotDoc)[0]]
           if (currentDoc?.picture_slider) {
             const spotImages = currentDoc.picture_slider.map(({ src, title }) => ({
-              src: `https://storage.googleapis.com/stateless-www-explomaker-fr/${src.original}`,
+              src: `https://storage.googleapis.com/explomaker-data-stateless/${src.original}`,
               title,
             }))
             return change.after.ref.set(

@@ -61,7 +61,7 @@ const useStyles = makeStyles(theme => ({
   },
 }))
 
-const TripRecapCard = ({ tripData, dateRange, onClick, isJoin = false }) => {
+const TripRecapCard = ({ tripData, dateRange, onClick, isJoin = false, hasClicked }) => {
   const classes = useStyles()
 
   return (
@@ -105,6 +105,7 @@ const TripRecapCard = ({ tripData, dateRange, onClick, isJoin = false }) => {
               size="large"
               onClick={onClick}
               className={classes.recapBtn}
+              disabled={hasClicked}
             >
               {isJoin ? 'Confirmer' : 'Voir le séjour'}
             </Button>

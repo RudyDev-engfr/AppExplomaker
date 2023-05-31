@@ -44,7 +44,7 @@ import {
   startOfDay,
 } from 'date-fns'
 import frLocale from 'date-fns/locale/fr'
-import ListRoundedIcon from '@mui/icons-material/ListRounded'
+import TimeLineIcon from '@mui/icons-material/Timeline'
 import { v4 as uuidv4 } from 'uuid'
 import clsx from 'clsx'
 import { useHistory, useLocation } from 'react-router-dom'
@@ -81,7 +81,8 @@ const useStyles = makeStyles(theme => ({
   calendarArea: {
     gridArea: 'calendarArea',
     display: 'grid',
-    gridTemplate: '1fr / 1fr',
+    gridTemplate: '64px / 1fr 180px',
+    columnGap: '20px',
     alignItems: 'center',
     backgroundColor: '#FFFFFF',
     overflowY: 'auto',
@@ -113,7 +114,7 @@ const useStyles = makeStyles(theme => ({
     height: '100vh',
     display: 'grid',
     gridTemplateColumns: '200px 200px 1fr',
-    gridTemplateRows: '100px 1fr',
+    gridTemplateRows: '64px 1fr',
     gridTemplateAreas: `
     "calendarArea calendarArea calendarArea"
     "previewArea previewArea mapArea"
@@ -134,10 +135,10 @@ const useStyles = makeStyles(theme => ({
   },
   calendarTitle: {
     backgroundColor: '#F7F7F7',
-    height: '80px',
-    borderRadius: '30px',
+    height: '50px',
+    borderRadius: '10px',
     cursor: 'pointer',
-    minWidth: '55px',
+    minWidth: '50px',
     transition: 'all .2s',
     margin: '0 8px',
     '&:hover': {
@@ -175,7 +176,7 @@ const useStyles = makeStyles(theme => ({
     padding: '20px 20px 0',
     placeItems: 'center',
     borderRadius: '10px 10px 0 0',
-    backgroundColor: theme.palette.grey.f7,
+    backgroundColor: 'white',
     [theme.breakpoints.down('sm')]: {
       gridRowStart: 'mapArea',
       gridRowEnd: 'previewArea',
@@ -183,8 +184,9 @@ const useStyles = makeStyles(theme => ({
       maxHeight: '100vh',
       zIndex: '10000',
       margin: '0',
+      padding: '0',
+      paddingBottom: '80px',
       backgroundColor: 'white',
-      borderRadius: '30px 30px 0 0',
       '&::-webkit-scrollbar': {
         display: 'none',
       },
@@ -365,6 +367,12 @@ const Planning = ({ tripData, tripId, canEdit }) => {
   const [editMode, setEditMode] = useState(false)
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false)
 
+  useEffect(() => {
+    console.log('currentEvent', currentEvent)
+    console.log('currentEventId', currentEventId)
+    console.log('currentView', currentView)
+  }, [currentEventId, currentEvent, currentView])
+
   const buildFlightTitle = flights =>
     `Vol de ${flights[0].data.airports[0].label} vers ${
       flights[flights.length - 1].data.airports[
@@ -376,7 +384,6 @@ const Planning = ({ tripData, tripId, canEdit }) => {
     if (days.length > 0 && typeof selectedDateOnPlanning !== 'undefined') {
       days.forEach(day => {
         if (isSameDay(selectedDateOnPlanning, day)) {
-          console.log('igotit')
           setSelectedDateOnPlanning(day)
         }
       })
@@ -915,7 +922,7 @@ const Planning = ({ tripData, tripId, canEdit }) => {
                     height: '100%',
                   }}
                 >
-                  <ListRoundedIcon sx={{ fontSize: '30px' }} />
+                  <TimeLineIcon sx={{ fontSize: '30px' }} />
                 </Box>
               </Paper>
               {(withoutDatesEvents.surveys.length > 0 || withoutDatesEvents.events.length > 0) && (
@@ -1027,7 +1034,7 @@ const Planning = ({ tripData, tripId, canEdit }) => {
                         locale: frLocale,
                       })}
                     </Typography>
-                    <Typography
+                    {/* <Typography
                       sx={{
                         fontSize: '12px',
                         color: selectedDateOnPlanning === day ? 'inherit' : '#7B7B7B',
@@ -1036,7 +1043,7 @@ const Planning = ({ tripData, tripId, canEdit }) => {
                       {format(day, 'MMM', {
                         locale: frLocale,
                       }).replace('.', '')}
-                    </Typography>
+                    </Typography> */}
                   </Box>
                 </Paper>
               ))}
@@ -1047,7 +1054,7 @@ const Planning = ({ tripData, tripId, canEdit }) => {
         {currentView === 'planning' && (
           <>
             <Paper className={classes.previewPaper}>
-              <Container>
+              <Container sx={{ paddingLeft: '15px !important' }}>
                 <Box sx={{ margin: '32px 0', display: 'flex', alignItems: 'center' }}>
                   <IconButton
                     onClick={() => {

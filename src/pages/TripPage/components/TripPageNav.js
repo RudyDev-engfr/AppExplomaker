@@ -6,16 +6,13 @@ import EventNoteIcon from '@mui/icons-material/EventNote'
 /* import PhotoCameraOutlinedIcon from '@mui/icons-material/PhotoCameraOutlined' */
 import ArrowBackRoundedIcon from '@mui/icons-material/ArrowBackRounded'
 import {
-  Badge,
   Box,
   Button,
   Dialog,
-  Fab,
   Paper,
   Slide,
   Tab,
   Tabs,
-  Typography,
   useMediaQuery,
   useTheme,
 } from '@mui/material'
@@ -24,17 +21,16 @@ import clsx from 'clsx'
 import FavoriteIcon from '@mui/icons-material/Favorite'
 import FeedIcon from '@mui/icons-material/Feed'
 import {
-  Add,
   AirplanemodeActiveRounded,
   Chat,
   DirectionsBusFilled,
-  DisplaySettings,
   ExploreRounded,
+  Help,
   HomeRounded,
   Logout,
   Notifications,
-  Person,
   RestaurantMenuRounded,
+  Tune,
 } from '@mui/icons-material'
 
 import logoFull from '../../../images/icons/logoFull.svg'
@@ -196,6 +192,7 @@ const TripPageNav = ({
   const [open, setOpen] = useState(false)
   const [refreshNotif, setRefreshNotif] = useState(false)
   const [currentNotifications, setCurrentNotifications] = useState([])
+
   const handleOpen = () => setOpen(true)
   const handleClose = () => setOpen(false)
 
@@ -405,7 +402,7 @@ const TripPageNav = ({
           centered
           variant="fullWidth"
           fixedTabs
-          value={currentActiveMobileNavTab}
+          value={0}
           TabIndicatorProps={{ sx: { display: 'none' } }}
         >
           <Tab
@@ -420,7 +417,7 @@ const TripPageNav = ({
               />
             }
             onClick={() => history.push('/')}
-            value="myTrips"
+            // value="myTrips"
             sx={{ padding: '0', minWidth: '20vw !important' }}
           />
           {/* <Tab
@@ -438,19 +435,19 @@ const TripPageNav = ({
           /> */}
           <Tab
             icon={
-              <DisplaySettings
+              <Help
                 sx={{
                   fontSize: '35px',
-                  color: openModal === 'general' && theme.palette.primary.main,
+                  color: isChatOpen === 'AIChat' && theme.palette.primary.main,
                 }}
               />
             }
-            onClick={() => setOpenModal('general')}
-            value="tripSettings"
+            onClick={() => setIsChatOpen('AIChat')}
+            // value="AIChatWindow"
             sx={{ padding: '0', minWidth: '20vw !important', marginRight: '8vw' }}
           />
 
-          <Box sx={{ maxHeight: '80px', height: '80px', paddingBottom: '5px' }} value={2}>
+          <Box sx={{ maxHeight: '80px', height: '80px', paddingBottom: '5px' }}>
             <FabDial actions={addActions} tripId={tripId} />
           </Box>
 
@@ -471,12 +468,17 @@ const TripPageNav = ({
         /> */}
           <Tab
             icon={
-              <Chat sx={{ color: isChatOpen && theme.palette.primary.main, fontSize: '35px' }} />
+              <Chat
+                sx={{
+                  color: isChatOpen === 'userChat' && theme.palette.primary.main,
+                  fontSize: '35px',
+                }}
+              />
             }
             onClick={() => {
-              setIsChatOpen(true)
+              setIsChatOpen('userChat')
             }}
-            value="openChat"
+            // value="userChat"
             sx={{ padding: '0', minWidth: '20vw !important', marginLeft: '8vw' }}
           />
           <Tab
@@ -486,23 +488,23 @@ const TripPageNav = ({
               setNotificationsToNewStateOnTrip(user, tripId, 2)
             }}
             icon={
-              <Notifications
-                sx={{
-                  color: openModal === 'editEditors' && theme.palette.primary.main,
-                  fontSize: '35px',
-                }}
+              // <Notifications
+              //   sx={{
+              //     color: openModal === 'editEditors' && theme.palette.primary.main,
+              //     fontSize: '35px',
+              //   }}
+              // />
+              <MobileNotificationArea
+                currentNotifications={currentNotifications}
+                tripId={tripId}
+                setRefreshNotif={setRefreshNotif}
               />
             }
-            value="myNotifications"
+            // value="myNotifications"
             sx={{ padding: '0', minWidth: '20vw !important' }}
           />
         </Tabs>
       </Paper>
-      <MobileNotificationModal
-        open={open}
-        setOpen={setOpen}
-        currentNotifications={currentNotifications}
-      />
       <Dialog
         fullScreen
         open={isMobilePlusOpen}

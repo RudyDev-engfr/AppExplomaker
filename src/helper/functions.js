@@ -389,6 +389,7 @@ export const buildNotificationsOnTripForUser = (user, tripId) => {
         singleNotif.tripId = tripId
         if (event) {
           singleNotif.startTime = event.startTime
+          singleNotif.event = event
         }
         // eslint-disable-next-line default-case
         switch (type) {
@@ -523,15 +524,24 @@ export const buildNotificationsOnTripForUser = (user, tripId) => {
             console.log('je passe par le propositionAdd')
             singleNotif.content = owner?.firstname
               ? `${owner.firstname} a ajouté une proposition sur le sondage - ${
-                  event.type
-                } - pour la journée du ${
-                  event.type === 'flight'
-                    ? rCTFF(
-                        event.propositions[event.propositions.length - 1].flights[0].date,
-                        'dd/MM/yyyy'
-                      )
-                    : rCTFF(event.propositions[event.propositions.length - 1].date, 'dd/MM/yyyy')
-                }.`
+                  event?.type === 'accommodation'
+                    ? 'Hébergement'
+                    : event?.type === 'flight'
+                    ? 'Vol'
+                    : event?.type === 'restaurant'
+                    ? 'Restaurant'
+                    : event?.type === 'explore'
+                    ? 'Exploration'
+                    : event?.type === 'transport' && 'Transport'
+                }
+                 - pour la journée du ${
+                   event.type === 'flight'
+                     ? rCTFF(
+                         event.propositions[event.propositions.length - 1].flights[0].date,
+                         'dd/MM/yyyy'
+                       )
+                     : rCTFF(event.propositions[event.propositions.length - 1].date, 'dd/MM/yyyy')
+                 }.`
               : `Une proposition a été ajouté sur le sondage pour la journée du ${rCTFF(
                   event.propositions[event.propositions.length - 1].date,
                   'dd/MM/yyyy'

@@ -230,6 +230,8 @@ const EventCreator = ({
     days,
   } = useContext(PlanningContext)
 
+  const { hasClicked, setHasClicked } = useContext(TripContext)
+
   const tripStartDate = rCTFF(dateRange[0])
   const tripEndDate = rCTFF(dateRange[1])
   const [daysInterval, setDaysInterval] = useState(0)
@@ -453,7 +455,7 @@ const EventCreator = ({
         setPrice(currentEvent.price / currentEvent.participatingTravelers.length)
         setCurrency(currentEvent.currency)
       } else if (eventType === EVENT_TYPES[2]) {
-        setSelectedDate(stringToDate(currentEvent.date, 'yyyy-MM-dd'))
+        setSelectedDate(stringToDate(currentEvent.date))
         setSelectedStartTime(stringToDate(currentEvent.startTime))
         setSelectedEndTime(stringToDate(currentEvent.endTime))
         setLocation({ ...currentEvent.location })
@@ -684,6 +686,7 @@ const EventCreator = ({
 
   const handleSubmit = async event => {
     event.preventDefault()
+    setHasClicked(true)
     let currentPlaceDetails
     if (
       eventType === EVENT_TYPES[0] ||
@@ -948,24 +951,29 @@ const EventCreator = ({
   }
 
   const fetchFlight = async flightIndex => {
-    const urlencoded = new URLSearchParams()
     const flightId = flights[flightIndex].number.trim()
     const carrierCode = flightId.substring(0, 2).toUpperCase()
     const flightNumber = flightId.substring(2).trim()
-    urlencoded.append('carrierCode', carrierCode) // 2-3 char
-    urlencoded.append('flightNumber', flightNumber) // 1-4 char
-    urlencoded.append('departureDate', format(flights[flightIndex].date, 'yyyy-MM-dd')) // format: YYYY-MM-DD
-
+    const body = JSON.stringify({
+      carrierCode,
+      flightNumber,
+      departureDate: format(flights[flightIndex].date, 'yyyy-MM-dd'),
+    })
+    console.log('body de la requete', body)
     const requestOptions = {
       method: 'POST',
-      body: urlencoded,
+      body,
       redirect: 'follow',
+      headers: {
+        'Content-Type': 'application/json',
+      },
     }
 
     const results = await fetch(
-      window.location.hostname === 'localhost'
-        ? 'http://localhost:5001/explomaker-3010b/us-central1/checkFlightNumber'
-        : 'https://us-central1-explomaker-3010b.cloudfunctions.net/checkFlightNumber',
+      // window.location.hostname === 'localhost'
+      //   ? 'http://localhost:5001/explomaker-3010b/us-central1/getFlightInformations'
+      //   :
+      'https://us-central1-explomaker-3010b.cloudfunctions.net/getFlightInformations',
       requestOptions
     )
     const data = await results.json()
@@ -991,7 +999,12 @@ const EventCreator = ({
             display: 'flex',
             justifyContent: 'space-between',
             alignItems: 'center',
+            backgroundColor: 'white',
             padding: '15px',
+            [theme.breakpoints.down('sm')]: {
+              padding: '15px',
+              paddingRight: '45px',
+            },
           }}
         >
           {matchesXs ? (
@@ -1017,7 +1030,7 @@ const EventCreator = ({
               <ArrowBackIosIcon style={{ transform: 'translate(5px ,0)' }} />
             </IconButton>
           )}
-          <Typography variant="h5" align="center" sx={{ fontWeight: 'bold' }}>
+          <Typography variant="h5" align="center" sx={{ fontWeight: 'bold', padding: '0' }}>
             {editMode ? 'Modifier' : 'Ajouter'} un
             {isNewProposition || isPropositionInEdition
               ? "e proposition d'"
@@ -1080,9 +1093,9 @@ const EventCreator = ({
         >
           <Box
             sx={{
-              margin: '2rem 2rem',
+              padding: '15px',
               [theme.breakpoints.down('sm')]: {
-                margin: '20px 30px',
+                padding: '30px',
               },
             }}
           >
@@ -1305,10 +1318,85 @@ const EventCreator = ({
                 </Box>
               </>
             )}
+            {eventType === EVENT_TYPES[3] && (
+              <>
+                <Box className={classes.marginBottom}>
+                  {transports.map((transport, index) => (
+                    <NewTransport
+                      key={transport.tempId}
+                      setTransports={setTransports}
+                      index={index}
+                      description={transport.description}
+                      start={transport.start}
+                      end={transport.end}
+                      startTime={transport.startTime}
+                      endTime={transport.endTime}
+                      icon={transport.icon}
+                      shouldHaveNumber={transports.length > 1}
+                      dateRange={dateRange}
+                    />
+                  ))}
+                </Box>
+                <Box className={classes.marginBottom} sx={{ gridColumn: '1 / 3' }}>
+                  <Button
+                    aria-label="add transport"
+                    onClick={() =>
+                      setTransports([
+                        ...transports,
+                        { ...initialTransport(transports[transports.length - 1].endTime) },
+                      ])
+                    }
+                    startIcon={<AddIcon />}
+                  >
+                    Ajouter un transport
+                  </Button>
+                </Box>
+                <Divider className={classes.marginBottom} />
+              </>
+            )}
+            {eventType === EVENT_TYPES[1] && (
+              <>
+                <Box className={classes.marginBottom}>
+                  {flights.map((flight, flightIndex) => (
+                    <NewFlight
+                      key={flight.tempId}
+                      shouldHaveNumber={flights.length > 1}
+                      date={flight.date}
+                      number={flight.number}
+                      flights={flights}
+                      setFlights={setFlights}
+                      index={flightIndex}
+                      dateRange={dateRange}
+                      fetchFlight={fetchFlight}
+                      needFetch={flight.needFetch}
+                      flightData={flight.data}
+                    />
+                  ))}
+                </Box>
+                {/* <Box className={classes.marginBottom} display="flex" alignItems="center">
+                  <IconButton
+                    aria-label="add flight"
+                    onClick={() =>
+                      setFlights([
+                        ...flights,
+                        { ...initialFlight(selectedDateFromPlanning || tripStartDate) },
+                      ])
+                    }
+                    sx={{ padding: '0', mr: 2 }}
+                  >
+                    <img src={plusCircle} alt="" />
+                  </IconButton>
+                  <Typography
+                    sx={{ fontSize: '17px', [theme.breakpoints.down('sm')]: { fontSize: '14px' } }}
+                  >
+                    Ajout d&apos;un vol
+                  </Typography>
+                </Box> */}
+                <Divider className={classes.marginBottom} />
+              </>
+            )}
             <Box sx={{ display: 'flex', justifyContent: 'flex-start', marginBottom: '15px' }}>
-              {eventType !== EVENT_TYPES[3] && (
-                <AdvancedModeButton advancedMode={advancedMode} setAdvancedMode={setAdvancedMode} />
-              )}
+              <AdvancedModeButton advancedMode={advancedMode} setAdvancedMode={setAdvancedMode} />
             </Box>
             <TextField
               label="Titre"
@@ -1348,97 +1436,7 @@ const EventCreator = ({
               type="url"
               sx={{ display: !advancedMode && 'none' }}
             />
-            {eventType === EVENT_TYPES[1] && (
-              <>
-                {matchesXs && (
-                  <IconSlider
-                    eventType={eventType}
-                    selectedIcon={selectedIcon}
-                    setSelectedIcon={setSelectedIcon}
-                  />
-                )}
-                <Box className={classes.marginBottom}>
-                  {flights.map((flight, flightIndex) => (
-                    <NewFlight
-                      key={flight.tempId}
-                      shouldHaveNumber={flights.length > 1}
-                      date={flight.date}
-                      number={flight.number}
-                      setFlights={setFlights}
-                      index={flightIndex}
-                      dateRange={dateRange}
-                      fetchFlight={fetchFlight}
-                      needFetch={flight.needFetch}
-                      flightData={flight.data}
-                    />
-                  ))}
-                </Box>
-                <Box className={classes.marginBottom} display="flex" alignItems="center">
-                  <IconButton
-                    aria-label="add flight"
-                    onClick={() =>
-                      setFlights([
-                        ...flights,
-                        { ...initialFlight(selectedDateFromPlanning || tripStartDate) },
-                      ])
-                    }
-                    sx={{ padding: '0', mr: 2 }}
-                  >
-                    <img src={plusCircle} alt="" />
-                  </IconButton>
-                  <Typography
-                    sx={{ fontSize: '17px', [theme.breakpoints.down('sm')]: { fontSize: '14px' } }}
-                  >
-                    Ajout d&apos;une escale
-                  </Typography>
-                </Box>
-                <Divider className={classes.marginBottom} />
-              </>
-            )}
-            {eventType === EVENT_TYPES[3] && (
-              <>
-                <Box className={classes.marginBottom}>
-                  {transports.map((transport, index) => (
-                    <NewTransport
-                      key={transport.tempId}
-                      setTransports={setTransports}
-                      index={index}
-                      description={transport.description}
-                      start={transport.start}
-                      end={transport.end}
-                      startTime={transport.startTime}
-                      endTime={transport.endTime}
-                      icon={transport.icon}
-                      shouldHaveNumber={transports.length > 1}
-                      dateRange={dateRange}
-                    />
-                  ))}
-                </Box>
-                <Box className={classes.marginBottom} sx={{ gridColumn: '1 / 3' }}>
-                  <Button
-                    aria-label="add transport"
-                    onClick={() =>
-                      setTransports([
-                        ...transports,
-                        { ...initialTransport(transports[transports.length - 1].endTime) },
-                      ])
-                    }
-                    startIcon={<AddIcon />}
-                  >
-                    Ajouter un transport
-                  </Button>
-                </Box>
-                <Divider className={classes.marginBottom} />
-                {eventType === EVENT_TYPES[3] && (
-                  <Box sx={{ marginBottom: '15px' }}>
-                    <AdvancedModeButton
-                      advancedMode={advancedMode}
-                      setAdvancedMode={setAdvancedMode}
-                    />
-                  </Box>
-                )}
-              </>
-            )}
+
             {(eventType === EVENT_TYPES[0] ||
               eventType === EVENT_TYPES[1] ||
               eventType === EVENT_TYPES[2] ||
@@ -1582,12 +1580,16 @@ const EventCreator = ({
                         color="primary"
                         sx={{
                           position: 'relative',
-                          left: !matchesXs && '-10px',
+                          left: !matchesXs && '-10px !important',
                         }}
                       />
                     }
                     label="Proposer en sondage"
-                    sx={{ position: 'relative', left: '20px', alignItems: 'center' }}
+                    sx={{
+                      position: 'relative',
+                      alignItems: 'center',
+                      marginLeft: !matchesXs && '-5px !important',
+                    }}
                   />
                 </Tooltip>
               ) : (
@@ -1612,7 +1614,7 @@ const EventCreator = ({
               type="submit"
               variant="contained"
               fullWidth
-              disabled={!isFormValid()}
+              disabled={!isFormValid() || hasClicked}
               className={classes.submitBtn}
             >
               {editMode ? 'Modifier' : 'Créer'} l

@@ -45,9 +45,11 @@ import PlanningCardIcon from './PlanningCardIcon'
 
 import LineFull from '../../../images/LineFull.svg'
 import findIcon from '../../../helper/icons'
+import mainWhite from '../../../images/eventCreator/flight/mainWhite.svg'
 import FlightPreview from './FlightPreview'
 import { PlanningContext } from '../../../contexts/planning'
 import { SessionContext } from '../../../contexts/session'
+import { TripContext } from '../../../contexts/trip'
 
 const useStyles = makeStyles(theme => ({
   iconBackground: {
@@ -112,7 +114,7 @@ const useStyles = makeStyles(theme => ({
   },
   deleteBtn: {
     backgroundColor: theme.palette.secondary.ultraLight,
-    padding: '1rem 2rem',
+    padding: '15px',
     color: theme.palette.secondary.main,
     '&:hover': {
       backgroundColor: theme.palette.secondary.ultraLight,
@@ -195,11 +197,11 @@ const EventPreview = ({
   const { user } = useContext(SessionContext)
   const { setNeedMapRefresh, days, selectedDateOnPlanning, setSelectedDateOnPlanning } =
     useContext(PlanningContext)
+  const { currentEventType, setCurrentEventType } = useContext(TripContext)
 
   const [isLoading, setIsLoading] = useState(false)
   const [tripData, setTripData] = useState()
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false)
-  const [currentEventType, setCurrentEventType] = useState('')
   // Menu Button Logic
   const [anchorEl, setAnchorEl] = React.useState(null)
   const open = Boolean(anchorEl)
@@ -235,7 +237,13 @@ const EventPreview = ({
   }, [currentEvent, days])
 
   useEffect(() => {
-    setCurrentEventType(currentEvent.type)
+    console.log('currentEventType', currentEventType)
+  }, [currentEventType])
+
+  useEffect(() => {
+    if (currentEvent.type) {
+      setCurrentEventType(currentEvent.type)
+    }
     if (previousEvent?.isSurvey) {
       setCurrentEventType(previousEvent.type)
     }
@@ -303,12 +311,14 @@ const EventPreview = ({
         <Paper className={classes.borderRadiusMobile}>
           <Box sx={{ position: matchesXs && 'sticky', top: '0px', zIndex: 10000 }}>
             <Box
-              display="flex"
-              justifyContent="center"
-              alignItems="center"
-              p="1rem 2rem"
-              position="relative"
-              backgroundColor="white"
+              sx={{
+                backgroundColor: 'white',
+                padding: '15px 30px',
+                display: 'flex',
+                justifyContent: 'center',
+                alignItems: 'center',
+                position: 'relative',
+              }}
             >
               <Box position="absolute" left="20px">
                 <IconButton
@@ -337,10 +347,10 @@ const EventPreview = ({
                     : currentEventType === EVENT_TYPES[1]
                     ? 'Vol'
                     : currentEventType === EVENT_TYPES[2]
-                    ? 'Restaurant'
+                    ? 'Exploration'
                     : currentEventType === EVENT_TYPES[3]
                     ? 'Transport'
-                    : currentEventType === EVENT_TYPES[4] && 'Exploration'}
+                    : currentEventType === EVENT_TYPES[4] && 'Restaurant'}
                 </Box>
               </Typography>
               {canEdit && (
@@ -389,34 +399,39 @@ const EventPreview = ({
             <Divider />
           </Box>
           <Container sx={{ position: 'inherit', zIndex: 2 }} disableGutters>
-            <Box sx={{ padding: '30px 15px 30px 30px', marginBottom: '20px' }}>
+            <Box sx={{ padding: matchesXs ? '30px 15px 30px 30px' : '15px', marginBottom: '20px' }}>
               <Box display="flex" justifyContent="space-between" alignItems="center">
-                <Typography component="h1" sx={{ fontSize: '28px' }}>
-                  {currentEvent.title}
-                </Typography>
+                <Box sx={{ marginBottom: '20px' }}>
+                  <Typography component="h1" sx={{ fontSize: '28px' }}>
+                    {currentEvent?.title}
+                  </Typography>
+                </Box>
               </Box>
               <Box display="flex" alignItems="center">
-                <RoomRoundedIcon fontSize="small" color="disabled" />
+                <RoomRoundedIcon fontSize="small" color="disabled" sx={{ marginRight: '5px' }} />
                 <Typography>
                   {(currentEventType === EVENT_TYPES[0] ||
                     currentEventType === EVENT_TYPES[2] ||
                     currentEventType === EVENT_TYPES[4]) &&
                     currentEvent.location.label}
-                  {currentEventType === EVENT_TYPES[1] &&
-                    currentEvent.flights[0].data.airports[0].label}
-                  {currentEventType === EVENT_TYPES[3] && currentEvent.transports[0].start.label}
-                </Typography>
-                {currentEventType === EVENT_TYPES[1] && (
-                  <Typography sx={{ paddingLeft: '15px' }}>
+                  {currentEventType === EVENT_TYPES[1] && (
                     <Link
                       href={`http://maps.google.com/?q=${currentEvent.flights[0].data.airports[0].geocode.latitude},${currentEvent.flights[0].data.airports[0].geocode.longitude}`}
                       target="_blank"
                       color="primary"
                     >
-                      Itinéraire
+                      {currentEvent.flights[0].data.airports[0].label}
                     </Link>
+                  )}
+                  {currentEventType === EVENT_TYPES[3] && currentEvent.transports[0].start.label}
+                </Typography>
+                {/* {currentEventType === EVENT_TYPES[1] && (
+                  <Typography sx={{ paddingLeft: '15px' }}>
+                    
+                      Itinéraire
+                    
                   </Typography>
-                )}
+                )} */}
               </Box>
               {currentEventType !== EVENT_TYPES[1] && (
                 <Box
@@ -426,7 +441,7 @@ const EventPreview = ({
                   justifyContent="flex-start"
                   flexWrap="wrap"
                 >
-                  {currentEvent.location?.photos?.length ? (
+                  {currentEvent?.location?.photos?.length > 0 ? (
                     <Carousel
                       swipe
                       animation="slide"
@@ -450,11 +465,13 @@ const EventPreview = ({
                         ))}
                     </Carousel>
                   ) : (
-                    <PlanningCardIcon
-                      icon={currentEvent.icon}
-                      eventType={currentEventType}
-                      size="100px"
-                    />
+                    <Box className={classes.cardIconContainer}>
+                      <PlanningCardIcon
+                        icon={currentEvent.icon}
+                        eventType={currentEventType}
+                        size="100px"
+                      />
+                    </Box>
                   )}
                 </Box>
               )}
@@ -619,15 +636,15 @@ const EventPreview = ({
               )}
               {currentEventType === EVENT_TYPES[1] && (
                 <Box mb={1}>
-                  {currentEvent.flights.map(({ data }) => (
-                    <Box display="flex" m="1rem 0" key={data.timings[0]}>
+                  {currentEvent.flights.map(({ data, number }) => (
+                    <Box display="flex" alignItems="center" key={data.timings[0]}>
                       <Box className={classes.iconFlight}>
-                        <img src={findIcon(currentEvent.icon, EVENT_TYPES[1])} alt="" />
+                        <img src={mainWhite} alt="avion" />
                       </Box>
                       <Box m="1.5rem">
                         <Typography>
                           <Box component="span" fontWeight="bold">
-                            Vol
+                            Vol {number}
                             {/* TODO récupérer la compagnie aérienne */}
                           </Box>
                         </Typography>
@@ -854,50 +871,25 @@ const EventPreview = ({
         {(currentEventType === EVENT_TYPES[0] ||
           currentEventType === EVENT_TYPES[1] ||
           currentEventType === EVENT_TYPES[2] ||
-          currentEventType === EVENT_TYPES[3]) && (
-          <Paper elevation={1} className={classes.borderRadiusMobile}>
-            <Container disableGutters>
-              <Box p={4} mb={3}>
-                <Typography variant="h5">
-                  <Box pb={1.5} component="span" fontWeight="bold">
-                    Combien ça coûte ?
-                  </Box>
-                </Typography>
-                <Box sx={{ display: 'grid', gridTemplate: '1fr / 1fr 1fr' }}>
-                  <Box pt={1.5}>
-                    <Typography variant="caption" color="textSecondary">
-                      Prix total
-                    </Typography>
-                    <Box mt={1}>
-                      <Typography variant="h4">
-                        <Box component="span" fontWeight="bold">
-                          {Math.floor(currentEvent.price * 100) / 100} €
-                        </Box>
-                      </Typography>
+          currentEventType === EVENT_TYPES[3]) &&
+          (currentEvent.price || currentEvent.location?.priceLevel) && (
+            <Paper elevation={1} className={classes.borderRadiusMobile}>
+              <Container disableGutters>
+                <Box p={4} mb={3}>
+                  <Typography variant="h5">
+                    <Box pb={1.5} component="span" fontWeight="bold">
+                      Combien ça coûte ?
                     </Box>
-                    {(currentEventType === EVENT_TYPES[2] ||
-                      currentEventType === EVENT_TYPES[3]) && (
-                      <Box mt={1}>
-                        <Typography variant="h6" color="primary">
-                          ≈ {currentEvent.totalPriceEuro} {/* TODO API conversion */}
-                        </Typography>
-                      </Box>
-                    )}
-                  </Box>
-                  <Box pt={1.5} display="flex">
-                    <Divider orientation="vertical" flexItem />
-                    <Box ml={2}>
+                  </Typography>
+                  <Box sx={{ display: 'grid', gridTemplate: '1fr / 1fr 1fr' }}>
+                    <Box pt={1.5}>
                       <Typography variant="caption" color="textSecondary">
-                        Prix par personne
+                        Prix total
                       </Typography>
                       <Box mt={1}>
                         <Typography variant="h4">
                           <Box component="span" fontWeight="bold">
-                            {Math.floor(
-                              (currentEvent.price / currentEvent.participatingTravelers.length) *
-                                100
-                            ) / 100}{' '}
-                            €
+                            {Math.floor(currentEvent.price * 100) / 100} €
                           </Box>
                         </Typography>
                       </Box>
@@ -905,18 +897,44 @@ const EventPreview = ({
                         currentEventType === EVENT_TYPES[3]) && (
                         <Box mt={1}>
                           <Typography variant="h6" color="primary">
-                            ≈ {currentEvent.totalPerPersoneEuro}
+                            ≈ {currentEvent.totalPriceEuro} {/* TODO API conversion */}
                           </Typography>
                         </Box>
                       )}
                     </Box>
+                    <Box pt={1.5} display="flex">
+                      <Divider orientation="vertical" flexItem />
+                      <Box ml={2}>
+                        <Typography variant="caption" color="textSecondary">
+                          Prix par personne
+                        </Typography>
+                        <Box mt={1}>
+                          <Typography variant="h4">
+                            <Box component="span" fontWeight="bold">
+                              {Math.floor(
+                                (currentEvent.price / currentEvent.participatingTravelers.length) *
+                                  100
+                              ) / 100}{' '}
+                              €
+                            </Box>
+                          </Typography>
+                        </Box>
+                        {(currentEventType === EVENT_TYPES[2] ||
+                          currentEventType === EVENT_TYPES[3]) && (
+                          <Box mt={1}>
+                            <Typography variant="h6" color="primary">
+                              ≈ {currentEvent.totalPerPersoneEuro}
+                            </Typography>
+                          </Box>
+                        )}
+                      </Box>
+                    </Box>
                   </Box>
                 </Box>
-              </Box>
-            </Container>
-          </Paper>
-        )}
-        {currentEventType === EVENT_TYPES[4] && (
+              </Container>
+            </Paper>
+          )}
+        {currentEventType === EVENT_TYPES[4] && currentEvent.priceLevel && (
           <Paper elevation={1} className={classes.borderRadiusMobile}>
             <Container disableGutters>
               <Box p={4} mb={3}>
@@ -959,7 +977,7 @@ const EventPreview = ({
                 </Typography>
               </Box>
               {currentEvent.location && (
-                <Box display="flex" justifyContent="space-between">
+                <Box sx={{ display: 'flex', flexDirection: 'column', gridGap: '10px' }}>
                   <Button
                     className={classes.greyBtn}
                     color="inherit"
@@ -1060,7 +1078,14 @@ const EventPreview = ({
                     Gérer l’événement
                   </Box>
                 </Typography>
-                <Box display="flex" justifyContent="space-between" mt={1}>
+                <Box
+                  sx={{
+                    marginTop: '10px',
+                    display: 'flex',
+                    gridGap: '10px',
+                    flexDirection: 'column',
+                  }}
+                >
                   <Button
                     className={classes.greyBtn}
                     startIcon={<CreateIcon />}

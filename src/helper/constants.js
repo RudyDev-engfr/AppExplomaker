@@ -20,6 +20,6 @@ export const BUDGET_OPTIONS = [
 
 export const EVENT_TYPES = ['accommodation', 'flight', 'explore', 'transport', 'restaurant']
 
-export const ROLES = { Read: 'Read', Write: 'Write', Removed: 'Removed', Admin: 'Admin' }
+export const ROLES = { Write: 'Write', Removed: 'Removed', Admin: 'Admin' }
 
 export const NATURALADMINS = ['IaOmRF2xqkh7vpdxXDJ7R0dj9NI2', 'e2jozx02tfTGBD05AZyOf2UEtcO2']

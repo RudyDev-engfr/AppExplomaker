@@ -4,7 +4,12 @@ import { toast } from 'react-toastify'
 import { PersonAddAlt1 } from '@mui/icons-material'
 import { useTheme } from '@mui/styles'
 
-const AddCollaboratorsButton = ({ tripId, size = '44px', iconSize = '26px' }) => {
+const AddCollaboratorsButton = ({
+  tripId,
+  size = '44px',
+  iconSize = '26px',
+  isEditorModal = false,
+}) => {
   const theme = useTheme()
   return (
     <IconButton
@@ -19,7 +24,7 @@ const AddCollaboratorsButton = ({ tripId, size = '44px', iconSize = '26px' }) =>
         borderRadius: ' 50px',
         width: size,
         height: size,
-        marginRight: '-10px',
+        marginRight: !isEditorModal && '-10px',
         zIndex: 1000,
         '&:hover': {
           backgroundColor: theme.palette.primary.main,

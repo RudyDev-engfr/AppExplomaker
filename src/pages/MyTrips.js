@@ -12,7 +12,7 @@ import Nav from '../components/molecules/Nav'
 import TripCard from '../components/molecules/TripCard'
 import { SessionContext } from '../contexts/session'
 import { rCTFF } from '../helper/functions'
-import Footer from '../components/molecules/Footer'
+// import Footer from '../components/molecules/Footer'
 import AuthModals from '../components/molecules/AuthModals'
 import Loader from '../components/Loader'
 import TrendingDestinations from '../components/molecules/trendingDestinations/TrendingDestinations'
@@ -56,6 +56,7 @@ const useStyles = makeStyles(theme => ({
     gridTemplateColumns: 'repeat(auto-fill, 360px)',
     gridAutoRows: 'max-content',
     gridGap: '60px',
+    paddingBottom: '20px',
     [theme.breakpoints.down('sm')]: {
       placeItems: 'center',
       gridTemplateColumns: 'unset',
@@ -69,8 +70,10 @@ const useStyles = makeStyles(theme => ({
     marginBottom: theme.spacing(3),
   },
   xsTripPage: {
+    backgroundColor: theme.palette.primary.vertPerse,
     [theme.breakpoints.down('sm')]: {
-      margin: '30px',
+      padding: '30px',
+      margin: '0',
       paddingBottom: '30px',
     },
   },
@@ -199,9 +202,9 @@ const MyTrips = () => {
       <Nav setOpenModal={setOpenModal} />
       <Box
         maxWidth="1200px"
-        m="120px auto 0"
-        minHeight="calc(100vh - 370px - 81px)"
+        minHeight="calc(100vh  - 81px)"
         className={classes.xsTripPage}
+        sx={{ marginX: 'auto', marginTop: '81px', paddingTop: '40px' }}
       >
         <Box component="section">
           <Box mb={!user.isLoggedIn || nextTrips.length < 1 ? 5 : 0}>
@@ -260,11 +263,7 @@ const MyTrips = () => {
                   </Box>
                 ) : (
                   <Box>
-                    <Box className={classes.row}>
-                      <Typography variant="h4" className={classes.xsTitle}>
-                        {pastTrips.length > 0 ? 'Aucun séjour à venir' : 'Aucun séjour'}
-                      </Typography>
-                    </Box>
+                    <Box className={classes.row} />
                     <Box className={classes.tripGrid}>
                       <Button
                         className={classes.addSejour}
@@ -325,11 +324,7 @@ const MyTrips = () => {
             </>
           ) : (
             <Box>
-              <Box className={classes.row}>
-                <Typography variant="h4" className={classes.xsTitle}>
-                  {pastTrips.length > 0 ? 'Aucun séjour à venir' : 'Aucun séjour'}
-                </Typography>
-              </Box>
+              <Box className={classes.row} />
               <Box className={classes.tripGrid}>
                 <Button
                   className={classes.addSejour}
@@ -411,7 +406,7 @@ const MyTrips = () => {
         </Paper>
       </Modal> */}
       <AuthModals modalState={openModal} modalStateSetter={setOpenModal} />
-      <Footer />
+      {/* <Footer /> */}
     </>
   )
 }

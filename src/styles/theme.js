@@ -12,6 +12,7 @@ const commonSettings = createTheme({
       dark: '#008481',
       ultraDark: '#006A75',
       lightGreenBackground: '#E8F1F2',
+      vertPerse: '#F4FBFA',
     },
     secondary: {
       ultraLight: '#F4E6E6',

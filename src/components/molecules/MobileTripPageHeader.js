@@ -5,6 +5,7 @@ import { makeStyles } from '@mui/styles'
 import { TripContext } from '../../contexts/trip'
 
 import lineMobile from '../../images/icons/lineMobile.svg'
+import EditBtn from '../atoms/EditBtn'
 
 const useStyles = makeStyles(theme => ({
   mainHeaderContainer: {
@@ -19,7 +20,7 @@ const useStyles = makeStyles(theme => ({
   },
 }))
 const MobileTripPageHeader = () => {
-  const { currentActiveTab, setCurrentActiveTab } = useContext(TripContext)
+  const { currentActiveTab, setCurrentActiveTab, setOpenModal } = useContext(TripContext)
   const classes = useStyles()
   const { tripData } = useContext(TripContext)
 
@@ -28,18 +29,25 @@ const MobileTripPageHeader = () => {
       <Box display="flex" justifyContent="center">
         <img src={lineMobile} alt="" />
       </Box>
-      <Typography
-        sx={{
-          color: 'white',
-          fontSize: '28px',
-          lineHeight: '40px',
-          fontWeight: 700,
-          padding: '40px 40px 5px 40px',
-          minHeight: '125px',
-        }}
-      >
-        {tripData?.title}
-      </Typography>
+      <Box>
+        <Typography
+          sx={{
+            color: 'white',
+            fontSize: '24px',
+            lineHeight: '40px',
+            fontWeight: 700,
+            padding: '10px 20px 5px 20px',
+            minHeight: '125px',
+            maxHeight: '125px',
+            display: 'flex',
+            alignItems: 'flex-end',
+            wordBreak: 'break-all',
+          }}
+        >
+          {tripData?.title?.length > 40 ? tripData?.title : tripData?.title?.substring(0, 50)}
+        </Typography>
+        <EditBtn onClick={() => setOpenModal('general')} top="0" right="15px" />
+      </Box>
       <Box
         className={classes.tripPageTabsContainer}
         sx={{

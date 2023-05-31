@@ -4,7 +4,7 @@ import makeStyles from '@mui/styles/makeStyles'
 import { useHistory } from 'react-router-dom'
 import clsx from 'clsx'
 
-import Footer from '../../../components/molecules/Footer'
+// import Footer from '../../../components/molecules/Footer'
 import { SessionContext } from '../../../contexts/session'
 
 import arrow from '../../../images/icons/arrow-back.svg'
@@ -21,7 +21,7 @@ const useStyles = makeStyles(theme => ({
     minHeight: '100vh',
   },
   container: {
-    minHeight: 'calc(100vh - 81px - 370px - 100px)',
+    minHeight: 'calc(100vh - 81px  - 100px)',
     width: '100%',
     margin: '0',
     padding: '50px 20px 34px',
@@ -176,7 +176,7 @@ const MobilePlus = ({ tripData, tripId, setIsOpen }) => {
           </Paper>
         </Box>
       </Box>
-      <Footer />
+      {/* <Footer /> */}
     </Box>
   )
 }

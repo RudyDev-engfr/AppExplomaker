@@ -122,6 +122,15 @@ const TripFifth = () => {
   const [selectedValues, setSelectedValues] = useState([])
   const [wishesOptions, setWishesOptions] = useState([])
   const [isAutocompleteOpen, setIsAutocompleteOpen] = useState(false)
+  const [hasClicked, setHasClicked] = useState(false)
+
+  useEffect(() => {
+    if (hasClicked) {
+      setTimeout(() => {
+        setHasClicked(false)
+      }, 2000)
+    }
+  }, [hasClicked])
 
   useEffect(() => {
     if (dictionary.meta_name_envies_sport) {
@@ -137,6 +146,7 @@ const TripFifth = () => {
   }, [wishes])
 
   const handleTripCreation = () => {
+    setHasClicked(true)
     const tempTravelers = newTrip.travelersDetails.map(traveler => {
       const { name, age, id, travelerId } = traveler
       if (id) {
