@@ -46,8 +46,15 @@ const SocialNavbar = () => {
   const { user } = useContext(SessionContext)
   const { firestore } = useContext(FirebaseContext)
   const messagesRef = firestore.collection('trips').doc(tripId).collection('messages')
+  const assistantRef = firestore.collection('trips').doc(tripId).collection('Assistant')
+  const assistantQuery = assistantRef.orderBy('createdAt')
   const query = messagesRef.orderBy('createdAt')
   const [messages] = useCollectionData(query, { idField: 'messageId' })
+  const [assistantMessages] = useCollectionData(assistantQuery, { idField: 'messageId' })
+
+  useEffect(() => {
+    console.log('assistantMessages', assistantMessages)
+  }, [assistantMessages])
 
   useEffect(() => {
     console.log('messagesRef', messages)
@@ -97,6 +104,7 @@ const SocialNavbar = () => {
                 setIsChatOpen('')
               } else {
                 setIsChatOpen('AIChat')
+                updateHasSeen('Assistant')
               }
             }}
             sx={{
@@ -110,7 +118,25 @@ const SocialNavbar = () => {
               height: '48px',
             }}
           >
-            <Badge color="error">
+            <Badge
+              color="error"
+              badgeContent={
+                assistantMessages?.length > 0 &&
+                assistantMessages?.filter(message => {
+                  const hasUserSeen = message.notifications?.filter(notification => {
+                    if (notification.userId === user.id && !notification.hasSeen) {
+                      return true
+                    }
+                    return false
+                  })
+                  if (hasUserSeen?.length > 0) {
+                    return true
+                  }
+                  return false
+                }).length
+              }
+              invisible={assistantMessages?.length < 1}
+            >
               <Help />
             </Badge>
           </IconButton>

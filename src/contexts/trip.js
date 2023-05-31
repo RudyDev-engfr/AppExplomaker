@@ -100,7 +100,7 @@ const TripContextProvider = ({ children }) => {
       let needsUpdate = false
 
       // eslint-disable-next-line no-plusplus
-      for (let i = 0; i < tempNotifications.length; i++) {
+      for (let i = 0; i < tempNotifications?.length; i++) {
         if (tempNotifications[i].userId === user.id && !tempNotifications[i].hasSeen) {
           tempNotifications[i].hasSeen = true
           needsUpdate = true
@@ -108,8 +108,12 @@ const TripContextProvider = ({ children }) => {
       }
 
       if (needsUpdate) {
-        const docRef = firestore.collection('trips').doc(tripId).collection('messages').doc(doc.id)
-        batch.set(docRef, { ...data, tempNotifications }, { merge: true })
+        const docRef = firestore
+          .collection('trips')
+          .doc(tripId)
+          .collection(chatCollection)
+          .doc(doc.id)
+        batch.set(docRef, { ...data, notifications: tempNotifications }, { merge: true })
       }
     })
 
