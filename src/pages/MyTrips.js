@@ -1,12 +1,13 @@
 import React, { useContext, useEffect, useState } from 'react'
 import { useHistory } from 'react-router-dom'
-import { Box, Button, Typography, useMediaQuery, useTheme } from '@mui/material'
+import { Avatar, Box, Button, Typography, useMediaQuery, useTheme } from '@mui/material'
 import makeStyles from '@mui/styles/makeStyles'
 import { AddCircle } from '@mui/icons-material'
 import { isPast, isSameYear, isWithinInterval } from 'date-fns'
 
 import Carousel from 'react-material-ui-carousel'
 
+import StarIcon from '@mui/icons-material/Star'
 import { FirebaseContext, useAuth } from '../contexts/firebase'
 import Nav from '../components/molecules/Nav'
 import TripCard from '../components/molecules/TripCard'
@@ -97,7 +98,7 @@ const MyTrips = () => {
   const { firestore, getTrendingDestinations } = useContext(FirebaseContext)
   const { user, setNeedRedirectTo } = useContext(SessionContext)
   const { initializing } = useAuth()
-
+  const [StateOfMyTrip, setStatOfMyTrip] = useState('inexistant')
   const [openModal, setOpenModal] = useState('')
   const [tripsData, setTripsData] = useState([])
   const [isLoading, setIsLoading] = useState(true)
@@ -105,6 +106,7 @@ const MyTrips = () => {
   const [pastTrips, setPastTrips] = useState([])
   const [trendingDestinations, setTrendingDestinations] = useState([])
   const [currentTripSelected, setCurrentTripSelected] = useState(0)
+  const isPremium = user.state === 'premium'
 
   useEffect(() => {
     if (trendingDestinations.length < 1) {
@@ -166,6 +168,7 @@ const MyTrips = () => {
                 nbNotif={3}
                 people={currentPeopleIds}
                 title={tripData.title}
+                state={tripData.state}
                 date={
                   currentDateRange ? `${currentDateRange[0]} - ${currentDateRange[1]}` : 'À définir'
                 }
