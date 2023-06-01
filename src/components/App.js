@@ -49,6 +49,7 @@ const App = () => {
           tempUser.newsletter = data.newsletter
           tempUser.myTripLetter = data.myTripLetter || false
           tempUser.notifications = data.notifications || []
+          tempUser.state = data.state
           setUser({ ...tempUser })
         }
       })
