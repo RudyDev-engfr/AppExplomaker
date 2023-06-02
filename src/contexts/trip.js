@@ -1,6 +1,6 @@
 import { useMediaQuery } from '@mui/material'
 import { useTheme } from '@mui/styles'
-import React, { useState, useEffect, createContext, useContext } from 'react'
+import React, { useState, useEffect, createContext, useContext, useRef } from 'react'
 import { useParams } from 'react-router-dom'
 import { buildNotificationsOnTripForUser, rCTFF } from '../helper/functions'
 
@@ -43,6 +43,12 @@ const TripContextProvider = ({ children }) => {
   const [currentEvent, setCurrentEvent] = useState()
   const [openModal, setOpenModal] = useState('')
 
+  // used to handle planning
+  const [location, setLocation] = useState()
+  const planningMapRef = useRef(null)
+  const [isGeocodeByPlaceId, setIsGeocodeByPlaceId] = useState(false)
+  const [currentPlaceId, setCurrentPlaceId] = useState('')
+
   // used in preview, desktopPreview
   const [currentDateRange, setCurrentDateRange] = useState(['', ''])
   const [currentActiveTab, setCurrentActiveTab] = useState('')
@@ -53,6 +59,27 @@ const TripContextProvider = ({ children }) => {
     setEventType(type)
     setCurrentView('creator')
   }
+
+  const handleEventCreation = eventDescription => {
+    const tempEventDescription = structuredClone(eventDescription)
+    if (tempEventDescription.place_id) {
+      return ''
+    }
+  }
+
+  const getPlaceTown = placeId =>
+    new Promise(resolve => {
+      const placesService = new window.google.maps.places.PlacesService(planningMapRef.current)
+      placesService.getDetails(
+        {
+          placeId,
+          fields: ['ALL'],
+        },
+        place => {
+          resolve(place)
+        }
+      )
+    })
 
   const updateTravelers = () => {
     const batchGetUsers = []
@@ -261,6 +288,15 @@ const TripContextProvider = ({ children }) => {
         currentTravelers,
         updateTravelers,
         updateHasSeen,
+        handleEventCreation,
+        location,
+        setLocation,
+        getPlaceTown,
+        planningMapRef,
+        isGeocodeByPlaceId,
+        setIsGeocodeByPlaceId,
+        currentPlaceId,
+        setCurrentPlaceId,
       }}
     >
       {children}

@@ -356,6 +356,7 @@ const Planning = ({ tripData, tripId, canEdit }) => {
     eventType,
     setEventType,
     setTypeCreator,
+    getPlaceTown,
   } = useContext(PlanningContext)
   const { days, setDays, selectedDateOnPlanning } = useContext(TripContext)
 
@@ -439,6 +440,10 @@ const Planning = ({ tripData, tripId, canEdit }) => {
   //     })
   //   }
   // }, [days, plannedEvents, planningMapRef])
+
+  useEffect(() => {
+    getPlaceTown('ChIJfeYX2V_q9EcRnqFAtnDMgx4').then(results => console.log(results))
+  }, [])
 
   useEffect(() => {
     const tempWithoutDatesEvents = { surveys: [], events: [] }

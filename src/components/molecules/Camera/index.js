@@ -27,19 +27,19 @@ const Camera = ({ imageSrc, setImageSrc, setOpenModal }) => {
 
   function handleTakePhotoAnimationDone(/* dataUri */) {
     // Do stuff with the photo...
-    // console.log('takePhotoAnimation')
+    console.log('takePhotoAnimation')
   }
 
   function handleCameraError(/* error */) {
-    // console.log('handleCameraError', error)
+    console.log('handleCameraError', error)
   }
 
   function handleCameraStart(/* stream */) {
-    // console.log('handleCameraStart')
+    console.log('handleCameraStart')
   }
 
   function handleCameraStop() {
-    // console.log('handleCameraStop')
+    console.log('handleCameraStop')
   }
 
   return (

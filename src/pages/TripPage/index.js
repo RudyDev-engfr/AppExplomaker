@@ -617,7 +617,7 @@ const TripPage = () => {
       console.log('update de la date')
       console.log('ça cest lancienne date', previousDateRange)
       console.log('ça cest la bonne date', currentDateRange)
-      // console.log('ça cest la date du tripData', rCTFF(tripData?.dateRange[0]))
+      console.log('ça cest la date du tripData', rCTFF(tripData?.dateRange[0]))
       createNotificationsOnTrip(
         user,
         tripData,

@@ -18,9 +18,11 @@ import { differenceInMinutes } from 'date-fns'
 import { EmojiEmotionsOutlined, Send } from '@mui/icons-material'
 import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos'
 import { makeStyles, useTheme } from '@mui/styles'
+import { useParams } from 'react-router-dom'
 
 import Picker from '@emoji-mart/react'
 import data from '@emoji-mart/data'
+import { geocodeByAddress, geocodeByPlaceId } from 'react-google-places-autocomplete'
 
 import { FirebaseContext } from '../../contexts/firebase'
 import { SessionContext } from '../../contexts/session'
@@ -28,6 +30,7 @@ import CustomAvatar from '../atoms/CustomAvatar'
 
 import { rCTFF } from '../../helper/functions'
 import { TripContext } from '../../contexts/trip'
+import { PlanningContext } from '../../contexts/planning'
 
 const useStyles = makeStyles(theme => ({
   basePaper: {
@@ -74,6 +77,12 @@ const useStyles = makeStyles(theme => ({
     fontSize: '12px',
     marginBottom: '5px',
     paddingLeft: '66px',
+  },
+  contentTypo: {
+    '& place': {
+      color: theme.palette.primary.main,
+      fontWeight: 700,
+    },
   },
 }))
 const AIChatWindow = ({ isChatOpen, setIsChatOpen, chats, tripId }) => {
@@ -347,10 +356,55 @@ const ChatBox = ({ messages, dummy, currentMessages, setCurrentMessages }) => (
   </Box>
 )
 
-const ChatMessage = ({ createdAt, userId, text = '', groupDate, questionType }) => {
+const ChatMessage = ({
+  createdAt,
+  userId,
+  text = '',
+  groupDate,
+  questionType,
+  eventDescription,
+  messageId,
+}) => {
   const classes = useStyles()
   const theme = useTheme()
+  const { tripId } = useParams
   const { user } = useContext(SessionContext)
+  const { firestore } = useContext(FirebaseContext)
+  const { setCurrentPlaceId, setIsGeocodeByPlaceId, getPlaceTown } = useContext(TripContext)
+
+  useEffect(() => {
+    if (text) {
+      const placeArray = document.getElementsByTagName('place')
+      const tempPlaceArray = Array.from(placeArray)
+      if (Array.isArray(tempPlaceArray) && tempPlaceArray.length > 0) {
+        tempPlaceArray?.forEach(singlePlace => {
+          // eslint-disable-next-line no-param-reassign
+          singlePlace.onclick = function placeClick() {
+            const tempPlaceId = singlePlace.getAttribute('place_id')
+            console.log('bebouTempPlaceId', tempPlaceId)
+            // const testGeocode = geocodeByPlaceId(tempPlaceId).then(results =>
+            //   console.log('placeidresults', results)
+            // )
+            // setCurrentPlaceId(tempPlaceId)
+            // setIsGeocodeByPlaceId(true)
+            const placeIdInformations = getPlaceTown(tempPlaceId).then(results => {
+              console.log('placetownresults', results)
+              let tempAddress = ''
+              results.address_components.forEach(address => {
+                const tempName = ` ${address.long_name}`
+                tempAddress += tempName
+              })
+              console.log('tempAddress', tempAddress)
+              const tempLocation = geocodeByAddress(tempAddress).then(autoResults => {
+                console.log('results', autoResults)
+                // setLocation(autoResults)
+              })
+            })
+          }
+        })
+      }
+    }
+  }, [])
 
   return (
     <>
@@ -397,6 +451,7 @@ const ChatMessage = ({ createdAt, userId, text = '', groupDate, questionType }) 
                     maxWidth: 'calc(100% - 80px)',
                     whiteSpace: 'pre-line',
                   }}
+                  className={classes.contentTypo}
                   dangerouslySetInnerHTML={{ __html: text }}
                 />
               </Box>
