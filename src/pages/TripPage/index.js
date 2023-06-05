@@ -73,7 +73,6 @@ import { SessionContext } from '../../contexts/session'
 import Loader from '../../components/Loader'
 import Head from '../../components/molecules/Head'
 import PlanningContextProvider from '../../contexts/planning'
-
 import ava1 from '../../images/avatar/ava1.png'
 import ava2 from '../../images/avatar/ava2.png'
 import ava3 from '../../images/avatar/ava3.png'

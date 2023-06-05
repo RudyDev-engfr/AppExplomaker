@@ -28,10 +28,7 @@ const useStyles = makeStyles(theme => ({
     height: '60px',
     borderRadius: '50px',
   },
-  badgeRoot: {
-    top: '-5px',
-    right: '-5px',
-  },
+  badgeRoot: {},
 }))
 const NotificationArea = ({
   tripId,
@@ -75,24 +72,24 @@ const NotificationArea = ({
   if (isMyTrips) {
     return (
       <>
-        <Badge
-          badgeContent={
-            isMyTrips
-              ? user.notifications?.filter(notification => notification?.state === 1).length
-              : user.notifications?.filter(
-                  notification => notification?.tripId === tripId && notification?.state === 1
-                ).length
-          }
-          color="secondary"
-        >
-          <IconButton
-            aria-label="more"
-            id="notif-button"
-            aria-controls={openNotif ? 'notif-menu' : undefined}
-            aria-expanded={openNotif ? 'true' : undefined}
-            aria-haspopup="true"
-            onClick={handleClickNotif}
-            sx={{
+        <IconButton
+          aria-label="more"
+          id="notif-button"
+          aria-controls={openNotif ? 'notif-menu' : undefined}
+          aria-expanded={openNotif ? 'true' : undefined}
+          aria-haspopup="true"
+          onClick={handleClickNotif}
+          sx={{
+            backgroundColor: isMyTrips
+              ? user?.notifications?.filter(notification => notification.state === 1).length > 0
+                ? theme.palette.primary.main
+                : 'white'
+              : user?.notifications?.filter(
+                  notification => notification?.state === 1 && notification?.tripId === tripId
+                ).length > 0
+              ? theme.palette.primary.main
+              : 'white',
+            '&:hover': {
               backgroundColor: isMyTrips
                 ? user?.notifications?.filter(notification => notification.state === 1).length > 0
                   ? theme.palette.primary.main
@@ -102,18 +99,18 @@ const NotificationArea = ({
                   ).length > 0
                 ? theme.palette.primary.main
                 : 'white',
-              '&:hover': {
-                backgroundColor: isMyTrips
-                  ? user?.notifications?.filter(notification => notification.state === 1).length > 0
-                    ? theme.palette.primary.main
-                    : 'white'
-                  : user?.notifications?.filter(
-                      notification => notification?.state === 1 && notification?.tripId === tripId
-                    ).length > 0
-                  ? theme.palette.primary.main
-                  : 'white',
-              },
-            }}
+            },
+          }}
+        >
+          <Badge
+            badgeContent={
+              isMyTrips
+                ? user.notifications?.filter(notification => notification?.state === 1).length
+                : user.notifications?.filter(
+                    notification => notification?.tripId === tripId && notification?.state === 1
+                  ).length
+            }
+            color="secondary"
           >
             <Notifications
               sx={{
@@ -125,8 +122,8 @@ const NotificationArea = ({
                     ).length > 0 && 'white',
               }}
             />
-          </IconButton>
-        </Badge>
+          </Badge>
+        </IconButton>
         <Menu
           anchorEl={anchorElNotif}
           id="notif-menu"
@@ -349,8 +346,8 @@ const NotificationArea = ({
             color: isChatOpen === 'notifications' ? theme.palette.primary.main : 'white',
             backgroundColor: isChatOpen === 'notifications' ? 'white' : theme.palette.primary.main,
           },
-          width: '48px',
-          height: '48px',
+          width: '42px',
+          height: '42px',
         }}
       >
         <Badge

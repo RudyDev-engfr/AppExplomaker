@@ -448,7 +448,7 @@ const TripPageNav = ({
           <Tab
             icon={
               <Badge
-                color="error"
+                color="secondary"
                 badgeContent={
                   assistantMessages?.length > 0 &&
                   assistantMessages?.filter(message => {
@@ -501,7 +501,7 @@ const TripPageNav = ({
           <Tab
             icon={
               <Badge
-                color="error"
+                color="secondary"
                 badgeContent={
                   messages?.length > 0 &&
                   messages?.filter(message => {

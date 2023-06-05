@@ -114,12 +114,12 @@ const SocialNavbar = () => {
                 color: isChatOpen === 'AIChat' ? theme.palette.primary.main : 'white',
                 backgroundColor: isChatOpen === 'AIChat' ? 'white' : theme.palette.primary.main,
               },
-              width: '48px',
-              height: '48px',
+              width: '42px',
+              height: '42px',
             }}
           >
             <Badge
-              color="error"
+              color="secondary"
               badgeContent={
                 assistantMessages?.length > 0 &&
                 assistantMessages?.filter(message => {
@@ -140,49 +140,51 @@ const SocialNavbar = () => {
               <Help />
             </Badge>
           </IconButton>
-          <Badge
-            color="error"
-            badgeContent={
-              messages?.length > 0 &&
-              messages?.filter(message => {
-                const hasUserSeen = message.notifications?.filter(notification => {
-                  if (notification.userId === user.id && !notification.hasSeen) {
+
+          <IconButton
+            onClick={() => {
+              if (isChatOpen === 'userChat') {
+                setIsChatOpen('')
+              } else {
+                setIsChatOpen('userChat')
+                updateHasSeen('messages')
+              }
+            }}
+            color="inherit"
+            sx={{
+              color: isChatOpen === 'userChat' ? theme.palette.primary.main : 'white',
+              backgroundColor: isChatOpen === 'userChat' ? 'white' : theme.palette.primary.main,
+              '&:hover': {
+                color: isChatOpen === 'userChat' ? theme.palette.primary.main : 'white',
+                backgroundColor: isChatOpen === 'userChat' ? 'white' : theme.palette.primary.main,
+              },
+              width: '42px',
+              height: '42px',
+            }}
+          >
+            <Badge
+              color="secondary"
+              badgeContent={
+                messages?.length > 0 &&
+                messages?.filter(message => {
+                  const hasUserSeen = message.notifications?.filter(notification => {
+                    if (notification.userId === user.id && !notification.hasSeen) {
+                      return true
+                    }
+                    return false
+                  })
+                  if (hasUserSeen?.length > 0) {
                     return true
                   }
                   return false
-                })
-                if (hasUserSeen?.length > 0) {
-                  return true
-                }
-                return false
-              }).length
-            }
-            invisible={messages?.length < 1}
-          >
-            <IconButton
-              onClick={() => {
-                if (isChatOpen === 'userChat') {
-                  setIsChatOpen('')
-                } else {
-                  setIsChatOpen('userChat')
-                  updateHasSeen('messages')
-                }
-              }}
-              color="inherit"
-              sx={{
-                color: isChatOpen === 'userChat' ? theme.palette.primary.main : 'white',
-                backgroundColor: isChatOpen === 'userChat' ? 'white' : theme.palette.primary.main,
-                '&:hover': {
-                  color: isChatOpen === 'userChat' ? theme.palette.primary.main : 'white',
-                  backgroundColor: isChatOpen === 'userChat' ? 'white' : theme.palette.primary.main,
-                },
-                width: '48px',
-                height: '48px',
-              }}
+                }).length
+              }
+              invisible={messages?.length < 1}
             >
               <Forum />
-            </IconButton>
-          </Badge>
+            </Badge>
+          </IconButton>
+
           <NotificationArea
             tripData={tripData}
             currentNotifications={currentNotifications}
