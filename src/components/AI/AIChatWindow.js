@@ -54,8 +54,8 @@ const useStyles = makeStyles(theme => ({
     gridTemplateRows: '1fr minmax(45px, auto)',
     [theme.breakpoints.down('sm')]: {
       width: '100%',
-      minHeight: 'calc(100vh - 80px)',
-      maxHeight: 'calc(100vh - 80px)',
+      minHeight: 'calc(100vh - 60px)',
+      maxHeight: 'calc(100vh - 60px)',
       borderRadius: 'unset',
     },
   },
@@ -82,6 +82,9 @@ const useStyles = makeStyles(theme => ({
     '& place': {
       fontWeight: 700,
     },
+  },
+  form: {
+    height: '0',
   },
 }))
 const AIChatWindow = ({ isChatOpen, setIsChatOpen, chats, tripId }) => {
@@ -269,7 +272,7 @@ const AIChatWindow = ({ isChatOpen, setIsChatOpen, chats, tripId }) => {
             currentMessages={currentMessages}
             setCurrentMessages={setCurrentMessages}
           />
-          <form onSubmit={event => handleSubmit(event)}>
+          <form onSubmit={event => handleSubmit(event)} className={classes.form}>
             <Box
               sx={{
                 [theme.breakpoints.down('sm')]: { position: 'fixed', bottom: '0', width: '100%' },
@@ -438,7 +441,7 @@ const ChatMessage = ({
                   sx={{
                     wordWrap: 'break-word',
                     textOverflow: 'clip',
-                    maxWidth: 'calc(100% - 80px)',
+                    maxWidth: 'calc(100% - 60px)',
                     whiteSpace: 'pre-line',
                   }}
                   className={classes.contentTypo}

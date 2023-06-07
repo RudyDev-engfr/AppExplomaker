@@ -31,7 +31,7 @@ const Camera = ({ imageSrc, setImageSrc, setOpenModal }) => {
   }
 
   function handleCameraError(/* error */) {
-    console.log('handleCameraError', error)
+    console.log('handleCameraError')
   }
 
   function handleCameraStart(/* stream */) {
