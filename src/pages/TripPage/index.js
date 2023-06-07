@@ -161,7 +161,6 @@ const useStyles = makeStyles(theme => ({
   content: {
     minHeight: '100vh',
     position: 'relative',
-    background: 'white',
     [theme.breakpoints.down('sm')]: {
       minHeight: 'calc(100vh - 80px)',
       backgroundColor: 'white !veryimportant',
@@ -1026,7 +1025,16 @@ const TripPage = () => {
           />
         </>
       )}
-      <Box component="section" className={classes.content}>
+      <Box
+        component="section"
+        className={classes.content}
+        sx={{
+          backgroundColor:
+            currentActiveTab === 'Preview'
+              ? theme.palette.secondary.contrastText
+              : theme.palette.grey.f7,
+        }}
+      >
         <Box
           className={classes.innerContent}
           sx={{

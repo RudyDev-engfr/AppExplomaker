@@ -46,7 +46,7 @@ const TripContextProvider = ({ children }) => {
   // used to handle planning
   const [location, setLocation] = useState()
   const planningMapRef = useRef(null)
-  const [isGeocodeByPlaceId, setIsGeocodeByPlaceId] = useState(false)
+  const [isAssistantGuided, setIsAssistantGuided] = useState(false)
   const [currentPlaceId, setCurrentPlaceId] = useState('')
 
   // used in preview, desktopPreview
@@ -293,8 +293,8 @@ const TripContextProvider = ({ children }) => {
         setLocation,
         getPlaceTown,
         planningMapRef,
-        isGeocodeByPlaceId,
-        setIsGeocodeByPlaceId,
+        isAssistantGuided,
+        setIsAssistantGuided,
         currentPlaceId,
         setCurrentPlaceId,
       }}

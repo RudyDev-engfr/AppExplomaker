@@ -18,7 +18,7 @@ import { differenceInMinutes } from 'date-fns'
 import { EmojiEmotionsOutlined, Send } from '@mui/icons-material'
 import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos'
 import { makeStyles, useTheme } from '@mui/styles'
-import { useParams } from 'react-router-dom'
+import { useHistory, useParams } from 'react-router-dom'
 
 import Picker from '@emoji-mart/react'
 import data from '@emoji-mart/data'
@@ -80,7 +80,6 @@ const useStyles = makeStyles(theme => ({
   },
   contentTypo: {
     '& place': {
-      color: theme.palette.primary.main,
       fontWeight: 700,
     },
   },
@@ -112,7 +111,7 @@ const AIChatWindow = ({ isChatOpen, setIsChatOpen, chats, tripId }) => {
   }
 
   const messagesRef = firestore.collection('trips').doc(tripId).collection('Assistant')
-  const query = messagesRef.orderBy('createdAt').limit(25)
+  const query = messagesRef.orderBy('createdAt', 'desc').limit(25)
   const [messages] = useCollectionData(query, { idField: 'messageId' })
 
   const handleSubmit = async event => {
@@ -370,7 +369,9 @@ const ChatMessage = ({
   const { tripId } = useParams
   const { user } = useContext(SessionContext)
   const { firestore } = useContext(FirebaseContext)
-  const { setCurrentPlaceId, setIsGeocodeByPlaceId, getPlaceTown } = useContext(TripContext)
+  const history = useHistory()
+  const { setCurrentPlaceId, setIsAssistantGuided, setCurrentView, setCurrentEventType } =
+    useContext(TripContext)
 
   useEffect(() => {
     if (text) {
@@ -381,25 +382,14 @@ const ChatMessage = ({
           // eslint-disable-next-line no-param-reassign
           singlePlace.onclick = function placeClick() {
             const tempPlaceId = singlePlace.getAttribute('place_id')
-            console.log('bebouTempPlaceId', tempPlaceId)
-            // const testGeocode = geocodeByPlaceId(tempPlaceId).then(results =>
-            //   console.log('placeidresults', results)
-            // )
-            // setCurrentPlaceId(tempPlaceId)
-            // setIsGeocodeByPlaceId(true)
-            const placeIdInformations = getPlaceTown(tempPlaceId).then(results => {
-              console.log('placetownresults', results)
-              let tempAddress = ''
-              results.address_components.forEach(address => {
-                const tempName = ` ${address.long_name}`
-                tempAddress += tempName
-              })
-              console.log('tempAddress', tempAddress)
-              const tempLocation = geocodeByAddress(tempAddress).then(autoResults => {
-                console.log('results', autoResults)
-                // setLocation(autoResults)
-              })
-            })
+            const testGeocode = geocodeByPlaceId(tempPlaceId).then(results =>
+              console.log('placeidresults', results)
+            )
+            history.push(`/tripPage/${tripId}/planning`)
+            setCurrentPlaceId(tempPlaceId)
+            setIsAssistantGuided(true)
+            setCurrentEventType(singlePlace.getAttribute('tag_type'))
+            setCurrentView('creator')
           }
         })
       }

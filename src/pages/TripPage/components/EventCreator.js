@@ -239,8 +239,8 @@ const EventCreator = ({
     setHasClicked,
     location,
     setLocation,
-    isGeocodeByPlaceId,
-    setIsGeocodeByPlaceId,
+    isAssistantGuided,
+    setIsAssistantGuided,
     currentPlaceId,
   } = useContext(TripContext)
 
@@ -300,9 +300,9 @@ const EventCreator = ({
     }
   }
   useEffect(() => {
-    console.log('geoby', isGeocodeByPlaceId)
+    console.log('assistant es tu là', isAssistantGuided)
     console.log('currentPlaceId', currentPlaceId)
-  }, [isGeocodeByPlaceId, currentPlaceId])
+  }, [isAssistantGuided, currentPlaceId])
 
   const generateParticipatingTravelers = () => {
     const tempTravelers = travelers
@@ -1144,7 +1144,7 @@ const EventCreator = ({
                   </Box>
                 )}
                 <Box display="flex" alignItems="center" className={classes.marginBottom}>
-                  {isGeocodeByPlaceId ? (
+                  {isAssistantGuided ? (
                     <>
                       <GooglePlacesAutocomplete
                         initialValue={autoValue}
@@ -1159,7 +1159,7 @@ const EventCreator = ({
                             console.log('placeEvent', event)
                             if (action === 'clear') {
                               setLocation('')
-                              setIsGeocodeByPlaceId(false)
+                              setIsAssistantGuided(false)
                             } else {
                               geocodeByPlaceId(event.value.description).then(results => {
                                 const destination = { ...event }

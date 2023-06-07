@@ -40,7 +40,7 @@ const EventAdd = ({ setEventType, setCurrentView }) => {
             Ajouter un événement
           </Box>
         </Typography>
-        <Box position="absolute" top="20.5%" right="0">
+        <Box position="absolute" top="20.5%" right="10px">
           <IconButton
             aria-label="delete"
             edge="end"

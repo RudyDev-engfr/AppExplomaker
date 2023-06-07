@@ -426,7 +426,6 @@ const NotificationAreaDrawer = ({
     }
     setCurrentEvent(notification.event)
     // setCurrentEventId(notification.event.id)
-
     if (notification.event.isSurvey) {
       setCurrentView('survey')
       console.log('je suis un survey')
