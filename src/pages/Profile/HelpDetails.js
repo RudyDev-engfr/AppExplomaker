@@ -10,6 +10,7 @@ import {
   AccordionSummary,
   AccordionDetails,
 } from '@mui/material'
+import he from 'he'
 import makeStyles from '@mui/styles/makeStyles'
 import { useTheme } from '@emotion/react'
 import CloseRoundedIcon from '@mui/icons-material/CloseRounded'
@@ -17,7 +18,6 @@ import NavigateNextRoundedIcon from '@mui/icons-material/NavigateNextRounded'
 import ArrowBackIosNewRoundedIcon from '@mui/icons-material/ArrowBackIosNewRounded'
 import ExpandMoreIcon from '@mui/icons-material/ExpandMoreRounded'
 import { useParams, useHistory } from 'react-router-dom'
-
 import { FirebaseContext } from '../../contexts/firebase'
 import Loader from '../../components/Loader'
 // import Footer from '../../components/molecules/Footer'
@@ -102,6 +102,7 @@ const useStyles = makeStyles(theme => ({
 }))
 
 const HelpDetails = () => {
+  const [decodedContent, setDecodedContent] = useState('')
   const history = useHistory()
   const classes = useStyles()
   const theme = useTheme()
@@ -119,6 +120,18 @@ const HelpDetails = () => {
       setIsLoading(false)
     }
   }, [faq])
+
+  useEffect(() => {
+    if (currentFaq?.items) {
+      const parser = new DOMParser()
+      const decodedItems = currentFaq.items.map(item => ({
+        ...item,
+        title: he.decode(item.title),
+        content: he.decode(item.content),
+      }))
+      setCurrentFaq({ ...currentFaq, items: decodedItems })
+    }
+  }, [currentFaq])
 
   const handleChange = panel => (event, isExpanded) => {
     setExpanded(isExpanded ? panel : '')
