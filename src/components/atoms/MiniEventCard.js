@@ -1,8 +1,10 @@
 import React, { useContext, useEffect } from 'react'
-import { Box, Button, Typography } from '@mui/material'
+import { Box, Button, IconButton, Typography } from '@mui/material'
 import { makeStyles, useTheme } from '@mui/styles'
 import { format } from 'date-fns'
 import { useHistory, useParams } from 'react-router-dom'
+import { Add } from '@mui/icons-material'
+
 import { stringToDate } from '../../helper/functions'
 import findIcon from '../../helper/icons'
 import { EVENT_TYPES } from '../../helper/constants'
@@ -50,14 +52,21 @@ const useStyles = makeStyles(theme => ({
   },
 }))
 
-const MiniEventCard = ({ plannedEvent, setCurrentView, surveyId, plannedSurvey, day }) => {
+const MiniEventCard = ({
+  plannedEvent,
+  setCurrentView,
+  surveyId,
+  plannedSurvey,
+  day,
+  isAssistant,
+}) => {
   const classes = useStyles()
   const history = useHistory()
   const theme = useTheme()
   const { tripId } = useParams()
   const { currentEventId, setCurrentEventId, setSurvey, setSelectedDateOnPlanning } =
     useContext(PlanningContext)
-  const { setCurrentEvent } = useContext(TripContext)
+  const { setCurrentEvent, handleEventCreation } = useContext(TripContext)
 
   useEffect(() => {
     console.log('leventtoutseulplanifie', plannedEvent)
@@ -104,11 +113,7 @@ const MiniEventCard = ({ plannedEvent, setCurrentView, surveyId, plannedSurvey, 
         }}
         onClick={() => {
           setSelectedDateOnPlanning(day)
-          if (surveyId && plannedSurvey) {
-            setSurvey(plannedSurvey)
-          } else {
-            setEvent(plannedEvent)
-          }
+          setEvent(plannedEvent)
         }}
       >
         <Typography className={classes.hourTypo}>
@@ -119,6 +124,11 @@ const MiniEventCard = ({ plannedEvent, setCurrentView, surveyId, plannedSurvey, 
             : format(stringToDate(plannedEvent.fakeDate, 'yyyy-MM-dd HH:mm'), "HH'h'mm")}
         </Typography>
         <Typography className={classes.eventTitleTypo}>{plannedEvent.title}</Typography>
+        {isAssistant && (
+          <IconButton onClick={() => handleEventCreation()}>
+            <Add />
+          </IconButton>
+        )}
       </Button>
     </Box>
   )

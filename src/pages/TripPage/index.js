@@ -73,7 +73,6 @@ import { SessionContext } from '../../contexts/session'
 import Loader from '../../components/Loader'
 import Head from '../../components/molecules/Head'
 import PlanningContextProvider from '../../contexts/planning'
-
 import ava1 from '../../images/avatar/ava1.png'
 import ava2 from '../../images/avatar/ava2.png'
 import ava3 from '../../images/avatar/ava3.png'
@@ -162,9 +161,9 @@ const useStyles = makeStyles(theme => ({
   content: {
     minHeight: '100vh',
     position: 'relative',
-    background: 'white',
     [theme.breakpoints.down('sm')]: {
       minHeight: 'calc(100vh - 80px)',
+      backgroundColor: 'white !veryimportant',
     },
   },
   rowPaper: {
@@ -575,6 +574,7 @@ const TripPage = () => {
     currentActiveTab,
     setCurrentActiveTab,
     currentTravelers,
+    updateTravelers,
   } = useContext(TripContext)
   const [isLoading, setIsLoading] = useState(true)
   const [carouselImages, setCarouselImages] = useState([])
@@ -615,7 +615,7 @@ const TripPage = () => {
       console.log('update de la date')
       console.log('ça cest lancienne date', previousDateRange)
       console.log('ça cest la bonne date', currentDateRange)
-      // console.log('ça cest la date du tripData', rCTFF(tripData?.dateRange[0]))
+      console.log('ça cest la date du tripData', rCTFF(tripData?.dateRange[0]))
       createNotificationsOnTrip(
         user,
         tripData,
@@ -1025,13 +1025,23 @@ const TripPage = () => {
           />
         </>
       )}
-      <Box component="section" className={classes.content}>
+      <Box
+        component="section"
+        className={classes.content}
+        sx={{
+          backgroundColor:
+            currentActiveTab === 'Preview'
+              ? theme.palette.secondary.contrastText
+              : theme.palette.grey.f7,
+        }}
+      >
         <Box
           className={classes.innerContent}
           sx={{
             position: 'relative',
             padding: '0 0 0 350px',
             margin: '0 auto',
+
             '@media (max-width: 1600px)': {
               maxWidth: '100%',
               // padding: '0 20px 0 380px',
@@ -1047,6 +1057,9 @@ const TripPage = () => {
             '@media (max-width: 600px)': {
               padding: '0',
               width: '100%',
+            },
+            [theme.breakpoints.down('sm')]: {
+              padding: '0',
             },
           }}
         >
@@ -1113,7 +1126,7 @@ const TripPage = () => {
                   position={matchesXs ? 'fixed' : 'absolute'}
                   right={matchesXs ? '50%' : matches1600 ? '-35px' : '-15px'}
                   bottom={matchesXs ? '110px' : matches1600 ? '85px' : '20px'}
-                  style={{ transform: matchesXs ? 'translate(50%, 0)' : 'none' }}
+                  sx={{ transform: matchesXs ? 'translate(50%, 0)' : 'none' }}
                 >
                   <Fab
                     color="primary"
@@ -1441,7 +1454,7 @@ const TripPage = () => {
             display: 'flex',
             alignItems: 'center',
             padding: '15px',
-            backgroundColor: theme.palette.primary.ultraLight,
+            backgroundColor: 'theme.palette.primary.ultraLight',
             borderRadius: '10px',
             marginTop: matchesXs && '10px',
           }}
