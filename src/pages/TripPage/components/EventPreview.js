@@ -50,6 +50,7 @@ import FlightPreview from './FlightPreview'
 import { PlanningContext } from '../../../contexts/planning'
 import { SessionContext } from '../../../contexts/session'
 import { TripContext } from '../../../contexts/trip'
+import CardMenu from '../../../components/atoms/CardMenu'
 
 const useStyles = makeStyles(theme => ({
   iconBackground: {
@@ -217,6 +218,9 @@ const EventPreview = ({
   const handleClose = () => {
     setAnchorEl(null)
   }
+  const handleCloseDropdown = () => {
+    setAnchorEl(null)
+  }
   // End of Menu Button Logic
 
   useEffect(() => {
@@ -235,11 +239,13 @@ const EventPreview = ({
   }, [])
 
   useEffect(() => {
-    days.forEach(day => {
-      if (isSameDay(stringToDate(currentEvent.startTime), day)) {
-        setSelectedDateOnPlanning(day)
-      }
-    })
+    if (currentEvent && days) {
+      days.forEach(day => {
+        if (isSameDay(stringToDate(currentEvent?.startTime), day)) {
+          setSelectedDateOnPlanning(day)
+        }
+      })
+    }
   }, [currentEvent, days])
 
   useEffect(() => {
@@ -289,8 +295,8 @@ const EventPreview = ({
               history.replace(`/tripPage/${tripId}/planning`)
               setSelectedPropositionIndex()
               createNotificationsOnTrip(user, tripData, tripId, 'eventDelete', 2, currentEvent)
-              setCurrentEvent()
               setCurrentView('planning')
+              setCurrentEvent()
             })
         }
       } else {
@@ -301,14 +307,36 @@ const EventPreview = ({
           .doc(currentEvent.id)
           .delete()
           .then(() => {
+            setCurrentView('planning')
             history.replace(`/tripPage/${tripId}/planning`)
             setCurrentEvent()
-            setCurrentView('planning')
           })
       }
     }
   }
-
+  const changeIntoSurvey = () => {
+    let tempDoc = {
+      type: currentEvent.type,
+      createdBy: user.id,
+    }
+    const tempPropositions = [{ ...currentEvent, likes: [] }]
+    delete tempPropositions[0].type
+    delete tempPropositions[0].id
+    tempDoc = {
+      ...tempDoc,
+      isSurvey: true,
+      propositions: tempPropositions,
+    }
+    firestore
+      .collection('trips')
+      .doc(tripId)
+      .collection('planning')
+      .doc(currentEvent.id)
+      .set({ ...tempDoc })
+      .then(() => {
+        const tempEvent = { ...tempDoc, id: currentEvent.id }
+      })
+  }
   return isLoading ? (
     <></>
   ) : (
@@ -371,34 +399,39 @@ const EventPreview = ({
                   >
                     <MoreHoriz />
                   </IconButton>
-                  <Menu
-                    id="basic-menu"
+                  <CardMenu
                     anchorEl={anchorEl}
-                    open={open}
-                    onClose={handleClose}
-                    MenuListProps={{
-                      'aria-labelledby': 'basic-button',
-                    }}
-                  >
-                    <MenuItem
-                      onClick={() => {
-                        setEventType(previousEvent ? previousEvent.type : currentEvent.type)
-                        setEditMode(true)
-                        setCurrentView('creator')
-                        handleClose()
-                      }}
-                    >
-                      Modifier l&rsquo;évènement
-                    </MenuItem>
-                    <MenuItem
-                      onClick={() => {
-                        setIsDeleteDialogOpen(true)
-                        handleClose()
-                      }}
-                    >
-                      Supprimer l&apos;évènement
-                    </MenuItem>
-                  </Menu>
+                    handleCloseDropdown={handleCloseDropdown}
+                    options={[
+                      {
+                        label: 'Modifier',
+                        callback: () => {
+                          setEventType(currentEvent.type)
+                          setEditMode(true)
+                          setCurrentView('creator')
+                          history.push(`/tripPage/${tripId}/planning?event=${currentEvent.id}`)
+                        },
+                      },
+                      {
+                        label: 'Proposer en sondage',
+                        callback: changeIntoSurvey,
+                        isRemoved: !!currentEvent?.needNewDates,
+                      },
+                      {
+                        label: 'Retirer',
+                        callback: () => {
+                          firestore
+                            .collection('trips')
+                            .doc(tripId)
+                            .collection('planning')
+                            .doc(currentEvent.id)
+                            .set({ needNewDates: true }, { merge: true })
+                        },
+                        isRemoved: !!currentEvent?.needNewDates,
+                      },
+                      { label: 'Supprimer', callback: () => setIsDeleteDialogOpen(true) },
+                    ]}
+                  />
                 </Box>
               )}
             </Box>

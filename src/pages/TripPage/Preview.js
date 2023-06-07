@@ -7,7 +7,7 @@ import ChatBubbleRoundedIcon from '@mui/icons-material/ChatBubbleRounded'
 import ArrowBackRoundedIcon from '@mui/icons-material/ArrowBackRounded'
 import ArrowForwardRoundedIcon from '@mui/icons-material/ArrowForwardRounded'
 import Paper from '@mui/material/Paper'
-import { Box, IconButton, Typography, useMediaQuery, useTheme } from '@mui/material'
+import { Box, IconButton, Typography, useMediaQuery, useTheme, Button } from '@mui/material'
 import Carousel from 'react-material-ui-carousel'
 import makeStyles from '@mui/styles/makeStyles'
 import clsx from 'clsx'
@@ -345,20 +345,64 @@ const Preview = ({
             <div>
               <Box className={classes.mobileHeaderRow}>
                 <img src={calendar} alt="" className={classes.mobileIcon} />
-                {currentDateRange[0]}
-                {' - '}
-                {currentDateRange[1]}
+                <Button
+                  onClick={() => setOpenModal('editDate')}
+                  sx={{
+                    textDecoration: 'none',
+                    textTransform: 'none',
+                    color: theme.palette.grey['33'],
+                  }}
+                >
+                  <Typography component="h4" className={classes.subtitle}>
+                    {currentDateRange[0]}
+                    {' - '}
+                    {currentDateRange[1]}
+                  </Typography>
+                </Button>
               </Box>
               <Box className={classes.mobileHeaderRow}>
                 <img src={location} alt="" className={classes.mobileIcon} />
-                {!tripData.noDestination && tripData.destination.label}
+                {!tripData.noDestination ? (
+                  <Button
+                    onClick={() => setOpenModal('editDestination')}
+                    sx={{
+                      textDecoration: 'none',
+                      textTransform: 'none',
+                      color: theme.palette.grey['33'],
+                    }}
+                  >
+                    <Typography component="h4" className={classes.subtitle}>
+                      {tripData.destination.label}
+                    </Typography>
+                  </Button>
+                ) : (
+                  <Button
+                    onClick={() => setOpenModal('editDestination')}
+                    sx={{
+                      textDecoration: 'none',
+                      textTransform: 'none',
+                      color: theme.palette.grey['33'],
+                    }}
+                  >
+                    A définir
+                  </Button>
+                )}
               </Box>
               <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                 <Box className={classes.mobileHeaderRow}>
                   <img src={person} alt="" className={classes.mobileIcon} />
-                  <Typography sx={{ fontSize: '14px' }}>
-                    {tripData.editors.length} contributeur{tripData.editors.length > 1 && 's'}
-                  </Typography>
+                  <Button
+                    onClick={() => setOpenModal('editEditors')}
+                    sx={{
+                      textDecoration: 'none',
+                      textTransform: 'none',
+                      color: theme.palette.grey['33'],
+                    }}
+                  >
+                    <Typography className={classes.subtitle} component="h4">
+                      {tripData.editors.length} contributeur{tripData.editors.length > 1 ? 's' : ''}
+                    </Typography>
+                  </Button>
                 </Box>
                 <Box sx={{ paddingRight: '10px' }}>
                   <AddCollaboratorsButton tripId={tripId} size="30px" iconSize="20px" />

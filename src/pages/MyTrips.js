@@ -98,7 +98,7 @@ const MyTrips = () => {
   const { firestore, getTrendingDestinations } = useContext(FirebaseContext)
   const { user, setNeedRedirectTo } = useContext(SessionContext)
   const { initializing } = useAuth()
-  const [StateOfMyTrip, setStatOfMyTrip] = useState('inexistant')
+  const [StateOfMyTrip, setStateOfMyTrip] = useState('inexistant')
   const [openModal, setOpenModal] = useState('')
   const [tripsData, setTripsData] = useState([])
   const [isLoading, setIsLoading] = useState(true)

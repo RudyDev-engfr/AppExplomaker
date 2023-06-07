@@ -189,7 +189,6 @@ const TripCard = ({
           <Box display="flex" flexDirection="column" justifyContent="space-between" height="100%">
             <Box display="flex" justifyContent="space-between" mb={2}>
               <Typography variant="h5">{title}</Typography>
-              <Typography variant="h6">{state}</Typography>
             </Box>
             <Box display="flex" justifyContent="space-between" alignItems="flex-end">
               <Box>
