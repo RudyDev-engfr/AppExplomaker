@@ -578,7 +578,12 @@ const AuthModals = ({ modalState, modalStateSetter, setCurrentActiveTab }) => {
     firestore
       .collection('users')
       .doc(tempUser.id)
-      .set({ ...tempUser, newsletter: false, updatedAt: new timestampRef.fromDate(new Date()) })
+      .set({
+        ...tempUser,
+        newsletter: false,
+        myTripLetter: false,
+        updatedAt: new timestampRef.fromDate(new Date()),
+      })
     tempUser.isLoggedIn = true
     setUser({ ...tempUser })
   }

@@ -15,6 +15,7 @@ import { Event, LocationOn, Notifications } from '@mui/icons-material'
 import { useHistory } from 'react-router-dom'
 import { isWithinInterval } from 'date-fns'
 
+import StarIcon from '@mui/icons-material/Star'
 import CustomAvatar from '../atoms/CustomAvatar'
 import { rCTFF } from '../../helper/functions'
 import { SessionContext } from '../../contexts/session'
@@ -75,7 +76,17 @@ const useStyles = makeStyles(theme => ({
   },
 }))
 
-const TripCard = ({ bgImg, people, title, date, destination, tripId, startDate, endDate }) => {
+const TripCard = ({
+  bgImg,
+  people,
+  title,
+  date,
+  destination,
+  tripId,
+  startDate,
+  endDate,
+  state = 'Gratuit',
+}) => {
   const classes = useStyles()
   const history = useHistory()
   const theme = useTheme()
@@ -133,6 +144,43 @@ const TripCard = ({ bgImg, people, title, date, destination, tripId, startDate, 
         className={classes.actionArea}
       >
         <CardMedia className={classes.image} image={bgImg}>
+          {state && (
+            <Box
+              sx={{
+                position: 'absolute',
+                top: '10px',
+                left: '10px',
+                display: 'flex',
+                alignItems: 'center',
+              }}
+            >
+              <Box
+                sx={{
+                  backgroundColor:
+                    state === 'Premium' ? theme.palette.primary.main : theme.palette.secondary.main,
+                  color: 'white',
+                  fontSize: '14px',
+                  fontWeight: '700',
+                  lineHeight: '1',
+                  padding: '5px',
+                  borderRadius: '10px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  marginRight: state === 'Premium' && '4px',
+                }}
+              >
+                {state === 'Premium' ? 'Premium' : 'Gratuit'}
+                {state === 'Premium' && (
+                  <StarIcon
+                    sx={{
+                      marginLeft: '2px',
+                      fontSize: '16px',
+                    }}
+                  />
+                )}
+              </Box>
+            </Box>
+          )}
           <Box position="absolute" bottom="8%" right="6%">
             <CustomAvatar peopleIds={people} />
           </Box>

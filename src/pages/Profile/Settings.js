@@ -1,4 +1,4 @@
-import React, { useContext } from 'react'
+import React, { useContext, useState } from 'react'
 import {
   Box,
   Breadcrumbs,
@@ -7,13 +7,15 @@ import {
   Paper,
   Typography,
   useMediaQuery,
+  MenuItem,
+  Menu,
 } from '@mui/material'
 import makeStyles from '@mui/styles/makeStyles'
 import { useHistory } from 'react-router-dom'
 import { useTheme } from '@emotion/react'
 import NavigateNextRoundedIcon from '@mui/icons-material/NavigateNextRounded'
 
-import { ArrowBackIos } from '@mui/icons-material'
+import { ArrowBackIos, KeyboardArrowDown } from '@mui/icons-material'
 import Footer from '../../components/molecules/Footer'
 import Nav from '../../components/molecules/Nav'
 import { SessionContext } from '../../contexts/session'
@@ -67,6 +69,8 @@ const useStyles = makeStyles(theme => ({
     width: '367px',
     height: '118px',
     padding: '15px 20px',
+    marginRight: '15px',
+    marginBottom: '15px',
     [theme.breakpoints.down('sm')]: {
       maxWidth: '100%',
     },
@@ -82,16 +86,43 @@ const useStyles = makeStyles(theme => ({
     paddingRight: '50px',
     lineHeight: '17px',
     marginTop: '-5px',
+    overflowWrap: 'break-word',
   },
   returnBtn: { position: 'absolute', top: '47px', left: '5px' },
+  frequencyIcon: {
+    marginLeft: theme.spacing(1),
+    fontSize: '1rem',
+  },
+  boldText: {
+    fontWeight: 700,
+  },
 }))
 
 const Settings = () => {
+  const [anchorEl, setAnchorEl] = useState(null)
+  const [isMenuOpen, setIsMenuOpen] = useState(false)
+  const handleMenuOpen = event => {
+    setIsMenuOpen(true)
+    setAnchorEl(event.currentTarget)
+  }
+  const handleMenuClose = () => {
+    setIsMenuOpen(false)
+    setAnchorEl(null)
+  }
+
   const history = useHistory()
   const classes = useStyles()
   const theme = useTheme()
   const matchesXs = useMediaQuery(theme.breakpoints.down('sm'))
   const { user } = useContext(SessionContext)
+  const [emailFrequency, setEmailFrequency] = useState('twice-monthly') // State for storing the selected frequency
+
+  const handleFrequencyChange = selectedFrequency => {
+    setEmailFrequency(selectedFrequency)
+    user.myTripLetterFrequency = emailFrequency
+    console.log(user.myTripLetterFrequency)
+    handleMenuClose()
+  }
 
   return (
     <>
@@ -131,9 +162,20 @@ const Settings = () => {
             Mes préférences
           </Typography>
           <Typography className={classes.titles}>Emails</Typography>
-          <Box display="flex">
+          <Box
+            sx={{
+              display: 'flex',
+              flexWrap: 'wrap',
+            }}
+          >
             <Paper className={classes.paper}>
-              <Box display="flex" justifyContent="space-between" alignItems="center">
+              <Box
+                sx={{
+                  display: 'flex',
+                  justifyContent: 'space-between',
+                  alignItems: 'center',
+                }}
+              >
                 <Typography className={classes.papersTitle}>Exploletter</Typography>
                 <Switch checked={user.newsletter} target="newsletter" />
               </Box>
@@ -143,11 +185,38 @@ const Settings = () => {
             </Paper>
             <Paper className={classes.paper}>
               <Box display="flex" justifyContent="space-between" alignItems="center">
-                <Typography className={classes.papersTitle}>L’actu de mes voyage</Typography>
-                <Switch checked={user.newsletter} target="newsletter" />
+                <Typography className={classes.papersTitle}>L’actu de mes voyages</Typography>
+                <Switch checked={user.myTripLetter} target="myTripLetter" />
               </Box>
               <Typography className={classes.papersDescription}>
-                Reçois régulièrement des recommandations d’articles qui pourraient t’intéresser
+                Reçois{' '}
+                <Box component="span" className={classes.frequencyTypo}>
+                  {emailFrequency === 'daily'
+                    ? 'quotidiennement'
+                    : emailFrequency === 'weekly'
+                    ? '1 fois par semaine'
+                    : emailFrequency === 'twice-monthly'
+                    ? '2 fois par mois'
+                    : emailFrequency === 'monthly'
+                    ? 'mensuellement'
+                    : emailFrequency}
+                </Box>
+                <KeyboardArrowDown className={classes.frequencyIcon} onClick={handleMenuOpen} />
+                <Menu anchorEl={anchorEl} open={Boolean(anchorEl)} onClose={handleMenuClose}>
+                  <MenuItem onClick={() => handleFrequencyChange('daily')}>
+                    Quotidiennement
+                  </MenuItem>
+                  <MenuItem onClick={() => handleFrequencyChange('weekly')}>
+                    1 fois par semaine
+                  </MenuItem>
+                  <MenuItem onClick={() => handleFrequencyChange('twice-monthly')}>
+                    2 fois par semaine
+                  </MenuItem>
+                  <MenuItem onClick={() => handleFrequencyChange('monthly')}>
+                    Mensuellement
+                  </MenuItem>
+                </Menu>
+                {' les notifications de tes séjours en cours'}
               </Typography>
             </Paper>
           </Box>

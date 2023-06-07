@@ -47,7 +47,10 @@ const App = () => {
           tempUser.rangeType = data.rangeType
           tempUser.likes = data.likes
           tempUser.newsletter = data.newsletter
+          tempUser.myTripLetter = data.myTripLetter || false
+          tempUser.myTripLetterFrequency = data.myTripLetterFrequency
           tempUser.notifications = data.notifications || []
+          tempUser.state = data.state
           setUser({ ...tempUser })
         }
       })
