@@ -69,6 +69,8 @@ const useStyles = makeStyles(theme => ({
     width: '367px',
     height: '118px',
     padding: '15px 20px',
+    marginRight: '15px',
+    marginBottom: '15px',
     [theme.breakpoints.down('sm')]: {
       maxWidth: '100%',
     },
@@ -84,6 +86,7 @@ const useStyles = makeStyles(theme => ({
     paddingRight: '50px',
     lineHeight: '17px',
     marginTop: '-5px',
+    overflowWrap: 'break-word',
   },
   returnBtn: { position: 'absolute', top: '47px', left: '5px' },
   frequencyIcon: {
@@ -112,10 +115,12 @@ const Settings = () => {
   const theme = useTheme()
   const matchesXs = useMediaQuery(theme.breakpoints.down('sm'))
   const { user } = useContext(SessionContext)
-  const [emailFrequency, setEmailFrequency] = useState('monthly') // State for storing the selected frequency
+  const [emailFrequency, setEmailFrequency] = useState('twice-monthly') // State for storing the selected frequency
 
   const handleFrequencyChange = selectedFrequency => {
     setEmailFrequency(selectedFrequency)
+    user.myTripLetterFrequency = emailFrequency
+    console.log(user.myTripLetterFrequency)
     handleMenuClose()
   }
 
@@ -157,9 +162,20 @@ const Settings = () => {
             Mes préférences
           </Typography>
           <Typography className={classes.titles}>Emails</Typography>
-          <Box display="flex">
+          <Box
+            sx={{
+              display: 'flex',
+              flexWrap: 'wrap',
+            }}
+          >
             <Paper className={classes.paper}>
-              <Box display="flex" justifyContent="space-between" alignItems="center">
+              <Box
+                sx={{
+                  display: 'flex',
+                  justifyContent: 'space-between',
+                  alignItems: 'center',
+                }}
+              >
                 <Typography className={classes.papersTitle}>Exploletter</Typography>
                 <Switch checked={user.newsletter} target="newsletter" />
               </Box>
@@ -179,8 +195,8 @@ const Settings = () => {
                     ? 'quotidiennement'
                     : emailFrequency === 'weekly'
                     ? '1 fois par semaine'
-                    : emailFrequency === 'twice_weekly'
-                    ? '2 fois par semaine'
+                    : emailFrequency === 'twice-monthly'
+                    ? '2 fois par mois'
                     : emailFrequency === 'monthly'
                     ? 'mensuellement'
                     : emailFrequency}
@@ -193,7 +209,7 @@ const Settings = () => {
                   <MenuItem onClick={() => handleFrequencyChange('weekly')}>
                     1 fois par semaine
                   </MenuItem>
-                  <MenuItem onClick={() => handleFrequencyChange('twice_weekly')}>
+                  <MenuItem onClick={() => handleFrequencyChange('twice-monthly')}>
                     2 fois par semaine
                   </MenuItem>
                   <MenuItem onClick={() => handleFrequencyChange('monthly')}>

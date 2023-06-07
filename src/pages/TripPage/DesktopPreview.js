@@ -1,10 +1,10 @@
 import React, { useContext } from 'react'
 import { useParams } from 'react-router-dom'
-import { Box, Button, IconButton, Typography } from '@mui/material'
+import { Box, Button, Icon, IconButton, Typography } from '@mui/material'
 import { makeStyles, useTheme } from '@mui/styles'
 import ShareIcon from '@mui/icons-material/Share'
 import { toast } from 'react-toastify'
-
+import StarIcon from '@mui/icons-material/Star'
 import calendar from '../../images/icons/calendar.svg'
 import location from '../../images/icons/location.svg'
 import person from '../../images/icons/person.svg'
@@ -27,6 +27,7 @@ const useStyles = makeStyles(theme => ({
   },
 }))
 const DesktopPreview = ({ tripData, generatedAvatars }) => {
+  const state = 'Premium'
   const classes = useStyles()
   const theme = useTheme()
   const { tripId } = useParams()
@@ -34,14 +35,40 @@ const DesktopPreview = ({ tripData, generatedAvatars }) => {
 
   return (
     <Box className={classes.generalInformationBlock}>
-      <Box
-        display="flex"
-        alignItems="flex-start"
-        width="calc(100% - 50px)"
-        mb="20px"
-        justifyContent="space-between"
-      >
+      <Box display="flex" alignItems="flex-start" mb="20px" justifyContent="space-between">
         <Typography variant="h1">{tripData.title}</Typography>
+        <Box display="flex" alignItems="center">
+          <Box
+            sx={{
+              backgroundColor:
+                state === 'Premium' ? theme.palette.primary.main : theme.palette.secondary.main,
+              color: 'white',
+              fontSize: '25px',
+              fontWeight: '700',
+              lineHeight: '1',
+              padding: '5px',
+              borderRadius: '10px',
+              display: 'flex',
+              alignItems: 'center',
+              marginLeft: '10px', // Ajuster la marge à gauche
+            }}
+          >
+            {state === 'Premium' ? (
+              <>
+                Premium
+                <StarIcon
+                  sx={{
+                    marginLeft: '2px',
+                    fontSize: '25px',
+                  }}
+                />
+              </>
+            ) : (
+              'Gratuit'
+            )}
+          </Box>
+        </Box>
+
         {/* <IconButton
           onClick={() => {
             navigator.clipboard.writeText(
@@ -53,14 +80,8 @@ const DesktopPreview = ({ tripData, generatedAvatars }) => {
           <ShareIcon />
         </IconButton> */}
       </Box>
-      <Box
-        sx={{
-          display: 'flex',
-          alignItems: 'center',
-          width: '100%',
-        }}
-      >
-        <Box display="flex" alignItems="center" marginRight="40px">
+      <Box display="flex" alignItems="center" justifyContent="space-between" flexWrap="wrap">
+        <Box display="flex" alignItems="center" mb="10px">
           <img src={calendar} alt="" className={classes.mobileIcon} />
           {currentDateRange[0] !== '' ? (
             <Button
@@ -72,9 +93,7 @@ const DesktopPreview = ({ tripData, generatedAvatars }) => {
               }}
             >
               <Typography component="h4" className={classes.subtitle}>
-                {currentDateRange[0]}
-                {' - '}
-                {currentDateRange[1]}
+                {currentDateRange[0]} - {currentDateRange[1]}
               </Typography>
             </Button>
           ) : (
@@ -90,7 +109,7 @@ const DesktopPreview = ({ tripData, generatedAvatars }) => {
             </Button>
           )}
         </Box>
-        <Box display="flex" alignItems="center" marginRight="40px">
+        <Box display="flex" alignItems="center" mb="10px">
           <img src={location} alt="" className={classes.mobileIcon} />
           {!tripData.noDestination ? (
             <Button
@@ -118,7 +137,7 @@ const DesktopPreview = ({ tripData, generatedAvatars }) => {
             </Button>
           )}
         </Box>
-        <Box display="flex" alignItems="center">
+        <Box display="flex" alignItems="center" marginRight="20px">
           <img src={person} alt="" className={classes.mobileIcon} />
           <Button
             onClick={() => setOpenModal('editEditors')}
@@ -129,20 +148,12 @@ const DesktopPreview = ({ tripData, generatedAvatars }) => {
             }}
           >
             <Typography className={classes.subtitle} component="h4">
-              {tripData.editors.length} contributeur{tripData.editors.length > 1 ? 's' : ''}
+              {tripData.editors.length} contributeur
+              {tripData.editors.length > 1 ? 's' : ''}
             </Typography>
           </Button>
         </Box>
-        <Box
-          sx={{
-            marginLeft: '475px',
-            alignSelf: 'flex-end',
-            display: 'flex',
-            alignItems: 'center',
-            justifySelf: 'flex-end',
-            justifyContent: 'flex-end',
-          }}
-        >
+        <Box display="flex" alignItems="center" ml="auto">
           <AddCollaboratorsButton tripId={tripId} />
           <CustomAvatar peopleIds={generatedAvatars} isPreview />
         </Box>

@@ -870,7 +870,7 @@ const Planning = ({ tripData, tripId, canEdit }) => {
             buildFlightTitle={buildFlightTitle}
           />
         )}
-        {currentView === 'preview' && (
+        {currentView === 'preview' && typeof currentEvent !== 'undefined' && (
           <EventPreview
             currentEvent={currentEvent}
             setCurrentEvent={setCurrentEvent}
