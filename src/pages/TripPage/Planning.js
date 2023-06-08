@@ -318,7 +318,6 @@ const Planning = ({ tripData, tripId }) => {
 
   const { user } = useContext(SessionContext)
   const { firestore } = useContext(FirebaseContext)
-  const { setDeleteEventNotifications, currentEvent, setCurrentEvent } = useContext(TripContext)
   const {
     setDeleteEventNotifications,
     currentEvent,
