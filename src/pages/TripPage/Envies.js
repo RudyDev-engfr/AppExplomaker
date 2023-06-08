@@ -323,7 +323,7 @@ const Envies = ({ tripId, tripWishes, recommendedWishes, canEdit, tripTravelers 
           />
           {wishesOptions.filter(
             option =>
-              recommendedWishes.includes(parseInt(option.value, 10)) &&
+              recommendedWishes.filter(wish => wish.id === parseInt(option.value, 10)) &&
               !wishes.some(wish => wish.value === option.value)
           ).length > 0 && (
             <>
@@ -333,8 +333,12 @@ const Envies = ({ tripId, tripWishes, recommendedWishes, canEdit, tripTravelers 
               {wishesOptions
                 .filter(
                   option =>
-                    recommendedWishes.includes(parseInt(option.value, 10)) &&
-                    !wishes.some(wish => wish.value === option.value)
+                    recommendedWishes.some(wish => {
+                      if (wish.id === parseInt(option.value, 10)) {
+                        return true
+                      }
+                      return false
+                    }) && !wishes.some(wish => wish.value === option.value)
                 )
                 .map(option => (
                   <Button

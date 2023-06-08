@@ -634,6 +634,10 @@ const TripPage = () => {
   }, [modalTravelers])
 
   useEffect(() => {
+    console.log('les voeux', recommendedWishes)
+  }, [recommendedWishes])
+
+  useEffect(() => {
     const currentImages = []
     if (tripSpot?.picture_slider) {
       tripSpot.picture_slider.forEach(picture => currentImages.push(picture))
@@ -648,6 +652,7 @@ const TripPage = () => {
     if (currentImages.length > 1) {
       setCarouselImages(currentImages)
     }
+    console.log('tripspot', tripSpot)
   }, [tripSpot])
 
   const travelersValidation = () => {
