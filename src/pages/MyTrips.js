@@ -168,7 +168,7 @@ const MyTrips = () => {
                 nbNotif={3}
                 people={currentPeopleIds}
                 title={tripData.title}
-                state={tripData.state}
+                isPremium={tripData.isPremium}
                 date={
                   currentDateRange ? `${currentDateRange[0]} - ${currentDateRange[1]}` : 'À définir'
                 }

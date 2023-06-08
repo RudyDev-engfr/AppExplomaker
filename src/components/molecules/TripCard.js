@@ -85,7 +85,7 @@ const TripCard = ({
   tripId,
   startDate,
   endDate,
-  state = 'Gratuit',
+  isPremium = false,
 }) => {
   const classes = useStyles()
   const history = useHistory()
@@ -138,49 +138,47 @@ const TripCard = ({
           </Badge>
         </Box>
       )}
-
       <CardActionArea
         onClick={() => history.push(`/tripPage/${tripId}`)}
         className={classes.actionArea}
       >
         <CardMedia className={classes.image} image={bgImg}>
-          {state && (
+          <Box
+            sx={{
+              position: 'absolute',
+              top: '10px',
+              left: '10px',
+              display: 'flex',
+              alignItems: 'center',
+            }}
+          >
             <Box
               sx={{
-                position: 'absolute',
-                top: '10px',
-                left: '10px',
+                backgroundColor: isPremium
+                  ? theme.palette.primary.main
+                  : theme.palette.secondary.main,
+                color: 'white',
+                fontSize: '14px',
+                fontWeight: '700',
+                lineHeight: '1',
+                padding: '5px',
+                borderRadius: '10px',
                 display: 'flex',
                 alignItems: 'center',
+                marginRight: isPremium && '4px',
               }}
             >
-              <Box
-                sx={{
-                  backgroundColor:
-                    state === 'Premium' ? theme.palette.primary.main : theme.palette.secondary.main,
-                  color: 'white',
-                  fontSize: '14px',
-                  fontWeight: '700',
-                  lineHeight: '1',
-                  padding: '5px',
-                  borderRadius: '10px',
-                  display: 'flex',
-                  alignItems: 'center',
-                  marginRight: state === 'Premium' && '4px',
-                }}
-              >
-                {state === 'Premium' ? 'Premium' : 'Gratuit'}
-                {state === 'Premium' && (
-                  <StarIcon
-                    sx={{
-                      marginLeft: '2px',
-                      fontSize: '16px',
-                    }}
-                  />
-                )}
-              </Box>
+              {isPremium ? 'Premium' : 'Gratuit'}
+              {isPremium && (
+                <StarIcon
+                  sx={{
+                    marginLeft: '2px',
+                    fontSize: '16px',
+                  }}
+                />
+              )}
             </Box>
-          )}
+          </Box>
           <Box position="absolute" bottom="8%" right="6%">
             <CustomAvatar peopleIds={people} />
           </Box>
