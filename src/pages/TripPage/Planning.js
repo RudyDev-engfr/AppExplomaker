@@ -890,6 +890,7 @@ const Planning = ({ tripData, tripId }) => {
               display: 'grid',
               gridTemplate: '1fr / min-content 1fr',
             }}
+            p
           >
             <Box display="flex" justifyContent="space-between" alignItems="center">
               <Paper

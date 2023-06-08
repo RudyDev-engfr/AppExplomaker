@@ -81,7 +81,7 @@ const DesktopPreview = ({ tripData, generatedAvatars }) => {
         </IconButton> */}
       </Box>
       <Box display="flex" alignItems="center" justifyContent="space-between" flexWrap="wrap">
-        <Box display="flex" alignItems="center" mb="10px">
+        <Box display="flex" alignItems="center">
           <img src={calendar} alt="" className={classes.mobileIcon} />
           {currentDateRange[0] !== '' ? (
             <Button
@@ -109,7 +109,7 @@ const DesktopPreview = ({ tripData, generatedAvatars }) => {
             </Button>
           )}
         </Box>
-        <Box display="flex" alignItems="center" mb="10px">
+        <Box display="flex" alignItems="center">
           <img src={location} alt="" className={classes.mobileIcon} />
           {!tripData.noDestination ? (
             <Button
