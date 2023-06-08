@@ -1,4 +1,4 @@
-import React, { useContext, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import {
   Box,
   Breadcrumbs,
@@ -21,6 +21,7 @@ import Nav from '../../components/molecules/Nav'
 import { SessionContext } from '../../contexts/session'
 import Switch from '../../components/atoms/Switch'
 import Head from '../../components/molecules/Head'
+import { firestore } from '../../contexts/firebase'
 
 const useStyles = makeStyles(theme => ({
   mainContainer: {
@@ -90,8 +91,15 @@ const useStyles = makeStyles(theme => ({
   },
   returnBtn: { position: 'absolute', top: '47px', left: '5px' },
   frequencyIcon: {
-    marginLeft: theme.spacing(1),
-    fontSize: '1rem',
+    marginLeft: '8px',
+    fontSize: '24px',
+    paddingTop: '10px',
+    paddingRight: '10px',
+  },
+  frequencyTypo: {
+    color: theme.palette.primary.main,
+    fontWeight: 500,
+    fontSize: '14px',
   },
   boldText: {
     fontWeight: 700,
@@ -115,14 +123,24 @@ const Settings = () => {
   const theme = useTheme()
   const matchesXs = useMediaQuery(theme.breakpoints.down('sm'))
   const { user } = useContext(SessionContext)
-  const [emailFrequency, setEmailFrequency] = useState('twice-monthly') // State for storing the selected frequency
+  const [myCurrentTripLetter, setMyCurrentTripLetter] = useState(false)
 
-  const handleFrequencyChange = selectedFrequency => {
-    setEmailFrequency(selectedFrequency)
-    user.myTripLetterFrequency = emailFrequency
-    console.log(user.myTripLetterFrequency)
-    handleMenuClose()
+  const handleUpdate = data => {
+    firestore
+      .collection('users')
+      .doc(user.id)
+      .set(
+        {
+          ...data,
+        },
+        { merge: true }
+      )
+      .then(() => true)
   }
+
+  useEffect(() => {
+    handleUpdate({ myTripLetter: myCurrentTripLetter })
+  }, [myCurrentTripLetter])
 
   return (
     <>
@@ -191,28 +209,46 @@ const Settings = () => {
               <Typography className={classes.papersDescription}>
                 Reçois{' '}
                 <Box component="span" className={classes.frequencyTypo}>
-                  {emailFrequency === 'daily'
+                  {user.myTripLetter === 'daily'
                     ? 'quotidiennement'
-                    : emailFrequency === 'weekly'
+                    : user.myTripLetter === 'weekly'
                     ? '1 fois par semaine'
-                    : emailFrequency === 'twice-monthly'
+                    : user.myTripLetter === 'twice-monthly'
                     ? '2 fois par mois'
-                    : emailFrequency === 'monthly'
-                    ? 'mensuellement'
-                    : emailFrequency}
+                    : user.myTripLetter === 'monthly' && 'mensuellement'}
                 </Box>
                 <KeyboardArrowDown className={classes.frequencyIcon} onClick={handleMenuOpen} />
                 <Menu anchorEl={anchorEl} open={Boolean(anchorEl)} onClose={handleMenuClose}>
-                  <MenuItem onClick={() => handleFrequencyChange('daily')}>
+                  <MenuItem
+                    onClick={() => {
+                      setMyCurrentTripLetter('daily')
+                      handleMenuClose()
+                    }}
+                  >
                     Quotidiennement
                   </MenuItem>
-                  <MenuItem onClick={() => handleFrequencyChange('weekly')}>
+                  <MenuItem
+                    onClick={() => {
+                      setMyCurrentTripLetter('weekly')
+                      handleMenuClose()
+                    }}
+                  >
                     1 fois par semaine
                   </MenuItem>
-                  <MenuItem onClick={() => handleFrequencyChange('twice-monthly')}>
-                    2 fois par semaine
+                  <MenuItem
+                    onClick={() => {
+                      setMyCurrentTripLetter('twice-monthly')
+                      handleMenuClose()
+                    }}
+                  >
+                    2 fois par mois
                   </MenuItem>
-                  <MenuItem onClick={() => handleFrequencyChange('monthly')}>
+                  <MenuItem
+                    onClick={() => {
+                      setMyCurrentTripLetter('monthly')
+                      handleMenuClose()
+                    }}
+                  >
                     Mensuellement
                   </MenuItem>
                 </Menu>

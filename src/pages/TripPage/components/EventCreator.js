@@ -214,8 +214,6 @@ const EventCreator = ({
   previousEvent,
   setPreviousEvent,
   selectedPropositionIndex,
-  editMode,
-  setEditMode,
   buildFlightTitle,
 }) => {
   const classes = useStyles()
@@ -242,6 +240,8 @@ const EventCreator = ({
     isAssistantGuided,
     setIsAssistantGuided,
     currentPlaceId,
+    editMode,
+    setEditMode,
   } = useContext(TripContext)
 
   const tripStartDate = rCTFF(dateRange[0])
@@ -284,6 +284,7 @@ const EventCreator = ({
   const [tripData, setTripData] = useState()
   const [advancedMode, setAdvancedMode] = useState(false)
   const [autoValue, setAutoValue] = useState(null)
+  const [currentLocation, setCurrentLocation] = useState(null)
 
   const changeAutoValue = () => {
     if (currentPlaceId) {
@@ -302,6 +303,11 @@ const EventCreator = ({
   useEffect(() => {
     console.log('assistant es tu là', isAssistantGuided)
     console.log('currentPlaceId', currentPlaceId)
+    if (isAssistantGuided && currentPlaceId) {
+      const tempLocation = geocodeByPlaceId(currentPlaceId).then(results =>
+        setCurrentLocation(results)
+      )
+    }
   }, [isAssistantGuided, currentPlaceId])
 
   const generateParticipatingTravelers = () => {
@@ -1146,54 +1152,7 @@ const EventCreator = ({
                 <Box display="flex" alignItems="center" className={classes.marginBottom}>
                   {isAssistantGuided ? (
                     <>
-                      <GooglePlacesAutocomplete
-                        initialValue={autoValue}
-                        minLengthAutocomplete={3}
-                        onSelect={({ autoDescription, placeId }) =>
-                          setAutoValue({ autoDescription, currentPlaceId })
-                        }
-                        selectProps={{
-                          placeholder: 'Emplacement',
-                          value: location,
-                          onChange: (event, { action }) => {
-                            console.log('placeEvent', event)
-                            if (action === 'clear') {
-                              setLocation('')
-                              setIsAssistantGuided(false)
-                            } else {
-                              geocodeByPlaceId(event.value.description).then(results => {
-                                const destination = { ...event }
-                                const shortCountryNameRef = results[0].address_components.filter(
-                                  address => address.types.includes('country')
-                                )
-                                if (shortCountryNameRef.length > 0) {
-                                  destination.shortCountryName = shortCountryNameRef[0].short_name
-                                }
-                                console.log(destination)
-                                setLocation({ ...destination })
-                              })
-                            }
-                          },
-                          isClearable: true,
-                          styles: {
-                            container: provided => ({ ...provided, width: '100%' }),
-                            control: provided => ({
-                              ...provided,
-                              cursor: 'pointer',
-                              zIndex: '2',
-                              height: '60px',
-                            }),
-                            menu: provided => ({
-                              ...provided,
-                              zIndex: '2',
-                            }),
-                            singleValue: provided => ({
-                              ...provided,
-                              color: theme.palette.primary.main,
-                            }),
-                          },
-                        }}
-                      />
+                      <TextField value={currentLocation} />
                       <Button onClick={() => changeAutoValue()}>change</Button>
                     </>
                   ) : (

@@ -369,11 +369,11 @@ const ChatMessage = ({
 }) => {
   const classes = useStyles()
   const theme = useTheme()
-  const { tripId } = useParams
+  const { tripId } = useParams()
   const { user } = useContext(SessionContext)
   const { firestore } = useContext(FirebaseContext)
   const history = useHistory()
-  const { setCurrentPlaceId, setIsAssistantGuided, setCurrentView, setCurrentEventType } =
+  const { setCurrentPlaceId, setIsAssistantGuided, setCurrentView, setEventType, setEditMode } =
     useContext(TripContext)
 
   useEffect(() => {
@@ -391,8 +391,9 @@ const ChatMessage = ({
             history.push(`/tripPage/${tripId}/planning`)
             setCurrentPlaceId(tempPlaceId)
             setIsAssistantGuided(true)
-            setCurrentEventType(singlePlace.getAttribute('tag_type'))
+            setEventType(singlePlace.getAttribute('tag_type'))
             setCurrentView('creator')
+            setEditMode(false)
           }
         })
       }

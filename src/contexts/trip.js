@@ -23,6 +23,7 @@ const TripContextProvider = ({ children }) => {
   const [deleteEventNotifications, setDeleteEventNotifications] = useState(false)
   const [hasClicked, setHasClicked] = useState(false)
   const [tripData, setTripData] = useState()
+  const [canEdit, setCanEdit] = useState(false)
 
   // use to handle Notifications
   const [currentNotifications, setCurrentNotifications] = useState([])
@@ -49,6 +50,9 @@ const TripContextProvider = ({ children }) => {
   const [isAssistantGuided, setIsAssistantGuided] = useState(false)
   const [currentPlaceId, setCurrentPlaceId] = useState('')
 
+  // used to handle eventCreator
+  const [editMode, setEditMode] = useState(false)
+
   // used in preview, desktopPreview
   const [currentDateRange, setCurrentDateRange] = useState(['', ''])
   const [currentActiveTab, setCurrentActiveTab] = useState('')
@@ -66,6 +70,12 @@ const TripContextProvider = ({ children }) => {
       return ''
     }
   }
+
+  useEffect(() => {
+    console.log('canEdit', canEdit)
+    console.log('eventType', eventType)
+    console.log('editMode', editMode)
+  }, [canEdit, eventType, editMode])
 
   const getPlaceTown = placeId =>
     new Promise(resolve => {
@@ -297,6 +307,10 @@ const TripContextProvider = ({ children }) => {
         setIsAssistantGuided,
         currentPlaceId,
         setCurrentPlaceId,
+        editMode,
+        setEditMode,
+        canEdit,
+        setCanEdit,
       }}
     >
       {children}
