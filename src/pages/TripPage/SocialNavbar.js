@@ -1,6 +1,7 @@
 import React, { useContext, useEffect } from 'react'
 import { AppBar, Badge, Box, Drawer, IconButton, Toolbar, useMediaQuery } from '@mui/material'
-import { Forum, ForumOutlined, Help } from '@mui/icons-material'
+import { Forum, ForumOutlined } from '@mui/icons-material'
+import ExploreIcon from '@mui/icons-material/Explore'
 import { makeStyles, useTheme } from '@mui/styles'
 import { useCollectionData } from 'react-firebase-hooks/firestore'
 
@@ -137,10 +138,9 @@ const SocialNavbar = () => {
               }
               invisible={assistantMessages?.length < 1}
             >
-              <Help />
+              <ExploreIcon />
             </Badge>
           </IconButton>
-
           <IconButton
             onClick={() => {
               if (isChatOpen === 'userChat') {
@@ -184,7 +184,6 @@ const SocialNavbar = () => {
               <Forum />
             </Badge>
           </IconButton>
-
           <NotificationArea
             tripData={tripData}
             currentNotifications={currentNotifications}
