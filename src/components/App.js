@@ -50,7 +50,7 @@ const App = () => {
           tempUser.myTripLetter = data.myTripLetter || false
           tempUser.myTripLetterFrequency = data.myTripLetterFrequency
           tempUser.notifications = data.notifications || []
-          tempUser.state = data.state
+          tempUser.premium = data.premium
           setUser({ ...tempUser })
         }
       })

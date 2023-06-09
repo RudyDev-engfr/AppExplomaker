@@ -1493,6 +1493,7 @@ const TripPage = () => {
                       <Typography variant="h6">{travelerDetails.firstname}</Typography>
                       <Typography variant="subtitle2">
                         {tripData.owner === travelerDetails.id && 'Propriétaire'}
+                        {travelerDetails.role === ROLES.Removed && 'Retiré'}
                       </Typography>
                     </Box>
                   </AccordionSummary>

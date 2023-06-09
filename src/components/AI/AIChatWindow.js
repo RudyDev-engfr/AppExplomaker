@@ -36,7 +36,7 @@ const useStyles = makeStyles(theme => ({
   basePaper: {
     width: '500px',
     borderLeft: 'unset',
-    maxHeight: '100vh',
+    maxHeight: 'calc(100vh - 1px)',
     boxShadow: '-5px 0px 15px -3px rgba(0,0,0,0.1)',
     [theme.breakpoints.down('sm')]: {
       width: '100vw',
@@ -46,8 +46,8 @@ const useStyles = makeStyles(theme => ({
   },
   chatsPaper: {
     backgroundColor: '#f7f7f7',
-    minHeight: 'calc(100vh - 65px)',
-    maxHeight: 'calc(100vh - 65px)',
+    minHeight: 'calc(100vh - 77px)',
+    maxHeight: 'calc(100vh - 77px)',
     width: '100%',
     display: 'grid',
     gridTemplateColumns: '1fr',
@@ -373,13 +373,24 @@ const ChatMessage = ({
   const { user } = useContext(SessionContext)
   const { firestore } = useContext(FirebaseContext)
   const history = useHistory()
-  const { setCurrentPlaceId, setIsAssistantGuided, setCurrentView, setEventType, setEditMode } =
-    useContext(TripContext)
+  const {
+    setIsAssistantGuided,
+    setCurrentView,
+    setEventType,
+    setEditMode,
+    currentLocation,
+    setCurrentLocation,
+  } = useContext(TripContext)
+
+  useEffect(() => {
+    console.log('---- current ----', currentLocation)
+  }, [currentLocation])
 
   useEffect(() => {
     if (text) {
       const placeArray = document.getElementsByTagName('place')
       const tempPlaceArray = Array.from(placeArray)
+      let tempLocation
       if (Array.isArray(tempPlaceArray) && tempPlaceArray.length > 0) {
         tempPlaceArray?.forEach(singlePlace => {
           // eslint-disable-next-line no-param-reassign
@@ -389,7 +400,9 @@ const ChatMessage = ({
               console.log('placeidresults', results)
             )
             history.push(`/tripPage/${tripId}/planning`)
-            setCurrentPlaceId(tempPlaceId)
+            tempLocation = geocodeByPlaceId(tempPlaceId).then(results =>
+              setCurrentLocation(results)
+            )
             setIsAssistantGuided(true)
             setEventType(singlePlace.getAttribute('tag_type'))
             setCurrentView('creator')

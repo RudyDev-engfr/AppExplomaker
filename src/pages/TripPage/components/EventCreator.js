@@ -242,6 +242,8 @@ const EventCreator = ({
     currentPlaceId,
     editMode,
     setEditMode,
+    currentLocation,
+    setCurrentLocation,
   } = useContext(TripContext)
 
   const tripStartDate = rCTFF(dateRange[0])
@@ -284,30 +286,16 @@ const EventCreator = ({
   const [tripData, setTripData] = useState()
   const [advancedMode, setAdvancedMode] = useState(false)
   const [autoValue, setAutoValue] = useState(null)
-  const [currentLocation, setCurrentLocation] = useState(null)
 
-  const changeAutoValue = () => {
-    if (currentPlaceId) {
-      let tempLabel
-      geocodeByPlaceId(currentPlaceId).then(results => {
-        tempLabel = results.formatted_address
-      })
-      setAutoValue({
-        description: 'Nouvelle valeur',
-        placeId: currentPlaceId,
-        label: tempLabel,
-        // Ajoutez d'autres attributs selon vos besoins
-      })
-    }
-  }
   useEffect(() => {
+    let tempLocation
     console.log('assistant es tu là', isAssistantGuided)
     console.log('currentPlaceId', currentPlaceId)
-    if (isAssistantGuided && currentPlaceId) {
-      const tempLocation = geocodeByPlaceId(currentPlaceId).then(results =>
-        setCurrentLocation(results)
-      )
-    }
+    const tempSearchFunction = geocodeByPlaceId(currentPlaceId).then(results => {
+      tempLocation = results
+      console.log('=== location temporaire OMG ===', tempLocation)
+    })
+    setCurrentLocation(tempLocation)
   }, [isAssistantGuided, currentPlaceId])
 
   const generateParticipatingTravelers = () => {
@@ -536,7 +524,10 @@ const EventCreator = ({
     if (location?.label && !editMode) {
       setTitle(location.label)
     }
-  }, [location])
+    if (currentLocation?.formatted_address) {
+      setTitle(location?.formatted_address)
+    }
+  }, [location, currentLocation])
 
   useEffect(() => {
     if (
@@ -730,7 +721,11 @@ const EventCreator = ({
       eventType === EVENT_TYPES[2] ||
       eventType === EVENT_TYPES[4]
     ) {
-      currentPlaceDetails = await getPlaceDetails(location?.value.place_id)
+      if (location) {
+        currentPlaceDetails = await getPlaceDetails(location?.value.place_id)
+      } else if (currentLocation) {
+        currentPlaceDetails = await getPlaceDetails(currentLocation?.place_id)
+      }
     }
     if (eventType === EVENT_TYPES[3]) {
       const tempLocationArray = []
@@ -1152,8 +1147,12 @@ const EventCreator = ({
                 <Box display="flex" alignItems="center" className={classes.marginBottom}>
                   {isAssistantGuided ? (
                     <>
-                      <TextField value={currentLocation} />
-                      <Button onClick={() => changeAutoValue()}>change</Button>
+                      <TextField
+                        variant="filled"
+                        value={currentLocation?.formatted_address}
+                        readOnly
+                        fullWidth
+                      />
                     </>
                   ) : (
                     <GooglePlacesAutocomplete

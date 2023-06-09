@@ -52,6 +52,7 @@ const TripContextProvider = ({ children }) => {
 
   // used to handle eventCreator
   const [editMode, setEditMode] = useState(false)
+  const [currentLocation, setCurrentLocation] = useState(null)
 
   // used in preview, desktopPreview
   const [currentDateRange, setCurrentDateRange] = useState(['', ''])
@@ -311,6 +312,8 @@ const TripContextProvider = ({ children }) => {
         setEditMode,
         canEdit,
         setCanEdit,
+        currentLocation,
+        setCurrentLocation,
       }}
     >
       {children}

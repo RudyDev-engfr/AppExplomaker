@@ -106,7 +106,6 @@ const MyTrips = () => {
   const [pastTrips, setPastTrips] = useState([])
   const [trendingDestinations, setTrendingDestinations] = useState([])
   const [currentTripSelected, setCurrentTripSelected] = useState(0)
-  const isPremium = user.state === 'premium'
 
   useEffect(() => {
     if (trendingDestinations.length < 1) {
@@ -168,7 +167,7 @@ const MyTrips = () => {
                 nbNotif={3}
                 people={currentPeopleIds}
                 title={tripData.title}
-                isPremium={tripData.isPremium}
+                premium={tripData.premium}
                 date={
                   currentDateRange ? `${currentDateRange[0]} - ${currentDateRange[1]}` : 'À définir'
                 }

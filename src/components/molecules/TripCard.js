@@ -85,7 +85,7 @@ const TripCard = ({
   tripId,
   startDate,
   endDate,
-  isPremium = false,
+  premium = false,
 }) => {
   const classes = useStyles()
   const history = useHistory()
@@ -154,7 +154,7 @@ const TripCard = ({
           >
             <Box
               sx={{
-                backgroundColor: isPremium
+                backgroundColor: premium
                   ? theme.palette.primary.main
                   : theme.palette.secondary.main,
                 color: 'white',
@@ -165,11 +165,11 @@ const TripCard = ({
                 borderRadius: '10px',
                 display: 'flex',
                 alignItems: 'center',
-                marginRight: isPremium && '4px',
+                marginRight: premium && '4px',
               }}
             >
-              {isPremium ? 'Premium' : 'Gratuit'}
-              {isPremium && (
+              {premium ? 'Premium' : 'Gratuit'}
+              {premium && (
                 <StarIcon
                   sx={{
                     marginLeft: '2px',
