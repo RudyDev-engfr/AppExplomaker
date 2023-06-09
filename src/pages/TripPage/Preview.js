@@ -341,22 +341,33 @@ const Preview = ({
               {canEdit && <EditBtn type="button" onClick={() => setOpenModal('general')} />}
             </Box>
             <div>
-              <Box className={classes.mobileHeaderRow}>
+              <Box display="flex" alignItems="center">
                 <img src={calendar} alt="" className={classes.mobileIcon} />
-                <Button
-                  onClick={() => setOpenModal('editDate')}
-                  sx={{
-                    textDecoration: 'none',
-                    textTransform: 'none',
-                    color: theme.palette.grey['33'],
-                  }}
-                >
-                  <Typography component="h4" className={classes.subtitle}>
-                    {currentDateRange[0]}
-                    {' - '}
-                    {currentDateRange[1]}
-                  </Typography>
-                </Button>
+                {currentDateRange[0] !== '' ? (
+                  <Button
+                    onClick={() => setOpenModal('editDate')}
+                    sx={{
+                      textDecoration: 'none',
+                      textTransform: 'none',
+                      color: theme.palette.grey['33'],
+                    }}
+                  >
+                    <Typography component="h4" className={classes.subtitle}>
+                      {currentDateRange[0]} - {currentDateRange[1]}
+                    </Typography>
+                  </Button>
+                ) : (
+                  <Button
+                    onClick={() => setOpenModal('editDate')}
+                    sx={{
+                      textDecoration: 'none',
+                      textTransform: 'none',
+                      color: theme.palette.grey['33'],
+                    }}
+                  >
+                    A définir
+                  </Button>
+                )}
               </Box>
               <Box className={classes.mobileHeaderRow}>
                 <img src={location} alt="" className={classes.mobileIcon} />
