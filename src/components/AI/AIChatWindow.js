@@ -36,7 +36,7 @@ const useStyles = makeStyles(theme => ({
   basePaper: {
     width: '500px',
     borderLeft: 'unset',
-    maxHeight: 'calc(100vh - 1px)',
+    maxHeight: '100vh',
     boxShadow: '-5px 0px 15px -3px rgba(0,0,0,0.1)',
     [theme.breakpoints.down('sm')]: {
       width: '100vw',
@@ -81,6 +81,7 @@ const useStyles = makeStyles(theme => ({
   contentTypo: {
     '& place': {
       fontWeight: 700,
+      cursor: 'pointer',
     },
   },
   form: {
@@ -401,7 +402,7 @@ const ChatMessage = ({
             )
             history.push(`/tripPage/${tripId}/planning`)
             tempLocation = geocodeByPlaceId(tempPlaceId).then(results =>
-              setCurrentLocation(results)
+              setCurrentLocation(results[0])
             )
             setIsAssistantGuided(true)
             setEventType(singlePlace.getAttribute('tag_type'))

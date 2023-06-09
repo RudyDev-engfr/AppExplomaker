@@ -287,17 +287,6 @@ const EventCreator = ({
   const [advancedMode, setAdvancedMode] = useState(false)
   const [autoValue, setAutoValue] = useState(null)
 
-  useEffect(() => {
-    let tempLocation
-    console.log('assistant es tu là', isAssistantGuided)
-    console.log('currentPlaceId', currentPlaceId)
-    const tempSearchFunction = geocodeByPlaceId(currentPlaceId).then(results => {
-      tempLocation = results
-      console.log('=== location temporaire OMG ===', tempLocation)
-    })
-    setCurrentLocation(tempLocation)
-  }, [isAssistantGuided, currentPlaceId])
-
   const generateParticipatingTravelers = () => {
     const tempTravelers = travelers
       .filter(traveler => !traveler.isNotTraveler)
@@ -525,7 +514,7 @@ const EventCreator = ({
       setTitle(location.label)
     }
     if (currentLocation?.formatted_address) {
-      setTitle(location?.formatted_address)
+      setTitle(currentLocation?.formatted_address)
     }
   }, [location, currentLocation])
 
@@ -555,7 +544,11 @@ const EventCreator = ({
           ...tempErrors,
           startTime: arrivalDateTimeError,
           endTime: departureDateTimeError,
-          location: !location,
+        }
+        if (isAssistantGuided) {
+          tempErrors.currentLocation = !currentLocation
+        } else {
+          tempErrors.location = !location
         }
         if (!isValid(selectedDepartureDateTime)) {
           tempErrors.departureDateTimeIsInvalid = true
@@ -611,7 +604,11 @@ const EventCreator = ({
       case EVENT_TYPES[2]:
         tempErrors = {
           ...tempErrors,
-          location: !location,
+        }
+        if (isAssistantGuided) {
+          tempErrors.currentLocation = !currentLocation
+        } else {
+          tempErrors.location = !location
         }
         if (!isValid(selectedDate)) {
           tempErrors.dateIsInvalid = true
@@ -679,7 +676,11 @@ const EventCreator = ({
       case EVENT_TYPES[4]:
         tempErrors = {
           ...tempErrors,
-          location: !location,
+        }
+        if (isAssistantGuided) {
+          tempErrors.currentLocation = !currentLocation
+        } else {
+          tempErrors.location = !location
         }
         if (!isValid(selectedDate)) {
           tempErrors.dateIsInvalid = true
@@ -723,8 +724,9 @@ const EventCreator = ({
     ) {
       if (location) {
         currentPlaceDetails = await getPlaceDetails(location?.value.place_id)
-      } else if (currentLocation) {
-        currentPlaceDetails = await getPlaceDetails(currentLocation?.place_id)
+      }
+      if (currentLocation) {
+        currentPlaceDetails = await getPlaceDetails(currentLocation.place_id)
       }
     }
     if (eventType === EVENT_TYPES[3]) {
