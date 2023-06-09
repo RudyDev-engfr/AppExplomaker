@@ -1,6 +1,7 @@
 import React, { useContext } from 'react'
 import { AppBar, Badge, Box, Drawer, IconButton, Toolbar, useMediaQuery } from '@mui/material'
-import { Forum, ForumOutlined, Help } from '@mui/icons-material'
+import { Forum, ForumOutlined } from '@mui/icons-material'
+import ExploreIcon from '@mui/icons-material/Explore'
 import { makeStyles, useTheme } from '@mui/styles'
 
 import { useLocation, useParams } from 'react-router-dom'
@@ -85,7 +86,7 @@ const SocialNavbar = () => {
             }}
           >
             <Badge color="error">
-              <Help />
+              <ExploreIcon />
             </Badge>
           </IconButton>
           <IconButton
