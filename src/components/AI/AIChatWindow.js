@@ -148,7 +148,7 @@ const AIChatWindow = ({ isChatOpen, setIsChatOpen, chats, tripId }) => {
           }
         }
       })
-      setCurrentMessages(tempMessages)
+      setCurrentMessages(tempMessages.reverse())
     }
   }, [messages])
 

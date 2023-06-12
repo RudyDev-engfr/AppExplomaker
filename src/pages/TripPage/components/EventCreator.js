@@ -713,6 +713,13 @@ const EventCreator = ({
     console.log('location', location)
   }, [location])
 
+  const handleReset = () => {
+    setEditMode(false)
+    setCurrentView('planning')
+    setCurrentLocation('')
+    setIsAssistantGuided(false)
+  }
+
   const handleSubmit = async event => {
     event.preventDefault()
     setHasClicked(true)
@@ -982,6 +989,7 @@ const EventCreator = ({
     //   `/tripPage/${tripId}/planning?${isSurvey ? 'survey=' : 'event='}${currentEvent.id}`
     // )
     setEventType('')
+    handleReset()
   }
 
   const fetchFlight = async flightIndex => {
