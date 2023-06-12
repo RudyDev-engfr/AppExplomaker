@@ -26,7 +26,7 @@ import MobileTripPageHeader from '../../components/molecules/MobileTripPageHeade
 const useStyles = makeStyles(theme => ({
   paper: {
     padding: '30px',
-    margin: '20px 0',
+    margin: '80px 30px 0 30px',
     [theme.breakpoints.down('sm')]: {
       margin: '20px',
       padding: '15px',
