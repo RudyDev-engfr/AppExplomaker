@@ -707,6 +707,9 @@ const EventCreator = ({
     if (location && eventType) {
       handleTempEventsMarkers(location, eventType)
     }
+    if (currentLocation && eventType) {
+      handleTempEventsMarkers(currentLocation, eventType)
+    }
   }, [location])
 
   useEffect(() => {
