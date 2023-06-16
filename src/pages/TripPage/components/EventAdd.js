@@ -5,7 +5,7 @@ import IconButton from '@mui/material/IconButton'
 import Paper from '@mui/material/Paper'
 import Typography from '@mui/material/Typography'
 
-import makeStyles from '@mui/styles/makeStyles'
+import { makeStyles, useTheme } from '@mui/styles'
 import CloseRoundedIcon from '@mui/icons-material/CloseRounded'
 
 import EventCircleSelect from './EventCircleSelect'

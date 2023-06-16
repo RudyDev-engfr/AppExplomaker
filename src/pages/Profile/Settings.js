@@ -9,9 +9,9 @@ import useMediaQuery from '@mui/material/useMediaQuery'
 import MenuItem from '@mui/material/MenuItem'
 import Menu from '@mui/material/Menu'
 
-import makeStyles from '@mui/styles/makeStyles'
+import { makeStyles, useTheme } from '@mui/styles'
 import { useHistory } from 'react-router-dom'
-import { useTheme } from '@emotion/react'
+
 import NavigateNextRoundedIcon from '@mui/icons-material/NavigateNextRounded'
 
 import { ArrowBackIos, KeyboardArrowDown } from '@mui/icons-material'

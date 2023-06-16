@@ -5,9 +5,7 @@ import Button from '@mui/material/Button'
 import IconButton from '@mui/material/IconButton'
 import Typography from '@mui/material/Typography'
 import useMediaQuery from '@mui/material/useMediaQuery'
-import useTheme from '@mui/material/'
-
-import makeStyles from '@mui/styles/makeStyles'
+import { makeStyles, useTheme } from '@mui/styles'
 import { FileCopyOutlined } from '@mui/icons-material'
 import { toast } from 'react-toastify'
 

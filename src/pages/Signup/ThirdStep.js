@@ -4,9 +4,8 @@ import Box from '@mui/material/Box'
 import Button from '@mui/material/Button'
 import Typography from '@mui/material/Typography'
 import useMediaQuery from '@mui/material/useMediaQuery'
-import useTheme from '@mui/material/'
 
-import makeStyles from '@mui/styles/makeStyles'
+import { makeStyles, useTheme } from '@mui/styles'
 import Delete from '@mui/icons-material/Delete'
 import PhotoCamera from '@mui/icons-material/PhotoCamera'
 

@@ -1,9 +1,9 @@
 import React from 'react'
-import { useTheme } from '@mui/material'
+
 import Typography from '@mui/material/Typography'
 import Box from '@mui/material/Box'
 import useMediaQuery from '@mui/material/useMediaQuery'
-import makeStyles from '@mui/styles/makeStyles'
+import { makeStyles, useTheme } from '@mui/styles'
 import MultiCarousel from 'react-multi-carousel'
 import 'react-multi-carousel/lib/styles.css'
 

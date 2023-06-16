@@ -1,7 +1,7 @@
 import React from 'react'
 import IconButton from '@mui/material/IconButton'
 import { CreateOutlined } from '@mui/icons-material'
-import makeStyles from '@mui/styles/makeStyles'
+import { makeStyles, useTheme } from '@mui/styles'
 
 const useStyles = makeStyles(theme => ({
   root: {

@@ -5,10 +5,10 @@ import InputAdornment from '@mui/material/InputAdornment'
 import Box from '@mui/material/Box'
 import TextField from '@mui/material/TextField'
 import useMediaQuery from '@mui/material/useMediaQuery'
-import useTheme from '@mui/material/'
+
 import Visibility from '@mui/icons-material/Visibility'
 import VisibilityOff from '@mui/icons-material/VisibilityOff'
-import makeStyles from '@mui/styles/makeStyles'
+import { makeStyles, useTheme } from '@mui/styles'
 
 const useStyles = makeStyles(theme => ({
   modalLogInButton: {

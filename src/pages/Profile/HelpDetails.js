@@ -10,8 +10,8 @@ import AccordionSummary from '@mui/material/AccordionSummary'
 import AccordionDetails from '@mui/material/AccordionDetails'
 
 import he from 'he'
-import makeStyles from '@mui/styles/makeStyles'
-import { useTheme } from '@emotion/react'
+import { makeStyles, useTheme } from '@mui/styles'
+
 import CloseRoundedIcon from '@mui/icons-material/CloseRounded'
 import NavigateNextRoundedIcon from '@mui/icons-material/NavigateNextRounded'
 import ArrowBackIosNewRoundedIcon from '@mui/icons-material/ArrowBackIosNewRounded'

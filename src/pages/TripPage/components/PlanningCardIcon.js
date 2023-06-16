@@ -1,6 +1,6 @@
 /* eslint-disable default-case */
 import React, { useEffect, useState } from 'react'
-import makeStyles from '@mui/styles/makeStyles'
+import { makeStyles, useTheme } from '@mui/styles'
 import Box from '@mui/material/Box'
 
 import findIcon from '../../../helper/icons'

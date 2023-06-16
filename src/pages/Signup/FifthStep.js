@@ -3,7 +3,7 @@ import { useHistory } from 'react-router-dom'
 import Avatar from '@mui/material/Avatar'
 import Box from '@mui/material/Box'
 
-import makeStyles from '@mui/styles/makeStyles'
+import { makeStyles, useTheme } from '@mui/styles'
 
 import { SessionContext } from '../../contexts/session'
 import { SignupContext } from '../../contexts/signup'

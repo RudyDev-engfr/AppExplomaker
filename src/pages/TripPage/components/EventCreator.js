@@ -16,10 +16,9 @@ import TextField from '@mui/material/TextField'
 import Tooltip from '@mui/material/Tooltip'
 import Typography from '@mui/material/Typography'
 import useMediaQuery from '@mui/material/useMediaQuery'
-import useTheme from '@mui/material/'
-
+import { makeStyles, useTheme } from '@mui/styles'
 import Fade from '@mui/material/Fade'
-import makeStyles from '@mui/styles/makeStyles'
+
 import CloseRoundedIcon from '@mui/icons-material/CloseRounded'
 import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos'
 import ClearRoundedIcon from '@mui/icons-material/ClearRounded'
