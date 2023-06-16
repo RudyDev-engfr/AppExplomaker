@@ -49,7 +49,7 @@ const MobileTripPageHeader = () => {
         >
           {tripData?.title?.length > 40 ? tripData?.title : tripData?.title?.substring(0, 50)}
         </Typography>
-        <EditBtn onClick={() => setOpenModal('general')} top="0" right="15px" />
+        <EditBtn onClick={() => setOpenModal('general')} top="15px" right="15px" />
       </Box>
       <Box
         className={classes.tripPageTabsContainer}

@@ -23,8 +23,12 @@ import { PlanningContext } from '../../../contexts/planning'
 const useStyles = makeStyles(theme => ({
   cardPlan: {
     cursor: 'pointer',
-    margin: '1rem 0',
+    margin: '15px 0',
     borderRadius: '10px',
+    maxWidth: '290px',
+    [theme.breakpoints.down('sm')]: {
+      maxWidth: 'calc(75vw - 15px)',
+    },
   },
   hoveredEvent: {
     backgroundColor: theme.palette.primary.ultraLight,
@@ -50,6 +54,9 @@ const useStyles = makeStyles(theme => ({
     textOverflow: 'ellipsis',
     overflow: 'hidden',
     maxWidth: '270px',
+    [theme.breakpoints.down('sm')]: {
+      maxWidth: 'calc(70vw - 15px)',
+    },
   },
 }))
 

@@ -85,11 +85,11 @@ const useStyles = makeStyles(theme => ({
     color: theme.palette.primary.main,
   },
 
-  flightGrid: {
+  transportGrid: {
     // marginRight: '2rem',
     display: 'grid',
-    gridTemplateColumns: '25% 50% 25%',
-    columnGap: '10px',
+    gridTemplateColumns: '20% 60% 20%',
+    height: '60px',
     alignItems: 'center',
   },
   fontRight: {
@@ -100,8 +100,8 @@ const useStyles = makeStyles(theme => ({
     display: 'flex',
     justifyContent: 'center',
     alignItems: 'center',
-    width: '75px',
-    margin: '1rem 0',
+    width: '50px',
+    padding: '25px 0 5px 0',
   },
   participantsBox: {
     color: '#FFFFFF',
@@ -168,6 +168,12 @@ const useStyles = makeStyles(theme => ({
     [theme.breakpoints.down('sm')]: {
       borderRadius: '0',
     },
+  },
+  hourTypo: {
+    fontSize: '24px',
+    fontWeight: 400,
+    lineHeight: 1.25,
+    fontFamily: 'Vesper Libre',
   },
 }))
 
@@ -506,7 +512,12 @@ const EventPreview = ({
                 </Box>
               )}
               {currentEventType === EVENT_TYPES[3] && (
-                <Box display="flex" justifyContent="space-between" alignItems="center" pb={4}>
+                <Box
+                  display="flex"
+                  justifyContent="space-between"
+                  alignItems="center"
+                  sx={{ paddingBottom: '32px' }}
+                >
                   <Box>
                     <Typography variant="h5">
                       <Box component="span" fontWeight="bold">
@@ -514,10 +525,9 @@ const EventPreview = ({
                       </Box>
                     </Typography>
                     <Typography>
-                      {currentEventType === EVENT_TYPES[3] &&
-                        format(stringToDate(currentEvent.transports[0].startTime), 'EEEE dd MMMM', {
-                          locale: frLocale,
-                        })}
+                      {format(stringToDate(currentEvent.transports[0].startTime), 'EEEE dd MMMM', {
+                        locale: frLocale,
+                      })}
                     </Typography>
                   </Box>
                   {currentEvent?.website && (
@@ -700,8 +710,8 @@ const EventPreview = ({
                     ({ start, end, startTime, endTime, description, icon }, transportIndex) => (
                       <Fragment key={startTime}>
                         <Box
-                          className={classes.flightGrid}
-                          m="1rem 0"
+                          className={classes.transportGrid}
+                          sx={{ paddingTop: '20px' }}
                           justifyContent="space-between"
                         >
                           <Box className={classes.planeIconBack}>
@@ -738,7 +748,7 @@ const EventPreview = ({
                             </Typography>
                           </Box>
                           <Box className={classes.fontRight}>
-                            <Typography variant="h4" sx={{ fontWeight: 'bold' }}>
+                            <Typography variant="h4" className={classes.hourTypo}>
                               {format(stringToDate(startTime), 'HH:mm', {
                                 locale: frLocale,
                               })}
@@ -768,7 +778,11 @@ const EventPreview = ({
                           <img src={LineFull} alt="line" />
                         </Box>
                         {/* ------------------Second Bus Line--------------- */}
-                        <Box className={classes.flightGrid} justifyContent="space-between" mb={2}>
+                        <Box
+                          className={classes.transportGrid}
+                          justifyContent="space-between"
+                          mb={2}
+                        >
                           <Box className={classes.planeIconBack}>
                             <Box
                               sx={{
@@ -794,7 +808,7 @@ const EventPreview = ({
                             {/* <Typography>{currentEvent.departureCity}</Typography> */}
                           </Box>
                           <Box className={classes.fontRight}>
-                            <Typography variant="h4" sx={{ fontWeight: 'bold' }}>
+                            <Typography variant="h4" className={classes.hourTypo}>
                               {format(stringToDate(endTime), 'HH:mm', {
                                 locale: frLocale,
                               })}

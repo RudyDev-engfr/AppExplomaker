@@ -14,9 +14,7 @@ import Slide from '@mui/material/Slide'
 import Tab from '@mui/material/Tab'
 import Tabs from '@mui/material/Tabs'
 import useMediaQuery from '@mui/material/useMediaQuery'
-
 import clsx from 'clsx'
-import FavoriteIcon from '@mui/icons-material/Favorite'
 import FeedIcon from '@mui/icons-material/Feed'
 import AirplanemodeActiveRounded from '@mui/icons-material/AirplanemodeActiveRounded'
 import Chat from '@mui/icons-material/Chat'
@@ -28,18 +26,20 @@ import Logout from '@mui/icons-material/Logout'
 import Notifications from '@mui/icons-material/Notifications'
 import RestaurantMenuRounded from '@mui/icons-material/RestaurantMenuRounded'
 import Tune from '@mui/icons-material/Tune'
+import { useCollectionData } from 'react-firebase-hooks/firestore'
 
 import logoFull from '../../../images/icons/logoFull.svg'
-import planning from '../../../images/icons/planning.svg'
-import planningGreen from '../../../images/icons/planningGreen.svg'
-/* import photo from '../../../images/icons/photo.svg'
-import photoGreen from '../../../images/icons/photoGreen.svg' */
-import plus from '../../../images/icons/plus.svg'
-import plusGreen from '../../../images/icons/plusGreen.svg'
-import apercu from '../../../images/icons/apercu.svg'
-import apercuGreen from '../../../images/icons/apercuGreen.svg'
+// import planning from '../../../images/icons/planning.svg'
+// import planningGreen from '../../../images/icons/planningGreen.svg'
+// /* import photo from '../../../images/icons/photo.svg'
+// import photoGreen from '../../../images/icons/photoGreen.svg' */
+// import plus from '../../../images/icons/plus.svg'
+// import plusGreen from '../../../images/icons/plusGreen.svg'
+// import apercu from '../../../images/icons/apercu.svg'
+// import apercuGreen from '../../../images/icons/apercuGreen.svg'
 import MobilePlus from './MobilePlus'
 import TitleArea from './TitleArea'
+
 import { TripContext } from '../../../contexts/trip'
 import FabDial from '../../../components/atoms/FabDial'
 import { EVENT_TYPES } from '../../../helper/constants'
@@ -150,14 +150,14 @@ const useStyles = makeStyles(theme => ({
     padding: `0 4px 12px 4px !important`,
     zIndex: '10000',
   },
-  spanNav: {
-    color: 'rgba(79, 79, 79, 0.5)',
-    fontSize: '9px',
-    fontWeight: '800',
-  },
-  activeMobileTabStyle: {
-    color: theme.palette.primary.main,
-  },
+  // spanNav: {
+  //   color: 'rgba(79, 79, 79, 0.5)',
+  //   fontSize: '9px',
+  //   fontWeight: '800',
+  // },
+  // activeMobileTabStyle: {
+  //   color: theme.palette.primary.main,
+  // },
 }))
 
 const TripPageNav = ({
@@ -179,15 +179,21 @@ const TripPageNav = ({
   const theme = useTheme()
   const isXs = useMediaQuery(theme.breakpoints.down('sm'))
 
-  const { setTypeCreator, currentActiveMobileNavTab, setCurrentActiveMobileNavTab } =
-    useContext(TripContext)
-  const { setNotificationsToNewStateOnTrip } = useContext(FirebaseContext)
+  const { setTypeCreator, updateHasSeen } = useContext(TripContext)
+  const { setNotificationsToNewStateOnTrip, firestore } = useContext(FirebaseContext)
   const { user } = useContext(SessionContext)
 
   const [isMobilePlusOpen, setIsMobilePlusOpen] = useState(false)
   const [open, setOpen] = useState(false)
   const [refreshNotif, setRefreshNotif] = useState(false)
   const [currentNotifications, setCurrentNotifications] = useState([])
+
+  const messagesRef = firestore.collection('trips').doc(tripId).collection('messages')
+  const assistantRef = firestore.collection('trips').doc(tripId).collection('Assistant')
+  const assistantQuery = assistantRef.orderBy('createdAt')
+  const query = messagesRef.orderBy('createdAt')
+  const [messages] = useCollectionData(query, { idField: 'messageId' })
+  const [assistantMessages] = useCollectionData(assistantQuery, { idField: 'AssistantId' })
 
   const handleOpen = () => setOpen(true)
   const handleClose = () => setOpen(false)
@@ -382,9 +388,15 @@ const TripPageNav = ({
           className={classes.returnButton}
           onClick={() => history.push('/')}
           startIcon={
-            <Box mr={1.5} display="flex" alignItems="center">
-              <ArrowBackRoundedIcon />
-            </Box>
+            <Logout
+              sx={{
+                color: theme.palette.secondary.likes,
+                fontSize: '35px !important',
+                webkitTransform: 'scaleX(-1)',
+                transform: 'scaleX(-1)',
+                marginRight: '10px',
+              }}
+            />
           }
         >
           Mes séjours
@@ -431,12 +443,32 @@ const TripPageNav = ({
           /> */}
           <Tab
             icon={
-              <Help
-                sx={{
-                  fontSize: '35px',
-                  color: isChatOpen === 'AIChat' && theme.palette.primary.main,
-                }}
-              />
+              <Badge
+                color="secondary"
+                badgeContent={
+                  assistantMessages?.length > 0 &&
+                  assistantMessages?.filter(message => {
+                    const hasUserSeen = message.notifications?.filter(notification => {
+                      if (notification.userId === user.id && !notification.hasSeen) {
+                        return true
+                      }
+                      return false
+                    })
+                    if (hasUserSeen?.length > 0) {
+                      return true
+                    }
+                    return false
+                  }).length
+                }
+                invisible={assistantMessages?.length < 1}
+              >
+                <Help
+                  sx={{
+                    fontSize: '35px',
+                    color: isChatOpen === 'AIChat' && theme.palette.primary.main,
+                  }}
+                />
+              </Badge>
             }
             onClick={() => setIsChatOpen('AIChat')}
             // value="AIChatWindow"
@@ -464,15 +496,36 @@ const TripPageNav = ({
         /> */}
           <Tab
             icon={
-              <Chat
-                sx={{
-                  color: isChatOpen === 'userChat' && theme.palette.primary.main,
-                  fontSize: '35px',
-                }}
-              />
+              <Badge
+                color="secondary"
+                badgeContent={
+                  messages?.length > 0 &&
+                  messages?.filter(message => {
+                    const hasUserSeen = message.notifications?.filter(notification => {
+                      if (notification.userId === user.id && !notification.hasSeen) {
+                        return true
+                      }
+                      return false
+                    })
+                    if (hasUserSeen?.length > 0) {
+                      return true
+                    }
+                    return false
+                  }).length
+                }
+                invisible={messages?.length < 1}
+              >
+                <Forum
+                  sx={{
+                    color: isChatOpen === 'userChat' && theme.palette.primary.main,
+                    fontSize: '35px',
+                  }}
+                />
+              </Badge>
             }
             onClick={() => {
               setIsChatOpen('userChat')
+              updateHasSeen('messages')
             }}
             // value="userChat"
             sx={{ padding: '0', minWidth: '20vw !important', marginLeft: '8vw' }}

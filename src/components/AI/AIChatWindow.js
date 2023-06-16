@@ -17,9 +17,11 @@ import EmojiEmotionsOutlined from '@mui/icons-material/EmojiEmotionsOutlined'
 import Send from '@mui/icons-material/Send'
 import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos'
 import { makeStyles, useTheme } from '@mui/styles'
+import { useHistory, useParams } from 'react-router-dom'
 
 import Picker from '@emoji-mart/react'
 import data from '@emoji-mart/data'
+import { geocodeByAddress, geocodeByPlaceId } from 'react-google-places-autocomplete'
 
 import { FirebaseContext } from '../../contexts/firebase'
 import { SessionContext } from '../../contexts/session'
@@ -27,6 +29,7 @@ import CustomAvatar from '../atoms/CustomAvatar'
 
 import { rCTFF } from '../../helper/functions'
 import { TripContext } from '../../contexts/trip'
+import { PlanningContext } from '../../contexts/planning'
 
 const useStyles = makeStyles(theme => ({
   basePaper: {
@@ -49,10 +52,9 @@ const useStyles = makeStyles(theme => ({
     gridTemplateColumns: '1fr',
     gridTemplateRows: '1fr minmax(45px, auto)',
     [theme.breakpoints.down('sm')]: {
-      margin: '24px 0 0 0',
       width: '100%',
-      minHeight: 'calc(100vh - 80px)',
-      maxHeight: 'calc(100vh - 80px)',
+      minHeight: 'calc(100vh - 60px)',
+      maxHeight: 'calc(100vh - 60px)',
       borderRadius: 'unset',
     },
   },
@@ -75,6 +77,14 @@ const useStyles = makeStyles(theme => ({
     marginBottom: '5px',
     paddingLeft: '66px',
   },
+  contentTypo: {
+    '& place': {
+      fontWeight: 700,
+    },
+  },
+  form: {
+    height: '0',
+  },
 }))
 const AIChatWindow = ({ isChatOpen, setIsChatOpen, chats, tripId }) => {
   const classes = useStyles()
@@ -82,7 +92,7 @@ const AIChatWindow = ({ isChatOpen, setIsChatOpen, chats, tripId }) => {
   const matchesXs = useMediaQuery(theme.breakpoints.down('sm'))
   const { user } = useContext(SessionContext)
   const { firestore, timestampRef } = useContext(FirebaseContext)
-  const { hasClicked } = useContext(TripContext)
+  const { hasClicked, currentTravelers } = useContext(TripContext)
 
   const dummy = useRef()
   const [messageToSend, setMessageToSend] = useState('')
@@ -103,7 +113,7 @@ const AIChatWindow = ({ isChatOpen, setIsChatOpen, chats, tripId }) => {
   }
 
   const messagesRef = firestore.collection('trips').doc(tripId).collection('Assistant')
-  const query = messagesRef.orderBy('createdAt').limit(25)
+  const query = messagesRef.orderBy('createdAt', 'desc').limit(25)
   const [messages] = useCollectionData(query, { idField: 'messageId' })
 
   const handleSubmit = async event => {
@@ -113,6 +123,9 @@ const AIChatWindow = ({ isChatOpen, setIsChatOpen, chats, tripId }) => {
       text: messageToSend,
       createdAt: new timestampRef.fromDate(new Date()),
       userId: id,
+      notifications: currentTravelers
+        .filter(traveler => traveler.id !== id)
+        .map(traveler => ({ userId: traveler.id, hasSeen: false })),
     })
 
     setMessageToSend('')
@@ -187,7 +200,12 @@ const AIChatWindow = ({ isChatOpen, setIsChatOpen, chats, tripId }) => {
               display="flex"
               flexDirection="column"
               alignItems="center"
-              sx={{ height: '50px', paddingTop: '15px' }}
+              sx={{
+                height: '50px',
+                paddingTop: '15px',
+                borderBottom: '2px solid #F7F7F7',
+                width: '100%',
+              }}
             >
               <Box
                 display="flex"
@@ -195,20 +213,6 @@ const AIChatWindow = ({ isChatOpen, setIsChatOpen, chats, tripId }) => {
                 alignItems="center"
                 width="100%"
               >
-                <Box position="absolute" left="20px">
-                  <IconButton
-                    aria-label="back"
-                    edge="start"
-                    onClick={() => {
-                      setIsChatOpen(false)
-                    }}
-                  >
-                    <ArrowBackIosIcon
-                      sx={{ transform: 'translate(5px ,-5px)', color: theme.palette.grey['33'] }}
-                    />
-                  </IconButton>
-                </Box>
-
                 <Typography variant="h4" sx={{ fontSize: '25px !important', paddingLeft: '50px' }}>
                   L&apos;Assistant
                 </Typography>
@@ -267,7 +271,7 @@ const AIChatWindow = ({ isChatOpen, setIsChatOpen, chats, tripId }) => {
             currentMessages={currentMessages}
             setCurrentMessages={setCurrentMessages}
           />
-          <form onSubmit={event => handleSubmit(event)}>
+          <form onSubmit={event => handleSubmit(event)} className={classes.form}>
             <Box
               sx={{
                 [theme.breakpoints.down('sm')]: { position: 'fixed', bottom: '0', width: '100%' },
@@ -297,7 +301,7 @@ const AIChatWindow = ({ isChatOpen, setIsChatOpen, chats, tripId }) => {
                           type="submit"
                           disabled={
                             !messageToSend ||
-                            currentMessages[currentMessages.length - 1]?.userId !== user.id ||
+                            currentMessages[currentMessages.length - 1]?.userId === user.id ||
                             currentMessages[currentMessages.length - 1]?.questionType === 'temp'
                           }
                           color="primary"
@@ -353,10 +357,46 @@ const ChatBox = ({ messages, dummy, currentMessages, setCurrentMessages }) => (
   </Box>
 )
 
-const ChatMessage = ({ createdAt, userId, text = '', groupDate, questionType }) => {
+const ChatMessage = ({
+  createdAt,
+  userId,
+  text = '',
+  groupDate,
+  questionType,
+  eventDescription,
+  messageId,
+}) => {
   const classes = useStyles()
   const theme = useTheme()
+  const { tripId } = useParams
   const { user } = useContext(SessionContext)
+  const { firestore } = useContext(FirebaseContext)
+  const history = useHistory()
+  const { setCurrentPlaceId, setIsAssistantGuided, setCurrentView, setCurrentEventType } =
+    useContext(TripContext)
+
+  useEffect(() => {
+    if (text) {
+      const placeArray = document.getElementsByTagName('place')
+      const tempPlaceArray = Array.from(placeArray)
+      if (Array.isArray(tempPlaceArray) && tempPlaceArray.length > 0) {
+        tempPlaceArray?.forEach(singlePlace => {
+          // eslint-disable-next-line no-param-reassign
+          singlePlace.onclick = function placeClick() {
+            const tempPlaceId = singlePlace.getAttribute('place_id')
+            const testGeocode = geocodeByPlaceId(tempPlaceId).then(results =>
+              console.log('placeidresults', results)
+            )
+            history.push(`/tripPage/${tripId}/planning`)
+            setCurrentPlaceId(tempPlaceId)
+            setIsAssistantGuided(true)
+            setCurrentEventType(singlePlace.getAttribute('tag_type'))
+            setCurrentView('creator')
+          }
+        })
+      }
+    }
+  }, [])
 
   return (
     <>
@@ -400,9 +440,10 @@ const ChatMessage = ({ createdAt, userId, text = '', groupDate, questionType }) 
                   sx={{
                     wordWrap: 'break-word',
                     textOverflow: 'clip',
-                    maxWidth: 'calc(100% - 80px)',
+                    maxWidth: 'calc(100% - 60px)',
                     whiteSpace: 'pre-line',
                   }}
+                  className={classes.contentTypo}
                   dangerouslySetInnerHTML={{ __html: text }}
                 />
               </Box>

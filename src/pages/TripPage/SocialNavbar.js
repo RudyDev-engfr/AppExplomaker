@@ -6,15 +6,16 @@ import Drawer from '@mui/material/Drawer'
 import IconButton from '@mui/material/IconButton'
 import Toolbar from '@mui/material/Toolbar'
 import useMediaQuery from '@mui/material/useMediaQuery'
-
 import { Forum, ForumOutlined } from '@mui/icons-material'
 import ExploreIcon from '@mui/icons-material/Explore'
 import { makeStyles, useTheme } from '@mui/styles'
+import { useCollectionData } from 'react-firebase-hooks/firestore'
 
 import { useLocation, useParams } from 'react-router-dom'
 import { SessionContext } from '../../contexts/session'
 import { TripContext } from '../../contexts/trip'
 import NotificationArea from '../../components/molecules/NotificationArea'
+import { FirebaseContext } from '../../contexts/firebase'
 
 const useStyles = makeStyles(theme => ({
   AppBarRoot: {
@@ -47,8 +48,39 @@ const SocialNavbar = () => {
     currentNotifications,
     setRefreshNotif,
     setSelectedDateOnPlanning,
+    updateHasSeen,
   } = useContext(TripContext)
   const { user } = useContext(SessionContext)
+  const { firestore } = useContext(FirebaseContext)
+  const messagesRef = firestore.collection('trips').doc(tripId).collection('messages')
+  const assistantRef = firestore.collection('trips').doc(tripId).collection('Assistant')
+  const assistantQuery = assistantRef.orderBy('createdAt')
+  const query = messagesRef.orderBy('createdAt')
+  const [messages] = useCollectionData(query, { idField: 'messageId' })
+  const [assistantMessages] = useCollectionData(assistantQuery, { idField: 'messageId' })
+
+  useEffect(() => {
+    console.log('assistantMessages', assistantMessages)
+  }, [assistantMessages])
+
+  useEffect(() => {
+    console.log('messagesRef', messages)
+    console.log(
+      'le filtre',
+      messages?.filter(message => {
+        const hasUserSeen = message.notifications?.filter(notification => {
+          if (notification.userId === user.id && !notification.hasSeen) {
+            return true
+          }
+          return false
+        })
+        if (hasUserSeen?.length > 0) {
+          return true
+        }
+        return false
+      }).length
+    )
+  }, [messages])
 
   return (
     <AppBar
@@ -79,6 +111,7 @@ const SocialNavbar = () => {
                 setIsChatOpen('')
               } else {
                 setIsChatOpen('AIChat')
+                updateHasSeen('Assistant')
               }
             }}
             sx={{
@@ -88,20 +121,40 @@ const SocialNavbar = () => {
                 color: isChatOpen === 'AIChat' ? theme.palette.primary.main : 'white',
                 backgroundColor: isChatOpen === 'AIChat' ? 'white' : theme.palette.primary.main,
               },
-              width: '48px',
-              height: '48px',
+              width: '42px',
+              height: '42px',
             }}
           >
-            <Badge color="error">
+            <Badge
+              color="secondary"
+              badgeContent={
+                assistantMessages?.length > 0 &&
+                assistantMessages?.filter(message => {
+                  const hasUserSeen = message.notifications?.filter(notification => {
+                    if (notification.userId === user.id && !notification.hasSeen) {
+                      return true
+                    }
+                    return false
+                  })
+                  if (hasUserSeen?.length > 0) {
+                    return true
+                  }
+                  return false
+                }).length
+              }
+              invisible={assistantMessages?.length < 1}
+            >
               <ExploreIcon />
             </Badge>
           </IconButton>
+
           <IconButton
             onClick={() => {
               if (isChatOpen === 'userChat') {
                 setIsChatOpen('')
               } else {
                 setIsChatOpen('userChat')
+                updateHasSeen('messages')
               }
             }}
             color="inherit"
@@ -112,12 +165,33 @@ const SocialNavbar = () => {
                 color: isChatOpen === 'userChat' ? theme.palette.primary.main : 'white',
                 backgroundColor: isChatOpen === 'userChat' ? 'white' : theme.palette.primary.main,
               },
-              width: '48px',
-              height: '48px',
+              width: '42px',
+              height: '42px',
             }}
           >
-            <Forum />
+            <Badge
+              color="secondary"
+              badgeContent={
+                messages?.length > 0 &&
+                messages?.filter(message => {
+                  const hasUserSeen = message.notifications?.filter(notification => {
+                    if (notification.userId === user.id && !notification.hasSeen) {
+                      return true
+                    }
+                    return false
+                  })
+                  if (hasUserSeen?.length > 0) {
+                    return true
+                  }
+                  return false
+                }).length
+              }
+              invisible={messages?.length < 1}
+            >
+              <Forum />
+            </Badge>
           </IconButton>
+
           <NotificationArea
             tripData={tripData}
             currentNotifications={currentNotifications}

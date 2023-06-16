@@ -54,7 +54,7 @@ const useStyles = makeStyles(theme => ({
     placeItems: 'start',
     padding: `${theme.spacing(3)} ${theme.spacing(1)} ${theme.spacing(2)}`,
     [theme.breakpoints.down('sm')]: {
-      gridTemplate: '1fr 1fr / auto',
+      gridTemplate: '1fr / auto',
       placeItems: 'flex-start',
       paddingLeft: '20px',
     },

@@ -30,6 +30,8 @@ const PlanningContextProvider = ({ children }) => {
     setTypeCreator,
     currentEventId,
     setCurrentEventId,
+    getPlaceTown,
+    planningMapRef,
   } = useContext(TripContext)
   const [currentMarkers, setCurrentMarkers] = useState([])
   const [transportMarkers, setTransportMarkers] = useState({
@@ -57,8 +59,6 @@ const PlanningContextProvider = ({ children }) => {
   const [singleDayPlannedEvents, setSingleDayPlannedEvents] = useState()
 
   const [needMapRefresh, setNeedMapRefresh] = useState(true)
-
-  const planningMapRef = useRef(null)
 
   const planningBounds = new window.google.maps.LatLngBounds()
 
@@ -1033,7 +1033,11 @@ const PlanningContextProvider = ({ children }) => {
 
   const setEvent = event => {
     setCurrentEvent(event)
-    history.push(`/tripPage/${tripId}/planning?event=${event.id}`)
+    if (event.isSurvey) {
+      history.push(`/tripPage/${tripId}/planning?survey=${event.id}`)
+    } else {
+      history.push(`/tripPage/${tripId}/planning?event=${event.id}`)
+    }
     setCurrentView('preview')
   }
 
@@ -1094,6 +1098,7 @@ const PlanningContextProvider = ({ children }) => {
         eventType,
         setEventType,
         setTypeCreator,
+        getPlaceTown,
       }}
     >
       {children}
