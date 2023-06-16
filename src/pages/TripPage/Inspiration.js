@@ -1,6 +1,12 @@
 import React from 'react'
-import { Box, Button, Card, CardContent, Paper, Typography } from '@mui/material'
-import makeStyles from '@mui/styles/makeStyles'
+import Box from '@mui/material/Box'
+import Button from '@mui/material/Button'
+import Card from '@mui/material/Card'
+import CardContent from '@mui/material/CardContent'
+import Paper from '@mui/material/Paper'
+import Typography from '@mui/material/Typography'
+
+import { makeStyles, useTheme } from '@mui/styles'
 import { ChatBubble, Favorite } from '@mui/icons-material'
 
 import inspi1 from '../../images/inspiration/1.png'

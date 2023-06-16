@@ -1,16 +1,13 @@
 import React, { useContext, useEffect, useState } from 'react'
-import {
-  Autocomplete,
-  Box,
-  Button,
-  IconButton,
-  Paper,
-  TextField,
-  Typography,
-  useMediaQuery,
-  useTheme,
-} from '@mui/material'
-import makeStyles from '@mui/styles/makeStyles'
+import Autocomplete from '@mui/material/Autocomplete'
+import Box from '@mui/material/Box'
+import Button from '@mui/material/Button'
+import IconButton from '@mui/material/IconButton'
+import Paper from '@mui/material/Paper'
+import TextField from '@mui/material/TextField'
+import Typography from '@mui/material/Typography'
+import useMediaQuery from '@mui/material/useMediaQuery'
+import { makeStyles, useTheme } from '@mui/styles'
 import { PeopleAltRounded, StarRounded } from '@mui/icons-material'
 import { v4 as uuidv4 } from 'uuid'
 import { useHistory } from 'react-router-dom'
@@ -323,7 +320,7 @@ const Envies = ({ tripId, tripWishes, recommendedWishes, canEdit, tripTravelers 
           />
           {wishesOptions.filter(
             option =>
-              recommendedWishes.includes(parseInt(option.value, 10)) &&
+              recommendedWishes.filter(wish => wish.id === parseInt(option.value, 10)) &&
               !wishes.some(wish => wish.value === option.value)
           ).length > 0 && (
             <>
@@ -333,8 +330,12 @@ const Envies = ({ tripId, tripWishes, recommendedWishes, canEdit, tripTravelers 
               {wishesOptions
                 .filter(
                   option =>
-                    recommendedWishes.includes(parseInt(option.value, 10)) &&
-                    !wishes.some(wish => wish.value === option.value)
+                    recommendedWishes.some(wish => {
+                      if (wish.id === parseInt(option.value, 10)) {
+                        return true
+                      }
+                      return false
+                    }) && !wishes.some(wish => wish.value === option.value)
                 )
                 .map(option => (
                   <Button

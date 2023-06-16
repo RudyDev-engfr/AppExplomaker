@@ -1,6 +1,9 @@
 import React from 'react'
-import { Box, Button, Paper, Typography } from '@mui/material'
-import makeStyles from '@mui/styles/makeStyles'
+import Box from '@mui/material/Box'
+import Button from '@mui/material/Button'
+import Paper from '@mui/material/Paper'
+import Typography from '@mui/material/Typography'
+import { makeStyles, useTheme } from '@mui/styles'
 import { DateRange, Room } from '@mui/icons-material'
 
 import CustomAvatar from '../atoms/CustomAvatar'

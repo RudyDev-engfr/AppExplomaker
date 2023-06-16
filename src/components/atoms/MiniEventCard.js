@@ -1,6 +1,9 @@
 import React, { useContext, useEffect } from 'react'
-import { Box, Button, IconButton, Typography } from '@mui/material'
+import Box from '@mui/material/Box'
+import Button from '@mui/material/Button'
+import Typography from '@mui/material/Typography'
 import { makeStyles, useTheme } from '@mui/styles'
+
 import { format } from 'date-fns'
 import { useHistory, useParams } from 'react-router-dom'
 import { Add } from '@mui/icons-material'

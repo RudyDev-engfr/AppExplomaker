@@ -1,16 +1,15 @@
 import React, { useContext } from 'react'
-import {
-  Box,
-  Breadcrumbs,
-  Button,
-  IconButton,
-  Paper,
-  Typography,
-  useMediaQuery,
-} from '@mui/material'
-import makeStyles from '@mui/styles/makeStyles'
+import Box from '@mui/material/Box'
+import Breadcrumbs from '@mui/material/Breadcrumbs'
+import Button from '@mui/material/Button'
+import IconButton from '@mui/material/IconButton'
+import Paper from '@mui/material/Paper'
+import Typography from '@mui/material/Typography'
+import useMediaQuery from '@mui/material/useMediaQuery'
+
+import { makeStyles, useTheme } from '@mui/styles'
 import { useHistory } from 'react-router-dom'
-import { useTheme } from '@emotion/react'
+
 import NavigateNextRoundedIcon from '@mui/icons-material/NavigateNextRounded'
 import CloseRoundedIcon from '@mui/icons-material/CloseRounded'
 

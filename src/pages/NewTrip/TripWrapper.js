@@ -1,6 +1,10 @@
 import React, { useContext, useEffect, useState } from 'react'
-import { Box, Button, Typography, useMediaQuery, useTheme } from '@mui/material'
-import makeStyles from '@mui/styles/makeStyles'
+import Box from '@mui/material/Box'
+import Button from '@mui/material/Button'
+import Typography from '@mui/material/Typography'
+import useMediaQuery from '@mui/material/useMediaQuery'
+
+import { makeStyles, useTheme } from '@mui/styles'
 import { useHistory } from 'react-router-dom'
 import { ArrowBackIos } from '@mui/icons-material'
 import Carousel from 'react-material-ui-carousel'

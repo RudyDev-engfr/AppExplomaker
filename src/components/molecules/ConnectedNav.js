@@ -1,31 +1,27 @@
-import {
-  Button,
-  Menu,
-  MenuItem,
-  Box,
-  Badge,
-  Avatar,
-  Divider,
-  useTheme,
-  Paper,
-  Tabs,
-  Tab,
-  useMediaQuery,
-  ButtonBase,
-  IconButton,
-  ListItemIcon,
-  Typography,
-} from '@mui/material'
+import Button from '@mui/material/Button'
+import Menu from '@mui/material/Menu'
+import MenuItem from '@mui/material/MenuItem'
+import Box from '@mui/material/Box'
+import Badge from '@mui/material/Badge'
+import Avatar from '@mui/material/Avatar'
+import Divider from '@mui/material/Divider'
+import { useTheme } from '@mui/material/styles'
+import Paper from '@mui/material/Paper'
+import Tabs from '@mui/material/Tabs'
+import Tab from '@mui/material/Tab'
+import { useMediaQuery } from '@mui/material'
+import ButtonBase from '@mui/material/ButtonBase'
+import IconButton from '@mui/material/IconButton'
+import ListItemIcon from '@mui/material/ListItemIcon'
+import Typography from '@mui/material/Typography'
 import { makeStyles } from '@mui/styles'
-import {
-  AccountCircleOutlined,
-  ContactSupportOutlined,
-  FavoriteBorderOutlined,
-  LogoutOutlined,
-  Menu as MenuIcon,
-  Notifications,
-  Search,
-} from '@mui/icons-material'
+import AccountCircleOutlined from '@mui/icons-material/AccountCircleOutlined'
+import ContactSupportOutlined from '@mui/icons-material/ContactSupportOutlined'
+import FavoriteBorderOutlined from '@mui/icons-material/FavoriteBorderOutlined'
+import LogoutOutlined from '@mui/icons-material/LogoutOutlined'
+import MenuIcon from '@mui/icons-material/Menu'
+import Notifications from '@mui/icons-material/Notifications'
+import Search from '@mui/icons-material/Search'
 import clsx from 'clsx'
 import React, { useContext, useEffect, useState } from 'react'
 import { useHistory, useLocation } from 'react-router-dom'

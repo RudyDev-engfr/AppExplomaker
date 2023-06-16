@@ -2,7 +2,7 @@ import React from 'react'
 import ArrowRightAlt from '@mui/icons-material/ArrowRightAlt'
 import Button from '@mui/material/Button'
 import Box from '@mui/material/Box'
-import makeStyles from '@mui/styles/makeStyles'
+import { makeStyles, useTheme } from '@mui/styles'
 
 const useStyles = makeStyles(theme => ({
   buttonsCountryTiles: {

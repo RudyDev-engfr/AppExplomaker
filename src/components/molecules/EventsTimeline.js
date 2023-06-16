@@ -1,13 +1,12 @@
 /* eslint-disable no-else-return */
 import React, { useContext } from 'react'
-import { Box, Typography } from '@mui/material'
-import {
-  Timeline,
-  TimelineConnector,
-  TimelineContent,
-  TimelineItem,
-  TimelineSeparator,
-} from '@mui/lab'
+import Box from '@mui/material/Box'
+import Typography from '@mui/material/Typography'
+import Timeline from '@mui/lab/Timeline'
+import TimelineConnector from '@mui/lab/TimelineConnector'
+import TimelineContent from '@mui/lab/TimelineContent'
+import TimelineItem from '@mui/lab/TimelineItem'
+import TimelineSeparator from '@mui/lab/TimelineSeparator'
 import { makeStyles } from '@mui/styles'
 import { isSameDay } from 'date-fns'
 

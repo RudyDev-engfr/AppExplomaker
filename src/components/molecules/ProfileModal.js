@@ -1,7 +1,12 @@
 import React, { useEffect, useState } from 'react'
-import makeStyles from '@mui/styles/makeStyles'
+import { makeStyles, useTheme } from '@mui/styles'
 import Modal from '@mui/material/Modal'
-import { Box, Divider, IconButton, Paper, Typography, useMediaQuery, useTheme } from '@mui/material'
+import Box from '@mui/material/Box'
+import Divider from '@mui/material/Divider'
+import IconButton from '@mui/material/IconButton'
+import Paper from '@mui/material/Paper'
+import Typography from '@mui/material/Typography'
+import useMediaQuery from '@mui/material/useMediaQuery'
 
 import cross from '../../images/icons/cross.svg'
 

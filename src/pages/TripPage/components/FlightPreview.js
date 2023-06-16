@@ -1,14 +1,13 @@
 import React, { useEffect } from 'react'
-import makeStyles from '@mui/styles/makeStyles'
+import { makeStyles, useTheme } from '@mui/styles'
 import Box from '@mui/material/Box'
 import Typography from '@mui/material/Typography'
 import Link from '@mui/material/Link'
-import { Checkbox, useTheme } from '@mui/material'
+import { Checkbox } from '@mui/material'
 import FlightTakeoffIcon from '@mui/icons-material/FlightTakeoff'
 import FlightLandIcon from '@mui/icons-material/FlightLand'
 import { format, formatDuration, intervalToDuration } from 'date-fns'
 import frLocale from 'date-fns/locale/fr'
-
 import {
   addOrSubTravelTime,
   applyTimezoneOffsetFromAmadeus,

@@ -1,6 +1,11 @@
 import React, { useContext } from 'react'
 import { useParams } from 'react-router-dom'
-import { Box, Button, Icon, IconButton, Typography } from '@mui/material'
+import Box from '@mui/material/Box'
+import Button from '@mui/material/Button'
+import Icon from '@mui/material/Icon'
+import IconButton from '@mui/material/IconButton'
+import Typography from '@mui/material/Typography'
+
 import { makeStyles, useTheme } from '@mui/styles'
 import ShareIcon from '@mui/icons-material/Share'
 import { toast } from 'react-toastify'
@@ -81,7 +86,7 @@ const DesktopPreview = ({ tripData, generatedAvatars }) => {
         </IconButton> */}
       </Box>
       <Box display="flex" alignItems="center" justifyContent="space-between" flexWrap="wrap">
-        <Box display="flex" alignItems="center" mb="10px">
+        <Box display="flex" alignItems="center">
           <img src={calendar} alt="" className={classes.mobileIcon} />
           {currentDateRange[0] !== '' ? (
             <Button
@@ -109,7 +114,7 @@ const DesktopPreview = ({ tripData, generatedAvatars }) => {
             </Button>
           )}
         </Box>
-        <Box display="flex" alignItems="center" mb="10px">
+        <Box display="flex" alignItems="center">
           <img src={location} alt="" className={classes.mobileIcon} />
           {!tripData.noDestination ? (
             <Button

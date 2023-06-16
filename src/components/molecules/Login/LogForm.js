@@ -1,15 +1,14 @@
 import React from 'react'
-import {
-  Button,
-  IconButton,
-  InputAdornment,
-  Box,
-  TextField,
-  useMediaQuery,
-  useTheme,
-} from '@mui/material'
-import { Visibility, VisibilityOff } from '@mui/icons-material'
-import { makeStyles } from '@mui/styles'
+import Button from '@mui/material/Button'
+import IconButton from '@mui/material/IconButton'
+import InputAdornment from '@mui/material/InputAdornment'
+import Box from '@mui/material/Box'
+import TextField from '@mui/material/TextField'
+import useMediaQuery from '@mui/material/useMediaQuery'
+
+import Visibility from '@mui/icons-material/Visibility'
+import VisibilityOff from '@mui/icons-material/VisibilityOff'
+import { makeStyles, useTheme } from '@mui/styles'
 
 const useStyles = makeStyles(theme => ({
   modalLogInButton: {

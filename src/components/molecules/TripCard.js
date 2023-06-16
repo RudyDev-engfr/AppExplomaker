@@ -1,16 +1,14 @@
 import React, { useContext, useEffect } from 'react'
-import {
-  Badge,
-  Box,
-  Card,
-  CardActionArea,
-  CardContent,
-  CardMedia,
-  IconButton,
-  Typography,
-  useTheme,
-} from '@mui/material'
-import makeStyles from '@mui/styles/makeStyles'
+import Badge from '@mui/material/Badge'
+import Box from '@mui/material/Box'
+import Card from '@mui/material/Card'
+import CardActionArea from '@mui/material/CardActionArea'
+import CardContent from '@mui/material/CardContent'
+import CardMedia from '@mui/material/CardMedia'
+import IconButton from '@mui/material/IconButton'
+import Typography from '@mui/material/Typography'
+
+import { makeStyles, useTheme } from '@mui/styles'
 import { Event, LocationOn, Notifications } from '@mui/icons-material'
 import { useHistory } from 'react-router-dom'
 import { isWithinInterval } from 'date-fns'

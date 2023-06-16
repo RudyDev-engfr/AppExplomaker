@@ -1,6 +1,11 @@
 import React from 'react'
-import { Box, Divider, IconButton, Paper, Typography } from '@mui/material'
-import makeStyles from '@mui/styles/makeStyles'
+import Box from '@mui/material/Box'
+import Divider from '@mui/material/Divider'
+import IconButton from '@mui/material/IconButton'
+import Paper from '@mui/material/Paper'
+import Typography from '@mui/material/Typography'
+
+import { makeStyles, useTheme } from '@mui/styles'
 import CloseRoundedIcon from '@mui/icons-material/CloseRounded'
 
 import EventCircleSelect from './EventCircleSelect'

@@ -1,24 +1,21 @@
 import React, { useState } from 'react'
-import {
-  Assignment,
-  ConfirmationNumber,
-  Hotel,
-  LocalAirport,
-  Lock,
-  MoreHoriz,
-  SupervisorAccount,
-} from '@mui/icons-material'
-import {
-  Box,
-  Card,
-  CardActions,
-  CardContent,
-  IconButton,
-  Modal,
-  Paper,
-  Typography,
-} from '@mui/material'
-import makeStyles from '@mui/styles/makeStyles'
+import Assignment from '@mui/icons-material/Assignment'
+import ConfirmationNumber from '@mui/icons-material/ConfirmationNumber'
+import Hotel from '@mui/icons-material/Hotel'
+import LocalAirport from '@mui/icons-material/LocalAirport'
+import Lock from '@mui/icons-material/Lock'
+import MoreHoriz from '@mui/icons-material/MoreHoriz'
+import SupervisorAccount from '@mui/icons-material/SupervisorAccount'
+import Box from '@mui/material/Box'
+import Card from '@mui/material/Card'
+import CardActions from '@mui/material/CardActions'
+import CardContent from '@mui/material/CardContent'
+import IconButton from '@mui/material/IconButton'
+import Modal from '@mui/material/Modal'
+import Paper from '@mui/material/Paper'
+import Typography from '@mui/material/Typography'
+
+import { makeStyles, useTheme } from '@mui/styles'
 
 import CustomAvatar from '../../components/atoms/CustomAvatar'
 import CardMenu from '../../components/atoms/CardMenu'

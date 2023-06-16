@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
-import { useTheme } from '@mui/material'
-import GooglePlacesAutocomplete, { geocodeByAddress } from 'react-google-places-autocomplete'
 
+import GooglePlacesAutocomplete, { geocodeByAddress } from 'react-google-places-autocomplete'
+import { makeStyles, useTheme } from '@mui/styles'
 import search from '../../images/icons/search.svg'
 import loc2 from '../../images/icons/location2.svg'
 import loc3 from '../../images/icons/location3.svg'

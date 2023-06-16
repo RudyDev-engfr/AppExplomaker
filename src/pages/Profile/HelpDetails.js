@@ -1,23 +1,22 @@
 import React, { useContext, useEffect, useState } from 'react'
-import {
-  IconButton,
-  Typography,
-  useMediaQuery,
-  Box,
-  Breadcrumbs,
-  Button,
-  Accordion,
-  AccordionSummary,
-  AccordionDetails,
-} from '@mui/material'
-import makeStyles from '@mui/styles/makeStyles'
-import { useTheme } from '@emotion/react'
+import IconButton from '@mui/material/IconButton'
+import Typography from '@mui/material/Typography'
+import useMediaQuery from '@mui/material/useMediaQuery'
+import Box from '@mui/material/Box'
+import Breadcrumbs from '@mui/material/Breadcrumbs'
+import Button from '@mui/material/Button'
+import Accordion from '@mui/material/Accordion'
+import AccordionSummary from '@mui/material/AccordionSummary'
+import AccordionDetails from '@mui/material/AccordionDetails'
+
+import he from 'he'
+import { makeStyles, useTheme } from '@mui/styles'
+
 import CloseRoundedIcon from '@mui/icons-material/CloseRounded'
 import NavigateNextRoundedIcon from '@mui/icons-material/NavigateNextRounded'
 import ArrowBackIosNewRoundedIcon from '@mui/icons-material/ArrowBackIosNewRounded'
 import ExpandMoreIcon from '@mui/icons-material/ExpandMoreRounded'
 import { useParams, useHistory } from 'react-router-dom'
-
 import { FirebaseContext } from '../../contexts/firebase'
 import Loader from '../../components/Loader'
 // import Footer from '../../components/molecules/Footer'
@@ -102,6 +101,7 @@ const useStyles = makeStyles(theme => ({
 }))
 
 const HelpDetails = () => {
+  const [decodedContent, setDecodedContent] = useState('')
   const history = useHistory()
   const classes = useStyles()
   const theme = useTheme()
@@ -119,6 +119,18 @@ const HelpDetails = () => {
       setIsLoading(false)
     }
   }, [faq])
+
+  useEffect(() => {
+    if (currentFaq?.items) {
+      const parser = new DOMParser()
+      const decodedItems = currentFaq.items.map(item => ({
+        ...item,
+        title: he.decode(item.title),
+        content: he.decode(item.content),
+      }))
+      setCurrentFaq({ ...currentFaq, items: decodedItems })
+    }
+  }, [currentFaq])
 
   const handleChange = panel => (event, isExpanded) => {
     setExpanded(isExpanded ? panel : '')

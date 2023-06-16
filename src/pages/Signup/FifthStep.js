@@ -1,7 +1,9 @@
 import React, { useContext, useEffect, useState } from 'react'
 import { useHistory } from 'react-router-dom'
-import { Avatar, Box } from '@mui/material'
-import makeStyles from '@mui/styles/makeStyles'
+import Avatar from '@mui/material/Avatar'
+import Box from '@mui/material/Box'
+
+import { makeStyles, useTheme } from '@mui/styles'
 
 import { SessionContext } from '../../contexts/session'
 import { SignupContext } from '../../contexts/signup'

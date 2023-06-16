@@ -1,6 +1,10 @@
 import React, { useContext } from 'react'
-import { Typography, Box, Paper, Button } from '@mui/material'
-import makeStyles from '@mui/styles/makeStyles'
+import Typography from '@mui/material/Typography'
+import Box from '@mui/material/Box'
+import Paper from '@mui/material/Paper'
+import Button from '@mui/material/Button'
+
+import { makeStyles, useTheme } from '@mui/styles'
 import { useHistory } from 'react-router-dom'
 import clsx from 'clsx'
 

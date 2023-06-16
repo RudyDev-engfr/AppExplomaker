@@ -1,6 +1,6 @@
 import React, { useContext } from 'react'
-import { Switch as MuiSwitch, useTheme } from '@mui/material'
-
+import MuiSwitch from '@mui/material/Switch'
+import useTheme from '@mui/styles/useTheme'
 import { SessionContext } from '../../contexts/session'
 import { FirebaseContext } from '../../contexts/firebase'
 

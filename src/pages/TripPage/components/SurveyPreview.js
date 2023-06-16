@@ -1,30 +1,26 @@
 import React, { useContext, useEffect, useState } from 'react'
-import {
-  Box,
-  Button,
-  ButtonBase,
-  Dialog,
-  DialogActions,
-  DialogContent,
-  DialogContentText,
-  DialogTitle,
-  Divider,
-  IconButton,
-  Paper,
-  Typography,
-  useMediaQuery,
-  useTheme,
-} from '@mui/material'
-import makeStyles from '@mui/styles/makeStyles'
-import {
-  ArrowBackIos,
-  Check,
-  Close,
-  Favorite,
-  FavoriteBorder,
-  Room,
-  WatchLaterRounded,
-} from '@mui/icons-material'
+import Box from '@mui/material/Box'
+import Button from '@mui/material/Button'
+import ButtonBase from '@mui/material/ButtonBase'
+import Dialog from '@mui/material/Dialog'
+import DialogActions from '@mui/material/DialogActions'
+import DialogContent from '@mui/material/DialogContent'
+import DialogContentText from '@mui/material/DialogContentText'
+import DialogTitle from '@mui/material/DialogTitle'
+import Divider from '@mui/material/Divider'
+import IconButton from '@mui/material/IconButton'
+import Paper from '@mui/material/Paper'
+import Typography from '@mui/material/Typography'
+import useMediaQuery from '@mui/material/useMediaQuery'
+import { makeStyles, useTheme } from '@mui/styles'
+import ArrowBackIos from '@mui/icons-material/ArrowBackIos'
+import Check from '@mui/icons-material/Check'
+import Close from '@mui/icons-material/Close'
+import Favorite from '@mui/icons-material/Favorite'
+import FavoriteBorder from '@mui/icons-material/FavoriteBorder'
+import Room from '@mui/icons-material/Room'
+import WatchLaterRounded from '@mui/icons-material/WatchLaterRounded'
+
 import { alpha } from '@mui/material/styles'
 import Add from '@mui/icons-material/Add'
 import clsx from 'clsx'

@@ -1,21 +1,20 @@
 /* eslint-disable no-unused-vars */
 import React, { useContext, useEffect, useState } from 'react'
-import {
-  Box,
-  Divider,
-  IconButton,
-  Paper,
-  Typography,
-  ImageList,
-  ImageListItem,
-  ImageListItemBar,
-  useTheme,
-  useMediaQuery,
-  Avatar,
-  Button,
-  ButtonBase,
-} from '@mui/material'
-import makeStyles from '@mui/styles/makeStyles'
+import Box from '@mui/material/Box'
+import Divider from '@mui/material/Divider'
+import IconButton from '@mui/material/IconButton'
+import Paper from '@mui/material/Paper'
+import Typography from '@mui/material/Typography'
+import ImageList from '@mui/material/ImageList'
+import ImageListItem from '@mui/material/ImageListItem'
+import ImageListItemBar from '@mui/material/ImageListItemBar'
+import useTheme from '@mui/material/'
+import useMediaQuery from '@mui/material/useMediaQuery'
+import Avatar from '@mui/material/Avatar'
+import Button from '@mui/material/Button'
+import ButtonBase from '@mui/material/ButtonBase'
+
+import { makeStyles, useTheme } from '@mui/styles'
 import { ArrowBackIos, Favorite, FavoriteBorder } from '@mui/icons-material'
 import StarBorderIcon from '@mui/icons-material/StarBorder'
 import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder'

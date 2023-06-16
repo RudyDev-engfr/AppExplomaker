@@ -3,35 +3,30 @@
 import React, { Fragment, useContext, useEffect, useState } from 'react'
 import Paper from '@mui/material/Paper'
 import Box from '@mui/material/Box'
-import {
-  alpha,
-  Button,
-  ButtonBase,
-  Container,
-  Dialog,
-  DialogActions,
-  DialogContent,
-  DialogContentText,
-  DialogTitle,
-  Divider,
-  Fab,
-  IconButton,
-  Typography,
-  useMediaQuery,
-  useTheme,
-} from '@mui/material'
-import makeStyles from '@mui/styles/makeStyles'
+import Button from '@mui/material/Button'
+import ButtonBase from '@mui/material/ButtonBase'
+import Container from '@mui/material/Container'
+import Dialog from '@mui/material/Dialog'
+import DialogActions from '@mui/material/DialogActions'
+import DialogContent from '@mui/material/DialogContent'
+import DialogContentText from '@mui/material/DialogContentText'
+import DialogTitle from '@mui/material/DialogTitle'
+import Divider from '@mui/material/Divider'
+import Fab from '@mui/material/Fab'
+import IconButton from '@mui/material/IconButton'
+import Typography from '@mui/material/Typography'
+import useMediaQuery from '@mui/material/useMediaQuery'
+import { makeStyles, useTheme } from '@mui/styles'
+import { alpha } from '@mui/material'
 import AddIcon from '@mui/icons-material/Add'
-import {
-  AirplanemodeActiveRounded,
-  ArrowBackIos,
-  Close,
-  DirectionsBusFilled,
-  ExploreRounded,
-  HomeRounded,
-  RestaurantMenuRounded,
-  UpdateRounded,
-} from '@mui/icons-material'
+import AirplanemodeActiveRounded from '@mui/icons-material/AirplanemodeActiveRounded'
+import ArrowBackIos from '@mui/icons-material/ArrowBackIos'
+import Close from '@mui/icons-material/Close'
+import DirectionsBusFilled from '@mui/icons-material/DirectionsBusFilled'
+import ExploreRounded from '@mui/icons-material/ExploreRounded'
+import HomeRounded from '@mui/icons-material/HomeRounded'
+import RestaurantMenuRounded from '@mui/icons-material/RestaurantMenuRounded'
+import UpdateRounded from '@mui/icons-material/UpdateRounded'
 import {
   eachDayOfInterval,
   format,
@@ -43,6 +38,7 @@ import {
   isWithinInterval,
   startOfDay,
 } from 'date-fns'
+
 import frLocale from 'date-fns/locale/fr'
 import TimeLineIcon from '@mui/icons-material/Timeline'
 import { v4 as uuidv4 } from 'uuid'
@@ -897,6 +893,7 @@ const Planning = ({ tripData, tripId, canEdit }) => {
               display: 'grid',
               gridTemplate: '1fr / min-content 1fr',
             }}
+            p
           >
             <Box display="flex" justifyContent="space-between" alignItems="center">
               <Paper

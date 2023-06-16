@@ -7,9 +7,14 @@ import ChatBubbleRoundedIcon from '@mui/icons-material/ChatBubbleRounded'
 import ArrowBackRoundedIcon from '@mui/icons-material/ArrowBackRounded'
 import ArrowForwardRoundedIcon from '@mui/icons-material/ArrowForwardRounded'
 import Paper from '@mui/material/Paper'
-import { Box, IconButton, Typography, useMediaQuery, useTheme, Button } from '@mui/material'
+import Box from '@mui/material/Box'
+import IconButton from '@mui/material/IconButton'
+import Typography from '@mui/material/Typography'
+import useMediaQuery from '@mui/material/useMediaQuery'
+import { makeStyles, useTheme } from '@mui/styles'
+import Button from '@mui/material/Button'
+
 import Carousel from 'react-material-ui-carousel'
-import makeStyles from '@mui/styles/makeStyles'
 import clsx from 'clsx'
 
 import { buildNotificationsOnTripForUser, rCTFF } from '../../helper/functions'
@@ -343,22 +348,33 @@ const Preview = ({
               {canEdit && <EditBtn type="button" onClick={() => setOpenModal('general')} />}
             </Box>
             <div>
-              <Box className={classes.mobileHeaderRow}>
+              <Box display="flex" alignItems="center">
                 <img src={calendar} alt="" className={classes.mobileIcon} />
-                <Button
-                  onClick={() => setOpenModal('editDate')}
-                  sx={{
-                    textDecoration: 'none',
-                    textTransform: 'none',
-                    color: theme.palette.grey['33'],
-                  }}
-                >
-                  <Typography component="h4" className={classes.subtitle}>
-                    {currentDateRange[0]}
-                    {' - '}
-                    {currentDateRange[1]}
-                  </Typography>
-                </Button>
+                {currentDateRange[0] !== '' ? (
+                  <Button
+                    onClick={() => setOpenModal('editDate')}
+                    sx={{
+                      textDecoration: 'none',
+                      textTransform: 'none',
+                      color: theme.palette.grey['33'],
+                    }}
+                  >
+                    <Typography component="h4" className={classes.subtitle}>
+                      {currentDateRange[0]} - {currentDateRange[1]}
+                    </Typography>
+                  </Button>
+                ) : (
+                  <Button
+                    onClick={() => setOpenModal('editDate')}
+                    sx={{
+                      textDecoration: 'none',
+                      textTransform: 'none',
+                      color: theme.palette.grey['33'],
+                    }}
+                  >
+                    A définir
+                  </Button>
+                )}
               </Box>
               <Box className={classes.mobileHeaderRow}>
                 <img src={location} alt="" className={classes.mobileIcon} />

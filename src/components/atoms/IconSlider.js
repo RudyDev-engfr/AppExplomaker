@@ -1,6 +1,9 @@
 import React from 'react'
-import { IconButton, useTheme, Box, useMediaQuery } from '@mui/material'
+import IconButton from '@mui/material/IconButton'
 
+import Box from '@mui/material/Box'
+import useMediaQuery from '@mui/material/useMediaQuery'
+import useTheme from '@mui/styles/useTheme'
 import { EVENT_TYPES } from '../../helper/constants'
 import { accomodation, explore, restaurant, transport } from '../../helper/icons'
 

@@ -1,9 +1,13 @@
 import React, { useContext, useEffect, useState } from 'react'
 import { v4 as uuidv4 } from 'uuid'
-import { Avatar, AvatarGroup, Badge, Box, Fade, Tooltip } from '@mui/material'
-import makeStyles from '@mui/styles/makeStyles'
-import { FavoriteRounded } from '@mui/icons-material'
-
+import Avatar from '@mui/material/Avatar'
+import AvatarGroup from '@mui/material/AvatarGroup'
+import Badge from '@mui/material/Badge'
+import Box from '@mui/material/Box'
+import Fade from '@mui/material/Fade'
+import Tooltip from '@mui/material/Tooltip'
+import { makeStyles, useTheme } from '@mui/styles'
+import FavoriteRounded from '@mui/icons-material/FavoriteRounded'
 import { FirebaseContext } from '../../contexts/firebase'
 
 const useStyles = makeStyles(theme => ({

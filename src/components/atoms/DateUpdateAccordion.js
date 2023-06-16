@@ -1,8 +1,10 @@
 import React from 'react'
-import { Box, IconButton, Typography } from '@mui/material'
-import { useTheme } from '@mui/styles'
+import Box from '@mui/material/Box'
+import IconButton from '@mui/material/IconButton'
+import Typography from '@mui/material/Typography'
+import { makeStyles, useTheme } from '@mui/styles'
 import { useHistory } from 'react-router-dom'
-import { Launch } from '@mui/icons-material'
+import Launch from '@mui/icons-material/Launch'
 
 const DateUpdateAccordion = ({ notification }) => {
   const theme = useTheme()

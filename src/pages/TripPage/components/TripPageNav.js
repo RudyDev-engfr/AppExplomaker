@@ -1,35 +1,31 @@
 import React, { useContext, useEffect, useState } from 'react'
+import { makeStyles, useTheme } from '@mui/styles'
 import { useHistory } from 'react-router-dom'
 import DashboardOutlinedIcon from '@mui/icons-material/DashboardOutlined'
 import StarBorderIcon from '@mui/icons-material/StarBorder'
 import EventNoteIcon from '@mui/icons-material/EventNote'
 /* import PhotoCameraOutlinedIcon from '@mui/icons-material/PhotoCameraOutlined' */
-import {
-  Badge,
-  Box,
-  Button,
-  Dialog,
-  Paper,
-  Slide,
-  Tab,
-  Tabs,
-  useMediaQuery,
-  useTheme,
-} from '@mui/material'
-import makeStyles from '@mui/styles/makeStyles'
+import ArrowBackRoundedIcon from '@mui/icons-material/ArrowBackRounded'
+import Box from '@mui/material/Box'
+import Button from '@mui/material/Button'
+import Dialog from '@mui/material/Dialog'
+import Paper from '@mui/material/Paper'
+import Slide from '@mui/material/Slide'
+import Tab from '@mui/material/Tab'
+import Tabs from '@mui/material/Tabs'
+import useMediaQuery from '@mui/material/useMediaQuery'
 import clsx from 'clsx'
 import FeedIcon from '@mui/icons-material/Feed'
-import {
-  AirplanemodeActiveRounded,
-  Chat,
-  DirectionsBusFilled,
-  ExploreRounded,
-  Forum,
-  Help,
-  HomeRounded,
-  Logout,
-  RestaurantMenuRounded,
-} from '@mui/icons-material'
+import AirplanemodeActiveRounded from '@mui/icons-material/AirplanemodeActiveRounded'
+import Chat from '@mui/icons-material/Chat'
+import DirectionsBusFilled from '@mui/icons-material/DirectionsBusFilled'
+import ExploreRounded from '@mui/icons-material/ExploreRounded'
+import Help from '@mui/icons-material/Help'
+import HomeRounded from '@mui/icons-material/HomeRounded'
+import Logout from '@mui/icons-material/Logout'
+import Notifications from '@mui/icons-material/Notifications'
+import RestaurantMenuRounded from '@mui/icons-material/RestaurantMenuRounded'
+import Tune from '@mui/icons-material/Tune'
 import { useCollectionData } from 'react-firebase-hooks/firestore'
 
 import logoFull from '../../../images/icons/logoFull.svg'

@@ -1,7 +1,10 @@
 import React from 'react'
 import { useHistory } from 'react-router-dom'
-import { Box, Button, Typography } from '@mui/material'
-import makeStyles from '@mui/styles/makeStyles'
+import Box from '@mui/material/Box'
+import Button from '@mui/material/Button'
+import Typography from '@mui/material/Typography'
+
+import { makeStyles, useTheme } from '@mui/styles'
 import { ArrowBackIos } from '@mui/icons-material'
 
 import Head from '../../components/molecules/Head'

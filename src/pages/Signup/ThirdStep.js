@@ -1,8 +1,13 @@
 import React, { useContext, useEffect, useRef, useState } from 'react'
 import { useHistory } from 'react-router-dom'
-import { Box, Button, Typography, useMediaQuery, useTheme } from '@mui/material'
-import makeStyles from '@mui/styles/makeStyles'
-import { Delete, PhotoCamera } from '@mui/icons-material'
+import Box from '@mui/material/Box'
+import Button from '@mui/material/Button'
+import Typography from '@mui/material/Typography'
+import useMediaQuery from '@mui/material/useMediaQuery'
+
+import { makeStyles, useTheme } from '@mui/styles'
+import Delete from '@mui/icons-material/Delete'
+import PhotoCamera from '@mui/icons-material/PhotoCamera'
 
 import { SessionContext } from '../../contexts/session'
 import { SignupContext } from '../../contexts/signup'
