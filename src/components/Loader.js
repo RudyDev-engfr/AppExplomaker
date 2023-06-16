@@ -1,5 +1,7 @@
 import React, { useContext, useEffect } from 'react'
-import { Box, Typography } from '@mui/material'
+import Box from '@mui/material/Box'
+import Typography from '@mui/material/Typography'
+
 import { makeStyles } from '@mui/styles'
 import { SessionContext } from '../contexts/session'
 

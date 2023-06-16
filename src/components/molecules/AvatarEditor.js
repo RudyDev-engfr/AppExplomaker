@@ -1,6 +1,8 @@
 import React, { useContext, useEffect, useRef, useState } from 'react'
 import ReactAvatarEditor from 'react-avatar-editor'
-import { IconButton, Box, useTheme } from '@mui/material'
+import IconButton from '@mui/material/IconButton'
+import Box from '@mui/material/Box'
+import useTheme from '@mui/material/'
 import makeStyles from '@mui/styles/makeStyles'
 
 import { FirebaseContext } from '../../contexts/firebase'

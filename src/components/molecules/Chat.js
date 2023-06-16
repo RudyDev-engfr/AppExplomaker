@@ -1,20 +1,19 @@
 import React, { useContext, useEffect, useRef, useState } from 'react'
-import {
-  Box,
-  Drawer,
-  FormControl,
-  IconButton,
-  Paper,
-  Typography,
-  Grid,
-  useTheme,
-  useMediaQuery,
-  TextField,
-  InputAdornment,
-} from '@mui/material'
+import Box from '@mui/material/Box'
+import Drawer from '@mui/material/Drawer'
+import FormControl from '@mui/material/FormControl'
+import IconButton from '@mui/material/IconButton'
+import Paper from '@mui/material/Paper'
+import Typography from '@mui/material/Typography'
+import Grid from '@mui/material/Grid'
+import useTheme from '@mui/material/'
+import useMediaQuery from '@mui/material/useMediaQuery'
+import TextField from '@mui/material/TextField'
+import InputAdornment from '@mui/material/InputAdornment'
 import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos'
 import makeStyles from '@mui/styles/makeStyles'
-import { EmojiEmotionsOutlined, Send } from '@mui/icons-material'
+import EmojiEmotionsOutlined from '@mui/icons-material/EmojiEmotionsOutlined'
+import Send from '@mui/icons-material/Send'
 import { useCollectionData } from 'react-firebase-hooks/firestore'
 import { differenceInMinutes } from 'date-fns'
 
@@ -137,6 +136,7 @@ const Chat = ({ isChatOpen, setIsChatOpen, chats, tripId }) => {
   const query = messagesRef.orderBy('createdAt').limit(25)
   const [messages] = useCollectionData(query, { idField: 'messageId' })
   const [showEmojiPicker, setShowEmojiPicker] = useState(false)
+  const [unreadMessages, setUnreadMessages] = useState(0)
 
   const addEmoji = e => {
     const emoji = e.native
@@ -167,6 +167,15 @@ const Chat = ({ isChatOpen, setIsChatOpen, chats, tripId }) => {
       }, 500)
     }
   }, [dummy, messages])
+  useEffect(() => {
+    if (messages) {
+      const tempMessages = [...messages]
+      const newUnreadMessages = tempMessages.filter(
+        message => !message.isRead && message.userId !== user.id
+      ).length
+      setUnreadMessages(newUnreadMessages)
+    }
+  }, [messages, user.id])
 
   return (
     <Drawer

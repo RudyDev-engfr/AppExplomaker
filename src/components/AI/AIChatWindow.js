@@ -1,21 +1,20 @@
 import React, { useContext, useEffect, useRef, useState } from 'react'
 import { useCollectionData } from 'react-firebase-hooks/firestore'
-import {
-  Box,
-  Divider,
-  Drawer,
-  FormControl,
-  Grid,
-  IconButton,
-  Input,
-  InputAdornment,
-  Paper,
-  TextField,
-  Typography,
-  useMediaQuery,
-} from '@mui/material'
+import Box from '@mui/material/Box'
+import Divider from '@mui/material/Divider'
+import Drawer from '@mui/material/Drawer'
+import FormControl from '@mui/material/FormControl'
+import Grid from '@mui/material/Grid'
+import IconButton from '@mui/material/IconButton'
+import Input from '@mui/material/Input'
+import InputAdornment from '@mui/material/InputAdornment'
+import Paper from '@mui/material/Paper'
+import TextField from '@mui/material/TextField'
+import Typography from '@mui/material/Typography'
+import { useMediaQuery } from '@mui/material'
 import { differenceInMinutes } from 'date-fns'
-import { EmojiEmotionsOutlined, Send } from '@mui/icons-material'
+import EmojiEmotionsOutlined from '@mui/icons-material/EmojiEmotionsOutlined'
+import Send from '@mui/icons-material/Send'
 import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos'
 import { makeStyles, useTheme } from '@mui/styles'
 import { useHistory, useParams } from 'react-router-dom'

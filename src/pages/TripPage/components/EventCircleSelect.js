@@ -4,7 +4,10 @@ import AirplanemodeActiveRoundedIcon from '@mui/icons-material/AirplanemodeActiv
 import ExploreRoundedIcon from '@mui/icons-material/ExploreRounded'
 import CommuteRoundedIcon from '@mui/icons-material/CommuteRounded'
 import RestaurantMenuRoundedIcon from '@mui/icons-material/RestaurantMenuRounded'
-import { Box, IconButton, Typography } from '@mui/material'
+import Box from '@mui/material/Box'
+import IconButton from '@mui/material/IconButton'
+import Typography from '@mui/material/Typography'
+
 import makeStyles from '@mui/styles/makeStyles'
 
 import { EVENT_TYPES } from '../../../helper/constants'

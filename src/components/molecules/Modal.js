@@ -1,17 +1,14 @@
 import React, { useEffect, useState } from 'react'
 import clsx from 'clsx'
-import makeStyles from '@mui/styles/makeStyles'
+import { makeStyles } from '@mui/styles'
 import Modal from '@mui/material/Modal'
-import {
-  Box,
-  Button,
-  Divider,
-  IconButton,
-  Paper,
-  Typography,
-  useMediaQuery,
-  useTheme,
-} from '@mui/material'
+import Box from '@mui/material/Box'
+import Button from '@mui/material/Button'
+import Divider from '@mui/material/Divider'
+import IconButton from '@mui/material/IconButton'
+import Paper from '@mui/material/Paper'
+import Typography from '@mui/material/Typography'
+import { useMediaQuery, useTheme } from '@mui/material'
 import { ArrowBackIos } from '@mui/icons-material'
 
 import cross from '../../images/icons/cross.svg'
