@@ -14,7 +14,7 @@ import Avatar from '@mui/material/Avatar'
 import Button from '@mui/material/Button'
 import ButtonBase from '@mui/material/ButtonBase'
 
-import makeStyles from '@mui/styles/makeStyles'
+import { makeStyles, useTheme } from '@mui/styles'
 import { ArrowBackIos, Favorite, FavoriteBorder } from '@mui/icons-material'
 import StarBorderIcon from '@mui/icons-material/StarBorder'
 import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder'

@@ -10,9 +10,7 @@ import TextareaAutosize from '@mui/material/TextareaAutosize'
 import Tooltip from '@mui/material/Tooltip'
 import Typography from '@mui/material/Typography'
 import useMediaQuery from '@mui/material/useMediaQuery'
-import useTheme from '@mui/material'
-
-import makeStyles from '@mui/styles/makeStyles'
+import { makeStyles, useTheme } from '@mui/styles'
 import { useHistory } from 'react-router-dom'
 import { Info, InfoRounded } from '@mui/icons-material'
 

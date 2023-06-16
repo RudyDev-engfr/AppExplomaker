@@ -1,5 +1,5 @@
 import React from 'react'
-import makeStyles from '@mui/styles/makeStyles'
+import { makeStyles, useTheme } from '@mui/styles'
 import ReactCamera, { FACING_MODES, IMAGE_TYPES } from 'react-html5-camera-photo'
 import { Box } from '@mui/material'
 

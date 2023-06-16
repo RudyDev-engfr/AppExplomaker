@@ -5,7 +5,6 @@ import Button from '@mui/material/Button'
 import Typography from '@mui/material/Typography'
 import useMediaQuery from '@mui/material/useMediaQuery'
 
-import { useTheme } from '@emotion/react'
 import CheckCircleRounded from '@mui/icons-material/CheckCircleRounded'
 import RadioButtonUncheckedRounded from '@mui/icons-material/RadioButtonUncheckedRounded'
 

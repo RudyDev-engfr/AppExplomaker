@@ -1,6 +1,5 @@
 import React from 'react'
-import makeStyles from '@mui/styles/makeStyles'
-import { useTheme } from '@mui/material'
+import { makeStyles, useTheme } from '@mui/styles'
 import { DateRangePicker } from '@mantine/dates'
 
 const useStyles = makeStyles(theme => ({

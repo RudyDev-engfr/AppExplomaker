@@ -6,7 +6,7 @@ import Badge from '@mui/material/Badge'
 import Box from '@mui/material/Box'
 import Fade from '@mui/material/Fade'
 import Tooltip from '@mui/material/Tooltip'
-import makeStyles from '@mui/styles/makeStyles'
+import { makeStyles, useTheme } from '@mui/styles'
 import FavoriteRounded from '@mui/icons-material/FavoriteRounded'
 import { FirebaseContext } from '../../contexts/firebase'
 

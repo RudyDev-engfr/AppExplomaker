@@ -1,7 +1,7 @@
 import React from 'react'
 import ButtonBase from '@mui/material/ButtonBase'
 import Box from '@mui/material/Box'
-import makeStyles from '@mui/styles/makeStyles'
+import { makeStyles, useTheme } from '@mui/styles'
 import clsx from 'clsx'
 
 const useStyles = makeStyles(theme => ({

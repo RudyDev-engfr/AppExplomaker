@@ -1,10 +1,8 @@
-import { useMediaQuery } from '@mui/material'
-import { useTheme } from '@mui/styles'
 import React, { useState, useEffect, createContext, useContext } from 'react'
+import { makeStyles, useTheme, useMediaQuery } from '@mui/material'
 import { useParams } from 'react-router-dom'
 import { toast } from 'react-toastify'
 import { buildNotificationsOnTripForUser, rCTFF } from '../helper/functions'
-
 import { FirebaseContext } from './firebase'
 import { SessionContext } from './session'
 

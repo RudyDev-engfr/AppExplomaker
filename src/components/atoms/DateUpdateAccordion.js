@@ -2,7 +2,7 @@ import React from 'react'
 import Box from '@mui/material/Box'
 import IconButton from '@mui/material/IconButton'
 import Typography from '@mui/material/Typography'
-import { useTheme } from '@mui/styles'
+import { makeStyles, useTheme } from '@mui/styles'
 import { useHistory } from 'react-router-dom'
 import Launch from '@mui/icons-material/Launch'
 

@@ -15,7 +15,7 @@ import Modal from '@mui/material/Modal'
 import Paper from '@mui/material/Paper'
 import Typography from '@mui/material/Typography'
 
-import makeStyles from '@mui/styles/makeStyles'
+import { makeStyles, useTheme } from '@mui/styles'
 
 import CustomAvatar from '../../components/atoms/CustomAvatar'
 import CardMenu from '../../components/atoms/CardMenu'

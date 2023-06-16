@@ -7,9 +7,9 @@ import Paper from '@mui/material/Paper'
 import Typography from '@mui/material/Typography'
 import useMediaQuery from '@mui/material/useMediaQuery'
 
-import makeStyles from '@mui/styles/makeStyles'
+import { makeStyles, useTheme } from '@mui/styles'
 import { useHistory } from 'react-router-dom'
-import { useTheme } from '@emotion/react'
+
 import NavigateNextRoundedIcon from '@mui/icons-material/NavigateNextRounded'
 import CloseRoundedIcon from '@mui/icons-material/CloseRounded'
 
