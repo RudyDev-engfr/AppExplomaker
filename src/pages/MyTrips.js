@@ -1,6 +1,12 @@
 import React, { useContext, useEffect, useState } from 'react'
 import { useHistory } from 'react-router-dom'
-import { Avatar, Box, Button, Typography, useMediaQuery, useTheme } from '@mui/material'
+import Avatar from '@mui/material/Avatar'
+import Box from '@mui/material/Box'
+import Button from '@mui/material/Button'
+import Typography from '@mui/material/Typography'
+import useMediaQuery from '@mui/material/useMediaQuery'
+import useTheme from '@mui/material/'
+
 import makeStyles from '@mui/styles/makeStyles'
 import { AddCircle } from '@mui/icons-material'
 import { isPast, isSameYear, isWithinInterval } from 'date-fns'

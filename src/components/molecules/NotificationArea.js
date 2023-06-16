@@ -1,17 +1,15 @@
 import React, { useContext, useState } from 'react'
-import {
-  Avatar,
-  Badge,
-  Box,
-  Drawer,
-  IconButton,
-  Menu,
-  Paper,
-  Typography,
-  useMediaQuery,
-} from '@mui/material'
+import Avatar from '@mui/material/Avatar'
+import Badge from '@mui/material/Badge'
+import Box from '@mui/material/Box'
+import Drawer from '@mui/material/Drawer'
+import IconButton from '@mui/material/IconButton'
+import Menu from '@mui/material/Menu'
+import Paper from '@mui/material/Paper'
+import Typography from '@mui/material/Typography'
+import { useMediaQuery } from '@mui/material'
 import { makeStyles, useTheme } from '@mui/styles'
-import { Notifications } from '@mui/icons-material'
+import Notifications from '@mui/icons-material/Notifications'
 import { isSameDay } from 'date-fns'
 import { useHistory } from 'react-router-dom'
 import findIcon from '../../helper/icons'

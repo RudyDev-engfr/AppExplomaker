@@ -1,7 +1,10 @@
 import React, { useContext, useEffect } from 'react'
 import Box from '@mui/material/Box'
 import { makeStyles, useTheme } from '@mui/styles'
-import { IconButton, Typography, useMediaQuery } from '@mui/material'
+import IconButton from '@mui/material/IconButton'
+import Typography from '@mui/material/Typography'
+import useMediaQuery from '@mui/material/useMediaQuery'
+
 import { format, isSameDay } from 'date-fns'
 import frLocale from 'date-fns/locale/fr'
 import capitalize from 'lodash.capitalize'

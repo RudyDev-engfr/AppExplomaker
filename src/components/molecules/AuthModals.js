@@ -1,18 +1,17 @@
 import React, { useContext } from 'react'
 import { useHistory } from 'react-router-dom'
-import {
-  Modal,
-  Paper,
-  Box,
-  IconButton,
-  Typography,
-  Divider,
-  Button,
-  useMediaQuery,
-  useTheme,
-} from '@mui/material'
+import Modal from '@mui/material/Modal'
+import Paper from '@mui/material/Paper'
+import Box from '@mui/material/Box'
+import IconButton from '@mui/material/IconButton'
+import Typography from '@mui/material/Typography'
+import Divider from '@mui/material/Divider'
+import Button from '@mui/material/Button'
+import useMediaQuery from '@mui/material/useMediaQuery'
+import useTheme from '@mui/material/'
 import { makeStyles } from '@mui/styles'
-import { ArrowBackIos, Close } from '@mui/icons-material'
+import ArrowBackIos from '@mui/icons-material/ArrowBackIos'
+import Close from '@mui/icons-material/Close'
 import { StyledFirebaseAuth } from 'react-firebaseui'
 import Carousel from 'react-multi-carousel'
 import 'react-multi-carousel/lib/styles.css'

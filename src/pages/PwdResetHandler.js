@@ -1,13 +1,12 @@
 import React, { useContext, useEffect, useState } from 'react'
-import {
-  Button,
-  IconButton,
-  InputAdornment,
-  Typography,
-  Paper,
-  Box,
-  TextField,
-} from '@mui/material'
+import Button from '@mui/material/Button'
+import IconButton from '@mui/material/IconButton'
+import InputAdornment from '@mui/material/InputAdornment'
+import Typography from '@mui/material/Typography'
+import Paper from '@mui/material/Paper'
+import Box from '@mui/material/Box'
+import TextField from '@mui/material/TextField'
+
 import { Visibility, VisibilityOff } from '@mui/icons-material'
 import { useHistory } from 'react-router-dom'
 

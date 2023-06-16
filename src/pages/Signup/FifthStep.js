@@ -1,6 +1,8 @@
 import React, { useContext, useEffect, useState } from 'react'
 import { useHistory } from 'react-router-dom'
-import { Avatar, Box } from '@mui/material'
+import Avatar from '@mui/material/Avatar'
+import Box from '@mui/material/Box'
+
 import makeStyles from '@mui/styles/makeStyles'
 
 import { SessionContext } from '../../contexts/session'

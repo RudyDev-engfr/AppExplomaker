@@ -1,15 +1,14 @@
 import React, { useContext, useEffect, useState } from 'react'
-import {
-  Autocomplete,
-  Box,
-  Button,
-  IconButton,
-  Paper,
-  TextField,
-  Typography,
-  useMediaQuery,
-  useTheme,
-} from '@mui/material'
+import Autocomplete from '@mui/material/Autocomplete'
+import Box from '@mui/material/Box'
+import Button from '@mui/material/Button'
+import IconButton from '@mui/material/IconButton'
+import Paper from '@mui/material/Paper'
+import TextField from '@mui/material/TextField'
+import Typography from '@mui/material/Typography'
+import useMediaQuery from '@mui/material/useMediaQuery'
+import useTheme from '@mui/material/'
+
 import makeStyles from '@mui/styles/makeStyles'
 import { PeopleAltRounded, StarRounded } from '@mui/icons-material'
 import { v4 as uuidv4 } from 'uuid'

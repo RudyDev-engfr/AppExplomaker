@@ -1,5 +1,12 @@
 import React, { useContext } from 'react'
-import { AppBar, Badge, Box, Drawer, IconButton, Toolbar, useMediaQuery } from '@mui/material'
+import AppBar from '@mui/material/AppBar'
+import Badge from '@mui/material/Badge'
+import Box from '@mui/material/Box'
+import Drawer from '@mui/material/Drawer'
+import IconButton from '@mui/material/IconButton'
+import Toolbar from '@mui/material/Toolbar'
+import useMediaQuery from '@mui/material/useMediaQuery'
+
 import { Forum, ForumOutlined } from '@mui/icons-material'
 import ExploreIcon from '@mui/icons-material/Explore'
 import { makeStyles, useTheme } from '@mui/styles'

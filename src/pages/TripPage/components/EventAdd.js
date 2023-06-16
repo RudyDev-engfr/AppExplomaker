@@ -1,5 +1,10 @@
 import React from 'react'
-import { Box, Divider, IconButton, Paper, Typography } from '@mui/material'
+import Box from '@mui/material/Box'
+import Divider from '@mui/material/Divider'
+import IconButton from '@mui/material/IconButton'
+import Paper from '@mui/material/Paper'
+import Typography from '@mui/material/Typography'
+
 import makeStyles from '@mui/styles/makeStyles'
 import CloseRoundedIcon from '@mui/icons-material/CloseRounded'
 

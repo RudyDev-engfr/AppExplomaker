@@ -8,7 +8,6 @@ import FlightTakeoffIcon from '@mui/icons-material/FlightTakeoff'
 import FlightLandIcon from '@mui/icons-material/FlightLand'
 import { format, formatDuration, intervalToDuration } from 'date-fns'
 import frLocale from 'date-fns/locale/fr'
-
 import {
   addOrSubTravelTime,
   applyTimezoneOffsetFromAmadeus,

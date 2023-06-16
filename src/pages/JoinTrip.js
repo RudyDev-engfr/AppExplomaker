@@ -1,8 +1,14 @@
 import React, { useContext, useEffect, useState } from 'react'
 import { makeStyles } from '@mui/styles'
-import { Box, Button, Typography, useMediaQuery } from '@mui/material'
+import Box from '@mui/material/Box'
+import Button from '@mui/material/Button'
+import Typography from '@mui/material/Typography'
+import useMediaQuery from '@mui/material/useMediaQuery'
+
 import { useTheme } from '@emotion/react'
-import { CheckCircleRounded, RadioButtonUncheckedRounded } from '@mui/icons-material'
+import CheckCircleRounded from '@mui/icons-material/CheckCircleRounded'
+import RadioButtonUncheckedRounded from '@mui/icons-material/RadioButtonUncheckedRounded'
+
 import clsx from 'clsx'
 import Carousel from 'react-material-ui-carousel'
 import { useHistory, useParams } from 'react-router-dom'

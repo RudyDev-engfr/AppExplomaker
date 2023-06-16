@@ -1,5 +1,8 @@
 import React, { useContext, useEffect, useState } from 'react'
-import { Box, Tab, Tabs, Typography } from '@mui/material'
+import Box from '@mui/material/Box'
+import Tab from '@mui/material/Tab'
+import Tabs from '@mui/material/Tabs'
+import Typography from '@mui/material/Typography'
 import { makeStyles } from '@mui/styles'
 
 import { TripContext } from '../../contexts/trip'
