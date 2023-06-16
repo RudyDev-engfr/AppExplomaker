@@ -417,6 +417,7 @@ const FirebaseContextProvider = ({ children }) => {
 
     updateData.notifications = structuredClone(tempNotifs)
     console.log('données qui vont être persistées', updateData)
+
     firestore
       .collection('users')
       .doc(user.id)

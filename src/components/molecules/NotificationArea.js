@@ -231,7 +231,7 @@ const NotificationArea = ({
                               className={classes.notificationImage}
                             />
                           </Box>
-                          {notification.notifArrayLength && (
+                          {notification.redPings && (
                             <Box
                               sx={{
                                 position: 'absolute',
@@ -248,7 +248,7 @@ const NotificationArea = ({
                               }}
                             >
                               <Typography sx={{ fontSize: '20px', color: 'white' }}>
-                                {notification.notifArrayLength}
+                                {notification.redPings}
                               </Typography>
                             </Box>
                           )}
@@ -537,7 +537,7 @@ const NotificationAreaDrawer = ({
                           className={classes.notificationImage}
                         />
                       </Box>
-                      {notification.notifArrayLength && (
+                      {notification.redPings && (
                         <Box
                           sx={{
                             position: 'absolute',
@@ -554,7 +554,7 @@ const NotificationAreaDrawer = ({
                           }}
                         >
                           <Typography sx={{ fontSize: '20px', color: 'white' }}>
-                            {notification.notifArrayLength}
+                            {notification.redPings}
                           </Typography>
                         </Box>
                       )}

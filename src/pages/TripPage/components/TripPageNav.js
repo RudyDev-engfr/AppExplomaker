@@ -474,7 +474,10 @@ const TripPageNav = ({
                 />
               </Badge>
             }
-            onClick={() => setIsChatOpen('AIChat')}
+            onClick={() => {
+              setIsChatOpen('AIChat')
+              updateHasSeen('Assistant')
+            }}
             // value="AIChatWindow"
             sx={{ padding: '0', minWidth: '20vw !important', marginRight: '8vw' }}
           />
