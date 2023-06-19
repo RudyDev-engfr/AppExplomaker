@@ -6,7 +6,6 @@ import Drawer from '@mui/material/Drawer'
 import IconButton from '@mui/material/IconButton'
 import Toolbar from '@mui/material/Toolbar'
 import useMediaQuery from '@mui/material/useMediaQuery'
-
 import { Forum, ForumOutlined } from '@mui/icons-material'
 import ExploreIcon from '@mui/icons-material/Explore'
 import { makeStyles, useTheme } from '@mui/styles'
