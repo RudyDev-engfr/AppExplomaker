@@ -12,6 +12,7 @@ import Dialog from '@mui/material/Dialog'
 import Paper from '@mui/material/Paper'
 import Slide from '@mui/material/Slide'
 import Tab from '@mui/material/Tab'
+import Badge from '@mui/material/Badge'
 import Tabs from '@mui/material/Tabs'
 import useMediaQuery from '@mui/material/useMediaQuery'
 import clsx from 'clsx'
@@ -26,6 +27,7 @@ import Logout from '@mui/icons-material/Logout'
 import Notifications from '@mui/icons-material/Notifications'
 import RestaurantMenuRounded from '@mui/icons-material/RestaurantMenuRounded'
 import Tune from '@mui/icons-material/Tune'
+import Forum from '@mui/icons-material/Forum'
 import { useCollectionData } from 'react-firebase-hooks/firestore'
 
 import logoFull from '../../../images/icons/logoFull.svg'
@@ -470,7 +472,10 @@ const TripPageNav = ({
                 />
               </Badge>
             }
-            onClick={() => setIsChatOpen('AIChat')}
+            onClick={() => {
+              setIsChatOpen('AIChat')
+              updateHasSeen('Assistant')
+            }}
             // value="AIChatWindow"
             sx={{ padding: '0', minWidth: '20vw !important', marginRight: '8vw' }}
           />

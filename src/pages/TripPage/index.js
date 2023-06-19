@@ -571,6 +571,8 @@ const TripPage = () => {
     setCurrentActiveTab,
     currentTravelers,
     updateTravelers,
+    canEdit,
+    setCanEdit,
   } = useContext(TripContext)
   const [isLoading, setIsLoading] = useState(true)
   const [carouselImages, setCarouselImages] = useState([])
@@ -593,7 +595,6 @@ const TripPage = () => {
   // eslint-disable-next-line no-unused-vars
   const [uploadedPhotos, setUplodedPhotos] = useState([])
   const [generatedAvatars, setGeneratedAvatars] = useState([])
-  const [canEdit, setCanEdit] = useState(false)
   const [isAdmin, setIsAdmin] = useState(false)
   const [tripSpot, setTripSpot] = useState()
   const [testSpot, setTestSpot] = useState()
@@ -1493,6 +1494,7 @@ const TripPage = () => {
                       <Typography variant="h6">{travelerDetails.firstname}</Typography>
                       <Typography variant="subtitle2">
                         {tripData.owner === travelerDetails.id && 'Propriétaire'}
+                        {travelerDetails.role === ROLES.Removed && 'Retiré'}
                       </Typography>
                     </Box>
                   </AccordionSummary>

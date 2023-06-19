@@ -212,8 +212,6 @@ const EventCreator = ({
   previousEvent,
   setPreviousEvent,
   selectedPropositionIndex,
-  editMode,
-  setEditMode,
   buildFlightTitle,
 }) => {
   const classes = useStyles()
@@ -240,6 +238,10 @@ const EventCreator = ({
     isAssistantGuided,
     setIsAssistantGuided,
     currentPlaceId,
+    editMode,
+    setEditMode,
+    currentLocation,
+    setCurrentLocation,
   } = useContext(TripContext)
 
   const tripStartDate = rCTFF(dateRange[0])
@@ -282,25 +284,6 @@ const EventCreator = ({
   const [tripData, setTripData] = useState()
   const [advancedMode, setAdvancedMode] = useState(false)
   const [autoValue, setAutoValue] = useState(null)
-
-  const changeAutoValue = () => {
-    if (currentPlaceId) {
-      let tempLabel
-      geocodeByPlaceId(currentPlaceId).then(results => {
-        tempLabel = results.formatted_address
-      })
-      setAutoValue({
-        description: 'Nouvelle valeur',
-        placeId: currentPlaceId,
-        label: tempLabel,
-        // Ajoutez d'autres attributs selon vos besoins
-      })
-    }
-  }
-  useEffect(() => {
-    console.log('assistant es tu là', isAssistantGuided)
-    console.log('currentPlaceId', currentPlaceId)
-  }, [isAssistantGuided, currentPlaceId])
 
   const generateParticipatingTravelers = () => {
     const tempTravelers = travelers
@@ -528,7 +511,10 @@ const EventCreator = ({
     if (location?.label && !editMode) {
       setTitle(location.label)
     }
-  }, [location])
+    if (currentLocation?.formatted_address) {
+      setTitle(currentLocation?.formatted_address)
+    }
+  }, [location, currentLocation])
 
   useEffect(() => {
     if (
@@ -556,7 +542,11 @@ const EventCreator = ({
           ...tempErrors,
           startTime: arrivalDateTimeError,
           endTime: departureDateTimeError,
-          location: !location,
+        }
+        if (isAssistantGuided) {
+          tempErrors.currentLocation = !currentLocation
+        } else {
+          tempErrors.location = !location
         }
         if (!isValid(selectedDepartureDateTime)) {
           tempErrors.departureDateTimeIsInvalid = true
@@ -612,7 +602,11 @@ const EventCreator = ({
       case EVENT_TYPES[2]:
         tempErrors = {
           ...tempErrors,
-          location: !location,
+        }
+        if (isAssistantGuided) {
+          tempErrors.currentLocation = !currentLocation
+        } else {
+          tempErrors.location = !location
         }
         if (!isValid(selectedDate)) {
           tempErrors.dateIsInvalid = true
@@ -680,7 +674,11 @@ const EventCreator = ({
       case EVENT_TYPES[4]:
         tempErrors = {
           ...tempErrors,
-          location: !location,
+        }
+        if (isAssistantGuided) {
+          tempErrors.currentLocation = !currentLocation
+        } else {
+          tempErrors.location = !location
         }
         if (!isValid(selectedDate)) {
           tempErrors.dateIsInvalid = true
@@ -707,11 +705,21 @@ const EventCreator = ({
     if (location && eventType) {
       handleTempEventsMarkers(location, eventType)
     }
+    if (currentLocation && eventType) {
+      handleTempEventsMarkers(currentLocation, eventType)
+    }
   }, [location])
 
   useEffect(() => {
     console.log('location', location)
   }, [location])
+
+  const handleReset = () => {
+    setEditMode(false)
+    setCurrentView('planning')
+    setCurrentLocation('')
+    setIsAssistantGuided(false)
+  }
 
   const handleSubmit = async event => {
     event.preventDefault()
@@ -722,7 +730,12 @@ const EventCreator = ({
       eventType === EVENT_TYPES[2] ||
       eventType === EVENT_TYPES[4]
     ) {
-      currentPlaceDetails = await getPlaceDetails(location?.value.place_id)
+      if (location) {
+        currentPlaceDetails = await getPlaceDetails(location?.value.place_id)
+      }
+      if (currentLocation) {
+        currentPlaceDetails = await getPlaceDetails(currentLocation.place_id)
+      }
     }
     if (eventType === EVENT_TYPES[3]) {
       const tempLocationArray = []
@@ -977,6 +990,7 @@ const EventCreator = ({
     //   `/tripPage/${tripId}/planning?${isSurvey ? 'survey=' : 'event='}${currentEvent.id}`
     // )
     setEventType('')
+    handleReset()
   }
 
   const fetchFlight = async flightIndex => {
@@ -1144,55 +1158,12 @@ const EventCreator = ({
                 <Box display="flex" alignItems="center" className={classes.marginBottom}>
                   {isAssistantGuided ? (
                     <>
-                      <GooglePlacesAutocomplete
-                        initialValue={autoValue}
-                        minLengthAutocomplete={3}
-                        onSelect={({ autoDescription, placeId }) =>
-                          setAutoValue({ autoDescription, currentPlaceId })
-                        }
-                        selectProps={{
-                          placeholder: 'Emplacement',
-                          value: location,
-                          onChange: (event, { action }) => {
-                            console.log('placeEvent', event)
-                            if (action === 'clear') {
-                              setLocation('')
-                              setIsAssistantGuided(false)
-                            } else {
-                              geocodeByPlaceId(event.value.description).then(results => {
-                                const destination = { ...event }
-                                const shortCountryNameRef = results[0].address_components.filter(
-                                  address => address.types.includes('country')
-                                )
-                                if (shortCountryNameRef.length > 0) {
-                                  destination.shortCountryName = shortCountryNameRef[0].short_name
-                                }
-                                console.log(destination)
-                                setLocation({ ...destination })
-                              })
-                            }
-                          },
-                          isClearable: true,
-                          styles: {
-                            container: provided => ({ ...provided, width: '100%' }),
-                            control: provided => ({
-                              ...provided,
-                              cursor: 'pointer',
-                              zIndex: '2',
-                              height: '60px',
-                            }),
-                            menu: provided => ({
-                              ...provided,
-                              zIndex: '2',
-                            }),
-                            singleValue: provided => ({
-                              ...provided,
-                              color: theme.palette.primary.main,
-                            }),
-                          },
-                        }}
+                      <TextField
+                        variant="filled"
+                        value={currentLocation?.formatted_address}
+                        readOnly
+                        fullWidth
                       />
-                      <Button onClick={() => changeAutoValue()}>change</Button>
                     </>
                   ) : (
                     <GooglePlacesAutocomplete

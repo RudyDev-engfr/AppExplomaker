@@ -309,7 +309,7 @@ const useStyles = makeStyles(theme => ({
   },
 }))
 
-const Planning = ({ tripData, tripId, canEdit }) => {
+const Planning = ({ tripData, tripId }) => {
   const classes = useStyles()
   const history = useHistory()
   const theme = useTheme()
@@ -318,7 +318,14 @@ const Planning = ({ tripData, tripId, canEdit }) => {
 
   const { user } = useContext(SessionContext)
   const { firestore } = useContext(FirebaseContext)
-  const { setDeleteEventNotifications, currentEvent, setCurrentEvent } = useContext(TripContext)
+  const {
+    setDeleteEventNotifications,
+    currentEvent,
+    setCurrentEvent,
+    editMode,
+    setEditMode,
+    canEdit,
+  } = useContext(TripContext)
   const {
     setCurrentMarkers,
     setTransportMarkers,
@@ -360,14 +367,7 @@ const Planning = ({ tripData, tripId, canEdit }) => {
   const [currentDateRange, setCurrentDateRange] = useState([])
   const [anchorEl, setAnchorEl] = useState(null)
   const [isNewProposition, setIsNewProposition] = useState(false)
-  const [editMode, setEditMode] = useState(false)
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false)
-
-  useEffect(() => {
-    console.log('currentEvent', currentEvent)
-    console.log('currentEventId', currentEventId)
-    console.log('currentView', currentView)
-  }, [currentEventId, currentEvent, currentView])
 
   const buildFlightTitle = flights =>
     `Vol de ${flights[0].data.airports[0].label} vers ${
@@ -436,10 +436,6 @@ const Planning = ({ tripData, tripId, canEdit }) => {
   //     })
   //   }
   // }, [days, plannedEvents, planningMapRef])
-
-  useEffect(() => {
-    getPlaceTown('ChIJfeYX2V_q9EcRnqFAtnDMgx4').then(results => console.log(results))
-  }, [])
 
   useEffect(() => {
     const tempWithoutDatesEvents = { surveys: [], events: [] }
@@ -865,8 +861,6 @@ const Planning = ({ tripData, tripId, canEdit }) => {
             setPreviousEvent={setPreviousEvent}
             selectedPropositionIndex={selectedPropositionIndex}
             planningMapRef={planningMapRef}
-            editMode={editMode}
-            setEditMode={setEditMode}
             buildFlightTitle={buildFlightTitle}
           />
         )}
@@ -882,7 +876,6 @@ const Planning = ({ tripData, tripId, canEdit }) => {
             selectedPropositionIndex={selectedPropositionIndex}
             setSelectedPropositionIndex={setSelectedPropositionIndex}
             canEdit={canEdit}
-            setEditMode={setEditMode}
             setEventType={setEventType}
           />
         )}

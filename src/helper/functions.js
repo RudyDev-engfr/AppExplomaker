@@ -1,3 +1,4 @@
+/* eslint-disable prefer-const */
 import {
   addMinutes,
   addHours,
@@ -12,6 +13,7 @@ import {
 import frLocale from 'date-fns/locale/fr'
 import parse from 'date-fns/parse'
 import { useEffect, useRef } from 'react'
+import { firestore } from '../contexts/firebase'
 
 import { EVENT_TYPES } from './constants'
 
@@ -341,13 +343,47 @@ export const buildNotifications = user => {
     )
     tempNotificationContent.forEach(({ tripId, owner, sejour }) => {
       const singleNotif = {}
+      let AssistantNotReadArrayLength = 0
+      let messagesNotReadArrayLength = 0
+      const tempMessagesArray = []
+      let tempAssistantArray = []
+      const notifArrayLength = user.notifications.filter(
+        notification => notification.tripId === tripId && notification.state === 1
+      ).length
+      const messagesRef = firestore
+        .collection('trips')
+        .doc(tripId)
+        .collection('messages')
+        .get()
+        .then(querySnapshot => {
+          querySnapshot.forEach(documentSnapshot => {
+            console.log(documentSnapshot.id, '=>', documentSnapshot.data())
+            tempMessagesArray.push(documentSnapshot.data())
+          })
+          const assistantRef = firestore
+            .collection('trips')
+            .doc(tripId)
+            .collection('Assistant')
+            .get()
+            .then(assistantQuerySnapshot => {
+              assistantQuerySnapshot.forEach(documentSnapshot => {
+                console.log(documentSnapshot.id, '=>', documentSnapshot.data())
+                tempMessagesArray.push(documentSnapshot.data())
+              })
+              messagesNotReadArrayLength = tempMessagesArray.filter(message =>
+                message.notifications?.some(notification => notification.userId === user.id)
+              ).length
+              singleNotif.redPings = notifArrayLength + messagesNotReadArrayLength
+              console.log('redPings', singleNotif.redPings)
+            })
+        })
       singleNotif.content = `il y a du nouveau sur le voyage - ${sejour?.title} -`
       singleNotif.url = `/tripPage/${tripId}`
       singleNotif.state = 1
       singleNotif.image = sejour?.mainPicture ?? `../../images/inherit/Kenya 1.png`
-      singleNotif.notifArrayLength = user.notifications.filter(
-        notification => notification.tripId === tripId && notification.state === 1
-      ).length
+      console.log('montre moi le compteur juste avant', messagesNotReadArrayLength)
+      singleNotif.redPings = notifArrayLength + messagesNotReadArrayLength
+      console.log('compteur de notif', singleNotif.redPings)
       notifications.push(singleNotif)
     })
     console.log('le log des notifs', notifications)
@@ -748,7 +784,10 @@ export const buildLogSejour = (tripId, tripData) => {
             singleNotif.eventType = event.type
             singleNotif.url = `/tripPage/${tripId}/planning?survey=${event.id}`
             singleNotif.logs = {
-              place: event.propositions[0].location.label,
+              place:
+                event.propositions[0].location.label ||
+                event.propositions[0].startLocation.label ||
+                event.propositions[0].flights[0].data.airports[0].label,
               date: rCTFF(event.propositions[0].date, 'dd/MM/yyyy'),
               eventName: event.propositions[0].title,
               participatingTravelers: event.propositions[0].participatingTravelers.map(

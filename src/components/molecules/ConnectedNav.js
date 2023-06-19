@@ -189,6 +189,10 @@ const ConnectedNav = () => {
   }
 
   useEffect(() => {
+    buildNotifications(user)
+  }, [user])
+
+  useEffect(() => {
     if (user && refreshNotif) {
       const tempNotif = buildNotifications(user)
       setCurrentNotifications(tempNotif)

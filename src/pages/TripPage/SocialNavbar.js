@@ -1,4 +1,4 @@
-import React, { useContext } from 'react'
+import React, { useContext, useEffect } from 'react'
 import AppBar from '@mui/material/AppBar'
 import Badge from '@mui/material/Badge'
 import Box from '@mui/material/Box'
@@ -147,7 +147,6 @@ const SocialNavbar = () => {
               <ExploreIcon />
             </Badge>
           </IconButton>
-
           <IconButton
             onClick={() => {
               if (isChatOpen === 'userChat') {
@@ -191,7 +190,6 @@ const SocialNavbar = () => {
               <Forum />
             </Badge>
           </IconButton>
-
           <NotificationArea
             tripData={tripData}
             currentNotifications={currentNotifications}
