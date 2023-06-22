@@ -63,6 +63,10 @@ const TripContextProvider = ({ children }) => {
     setCurrentView('creator')
   }
 
+  useEffect(() => {
+    console.log('voyageurs actuels', currentTravelers)
+  }, [currentTravelers])
+
   const handleEventCreation = eventDescription => {
     const tempEventDescription = structuredClone(eventDescription)
     if (tempEventDescription.place_id) {
@@ -95,20 +99,32 @@ const TripContextProvider = ({ children }) => {
     tripData?.travelersDetails
       .filter(traveler => traveler.id)
       .forEach(peopleId => {
+        const role = peopleId?.role
         if (peopleId?.id) {
-          batchGetUsers.push(getUserById(peopleId.id))
+          batchGetUsers.push(
+            getUserById(peopleId.id).then(currentUser => ({
+              ...currentUser,
+              role: role || user.role,
+            }))
+          )
         } else if (peopleId?.name) {
-          batchGetUsers.push(new Promise(resolve => resolve({ firstname: peopleId.name })))
+          batchGetUsers.push(new Promise(resolve => resolve({ firstname: peopleId.name, role })))
         } else {
-          batchGetUsers.push(getUserById(peopleId))
+          batchGetUsers.push(
+            getUserById(peopleId).then(currentUser => ({
+              ...currentUser,
+              role: role || user.role,
+            }))
+          )
         }
       })
     Promise.all(batchGetUsers).then(response => {
       if (response.length > 0) {
-        const tempTravelers = response.map(({ firstname, avatar, id }) => ({
+        const tempTravelers = response.map(({ firstname, avatar, id, role }) => ({
           firstname,
           avatar,
           id,
+          role,
         }))
         setCurrentTravelers(tempTravelers)
       }
