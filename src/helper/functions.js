@@ -278,22 +278,43 @@ function usePrevious(value) {
   return ref.current
 }
 
-export const buildNotifications = user => {
+export const buildNotifications = async user => {
   const notifications = []
   const tripsIdArray = []
   const tempNotificationContent = []
   if (user.notifications) {
     user.notifications.forEach(
       ({ sejour, priority, state, type, creationDate, url, owner, tripId, image, id }) => {
-        if (tripId && !tripsIdArray.includes(tripId) && state === 1) {
-          tripsIdArray.push(tripId)
-          tempNotificationContent.push({ tripId, owner, sejour })
-        }
+        // if (tripId && !tripsIdArray.includes(tripId)) {
+        //   tripsIdArray.push(tripId)
+        //   tempNotificationContent.push({ tripId, owner, sejour })
+        // }
         const singleNotif = {}
         singleNotif.id = id
         if (type === 'newTrip') {
           console.log('je suis un newtrip')
           singleNotif.content = `Votre nouveau voyage - ${sejour?.title} - a bien été créé`
+          const tempTimer = intervalToDuration({
+            start: new Date(rCTFF(creationDate)),
+            end: new Date(),
+          })
+          singleNotif.timer = `il y a ${formatDuration(tempTimer, {
+            format:
+              tempTimer.days > 1
+                ? ['days']
+                : tempTimer.hours > 1
+                ? ['hours']
+                : tempTimer.minutes > 1
+                ? ['minutes']
+                : tempTimer.seconds >= 1 && ['seconds'],
+          })}`
+          singleNotif.state = state
+          singleNotif.image = sejour?.mainPicture ?? ''
+
+          notifications.push(singleNotif)
+        } else if (type === 'jointrip') {
+          console.log('je suis un jointrip')
+          singleNotif.content = `Vous avez rejoint le voyage ${sejour?.title}`
           const tempTimer = intervalToDuration({
             start: new Date(rCTFF(creationDate)),
             end: new Date(),
@@ -341,7 +362,31 @@ export const buildNotifications = user => {
         }
       }
     )
-    tempNotificationContent.forEach(({ tripId, owner, sejour }) => {
+
+    const userTripCollection = []
+    const userTripRequest = await firestore
+      .collection('users')
+      .doc(user.id)
+      .collection('trips')
+      .get()
+
+    userTripRequest.forEach(doc => userTripCollection.push(doc.id))
+
+    const tempTripCollectionRequest = userTripCollection.map(async tripId => {
+      console.log('tripId', tripId)
+      const tempRequest = await firestore.collection('trips').doc(tripId).get()
+      return {
+        tripId,
+        tripData: tempRequest.data(),
+      }
+    })
+    console.log('request de voyages', tempTripCollectionRequest)
+    const tempTripCollection = await Promise.all(tempTripCollectionRequest)
+
+    console.log('collection de voyages', tempTripCollection)
+    console.log('collection de trips', userTripCollection)
+    const buildNotificationsPromises = tempTripCollection.map(({ tripId, tripData }) => {
+      console.log('tripId dans la collec', tripId)
       const singleNotif = {}
       let AssistantNotReadArrayLength = 0
       let messagesNotReadArrayLength = 0
@@ -350,44 +395,52 @@ export const buildNotifications = user => {
       const notifArrayLength = user.notifications.filter(
         notification => notification.tripId === tripId && notification.state === 1
       ).length
-      const messagesRef = firestore
+
+      const messagesPromise = firestore.collection('trips').doc(tripId).collection('messages').get()
+
+      const assistantPromise = firestore
         .collection('trips')
         .doc(tripId)
-        .collection('messages')
+        .collection('Assistant')
         .get()
-        .then(querySnapshot => {
-          querySnapshot.forEach(documentSnapshot => {
-            console.log(documentSnapshot.id, '=>', documentSnapshot.data())
-            tempMessagesArray.push(documentSnapshot.data())
+
+      return Promise.all([messagesPromise, assistantPromise]).then(
+        ([messagesSnapshot, assistantSnapshot]) => {
+          messagesSnapshot.forEach(doc => {
+            tempMessagesArray.push(doc.data())
           })
-          const assistantRef = firestore
-            .collection('trips')
-            .doc(tripId)
-            .collection('Assistant')
-            .get()
-            .then(assistantQuerySnapshot => {
-              assistantQuerySnapshot.forEach(documentSnapshot => {
-                console.log(documentSnapshot.id, '=>', documentSnapshot.data())
-                tempMessagesArray.push(documentSnapshot.data())
-              })
-              messagesNotReadArrayLength = tempMessagesArray.filter(message =>
-                message.notifications?.some(notification => notification.userId === user.id)
-              ).length
-              singleNotif.redPings = notifArrayLength + messagesNotReadArrayLength
-              console.log('redPings', singleNotif.redPings)
-            })
-        })
-      singleNotif.content = `il y a du nouveau sur le voyage - ${sejour?.title} -`
-      singleNotif.url = `/tripPage/${tripId}`
-      singleNotif.state = 1
-      singleNotif.image = sejour?.mainPicture ?? `../../images/inherit/Kenya 1.png`
-      console.log('montre moi le compteur juste avant', messagesNotReadArrayLength)
-      singleNotif.redPings = notifArrayLength + messagesNotReadArrayLength
-      console.log('compteur de notif', singleNotif.redPings)
-      notifications.push(singleNotif)
+          assistantSnapshot.forEach(doc => {
+            tempAssistantArray.push(doc.data())
+          })
+          messagesNotReadArrayLength = tempMessagesArray?.filter(message =>
+            message.notifications?.some(
+              notification => notification.userId === user.id && !notification.hasSeen
+            )
+          ).length
+          AssistantNotReadArrayLength = tempAssistantArray?.filter(message =>
+            message.notifications?.some(
+              notification => notification.userId === user.id && !notification.hasSeen
+            )
+          ).length
+          console.log('le compteur de messages', messagesNotReadArrayLength)
+          singleNotif.redPings =
+            notifArrayLength + messagesNotReadArrayLength + AssistantNotReadArrayLength
+          console.log('redPings', singleNotif.redPings)
+          singleNotif.content = `il y a du nouveau sur le voyage - ${tripData?.title} -`
+          singleNotif.url = `/tripPage/${tripId}`
+          singleNotif.state = 1
+          singleNotif.myTripsTripId = tripId
+          singleNotif.image = tripData?.mainPicture ?? `../../images/inherit/Kenya 1.png`
+          console.log('compteur de notif', singleNotif.redPings)
+          notifications.push(singleNotif)
+          console.log('le log des notifs', notifications)
+        }
+      )
     })
-    console.log('le log des notifs', notifications)
-    return notifications
+    return Promise.all(buildNotificationsPromises).then(() => {
+      console.log('le log des notifs', notifications)
+      return notifications
+    })
   }
 }
 
@@ -416,7 +469,10 @@ export const buildNotificationsOnTripForUser = (user, tripId) => {
   const notifications = []
   if (user.notifications) {
     user.notifications
-      .filter(notification => notification.tripId === tripId)
+      .filter(
+        notification =>
+          notification.tripId === tripId && notification?.sejour?.travelersDetails?.length > 0
+      )
       .forEach(({ sejour, priority, state, type, creationDate, owner, event, id }) => {
         const singleNotif = {}
         const notifBody = buildNotifTimerAndState(creationDate, state)

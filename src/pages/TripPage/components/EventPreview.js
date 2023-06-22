@@ -182,15 +182,12 @@ const openingHours = ['Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendredi', 'Samedi
 const EventPreview = ({
   currentEvent,
   setCurrentEvent,
-  setCurrentView,
   propsClasses,
   tripId,
   previousEvent,
   setPreviousEvent,
   selectedPropositionIndex,
   setSelectedPropositionIndex,
-  canEdit,
-  setEditMode,
   setEventType,
 }) => {
   const classes = useStyles()
@@ -201,10 +198,12 @@ const EventPreview = ({
   const { user } = useContext(SessionContext)
   const { setNeedMapRefresh, days, selectedDateOnPlanning, setSelectedDateOnPlanning } =
     useContext(PlanningContext)
-  const { currentEventType, setCurrentEventType } = useContext(TripContext)
+  const { currentEventType, setCurrentEventType, canEdit, setCurrentView, setEditMode } =
+    useContext(TripContext)
 
   const [isLoading, setIsLoading] = useState(false)
   const [tripData, setTripData] = useState()
+  const [currentOptions, setCurrentOptions] = useState([])
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false)
   // Menu Button Logic
   const [anchorEl, setAnchorEl] = React.useState(null)
@@ -332,8 +331,72 @@ const EventPreview = ({
       .set({ ...tempDoc })
       .then(() => {
         const tempEvent = { ...tempDoc, id: currentEvent.id }
+        setCurrentEvent(tempEvent)
+        history.push(`/tripPage/${tripId}/planning?survey=${currentEvent.id}`)
+        setCurrentView('survey')
       })
   }
+
+  const surveyOptions = [
+    {
+      label: 'Modifier',
+      callback: () => {
+        setEventType(previousEvent ? previousEvent.type : currentEventType)
+        setEditMode(true)
+        setCurrentView('creator')
+      },
+    },
+    {
+      label: 'Retirer',
+      callback: () => {
+        firestore
+          .collection('trips')
+          .doc(tripId)
+          .collection('planning')
+          .doc(currentEvent.id)
+          .set({ needNewDates: true }, { merge: true })
+      },
+      isRemoved: !!currentEvent?.needNewDates,
+    },
+    { label: 'Supprimer', callback: () => setIsDeleteDialogOpen(true) },
+  ]
+  const eventOptions = [
+    {
+      label: 'Modifier',
+      callback: () => {
+        setEventType(previousEvent ? previousEvent.type : currentEventType)
+        setEditMode(true)
+        setCurrentView('creator')
+      },
+    },
+    {
+      label: 'Proposer en sondage',
+      callback: changeIntoSurvey,
+      isRemoved: !!currentEvent?.needNewDates,
+    },
+    {
+      label: 'Retirer',
+      callback: () => {
+        firestore
+          .collection('trips')
+          .doc(tripId)
+          .collection('planning')
+          .doc(currentEvent.id)
+          .set({ needNewDates: true }, { merge: true })
+      },
+      isRemoved: !!currentEvent?.needNewDates,
+    },
+    { label: 'Supprimer', callback: () => setIsDeleteDialogOpen(true) },
+  ]
+
+  useEffect(() => {
+    if (previousEvent?.isSurvey) {
+      setCurrentOptions(surveyOptions)
+    } else {
+      setCurrentOptions(eventOptions)
+    }
+  }, [previousEvent])
+
   return isLoading ? (
     <></>
   ) : (
@@ -399,35 +462,7 @@ const EventPreview = ({
                   <CardMenu
                     anchorEl={anchorEl}
                     handleCloseDropdown={handleCloseDropdown}
-                    options={[
-                      {
-                        label: 'Modifier',
-                        callback: () => {
-                          setEventType(currentEvent.type)
-                          setEditMode(true)
-                          setCurrentView('creator')
-                          history.push(`/tripPage/${tripId}/planning?event=${currentEvent.id}`)
-                        },
-                      },
-                      {
-                        label: 'Proposer en sondage',
-                        callback: changeIntoSurvey,
-                        isRemoved: !!currentEvent?.needNewDates,
-                      },
-                      {
-                        label: 'Retirer',
-                        callback: () => {
-                          firestore
-                            .collection('trips')
-                            .doc(tripId)
-                            .collection('planning')
-                            .doc(currentEvent.id)
-                            .set({ needNewDates: true }, { merge: true })
-                        },
-                        isRemoved: !!currentEvent?.needNewDates,
-                      },
-                      { label: 'Supprimer', callback: () => setIsDeleteDialogOpen(true) },
-                    ]}
+                    options={currentOptions}
                   />
                 </Box>
               )}

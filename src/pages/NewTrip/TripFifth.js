@@ -221,7 +221,7 @@ const TripFifth = () => {
         batch.commit()
         console.log('utilisateur', user)
         console.log('nouveauvoyage', newTrip)
-        createNotifications(user, tempTrip, 'newTrip', 3)
+        createNotifications(user, tempTrip, docRef.id, 'newTrip', 3)
         history.push('/newtrip/tripRecap')
       })
   }
@@ -370,7 +370,7 @@ const TripFifth = () => {
           color="primary"
           variant="contained"
           onClick={handleTripCreation}
-          disabled={wishes.length === 0}
+          disabled={wishes.length === 0 || hasClicked}
         >
           Terminer
         </Button>

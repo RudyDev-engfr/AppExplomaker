@@ -1,4 +1,4 @@
-import React, { useContext, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import Avatar from '@mui/material/Avatar'
 import Badge from '@mui/material/Badge'
 import Box from '@mui/material/Box'
@@ -45,7 +45,7 @@ const NotificationArea = ({
     useContext(FirebaseContext)
   const { user } = useContext(SessionContext)
   const [anchorElNotif, setAnchorElNotif] = useState(null)
-
+  const [currentRedPings, setCurrentRedPings] = useState(0)
   const openNotif = Boolean(anchorElNotif)
 
   const handleCloseNotif = event => {
@@ -67,6 +67,17 @@ const NotificationArea = ({
     }
   }
 
+  useEffect(() => {
+    let tempRedPings = 0
+    currentNotifications
+      ?.filter(notification => notification.redPings)
+      .forEach(notification => {
+        console.log('redpings', notification.redPings)
+        tempRedPings += notification?.redPings
+      })
+    setCurrentRedPings(tempRedPings)
+  }, [currentNotifications])
+
   if (isMyTrips) {
     return (
       <>
@@ -79,7 +90,7 @@ const NotificationArea = ({
           onClick={handleClickNotif}
           sx={{
             backgroundColor: isMyTrips
-              ? user?.notifications?.filter(notification => notification.state === 1).length > 0
+              ? currentRedPings > 0
                 ? theme.palette.primary.main
                 : 'white'
               : user?.notifications?.filter(
@@ -89,7 +100,7 @@ const NotificationArea = ({
               : 'white',
             '&:hover': {
               backgroundColor: isMyTrips
-                ? user?.notifications?.filter(notification => notification.state === 1).length > 0
+                ? currentRedPings > 0
                   ? theme.palette.primary.main
                   : 'white'
                 : user?.notifications?.filter(
@@ -103,7 +114,7 @@ const NotificationArea = ({
           <Badge
             badgeContent={
               isMyTrips
-                ? user.notifications?.filter(notification => notification?.state === 1).length
+                ? currentRedPings
                 : user.notifications?.filter(
                     notification => notification?.tripId === tripId && notification?.state === 1
                   ).length
@@ -113,8 +124,7 @@ const NotificationArea = ({
             <Notifications
               sx={{
                 color: isMyTrips
-                  ? user?.notifications?.filter(notification => notification.state === 1).length >
-                      0 && 'white'
+                  ? currentRedPings > 0 && 'white'
                   : user?.notifications?.filter(
                       notification => notification.state === 1 && notification.tripId === tripId
                     ).length > 0 && 'white',
@@ -184,6 +194,7 @@ const NotificationArea = ({
                 currentNotifications
                   ?.slice(0)
                   .reverse()
+                  .filter(notification => notification.redPings)
                   .map((notification, index) => (
                     <Box
                       sx={{
@@ -351,8 +362,8 @@ const NotificationArea = ({
         <Badge
           badgeContent={
             isMyTrips
-              ? user.notifications?.filter(
-                  notification => notification?.state === 1 && !notification.tripId
+              ? currentNotifications.filter(
+                  notification => notification.myTripsTripId && notification.redPings > 0
                 ).length
               : user.notifications?.filter(
                   notification => notification?.tripId === tripId && notification?.state === 1

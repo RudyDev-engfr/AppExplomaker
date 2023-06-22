@@ -157,7 +157,7 @@ const ConnectedNav = () => {
   const matchesXs = useMediaQuery(theme.breakpoints.down('sm'))
 
   const { auth, database, setNotificationsToNewState } = useContext(FirebaseContext)
-  const { user, setUser } = useContext(SessionContext)
+  const { user, setUser, currentUserNotifications } = useContext(SessionContext)
   const [currentNotifications, setCurrentNotifications] = useState([])
 
   const [anchorEl, setAnchorEl] = useState(null)
@@ -188,13 +188,13 @@ const ConnectedNav = () => {
     })
   }
 
-  useEffect(() => {
-    buildNotifications(user)
-  }, [user])
+  const handleNotifications = () => {
+    buildNotifications(user).then(notifications => setCurrentNotifications(notifications))
+  }
 
   useEffect(() => {
     if (user && refreshNotif) {
-      const tempNotif = buildNotifications(user)
+      const tempNotif = handleNotifications(user)
       setCurrentNotifications(tempNotif)
       setRefreshNotif(false)
     }
@@ -562,7 +562,7 @@ const ConnectedNav = () => {
             </Menu> */}
             {!matchesXs ? (
               <NotificationArea
-                currentNotifications={currentNotifications}
+                currentNotifications={currentUserNotifications}
                 setRefreshNotif={setRefreshNotif}
                 isMyTrips
                 setIsChatOpen={setIsChatOpen}
@@ -570,7 +570,7 @@ const ConnectedNav = () => {
               />
             ) : (
               <MobileNotificationArea
-                currentNotifications={currentNotifications}
+                currentNotifications={currentUserNotifications}
                 setRefreshNotif={setRefreshNotif}
                 isMyTrips
               />

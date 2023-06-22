@@ -395,7 +395,7 @@ const FirebaseContextProvider = ({ children }) => {
       })
   }
 
-  const createNotifications = async (currentUser, tripData, type, priority) => {
+  const createNotifications = async (currentUser, tripData, tripId, type, priority) => {
     const tempTrip = {
       mainPicture: tripData.mainPicture,
       dateRange: tripData.dateRange,
@@ -412,6 +412,7 @@ const FirebaseContextProvider = ({ children }) => {
       type,
       priority,
       state: 1,
+      tripId,
       creationDate: new Date(),
     })
 

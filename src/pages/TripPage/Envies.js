@@ -23,7 +23,7 @@ import MobileTripPageHeader from '../../components/molecules/MobileTripPageHeade
 const useStyles = makeStyles(theme => ({
   paper: {
     padding: '30px',
-    margin: '80px 30px 0 30px',
+    margin: '40px 30px 0 30px',
     [theme.breakpoints.down('sm')]: {
       margin: '20px',
       padding: '15px',
@@ -184,7 +184,7 @@ const Envies = ({ tripId, tripWishes, recommendedWishes, canEdit, tripTravelers 
           </Box> */}
         </>
       )}
-      <Paper className={classes.paper}>
+      <Paper className={classes.paper} sx={{ marginTop: '80px' }}>
         <Typography className={classes.title}>
           {matchesXs ? 'Top 3 des envies' : 'Envies du séjour'}
         </Typography>

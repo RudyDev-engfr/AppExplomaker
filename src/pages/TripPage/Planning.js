@@ -875,7 +875,6 @@ const Planning = ({ tripData, tripId }) => {
             setPreviousEvent={setPreviousEvent}
             selectedPropositionIndex={selectedPropositionIndex}
             setSelectedPropositionIndex={setSelectedPropositionIndex}
-            canEdit={canEdit}
             setEventType={setEventType}
           />
         )}

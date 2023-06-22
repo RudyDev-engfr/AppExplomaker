@@ -169,7 +169,6 @@ const MyTrips = () => {
                 key={tripData.id}
                 tripId={tripData.id}
                 bgImg={tripData?.mainPicture || kenya1}
-                nbNotif={3}
                 people={currentPeopleIds}
                 title={tripData.title}
                 premium={tripData.premium}

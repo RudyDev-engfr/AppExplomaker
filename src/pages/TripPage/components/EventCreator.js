@@ -164,6 +164,10 @@ const useStyles = makeStyles(theme => ({
       placeItems: 'start',
     },
   },
+  chatPlaceInput: {
+    backgroundColor: theme.palette.grey.f7,
+    padding: '8px 12px',
+  },
 }))
 
 const priceOption = [
@@ -718,6 +722,7 @@ const EventCreator = ({
     setEditMode(false)
     setCurrentView('planning')
     setCurrentLocation('')
+    setLocation('')
     setIsAssistantGuided(false)
   }
 
@@ -1102,6 +1107,7 @@ const EventCreator = ({
               }
               setEventType('')
               setCurrentView('planning')
+              handleReset()
             }}
             size="large"
           >
@@ -1159,10 +1165,15 @@ const EventCreator = ({
                   {isAssistantGuided ? (
                     <>
                       <TextField
-                        variant="filled"
+                        variant="outlined"
+                        inputVariant="filled"
                         value={currentLocation?.formatted_address}
                         readOnly
                         fullWidth
+                        InputProps={{
+                          classes: { filledInput: classes.chatPlaceInput },
+                        }}
+                        label="Emplacement"
                       />
                     </>
                   ) : (

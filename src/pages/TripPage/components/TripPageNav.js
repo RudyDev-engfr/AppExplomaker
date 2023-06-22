@@ -5,7 +5,6 @@ import DashboardOutlinedIcon from '@mui/icons-material/DashboardOutlined'
 import StarBorderIcon from '@mui/icons-material/StarBorder'
 import EventNoteIcon from '@mui/icons-material/EventNote'
 /* import PhotoCameraOutlinedIcon from '@mui/icons-material/PhotoCameraOutlined' */
-import ArrowBackRoundedIcon from '@mui/icons-material/ArrowBackRounded'
 import Box from '@mui/material/Box'
 import Button from '@mui/material/Button'
 import Dialog from '@mui/material/Dialog'
@@ -18,15 +17,12 @@ import useMediaQuery from '@mui/material/useMediaQuery'
 import clsx from 'clsx'
 import FeedIcon from '@mui/icons-material/Feed'
 import AirplanemodeActiveRounded from '@mui/icons-material/AirplanemodeActiveRounded'
-import Chat from '@mui/icons-material/Chat'
 import DirectionsBusFilled from '@mui/icons-material/DirectionsBusFilled'
 import ExploreRounded from '@mui/icons-material/ExploreRounded'
-import Help from '@mui/icons-material/Help'
 import HomeRounded from '@mui/icons-material/HomeRounded'
 import Logout from '@mui/icons-material/Logout'
-import Notifications from '@mui/icons-material/Notifications'
+import Explore from '@mui/icons-material/Explore'
 import RestaurantMenuRounded from '@mui/icons-material/RestaurantMenuRounded'
-import Tune from '@mui/icons-material/Tune'
 import Forum from '@mui/icons-material/Forum'
 import { useCollectionData } from 'react-firebase-hooks/firestore'
 
@@ -464,7 +460,7 @@ const TripPageNav = ({
                 }
                 invisible={assistantMessages?.length < 1}
               >
-                <Help
+                <Explore
                   sx={{
                     fontSize: '35px',
                     color: isChatOpen === 'AIChat' && theme.palette.primary.main,

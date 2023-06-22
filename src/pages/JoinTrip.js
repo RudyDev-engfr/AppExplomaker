@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useState } from 'react'
-import { makeStyles } from '@mui/styles'
+import { makeStyles, useTheme } from '@mui/styles'
 import Box from '@mui/material/Box'
 import Button from '@mui/material/Button'
 import Typography from '@mui/material/Typography'
@@ -114,7 +114,8 @@ const JoinTrip = () => {
   const matchesXs = useMediaQuery(theme.breakpoints.down('sm'))
   const { tripId } = useParams()
   const { user, setNeedRedirectTo, setJoinCallback } = useContext(SessionContext)
-  const { firestore, timestampRef, getUserById, getSpotByDestination } = useContext(FirebaseContext)
+  const { firestore, timestampRef, getUserById, getSpotByDestination, createNotifications } =
+    useContext(FirebaseContext)
 
   const [isLoading, setIsLoading] = useState(true)
   const [tripData, setTripData] = useState()
@@ -224,6 +225,7 @@ const JoinTrip = () => {
     if (user.isLoggedIn) {
       updateTraveler(user.id, isTraveler)
       history.push(`/tripPage/${tripId}`)
+      createNotifications(user, tripData, tripId, 'jointrip', 3)
     } else {
       setOpenModal('login')
     }

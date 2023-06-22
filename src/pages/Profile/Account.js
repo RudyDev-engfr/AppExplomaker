@@ -70,6 +70,9 @@ const useStyles = makeStyles(theme => ({
   mainTitle: {
     fontSize: '28px',
     fontWeight: '500',
+    position: 'absolute',
+    top: '47px',
+    left: '55px',
   },
   gridContainer: {
     margin: '45px 0 80px',

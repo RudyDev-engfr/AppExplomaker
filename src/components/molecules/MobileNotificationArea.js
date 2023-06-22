@@ -68,7 +68,9 @@ const MobileNotificationArea = ({
         <Badge
           badgeContent={
             isMyTrips
-              ? user.notifications.filter(notification => notification?.state === 1).length
+              ? currentNotifications.filter(
+                  notification => notification.myTripsTripId && notification.redPings > 0
+                ).length
               : user?.notifications.filter(
                   notification => notification?.tripId === tripId && notification?.state === 1
                 ).length

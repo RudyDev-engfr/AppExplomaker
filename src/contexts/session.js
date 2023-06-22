@@ -1,4 +1,5 @@
 import React, { useState, useEffect, createContext, useContext } from 'react'
+import { buildNotifications } from '../helper/functions'
 import { FirebaseContext } from './firebase'
 
 export const SessionContext = createContext()
@@ -7,10 +8,21 @@ const SessionContextProvider = ({ children }) => {
   const localUser = JSON.parse(localStorage.getItem('user'))
   const { firestore } = useContext(FirebaseContext)
   const [user, setUser] = useState(localUser || {})
+  const [currentUserNotifications, setCurrentUserNotifications] = useState()
   const [firstname, setFirstname] = useState('')
   const [tripRoles, setTripRoles] = useState()
   const [needRedirectTo, setNeedRedirectTo] = useState()
   const [joinCallback, setJoinCallback] = useState(() => {})
+
+  const handleNotifications = () => {
+    buildNotifications(user).then(notifications => setCurrentUserNotifications(notifications))
+  }
+
+  useEffect(() => {
+    if (user) {
+      handleNotifications(user)
+    }
+  }, [user])
 
   useEffect(() => {
     console.log('le prénom', firstname)
@@ -46,6 +58,7 @@ const SessionContextProvider = ({ children }) => {
         joinCallback,
         setJoinCallback,
         firstname,
+        currentUserNotifications,
       }}
     >
       {children}

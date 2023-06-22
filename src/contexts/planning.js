@@ -255,7 +255,7 @@ const PlanningContextProvider = ({ children }) => {
   }, [selectedDateOnPlanning, plannedEvents, isNewDatesSectionOpen])
 
   useEffect(() => {
-    if (currentView === 'chronoFeed' && singleDayPlannedEvents?.length > 1) {
+    if (currentView === 'chronoFeed' && singleDayPlannedEvents?.length > 1 && needMapRefresh) {
       const uniqueIds = new Set()
       setCurrentEvents({
         surveys: plannedEvents.filter(plannedEvent => {
@@ -268,6 +268,7 @@ const PlanningContextProvider = ({ children }) => {
           plannedEvent => !plannedEvent.itsAllDayLong && !plannedEvent.isSurvey
         ),
       })
+      setNeedMapRefresh(false)
     }
   }, [currentView, singleDayPlannedEvents])
 
@@ -757,8 +758,10 @@ const PlanningContextProvider = ({ children }) => {
             setSingleDayPlannedEvents(singleDayEventsArray)
           }
         })
+    } else {
+      setSingleDayPlannedEvents([])
     }
-  }, [plannedEvents])
+  }, [plannedEvents, currentEvents])
 
   const deleteStopoverOnEventCreator = (flights, flightId, setter) => {
     const tempFlights = structuredClone(flights)

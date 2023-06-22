@@ -26,6 +26,7 @@ const useStyles = makeStyles(theme => ({
   subtitle: {
     fontWeight: '500',
     fontSize: '14px',
+    marginRight: '20px',
   },
   mobileIcon: {
     marginRight: '10px',

@@ -30,7 +30,7 @@ const useStyles = makeStyles(theme => ({
     paddingTop: '1px',
     paddingBottom: '1px',
     marginTop: '80px',
-    minHeight: 'calc(100vh - 80px - 370px)',
+    minHeight: 'calc(100vh - 80px)',
     [theme.breakpoints.down('sm')]: {
       paddingBottom: '100%',
       marginTop: 'unset',
@@ -58,6 +58,9 @@ const useStyles = makeStyles(theme => ({
     fontSize: '28px',
     fontWeight: '500',
     color: theme.palette.grey['33'],
+    position: 'absolute',
+    top: '47px',
+    left: '55px',
   },
   titles: {
     fontSize: '18px',
@@ -73,6 +76,7 @@ const useStyles = makeStyles(theme => ({
     marginBottom: '15px',
     [theme.breakpoints.down('sm')]: {
       maxWidth: '100%',
+      minWidth: 'calc(100vw - 60px)',
     },
   },
   papersTitle: {
@@ -147,7 +151,7 @@ const Settings = () => {
       <Nav />
       <Box className={classes.mainContainer}>
         <Box className={classes.container}>
-          <Box>
+          <Box sx={{ display: 'flex', justifyContent: 'space-evenly' }}>
             {matchesXs && (
               <IconButton
                 className={classes.returnBtn}
@@ -174,10 +178,10 @@ const Settings = () => {
                 </Button>
               </Breadcrumbs>
             )}
+            <Typography className={classes.mainTitle} component="h1">
+              Mes préférences
+            </Typography>
           </Box>
-          <Typography className={classes.mainTitle} component="h1">
-            Mes préférences
-          </Typography>
           <Typography className={classes.titles}>Emails</Typography>
           <Box
             sx={{
@@ -207,7 +211,17 @@ const Settings = () => {
               </Box>
               <Typography className={classes.papersDescription}>
                 Reçois{' '}
-                <Box component="span" className={classes.frequencyTypo}>
+                <Box
+                  component="span"
+                  className={classes.frequencyTypo}
+                  onClick={() => {
+                    if (anchorEl === null) {
+                      handleMenuOpen()
+                    } else {
+                      handleMenuClose()
+                    }
+                  }}
+                >
                   {user.myTripLetter === 'daily'
                     ? 'quotidiennement'
                     : user.myTripLetter === 'weekly'

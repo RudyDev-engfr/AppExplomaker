@@ -373,6 +373,7 @@ const ChatMessage = ({
   const { user } = useContext(SessionContext)
   const { firestore } = useContext(FirebaseContext)
   const history = useHistory()
+  const matchesXs = useMediaQuery(theme.breakpoints.down('sm'))
   const {
     setIsAssistantGuided,
     setCurrentView,
@@ -380,6 +381,7 @@ const ChatMessage = ({
     setEditMode,
     currentLocation,
     setCurrentLocation,
+    setIsChatOpen,
   } = useContext(TripContext)
 
   useEffect(() => {
@@ -407,6 +409,9 @@ const ChatMessage = ({
             setEventType(singlePlace.getAttribute('tag_type'))
             setCurrentView('creator')
             setEditMode(false)
+            if (matchesXs) {
+              setIsChatOpen(false)
+            }
           }
         })
       }

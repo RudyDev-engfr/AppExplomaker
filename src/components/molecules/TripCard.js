@@ -1,4 +1,4 @@
-import React, { useContext, useEffect } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import Badge from '@mui/material/Badge'
 import Box from '@mui/material/Box'
 import Card from '@mui/material/Card'
@@ -88,45 +88,44 @@ const TripCard = ({
   const classes = useStyles()
   const history = useHistory()
   const theme = useTheme()
-  const { user } = useContext(SessionContext)
+  const { user, currentUserNotifications } = useContext(SessionContext)
+  const [currentRedPings, setCurrentRedPings] = useState()
+
+  useEffect(() => {
+    if (currentUserNotifications?.filter(notif => notif.myTripsTripId === tripId)[0].redPings) {
+      setCurrentRedPings(
+        currentUserNotifications?.filter(notif => notif.myTripsTripId === tripId)[0].redPings
+      )
+    }
+  }, [currentUserNotifications, user])
 
   return (
     <Card className={classes.root}>
-      {user.notifications?.filter(
-        notification => notification?.tripId === tripId && notification?.state === 1
-      ).length > 0 && (
+      {currentUserNotifications?.filter(notif => notif.myTripsTripId === tripId).length > 0 && (
         <Box position="absolute" top="calc(4% + 1rem)" right="calc(4% + 1rem)" zIndex={10}>
-          <Badge
-            badgeContent={
-              user.notifications?.filter(
-                notification => notification?.tripId === tripId && notification?.state === 1
-              ).length
-            }
-            color="secondary"
-            overlap="circular"
-          >
+          <Badge badgeContent={currentRedPings} color="secondary" overlap="circular">
             <IconButton
               className={classes.iconBtn}
               size="large"
               disabled={
-                user.notifications?.filter(
-                  notification => notification?.tripId === tripId && notification?.state === 1
+                currentUserNotifications.filter(
+                  notif => notif.myTripsTripId === tripId && notif.redPings > 0
                 ).length === 0
               }
               sx={{
                 backgroundColor:
-                  user.notifications?.filter(
-                    notification => notification?.tripId === tripId && notification?.state === 1
+                  currentUserNotifications.filter(
+                    notif => notif.myTripsTripId === tripId && notif.redPings > 0
                   ).length > 0
                     ? `${theme.palette.primary.ultraLight} !important`
-                    : `${theme.palette.grey.bd}!important`,
+                    : `${theme.palette.grey.f2}!important`,
               }}
             >
               <Notifications
                 sx={{
                   color:
-                    user.notifications?.filter(
-                      notification => notification?.tripId === tripId && notification.state === 1
+                    currentUserNotifications.filter(
+                      notif => notif.myTripsTripId === tripId && notif.redPings > 0
                     ).length > 0
                       ? `${theme.palette.primary.main} !important`
                       : `${theme.palette.grey.bd}!important`,
