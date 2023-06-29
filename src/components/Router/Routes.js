@@ -10,7 +10,6 @@ import SignupFourthStep from '../../pages/Signup/FourthStep'
 import SignupFifthStep from '../../pages/Signup/FifthStep'
 import PwdResetHandler from '../../pages/PwdResetHandler'
 import JoinTrip from '../../pages/JoinTrip'
-import WelcomeTrip from '../../pages/WelcomeTrip'
 import TripFirst from '../../pages/NewTrip/TripFirst'
 import TripSecond from '../../pages/NewTrip/TripSecond'
 import TripThird from '../../pages/NewTrip/TripThird'
@@ -25,6 +24,8 @@ import Help from '../../pages/Profile/Help'
 import HelpDetails from '../../pages/Profile/HelpDetails'
 
 import TripContextProvider from '../../contexts/trip'
+import TripGuide from '../../pages/TripPage/components/TripGuide'
+import TripGuideItem from '../TripGuideItem'
 
 const Routes = () => {
   const history = useHistory()
@@ -99,7 +100,6 @@ const Routes = () => {
       <PrivateRoute path="/help">
         <Help />
       </PrivateRoute>
-
       <Route path="*">
         <MyTrips />
       </Route>

@@ -324,6 +324,23 @@ const TripPageNav = ({
           </Button>
         )}
 
+        {tripData.premium && (
+          <Button
+            className={clsx(classes.sidebarButton, {
+              [classes.activeTabStyle]: currentActiveTab === 'tripguide',
+            })}
+            onClick={() => setCurrentActiveTab('tripguide')}
+            startIcon={
+              <FeedIcon
+                color={currentActiveTab === 'tripguide' ? 'primary' : 'disabled'}
+                className={classes.icons}
+              />
+            }
+          >
+            Guide du séjour
+          </Button>
+        )}
+
         {/* <Button
               className={clsx(classes.sidebarButton, {
                 [classes.activeTabStyle]: currentActiveTab === 'photos',

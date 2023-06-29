@@ -110,7 +110,6 @@ const MyTrips = () => {
   const [pastTrips, setPastTrips] = useState([])
   const [trendingDestinations, setTrendingDestinations] = useState([])
   const [currentTripSelected, setCurrentTripSelected] = useState(0)
-  const isPremium = user.state === 'premium'
 
   useEffect(() => {
     if (trendingDestinations.length < 1) {

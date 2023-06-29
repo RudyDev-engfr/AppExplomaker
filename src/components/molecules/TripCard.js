@@ -92,7 +92,7 @@ const TripCard = ({
   const [currentRedPings, setCurrentRedPings] = useState()
 
   useEffect(() => {
-    if (currentUserNotifications?.filter(notif => notif.myTripsTripId === tripId)[0].redPings) {
+    if (currentUserNotifications?.filter(notif => notif.myTripsTripId === tripId)[0]?.redPings) {
       setCurrentRedPings(
         currentUserNotifications?.filter(notif => notif.myTripsTripId === tripId)[0].redPings
       )

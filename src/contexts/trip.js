@@ -58,6 +58,9 @@ const TripContextProvider = ({ children }) => {
   const [currentActiveMobileNavTab, setCurrentActiveMobileNavTab] = useState('preview')
   const [currentTravelers, setCurrentTravelers] = useState([])
 
+  // used to handle tripGuide page
+  const [tripGuideData, setTripGuideData] = useState(null)
+
   const setTypeCreator = type => () => {
     setEventType(type)
     setCurrentView('creator')
@@ -66,6 +69,10 @@ const TripContextProvider = ({ children }) => {
   useEffect(() => {
     console.log('voyageurs actuels', currentTravelers)
   }, [currentTravelers])
+
+  useEffect(() => {
+    console.log('tripGuideData', tripGuideData)
+  }, [tripGuideData])
 
   const handleEventCreation = eventDescription => {
     const tempEventDescription = structuredClone(eventDescription)
@@ -175,6 +182,7 @@ const TripContextProvider = ({ children }) => {
 
   useEffect(() => {
     updateTravelers()
+    console.log('tripData', tripData)
   }, [tripData])
 
   useEffect(() => {
@@ -186,6 +194,45 @@ const TripContextProvider = ({ children }) => {
         setTripData(tempDoc)
       })
   }, [tripId])
+
+  useEffect(() => {
+    console.log('placeIDpourGuide', tripData?.destination?.place_id)
+
+    if (
+      (tripGuideData === null || typeof tripGuideData === 'undefined') &&
+      tripData?.destination?.place_id
+    ) {
+      console.log('on est parti')
+      firestore
+        .collection('inspirations')
+        .doc(tripData?.destination?.place_id)
+        .onSnapshot(doc => {
+          if (doc.exists) {
+            console.log('doc', doc)
+            const tempDoc = doc.data()
+            const tripGuideDataKeys = Object.keys(tempDoc)
+            const tempTripGuideData = tripGuideDataKeys.map(currentKey => tempDoc[currentKey])
+            console.log('testtripGuideData', tempTripGuideData)
+            setTripGuideData(tempTripGuideData)
+          } else {
+            firestore
+              .collection('inspirations')
+              .doc(tripData?.destination?.place_id)
+              .set({
+                place_id: tripData?.destination?.place_id,
+                createdAt: new Date(),
+                userId: user.id,
+              })
+              .then(() => {
+                console.log('=== Document successfully written! ===')
+              })
+              .catch(error => {
+                console.error('=== Error writing document: ', error)
+              })
+          }
+        })
+    }
+  }, [tripGuideData, tripData])
 
   // const [allowDeleteNotif, setAllowDeleteNotif] = useState(false)
   // const [timingRefresh, setTimingRefresh] = useState(false)
@@ -328,6 +375,8 @@ const TripContextProvider = ({ children }) => {
         setCanEdit,
         currentLocation,
         setCurrentLocation,
+        tripGuideData,
+        setTripGuideData,
       }}
     >
       {children}

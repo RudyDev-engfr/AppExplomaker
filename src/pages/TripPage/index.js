@@ -85,6 +85,7 @@ import MobileTripPageHeader from '../../components/molecules/MobileTripPageHeade
 import SocialNavbar from './SocialNavbar'
 import AIChatWindow from '../../components/AI/AIChatWindow'
 import AddCollaboratorsButton from '../../components/atoms/AddCollaboratorsButton'
+import TripGuide from './components/TripGuide'
 
 const notifications = [
   {
@@ -731,9 +732,16 @@ const TripPage = () => {
     const currentTabFromUrl = location.pathname.substring(location.pathname.lastIndexOf('/') + 1)
     let isUrlSameAsTab = currentTabFromUrl === currentActiveTab
     if (
-      !['documents', 'inspiration', 'envies', 'planning', 'photos', 'notes', 'triplogs'].includes(
-        currentTabFromUrl
-      ) &&
+      ![
+        'documents',
+        'inspiration',
+        'envies',
+        'planning',
+        'photos',
+        'notes',
+        'triplogs',
+        'tripguide',
+      ].includes(currentTabFromUrl) &&
       currentActiveTab === 'preview'
     ) {
       isUrlSameAsTab = true
@@ -748,6 +756,7 @@ const TripPage = () => {
         /* 'documents', 'inspiration',  */ 'envies',
         'planning' /* , 'photos'  , 'notes' */,
         'triplogs',
+        'tripguide',
       ].includes(currentTabFromUrl)
     ) {
       setCurrentActiveTab('preview')
@@ -1115,6 +1124,7 @@ const TripPage = () => {
               {currentActiveTab === 'triplogs' && (
                 <TripLogs tripData={tripData} tripId={tripId} canEdit={canEdit} />
               )}
+              {currentActiveTab === 'tripguide' && <TripGuide />}
               {/* {currentActiveTab === 'photos' && <Photos tripId={tripId} />} */}
               {/* {currentActiveTab === 'documents' && <Documents />}
             {currentActiveTab === 'notes' && <Notes />}

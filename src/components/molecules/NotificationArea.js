@@ -72,7 +72,7 @@ const NotificationArea = ({
     currentNotifications
       ?.filter(notification => notification.redPings)
       .forEach(notification => {
-        console.log('redpings', notification.redPings)
+        // console.log('redpings', notification.redPings)
         tempRedPings += notification?.redPings
       })
     setCurrentRedPings(tempRedPings)

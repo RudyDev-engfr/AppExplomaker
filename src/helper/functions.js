@@ -373,20 +373,20 @@ export const buildNotifications = async user => {
     userTripRequest.forEach(doc => userTripCollection.push(doc.id))
 
     const tempTripCollectionRequest = userTripCollection.map(async tripId => {
-      console.log('tripId', tripId)
+      // console.log('tripId', tripId)
       const tempRequest = await firestore.collection('trips').doc(tripId).get()
       return {
         tripId,
         tripData: tempRequest.data(),
       }
     })
-    console.log('request de voyages', tempTripCollectionRequest)
+    // console.log('request de voyages', tempTripCollectionRequest)
     const tempTripCollection = await Promise.all(tempTripCollectionRequest)
 
-    console.log('collection de voyages', tempTripCollection)
-    console.log('collection de trips', userTripCollection)
+    // console.log('collection de voyages', tempTripCollection)
+    // console.log('collection de trips', userTripCollection)
     const buildNotificationsPromises = tempTripCollection.map(({ tripId, tripData }) => {
-      console.log('tripId dans la collec', tripId)
+      // console.log('tripId dans la collec', tripId)
       const singleNotif = {}
       let AssistantNotReadArrayLength = 0
       let messagesNotReadArrayLength = 0
@@ -422,18 +422,18 @@ export const buildNotifications = async user => {
               notification => notification.userId === user.id && !notification.hasSeen
             )
           ).length
-          console.log('le compteur de messages', messagesNotReadArrayLength)
+          // console.log('le compteur de messages', messagesNotReadArrayLength)
           singleNotif.redPings =
             notifArrayLength + messagesNotReadArrayLength + AssistantNotReadArrayLength
-          console.log('redPings', singleNotif.redPings)
+          // console.log('redPings', singleNotif.redPings)
           singleNotif.content = `il y a du nouveau sur le voyage - ${tripData?.title} -`
           singleNotif.url = `/tripPage/${tripId}`
           singleNotif.state = 1
           singleNotif.myTripsTripId = tripId
           singleNotif.image = tripData?.mainPicture ?? `../../images/inherit/Kenya 1.png`
-          console.log('compteur de notif', singleNotif.redPings)
+          // console.log('compteur de notif', singleNotif.redPings)
           notifications.push(singleNotif)
-          console.log('le log des notifs', notifications)
+          // console.log('le log des notifs', notifications)
         }
       )
     })

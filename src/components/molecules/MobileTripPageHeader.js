@@ -132,6 +132,21 @@ const MobileTripPageHeader = () => {
             value="triplogs"
             onClick={() => setCurrentActiveTab('triplogs')}
           />
+          <Tab
+            label={
+              <Typography
+                sx={{
+                  color: 'white',
+                  textTransform: 'none',
+                  fontWeight: currentActiveTab === 'tripguide' && 700,
+                }}
+              >
+                Logs
+              </Typography>
+            }
+            value="tripguide"
+            onClick={() => setCurrentActiveTab('tripguide')}
+          />
         </Tabs>
       </Box>
     </Box>

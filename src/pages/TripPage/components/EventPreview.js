@@ -330,10 +330,10 @@ const EventPreview = ({
       .doc(currentEvent.id)
       .set({ ...tempDoc })
       .then(() => {
+        setCurrentView('planning')
         const tempEvent = { ...tempDoc, id: currentEvent.id }
         setCurrentEvent(tempEvent)
-        history.push(`/tripPage/${tripId}/planning?survey=${currentEvent.id}`)
-        setCurrentView('survey')
+        history.push(`/tripPage/${tripId}/planning?survey=${currentEvent.id}&proposition=0`)
       })
   }
 
@@ -355,6 +355,8 @@ const EventPreview = ({
           .collection('planning')
           .doc(currentEvent.id)
           .set({ needNewDates: true }, { merge: true })
+        setCurrentEvent('')
+        setCurrentView('planning')
       },
       isRemoved: !!currentEvent?.needNewDates,
     },
@@ -383,6 +385,8 @@ const EventPreview = ({
           .collection('planning')
           .doc(currentEvent.id)
           .set({ needNewDates: true }, { merge: true })
+        setCurrentEvent('')
+        setCurrentView('planning')
       },
       isRemoved: !!currentEvent?.needNewDates,
     },
