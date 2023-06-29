@@ -36,7 +36,7 @@ const useStyles = makeStyles(theme => ({
 const TripGuideItem = ({ currentItem, setCurrentSelectedButton, setItemData }) => {
   const classes = useStyles()
   const theme = useTheme()
-  const { tripId } = useParams
+  const { tripId } = useParams()
   const history = useHistory()
   const matchesXs = useMediaQuery(theme.breakpoints.down('sm'))
   const { tripData } = useContext(TripContext)
@@ -66,7 +66,7 @@ const TripGuideItem = ({ currentItem, setCurrentSelectedButton, setItemData }) =
               className={classes.breadcrumbsBtn}
               onClick={() => {
                 setItemData(null)
-                setCurrentSelectedButton('')
+                setCurrentSelectedButton(null)
                 history.push(`/tripPage/${tripId}/tripguide`)
               }}
             >

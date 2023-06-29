@@ -10,7 +10,6 @@ import TripGuideItem from '../../../components/TripGuideItem'
 const useStyles = makeStyles(theme => ({
   mainContainer: {
     width: 'calc(100vw - 350px)',
-    height: '100vh',
   },
   titleContainer: {
     height: '65px',
@@ -39,6 +38,7 @@ const TripGuide = () => {
   const [itemData, setItemData] = useState(null)
   const [currentSelectedButton, setCurrentSelectedButton] = useState(null)
   const [localItemData, setLocalItemData] = useState(itemData)
+  const [currentCategory, setCurrentCategory] = useState()
 
   useEffect(() => {
     setLocalItemData(itemData)
@@ -70,16 +70,42 @@ const TripGuide = () => {
       </Box>
       <Box className={classes.tripGuideButtonsContainer}>
         {tripGuideData
-          ?.filter(data => data.name)
-          .map(singleData => (
-            <TripGuideButton
-              itemName={singleData?.name}
-              logo={singleData?.logo}
-              currentSelectedButton={currentSelectedButton}
-              setCurrentSelectedButton={setCurrentSelectedButton}
-              model={singleData?.model}
-            />
-          ))}
+          ?.filter(data => data?.name && data?.category)
+          .sort((a, b) => {
+            if (a.category < b.category) {
+              return -1
+            }
+            if (a.category > b.category) {
+              return 1
+            }
+            return 0
+          })
+          .reduce((acc, singleData) => {
+            const lastCategory = acc[acc.length - 1]?.category
+            if (lastCategory !== singleData.category) {
+              acc.push({ category: singleData.category })
+            }
+            acc.push(singleData)
+            return acc
+          }, [])
+          .map(item =>
+            item?.name ? (
+              <TripGuideButton
+                key={item.name}
+                itemName={item?.name}
+                logo={item?.logo}
+                currentSelectedButton={currentSelectedButton}
+                setCurrentSelectedButton={setCurrentSelectedButton}
+                model={item?.model}
+              />
+            ) : (
+              <Box sx={{ width: '100%', marginBottom: '15px', marginTop: '15px' }}>
+                <Typography sx={{ fontSize: '20px', fontWeight: 500 }} key={item.category}>
+                  {item?.category}
+                </Typography>
+              </Box>
+            )
+          )}
       </Box>
     </Box>
   )

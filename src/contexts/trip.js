@@ -212,8 +212,11 @@ const TripContextProvider = ({ children }) => {
             const tempDoc = doc.data()
             const tripGuideDataKeys = Object.keys(tempDoc)
             const tempTripGuideData = tripGuideDataKeys.map(currentKey => tempDoc[currentKey])
-            console.log('testtripGuideData', tempTripGuideData)
-            setTripGuideData(tempTripGuideData)
+            const buildTripGuideData = tempTripGuideData.filter(
+              (v, i, a) => a.findIndex(t => t.category === v.category && t.name === v.name) === i
+            )
+            console.log('buildTripGuideData', buildTripGuideData)
+            setTripGuideData(buildTripGuideData)
           } else {
             firestore
               .collection('inspirations')
