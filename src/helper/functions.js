@@ -500,6 +500,7 @@ export const buildNotificationsOnTripForUser = (user, tripId) => {
             singleNotif.timer = notifBody.definitiveTimer
             singleNotif.state = notifBody.state
             singleNotif.url = `/tripPage/${tripId}`
+            singleNotif.type = 'dateUpdate'
             break
 
           case 'surveyCreate':
@@ -720,6 +721,7 @@ export const buildNotificationsOnTripForUser = (user, tripId) => {
             // singleNotif.icon = event.icon
             // singleNotif.eventType = event.type
             singleNotif.url = `/tripPage/${tripId}`
+            singleNotif.type = 'destinationUpdate'
             break
 
           case 'eventDelete':

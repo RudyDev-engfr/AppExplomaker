@@ -10,6 +10,8 @@ import Typography from '@mui/material/Typography'
 import { useMediaQuery } from '@mui/material'
 import { makeStyles, useTheme } from '@mui/styles'
 import Notifications from '@mui/icons-material/Notifications'
+import EditLocation from '@mui/icons-material/EditLocation'
+import EventNote from '@mui/icons-material/EventNote'
 import { isSameDay } from 'date-fns'
 import { useHistory } from 'react-router-dom'
 import findIcon from '../../helper/icons'
@@ -561,7 +563,7 @@ const NotificationAreaDrawer = ({
                             : notification.priority === 3 && theme.palette.secondary.main,
                       }}
                     >
-                      {notification.icon ? (
+                      {notification.icon && (
                         <Box
                           component="img"
                           src={findIcon(notification.icon, notification.eventType)}
@@ -572,8 +574,13 @@ const NotificationAreaDrawer = ({
                             height: '20px',
                           }}
                         />
+                      )}
+                      {notification?.type === 'dateUpdate' ? (
+                        <EventNote sx={{ color: 'white', fontSize: '20px' }} />
                       ) : (
-                        <Notifications sx={{ color: 'white', fontSize: '20px' }} />
+                        notification?.type === 'destinationUpdate' && (
+                          <EditLocation sx={{ color: 'white', fontSize: '20px' }} />
+                        )
                       )}
                     </Box>
                   </Box>

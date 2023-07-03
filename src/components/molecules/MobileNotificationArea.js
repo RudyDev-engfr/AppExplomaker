@@ -1,4 +1,4 @@
-import { ArrowForward, Notifications } from '@mui/icons-material'
+import { EditLocation, EventNote, Notifications } from '@mui/icons-material'
 import { Avatar, Badge, Box, Drawer, IconButton, Modal, Paper, Typography } from '@mui/material'
 import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos'
 import { makeStyles, useTheme } from '@mui/styles'
@@ -242,16 +242,25 @@ export const MobileNotificationModal = ({
                           : notification.priority === 3 && theme.palette.secondary.main,
                     }}
                   >
-                    <Box
-                      component="img"
-                      src={findIcon(notification.icon, notification.eventType)}
-                      sx={{
-                        filter:
-                          'brightness(0) saturate(100%) invert(92%) sepia(95%) saturate(0%) hue-rotate(332deg) brightness(114%) contrast(100%)',
-                        width: '20px',
-                        height: '20px',
-                      }}
-                    />
+                    {notification.icon && (
+                      <Box
+                        component="img"
+                        src={findIcon(notification.icon, notification.eventType)}
+                        sx={{
+                          filter:
+                            'brightness(0) saturate(100%) invert(92%) sepia(95%) saturate(0%) hue-rotate(332deg) brightness(114%) contrast(100%)',
+                          width: '20px',
+                          height: '20px',
+                        }}
+                      />
+                    )}
+                    {notification?.type === 'dateUpdate' ? (
+                      <EventNote sx={{ color: 'white', fontSize: '20px' }} />
+                    ) : (
+                      notification?.type === 'destinationUpdate' && (
+                        <EditLocation sx={{ color: 'white', fontSize: '20px' }} />
+                      )
+                    )}
                   </Box>
                 </Box>
                 <Box>

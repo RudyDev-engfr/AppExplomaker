@@ -119,7 +119,7 @@ const Chat = ({ isChatOpen, setIsChatOpen, chats, tripId }) => {
   const matchesXs = useMediaQuery(theme.breakpoints.down('sm'))
   const { user } = useContext(SessionContext)
   const { firestore, timestampRef } = useContext(FirebaseContext)
-  const { currentTravelers } = useContext(TripContext)
+  const { currentTravelers, updateHasSeen } = useContext(TripContext)
 
   const dummy = useRef()
   const [messageToSend, setMessageToSend] = useState('')
@@ -154,7 +154,7 @@ const Chat = ({ isChatOpen, setIsChatOpen, chats, tripId }) => {
         .filter(traveler => traveler.id !== id)
         .map(traveler => ({ userId: traveler.id, hasSeen: false })),
     })
-
+    updateHasSeen('messages')
     setMessageToSend('')
     dummy.current?.scrollIntoView({ behavior: 'smooth' })
   }
