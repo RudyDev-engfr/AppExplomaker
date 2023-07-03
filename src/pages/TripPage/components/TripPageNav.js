@@ -177,7 +177,8 @@ const TripPageNav = ({
   const theme = useTheme()
   const isXs = useMediaQuery(theme.breakpoints.down('sm'))
 
-  const { setTypeCreator, updateHasSeen } = useContext(TripContext)
+  const { setTypeCreator, updateHasSeen, setItemData, setCurrentSelectedTripGuideButton } =
+    useContext(TripContext)
   const { setNotificationsToNewStateOnTrip, firestore } = useContext(FirebaseContext)
   const { user } = useContext(SessionContext)
 
@@ -307,6 +308,26 @@ const TripPageNav = ({
             </Box>
           )}
         </Button>
+        {tripData.premium && (
+          <Button
+            className={clsx(classes.sidebarButton, {
+              [classes.activeTabStyle]: currentActiveTab === 'tripguide',
+            })}
+            onClick={() => {
+              setCurrentActiveTab('tripguide')
+              setCurrentSelectedTripGuideButton(null)
+              setItemData(null)
+            }}
+            startIcon={
+              <FeedIcon
+                color={currentActiveTab === 'tripguide' ? 'primary' : 'disabled'}
+                className={classes.icons}
+              />
+            }
+          >
+            Guide du séjour
+          </Button>
+        )}
         {canEdit && (
           <Button
             className={clsx(classes.sidebarButton, {
@@ -323,24 +344,6 @@ const TripPageNav = ({
             Logs
           </Button>
         )}
-
-        {tripData.premium && (
-          <Button
-            className={clsx(classes.sidebarButton, {
-              [classes.activeTabStyle]: currentActiveTab === 'tripguide',
-            })}
-            onClick={() => setCurrentActiveTab('tripguide')}
-            startIcon={
-              <FeedIcon
-                color={currentActiveTab === 'tripguide' ? 'primary' : 'disabled'}
-                className={classes.icons}
-              />
-            }
-          >
-            Guide du séjour
-          </Button>
-        )}
-
         {/* <Button
               className={clsx(classes.sidebarButton, {
                 [classes.activeTabStyle]: currentActiveTab === 'photos',

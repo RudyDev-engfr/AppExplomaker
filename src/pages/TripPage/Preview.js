@@ -344,7 +344,9 @@ const Preview = ({
         <Box className={classes.mobileHeader}>
           <Box className={classes.mobileHeaderInner}>
             <Box className={classes.mobileHeaderInnerHeader}>
-              <Typography className={classes.mobileHeaderInnerTitle}>{tripData.title}</Typography>
+              {!matchesXs && (
+                <Typography className={classes.mobileHeaderInnerTitle}>{tripData.title}</Typography>
+              )}
               {canEdit && <EditBtn type="button" onClick={() => setOpenModal('general')} />}
             </Box>
             <div>

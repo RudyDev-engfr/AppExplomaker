@@ -154,8 +154,8 @@ const DesktopPreview = ({ tripData, generatedAvatars }) => {
             }}
           >
             <Typography className={classes.subtitle} component="h4">
-              {tripData.editors.length} contributeur
-              {tripData.editors.length > 1 ? 's' : ''}
+              {tripData.travelersDetails.filter(traveler => traveler.id).length} contributeur
+              {tripData.travelersDetails.filter(traveler => traveler.id).length > 1 ? 's' : ''}
             </Typography>
           </Button>
         </Box>

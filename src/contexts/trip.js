@@ -60,6 +60,8 @@ const TripContextProvider = ({ children }) => {
 
   // used to handle tripGuide page
   const [tripGuideData, setTripGuideData] = useState(null)
+  const [currentSelectedTripGuideButton, setCurrentSelectedTripGuideButton] = useState(null)
+  const [itemData, setItemData] = useState(null)
 
   const setTypeCreator = type => () => {
     setEventType(type)
@@ -380,6 +382,10 @@ const TripContextProvider = ({ children }) => {
         setCurrentLocation,
         tripGuideData,
         setTripGuideData,
+        currentSelectedTripGuideButton,
+        setCurrentSelectedTripGuideButton,
+        itemData,
+        setItemData,
       }}
     >
       {children}

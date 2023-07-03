@@ -478,6 +478,7 @@ export const buildNotificationsOnTripForUser = (user, tripId) => {
         const notifBody = buildNotifTimerAndState(creationDate, state)
         singleNotif.id = id
         singleNotif.owner = owner
+        singleNotif.priority = priority
         singleNotif.tripId = tripId
         if (event) {
           singleNotif.startTime = event.startTime

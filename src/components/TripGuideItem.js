@@ -16,24 +16,43 @@ import { useMediaQuery } from '@mui/material'
 import arrowBack from '../images/icons/arrow-back.svg'
 
 import { TripContext } from '../contexts/trip'
+import MobileTripPageHeader from './molecules/MobileTripPageHeader'
 
 const useStyles = makeStyles(theme => ({
   mainContainer: {
     width: 'calc(100vw - 350px)',
     backgroundColor: theme.palette.grey.f7,
     padding: '30px',
-    paddingTop: '95px',
+    [theme.breakpoints.down('sm')]: {
+      width: '100vw',
+      padding: 'unset',
+      paddingTop: '30px',
+      paddingBottom: '90px',
+    },
   },
   breadcrumbsContent: { margin: '20px 0' },
   breadcrumbsBtn: {
     textTransform: 'none',
-    fontSize: '28px',
+    fontSize: '20px',
+    fontWeight: 500,
+    lineHeight: 1.5,
     color: theme.palette.grey['33'],
     padding: '0',
     minWidth: 'unset',
   },
+  titleTypo: {
+    color: theme.palette.grey['33'],
+    fontSize: '20px',
+    fontWeight: 700,
+    lineHeight: '36px',
+  },
+  accordionContainer: {
+    [theme.breakpoints.down('sm')]: {
+      padding: '30px',
+    },
+  },
 }))
-const TripGuideItem = ({ currentItem, setCurrentSelectedButton, setItemData }) => {
+const TripGuideItem = ({ currentItem, setCurrentSelectedTripGuideButton, setItemData }) => {
   const classes = useStyles()
   const theme = useTheme()
   const { tripId } = useParams()
@@ -48,15 +67,27 @@ const TripGuideItem = ({ currentItem, setCurrentSelectedButton, setItemData }) =
 
   return (
     <Box className={classes.mainContainer}>
+      {matchesXs && <MobileTripPageHeader />}
+      <Box sx={{ display: 'flex', columnGap: '15px', margin: matchesXs && '30px 0' }}>
+        <IconButton
+          className={classes.mobileTitleIcon}
+          size="large"
+          onClick={() => {
+            setItemData(null)
+            setCurrentSelectedTripGuideButton(null)
+            history.push(`/tripPage/${tripId}/tripguide`)
+          }}
+        >
+          <img src={arrowBack} alt="" />
+        </IconButton>
+        <Typography className={classes.titleTypo}>
+          {!matchesXs
+            ? `Guide de voyage : ${tripData?.destination?.label}`
+            : `${currentItem?.category}`}
+        </Typography>
+      </Box>
       {!matchesXs && (
         <Box sx={{ display: 'flex' }}>
-          <IconButton
-            className={classes.mobileTitleIcon}
-            size="large"
-            onClick={() => history.goBack()}
-          >
-            <img src={arrowBack} alt="" />
-          </IconButton>
           <Breadcrumbs
             className={classes.breadcrumbsContent}
             separator={<NavigateNextRoundedIcon sx={{ fontSize: '30px' }} />}
@@ -66,11 +97,11 @@ const TripGuideItem = ({ currentItem, setCurrentSelectedButton, setItemData }) =
               className={classes.breadcrumbsBtn}
               onClick={() => {
                 setItemData(null)
-                setCurrentSelectedButton(null)
+                setCurrentSelectedTripGuideButton(null)
                 history.push(`/tripPage/${tripId}/tripguide`)
               }}
             >
-              {tripData?.destination.label}
+              {currentItem?.category}
             </Button>
             <Button className={classes.breadcrumbsBtn}>{currentItem?.name}</Button>
           </Breadcrumbs>

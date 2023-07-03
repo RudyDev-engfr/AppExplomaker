@@ -35,6 +35,9 @@ const useStyles = makeStyles(theme => ({
         height: '85px',
       },
     },
+    [theme.breakpoints.down('sm')]: {
+      width: 'calc(100vw - 60px)',
+    },
   },
   papersContent: {
     display: 'flex',
@@ -51,13 +54,13 @@ const useStyles = makeStyles(theme => ({
   },
 }))
 
-const TripGuideButton = ({ itemName, model, logo, setCurrentSelectedButton }) => {
+const TripGuideButton = ({ itemName, model, logo, setCurrentSelectedTripGuideButton }) => {
   const classes = useStyles()
   const history = useHistory()
 
   const handleClick = () => {
     history.push(`${history.location.pathname}?itemName=${model}`)
-    setCurrentSelectedButton(model)
+    setCurrentSelectedTripGuideButton(model)
   }
 
   return (

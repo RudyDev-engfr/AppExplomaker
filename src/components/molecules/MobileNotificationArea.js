@@ -234,7 +234,12 @@ export const MobileNotificationModal = ({
                       borderRadius: '50px',
                       width: '32px',
                       height: '32px',
-                      backgroundColor: theme.palette.primary.main,
+                      backgroundColor:
+                        notification.priority === 1
+                          ? theme.palette.primary.main
+                          : notification.priority === 2
+                          ? theme.palette.primary.ultraDark
+                          : notification.priority === 3 && theme.palette.secondary.main,
                     }}
                   >
                     <Box

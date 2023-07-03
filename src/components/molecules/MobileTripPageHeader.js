@@ -58,11 +58,11 @@ const MobileTripPageHeader = () => {
           top: 0,
           boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)',
           zIndex: 1001,
+          width: '100vw',
         }}
       >
         <Tabs
           centered
-          variant="fullWidth"
           fixedTabs
           value={currentActiveTab}
           TabIndicatorProps={{
@@ -71,6 +71,7 @@ const MobileTripPageHeader = () => {
               height: '5px',
             },
           }}
+          variant="scrollable"
         >
           <Tab
             label={
@@ -123,6 +124,21 @@ const MobileTripPageHeader = () => {
                 sx={{
                   color: 'white',
                   textTransform: 'none',
+                  fontWeight: currentActiveTab === 'tripguide' && 700,
+                }}
+              >
+                Guide
+              </Typography>
+            }
+            value="tripguide`"
+            onClick={() => setCurrentActiveTab('tripguide')}
+          />
+          <Tab
+            label={
+              <Typography
+                sx={{
+                  color: 'white',
+                  textTransform: 'none',
                   fontWeight: currentActiveTab === 'triplogs' && 700,
                 }}
               >
@@ -131,21 +147,6 @@ const MobileTripPageHeader = () => {
             }
             value="triplogs"
             onClick={() => setCurrentActiveTab('triplogs')}
-          />
-          <Tab
-            label={
-              <Typography
-                sx={{
-                  color: 'white',
-                  textTransform: 'none',
-                  fontWeight: currentActiveTab === 'tripguide' && 700,
-                }}
-              >
-                Logs
-              </Typography>
-            }
-            value="tripguide"
-            onClick={() => setCurrentActiveTab('tripguide')}
           />
         </Tabs>
       </Box>
