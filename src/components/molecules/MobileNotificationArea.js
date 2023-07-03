@@ -1,4 +1,4 @@
-import { EditLocation, EventNote, Notifications } from '@mui/icons-material'
+import { EditLocationAlt, EventNote, Notifications } from '@mui/icons-material'
 import { Avatar, Badge, Box, Drawer, IconButton, Modal, Paper, Typography } from '@mui/material'
 import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos'
 import { makeStyles, useTheme } from '@mui/styles'
@@ -258,7 +258,7 @@ export const MobileNotificationModal = ({
                       <EventNote sx={{ color: 'white', fontSize: '20px' }} />
                     ) : (
                       notification?.type === 'destinationUpdate' && (
-                        <EditLocation sx={{ color: 'white', fontSize: '20px' }} />
+                        <EditLocationAlt sx={{ color: 'white', fontSize: '20px' }} />
                       )
                     )}
                   </Box>

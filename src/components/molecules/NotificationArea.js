@@ -10,7 +10,7 @@ import Typography from '@mui/material/Typography'
 import { useMediaQuery } from '@mui/material'
 import { makeStyles, useTheme } from '@mui/styles'
 import Notifications from '@mui/icons-material/Notifications'
-import EditLocation from '@mui/icons-material/EditLocation'
+import EditLocationAlt from '@mui/icons-material/EditLocationAlt'
 import EventNote from '@mui/icons-material/EventNote'
 import { isSameDay } from 'date-fns'
 import { useHistory } from 'react-router-dom'
@@ -579,7 +579,7 @@ const NotificationAreaDrawer = ({
                         <EventNote sx={{ color: 'white', fontSize: '20px' }} />
                       ) : (
                         notification?.type === 'destinationUpdate' && (
-                          <EditLocation sx={{ color: 'white', fontSize: '20px' }} />
+                          <EditLocationAlt sx={{ color: 'white', fontSize: '20px' }} />
                         )
                       )}
                     </Box>
