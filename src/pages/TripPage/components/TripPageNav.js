@@ -325,7 +325,7 @@ const TripPageNav = ({
               />
             }
           >
-            Guide du séjour
+            Guide
           </Button>
         )}
         {canEdit && (

@@ -395,24 +395,23 @@ const NotificationArea = ({
 }
 
 const NotificationAreaDrawer = ({
-  openNotif,
-  anchorElNotif,
   setAnchorElNotif,
   currentNotifications,
-  setNotificationsToNewState,
   user,
-  isMyTrips,
-  days,
   setSelectedDateOnPlanning,
   isChatOpen,
   setIsChatOpen,
 }) => {
-  const classes = useStyles()
   const theme = useTheme()
   const matchesXs = useMediaQuery(theme.breakpoints.down('sm'))
   const history = useHistory()
-  const { setCurrentEventType, setCurrentEvent, setCurrentView, setNotificationsToNewStateOnTrip } =
-    useContext(TripContext)
+  const {
+    setCurrentEventType,
+    setCurrentEvent,
+    setCurrentView,
+    setNotificationsToNewStateOnTrip,
+    days,
+  } = useContext(TripContext)
 
   const handleCloseNotif = event => {
     setAnchorElNotif(null)

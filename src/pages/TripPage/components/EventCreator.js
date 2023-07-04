@@ -991,9 +991,9 @@ const EventCreator = ({
           }
         })
     }
-    // history.push(
-    //   `/tripPage/${tripId}/planning?${isSurvey ? 'survey=' : 'event='}${currentEvent.id}`
-    // )
+    history.push(
+      `/tripPage/${tripId}/planning?${isSurvey ? 'survey=' : 'event='}${currentEvent.id}`
+    )
     setEventType('')
     handleReset()
   }
