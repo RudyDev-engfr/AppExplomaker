@@ -1,12 +1,10 @@
 import React, { useContext, useEffect, useRef, useState } from 'react'
 import { useCollectionData } from 'react-firebase-hooks/firestore'
 import Box from '@mui/material/Box'
-import Divider from '@mui/material/Divider'
 import Drawer from '@mui/material/Drawer'
 import FormControl from '@mui/material/FormControl'
 import Grid from '@mui/material/Grid'
 import IconButton from '@mui/material/IconButton'
-import Input from '@mui/material/Input'
 import InputAdornment from '@mui/material/InputAdornment'
 import Paper from '@mui/material/Paper'
 import TextField from '@mui/material/TextField'
@@ -20,8 +18,7 @@ import { makeStyles, useTheme } from '@mui/styles'
 import { useHistory, useParams } from 'react-router-dom'
 
 import Picker from '@emoji-mart/react'
-import data from '@emoji-mart/data'
-import { geocodeByAddress, geocodeByPlaceId } from 'react-google-places-autocomplete'
+import { geocodeByPlaceId } from 'react-google-places-autocomplete'
 
 import { FirebaseContext } from '../../contexts/firebase'
 import { SessionContext } from '../../contexts/session'
@@ -29,7 +26,6 @@ import CustomAvatar from '../atoms/CustomAvatar'
 
 import { rCTFF } from '../../helper/functions'
 import { TripContext } from '../../contexts/trip'
-import { PlanningContext } from '../../contexts/planning'
 
 const useStyles = makeStyles(theme => ({
   basePaper: {
@@ -68,9 +64,6 @@ const useStyles = makeStyles(theme => ({
     padding: '15px 0',
     borderBottom: '1px solid lightgrey',
     maxWidth: '100%',
-  },
-  textWhite: {
-    color: '#FFFFFF',
   },
   dateMessage: {
     fontSize: '12px',
@@ -358,22 +351,13 @@ const ChatBox = ({ messages, dummy, currentMessages, setCurrentMessages }) => (
   </Box>
 )
 
-const ChatMessage = ({
-  createdAt,
-  userId,
-  text = '',
-  groupDate,
-  questionType,
-  eventDescription,
-  messageId,
-}) => {
+const ChatMessage = ({ createdAt, userId, text = '', groupDate, questionType }) => {
   const classes = useStyles()
   const theme = useTheme()
   const { tripId } = useParams()
-  const { user } = useContext(SessionContext)
-  const { firestore } = useContext(FirebaseContext)
   const history = useHistory()
   const matchesXs = useMediaQuery(theme.breakpoints.down('sm'))
+
   const {
     setIsAssistantGuided,
     setCurrentView,
@@ -385,38 +369,51 @@ const ChatMessage = ({
   } = useContext(TripContext)
 
   useEffect(() => {
+    console.log('matchesXs', matchesXs)
+  }, [matchesXs])
+
+  const handleEventFromAssistant = () => {
+    const placeArray = document.getElementsByTagName('place')
+    const tempPlaceArray = Array.from(placeArray)
+    if (Array.isArray(tempPlaceArray) && tempPlaceArray.length > 0 && !matchesXs) {
+      tempPlaceArray?.forEach(singlePlace => {
+        // eslint-disable-next-line no-param-reassign
+        singlePlace.onclick = function placeClick() {
+          const tempPlaceId = singlePlace.getAttribute('place_id')
+          history.push(`/tripPage/${tripId}/planning`)
+          geocodeByPlaceId(tempPlaceId).then(results => setCurrentLocation(results[0]))
+          setIsAssistantGuided(true)
+          setEventType(singlePlace.getAttribute('tag_type'))
+          setCurrentView('creator')
+          setEditMode(false)
+        }
+      })
+    } else if (Array.isArray(tempPlaceArray) && tempPlaceArray.length > 0 && matchesXs) {
+      tempPlaceArray?.forEach(singlePlace => {
+        // eslint-disable-next-line no-param-reassign
+        singlePlace.onclick = function placeClick() {
+          const tempPlaceId = singlePlace.getAttribute('place_id')
+          history.push(`/tripPage/${tripId}/planning`)
+          setIsChatOpen(false)
+          geocodeByPlaceId(tempPlaceId).then(results => setCurrentLocation(results[0]))
+          setIsAssistantGuided(true)
+          setEventType(singlePlace.getAttribute('tag_type'))
+          setCurrentView('creator')
+          setEditMode(false)
+        }
+      })
+    }
+  }
+
+  useEffect(() => {
     console.log('---- current ----', currentLocation)
   }, [currentLocation])
 
   useEffect(() => {
     if (text) {
-      const placeArray = document.getElementsByTagName('place')
-      const tempPlaceArray = Array.from(placeArray)
-      let tempLocation
-      if (Array.isArray(tempPlaceArray) && tempPlaceArray.length > 0) {
-        tempPlaceArray?.forEach(singlePlace => {
-          // eslint-disable-next-line no-param-reassign
-          singlePlace.onclick = function placeClick() {
-            const tempPlaceId = singlePlace.getAttribute('place_id')
-            const testGeocode = geocodeByPlaceId(tempPlaceId).then(results =>
-              console.log('placeidresults', results)
-            )
-            history.push(`/tripPage/${tripId}/planning`)
-            tempLocation = geocodeByPlaceId(tempPlaceId).then(results =>
-              setCurrentLocation(results[0])
-            )
-            setIsAssistantGuided(true)
-            setEventType(singlePlace.getAttribute('tag_type'))
-            setCurrentView('creator')
-            setEditMode(false)
-            if (matchesXs) {
-              setIsChatOpen(false)
-            }
-          }
-        })
-      }
+      handleEventFromAssistant()
     }
-  }, [])
+  }, [text, matchesXs])
 
   return (
     <>

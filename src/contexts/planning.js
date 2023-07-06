@@ -548,36 +548,57 @@ const PlanningContextProvider = ({ children }) => {
           survey.propositions?.map((flightProposition, flightPropositionIndex) =>
             flightProposition.flights.map(flight => {
               const currentFlightIndex = tempFlightIndex
+              let previousArrivalAirport
               tempTransportCoordinates.push([])
               tempFlightIndex += 1
-              return flight.data.airports.map(airport => {
+              return flight.data.legs.map(leg => {
+                let departureIsLastArrival = false
+                const currentDepartureAirport = flight.data.airports.filter(
+                  airport => airport.iataCode === leg.departureIata
+                )[0]
+                const currentArrivalAirport = flight.data.airports.filter(
+                  airport => airport.iataCode === leg.arrivalIata
+                )[0]
+                if (
+                  !previousArrivalAirport ||
+                  previousArrivalAirport?.iataCode !== currentDepartureAirport.iataCode
+                ) {
+                  tempTransportCoordinates[currentFlightIndex].push({
+                    lat: currentDepartureAirport.geocode.latitude,
+                    lng: currentDepartureAirport.geocode.longitude,
+                  })
+                } else {
+                  departureIsLastArrival = true
+                }
                 tempTransportCoordinates[currentFlightIndex].push({
-                  lat: airport.geocode.latitude,
-                  lng: airport.geocode.longitude,
+                  lat: currentArrivalAirport.geocode.latitude,
+                  lng: currentArrivalAirport.geocode.longitude,
                 })
+                previousArrivalAirport = flight.data.airports.filter(
+                  airport => airport.iataCode === leg.arrivalIata
+                )[0]
+
                 return (
-                  <CustomMarker
-                    key={`${uuidv4()} - ${flightProposition.id}`}
-                    position={{
-                      lat: airport.geocode.latitude,
-                      lng: airport.geocode.longitude,
-                    }}
-                    clickable
-                    onClick={() => {
-                      if (currentView !== 'preview') {
-                        if (currentView === 'survey') {
-                          setPreviousEvent(survey)
-                          setSelectedPropositionIndex(flightPropositionIndex)
-                          setEvent(flightProposition)
-                        } else {
-                          setSurvey(survey)
-                        }
-                      }
-                    }}
-                    onMouseOver={() => setCurrentEventId(survey.id)}
-                    onMouseOut={() => setCurrentEventId()}
-                    icon={findGoogleMarker(survey.type, survey.id === currentEventId)}
-                  />
+                  <>
+                    {!departureIsLastArrival && (
+                      <CustomMarker
+                        key={`${uuidv4()} - ${flight.tempId}-${currentDepartureAirport.iataCode}`}
+                        position={{
+                          lat: currentDepartureAirport.geocode.latitude,
+                          lng: currentDepartureAirport.geocode.longitude,
+                        }}
+                        icon={findSpecificGoogleMarker('flight', false, 'flight')}
+                      />
+                    )}
+                    <CustomMarker
+                      key={`${uuidv4()} - ${flight.tempId}-${currentArrivalAirport.iataCode}`}
+                      position={{
+                        lat: currentArrivalAirport.geocode.latitude,
+                        lng: currentArrivalAirport.geocode.longitude,
+                      }}
+                      icon={findSpecificGoogleMarker('flight', false, 'flight')}
+                    />
+                  </>
                 )
               })
             })
@@ -590,35 +611,57 @@ const PlanningContextProvider = ({ children }) => {
         .map(event =>
           event.flights.map(flight => {
             const currentFlightIndex = tempFlightIndex
+            let previousArrivalAirport
             tempTransportCoordinates.push([])
             tempFlightIndex += 1
-            return flight.data.airports.map((airport, airportIndex) => {
+            return flight.data.legs.map(leg => {
+              let departureIsLastArrival = false
+              const currentDepartureAirport = flight.data.airports.filter(
+                airport => airport.iataCode === leg.departureIata
+              )[0]
+              const currentArrivalAirport = flight.data.airports.filter(
+                airport => airport.iataCode === leg.arrivalIata
+              )[0]
+              if (
+                !previousArrivalAirport ||
+                previousArrivalAirport?.iataCode !== currentDepartureAirport.iataCode
+              ) {
+                tempTransportCoordinates[currentFlightIndex].push({
+                  lat: currentDepartureAirport.geocode.latitude,
+                  lng: currentDepartureAirport.geocode.longitude,
+                })
+              } else {
+                departureIsLastArrival = true
+              }
               tempTransportCoordinates[currentFlightIndex].push({
-                lat: airport.geocode.latitude,
-                lng: airport.geocode.longitude,
+                lat: currentArrivalAirport.geocode.latitude,
+                lng: currentArrivalAirport.geocode.longitude,
               })
+              previousArrivalAirport = flight.data.airports.filter(
+                airport => airport.iataCode === leg.arrivalIata
+              )[0]
 
               return (
-                <CustomMarker
-                  key={`${uuidv4()} -${event.id}-${flight.data.airports[airportIndex].iataCode}`}
-                  position={{
-                    lat: airport.geocode.latitude,
-                    lng: airport.geocode.longitude,
-                  }}
-                  clickable
-                  onClick={() => {
-                    if (currentView !== 'preview') {
-                      setEvent(event)
-                    }
-                  }}
-                  onMouseOver={() => setCurrentEventId(event.id)}
-                  onMouseOut={() => setCurrentEventId()}
-                  icon={findSpecificGoogleMarker(
-                    event.icon,
-                    event.id === currentEventId,
-                    event.type
+                <>
+                  {!departureIsLastArrival && (
+                    <CustomMarker
+                      key={`${uuidv4()} - ${flight.tempId}-${currentDepartureAirport.iataCode}`}
+                      position={{
+                        lat: currentDepartureAirport.geocode.latitude,
+                        lng: currentDepartureAirport.geocode.longitude,
+                      }}
+                      icon={findSpecificGoogleMarker('flight', false, 'flight')}
+                    />
                   )}
-                />
+                  <CustomMarker
+                    key={`${uuidv4()} - ${flight.tempId}-${currentArrivalAirport.iataCode}`}
+                    position={{
+                      lat: currentArrivalAirport.geocode.latitude,
+                      lng: currentArrivalAirport.geocode.longitude,
+                    }}
+                    icon={findSpecificGoogleMarker('flight', false, 'flight')}
+                  />
+                </>
               )
             })
           })
