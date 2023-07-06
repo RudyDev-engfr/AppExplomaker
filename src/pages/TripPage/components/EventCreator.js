@@ -709,10 +709,14 @@ const EventCreator = ({
     if (location && eventType) {
       handleTempEventsMarkers(location, eventType)
     }
-    if (currentLocation && eventType) {
+    if (currentLocation?.place_id && eventType) {
       handleTempEventsMarkers(currentLocation, eventType)
     }
-  }, [location])
+  }, [location, currentLocation])
+
+  useEffect(() => {
+    console.log('currentLocation', currentLocation)
+  }, [currentLocation])
 
   useEffect(() => {
     console.log('location', location)
