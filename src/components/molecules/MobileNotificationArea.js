@@ -13,6 +13,7 @@ import { TripContext } from '../../contexts/trip'
 import findIcon from '../../helper/icons'
 import CustomAvatar from '../atoms/CustomAvatar'
 import { stringToDate } from '../../helper/functions'
+import ClearNotificationsButton from '../atoms/ClearNotificationsButton'
 
 const useStyles = makeStyles(theme => ({
   notificationTitle: {
@@ -205,6 +206,7 @@ export const MobileNotificationModal = ({
               <Box
                 sx={{
                   width: 'calc(100vw - 30px),',
+                  position: 'relative',
                   height: '113px',
                   padding: '0 30px',
                   display: 'grid',
@@ -283,6 +285,9 @@ export const MobileNotificationModal = ({
           >
             <Typography>Pas d&apos;activité pour le moment</Typography>
           </Box>
+        )}
+        {currentNotifications.length > 0 && (
+          <ClearNotificationsButton currentNotifications={currentNotifications} />
         )}
       </Paper>
     </Drawer>

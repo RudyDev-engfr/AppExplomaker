@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 /* eslint-disable prefer-const */
 import {
   addMinutes,
@@ -8,7 +9,6 @@ import {
   subHours,
   intervalToDuration,
   formatDuration,
-  isBefore,
 } from 'date-fns'
 import frLocale from 'date-fns/locale/fr'
 import parse from 'date-fns/parse'
@@ -59,7 +59,7 @@ export function dateToString(date, displayFormat = 'yyyy-MM-dd') {
   return format(tempDate, displayFormat, { locale: frLocale })
 }
 
-export function formatDateInTimezone(receivedTimestamp, timezone, formatString) {
+export function formatDateInTimezone(receivedTimestamp) {
   // // timestamp de Firebase
   // const firebaseTimestamp = receivedTimestamp
 
@@ -266,6 +266,7 @@ export const renderStopoverTime = (departureTime, arrivalTime, legs) => {
   return stopoverTime
 }
 
+// eslint-disable-next-line no-unused-vars
 function usePrevious(value) {
   // The ref object is a generic container whose current property is mutable ...
   // ... and can hold any value, similar to an instance property on a class
@@ -280,10 +281,9 @@ function usePrevious(value) {
 
 export const buildNotifications = async user => {
   const notifications = []
-  const tripsIdArray = []
-  const tempNotificationContent = []
   if (user.notifications) {
     user.notifications.forEach(
+      // eslint-disable-next-line no-unused-vars
       ({ sejour, priority, state, type, creationDate, url, owner, tripId, image, id }) => {
         // if (tripId && !tripsIdArray.includes(tripId)) {
         //   tripsIdArray.push(tripId)
@@ -767,6 +767,7 @@ export const buildLogSejour = (tripId, tripData) => {
   if (tripData?.notifications?.length > 0) {
     tripData.notifications
       .filter(notification => notification.tripId === tripId)
+      // eslint-disable-next-line no-unused-vars
       .forEach(({ sejour, priority, state, type, creationDate, owner, event, id, previous }) => {
         const singleNotif = {}
         if (event) {

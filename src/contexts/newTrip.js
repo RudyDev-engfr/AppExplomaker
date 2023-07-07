@@ -18,7 +18,7 @@ const initialValues = {
   travelersDetails: [],
   nbTravelers: 0,
   noDestination: false,
-  premium: true,
+  premium: false,
 }
 
 const NewTripContextProvider = ({ children }) => {

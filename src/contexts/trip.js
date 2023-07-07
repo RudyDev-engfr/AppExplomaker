@@ -1,5 +1,5 @@
 import React, { useState, useEffect, createContext, useContext, useRef } from 'react'
-import { makeStyles, useTheme, useMediaQuery } from '@mui/material'
+import { useMediaQuery } from '@mui/material'
 import { useParams } from 'react-router-dom'
 import { buildNotificationsOnTripForUser, rCTFF } from '../helper/functions'
 import { FirebaseContext } from './firebase'
@@ -12,9 +12,7 @@ const TripContextProvider = ({ children }) => {
   //   useContext(FirebaseContext)
   // const { user } = useContext(SessionContext)
   // const { tripId } = useParams()
-  const theme = useTheme()
   const { tripId } = useParams()
-  const matchesXs = useMediaQuery(theme.breakpoints.down('sm'))
   const matches1600 = useMediaQuery('(max-width:1600px)')
   const { user } = useContext(SessionContext)
   const { getUserById, firestore } = useContext(FirebaseContext)
@@ -68,26 +66,12 @@ const TripContextProvider = ({ children }) => {
     setCurrentView('creator')
   }
 
-  useEffect(() => {
-    console.log('voyageurs actuels', currentTravelers)
-  }, [currentTravelers])
-
-  useEffect(() => {
-    console.log('tripGuideData', tripGuideData)
-  }, [tripGuideData])
-
   const handleEventCreation = eventDescription => {
     const tempEventDescription = structuredClone(eventDescription)
     if (tempEventDescription.place_id) {
       return ''
     }
   }
-
-  useEffect(() => {
-    console.log('canEdit', canEdit)
-    console.log('eventType', eventType)
-    console.log('editMode', editMode)
-  }, [canEdit, eventType, editMode])
 
   const getPlaceTown = placeId =>
     new Promise(resolve => {
@@ -150,13 +134,13 @@ const TripContextProvider = ({ children }) => {
       .get()
 
     if (collection.empty) {
-      console.log('No matching documents.')
+      // eslint-disable-next-line no-console
+      console.info('No matching documents.')
       return
     }
 
     collection.forEach(doc => {
       const data = doc.data()
-      console.log('data', data)
       const tempNotifications = data.notifications
       let needsUpdate = false
 
@@ -179,12 +163,12 @@ const TripContextProvider = ({ children }) => {
     })
 
     await batch.commit()
-    console.log('Batch update completed')
+    // eslint-disable-next-line no-console
+    console.info('=== Batch update completed')
   }
 
   useEffect(() => {
     updateTravelers()
-    console.log('tripData', tripData)
   }, [tripData])
 
   useEffect(() => {
@@ -198,26 +182,21 @@ const TripContextProvider = ({ children }) => {
   }, [tripId])
 
   useEffect(() => {
-    console.log('placeIDpourGuide', tripData?.destination?.place_id)
-
     if (
       (tripGuideData === null || typeof tripGuideData === 'undefined') &&
       tripData?.destination?.place_id
     ) {
-      console.log('on est parti')
       firestore
         .collection('inspirations')
         .doc(tripData?.destination?.place_id)
         .onSnapshot(doc => {
           if (doc.exists) {
-            console.log('doc', doc)
             const tempDoc = doc.data()
             const tripGuideDataKeys = Object.keys(tempDoc)
             const tempTripGuideData = tripGuideDataKeys.map(currentKey => tempDoc[currentKey])
             const buildTripGuideData = tempTripGuideData.filter(
               (v, i, a) => a.findIndex(t => t.category === v.category && t.name === v.name) === i
             )
-            console.log('buildTripGuideData', buildTripGuideData)
             setTripGuideData(buildTripGuideData)
           } else {
             firestore
@@ -229,9 +208,11 @@ const TripContextProvider = ({ children }) => {
                 userId: user.id,
               })
               .then(() => {
-                console.log('=== Document successfully written! ===')
+                // eslint-disable-next-line no-console
+                console.info('=== Document successfully written! ===')
               })
               .catch(error => {
+                // eslint-disable-next-line no-console
                 console.error('=== Error writing document: ', error)
               })
           }
@@ -291,7 +272,6 @@ const TripContextProvider = ({ children }) => {
       setCurrentNotifications(tempNotif)
       setRefreshNotif(false)
     }
-    console.log('le voyage avec ses notifs', user.notifications)
   }, [tripData, user, refreshNotif])
 
   useEffect(() => {
@@ -314,14 +294,6 @@ const TripContextProvider = ({ children }) => {
       }, 2000)
     }
   }, [hasClicked])
-
-  useEffect(() => {
-    console.log('showmelestate1', selectedDateOnPlanning)
-  }, [selectedDateOnPlanning])
-
-  useEffect(() => {
-    console.log('showmelestate2', days)
-  }, [days])
 
   return (
     <TripContext.Provider

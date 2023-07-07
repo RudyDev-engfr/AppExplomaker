@@ -17,7 +17,6 @@ import Send from '@mui/icons-material/Send'
 import { useCollectionData } from 'react-firebase-hooks/firestore'
 import { differenceInMinutes } from 'date-fns'
 
-import data from '@emoji-mart/data'
 import Picker from '@emoji-mart/react'
 
 import { SessionContext } from '../../contexts/session'
@@ -103,9 +102,6 @@ const useStyles = makeStyles(theme => ({
     borderRadius: '0',
     borderLeft: '1px solid white',
   },
-  textWhite: {
-    color: '#FFFFFF',
-  },
   messageTypo: {
     wordWrap: 'break-word',
     textOverflow: 'clip',
@@ -129,6 +125,7 @@ const Chat = ({ isChatOpen, setIsChatOpen, chats, tripId }) => {
   for (const key of Object.entries(chats)) {
     chatNames.push(key[0])
   }
+  // eslint-disable-next-line no-unused-vars
   const [openChat, setOpenChat] = useState(chatNames[0])
   const [isMounted, setIsMounted] = useState(false)
 
@@ -136,6 +133,7 @@ const Chat = ({ isChatOpen, setIsChatOpen, chats, tripId }) => {
   const query = messagesRef.orderBy('createdAt').limit(25)
   const [messages] = useCollectionData(query, { idField: 'messageId' })
   const [showEmojiPicker, setShowEmojiPicker] = useState(false)
+  // eslint-disable-next-line no-unused-vars
   const [unreadMessages, setUnreadMessages] = useState(0)
 
   const addEmoji = e => {
@@ -331,7 +329,6 @@ const Chat = ({ isChatOpen, setIsChatOpen, chats, tripId }) => {
                         </IconButton>
                       </InputAdornment>
                     ),
-                    disableUnderline: true,
                     multiline: true,
                     onKeyDown: event => {
                       if (event.key === 'Enter') {

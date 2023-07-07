@@ -90,6 +90,7 @@ const useStyles = makeStyles(theme => ({
     [theme.breakpoints.down('sm')]: {
       gridTemplate: 'auto / 70px 1fr',
     },
+    cursor: 'pointer',
   },
   chooseModePaper: {
     '&:hover': {
@@ -322,7 +323,7 @@ const SurveyPreview = ({
           {currentEvent.propositions.map((proposition, index) => (
             <Paper
               key={uuidv4()}
-              component={ButtonBase}
+              // component={ButtonBase}
               className={clsx(classes.cardPaper, {
                 [classes.chooseModePaper]: chooseMode,
                 [classes.selectedPaper]: chooseMode && selectedProposition === index,
@@ -390,6 +391,8 @@ const SurveyPreview = ({
                           justifyContent: 'center',
                           alignItems: 'center',
                         }}
+                        // eslint-disable-next-line react/no-array-index-key
+                        key={iconIndex}
                       >
                         <Box
                           component="img"
@@ -503,7 +506,8 @@ const SurveyPreview = ({
                         .replace('minute', 'min')}
                     </Typography>
                     {proposition.transports.map((transport, transportIndex, currentArray) => (
-                      <>
+                      // eslint-disable-next-line react/no-array-index-key
+                      <React.Fragment key={`${uuidv4()} - ${transportIndex}`}>
                         <Box display="flex" alignItems="center">
                           <Box className={classes.iconBox}>
                             <Box
@@ -579,7 +583,7 @@ const SurveyPreview = ({
                             )}
                           </Box>
                         )}
-                      </>
+                      </React.Fragment>
                     ))}
                   </>
                 )}

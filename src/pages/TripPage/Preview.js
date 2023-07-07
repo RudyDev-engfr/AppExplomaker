@@ -242,16 +242,7 @@ const Preview = ({
 
   const { dictionary } = useContext(FirebaseContext)
   const { user } = useContext(SessionContext)
-  const {
-    currentDateRange,
-    setCurrentDateRange,
-    days,
-    setSelectedDateOnPlanning,
-    currentNotifications,
-    setCurrentNotifications,
-    refreshNotif,
-    setRefreshNotif,
-  } = useContext(TripContext)
+  const { currentDateRange, currentNotifications } = useContext(TripContext)
 
   const [generatedAvatars, setGeneratedAvatars] = useState([])
 

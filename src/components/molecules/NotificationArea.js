@@ -1,5 +1,4 @@
 import React, { useContext, useEffect, useState } from 'react'
-import Avatar from '@mui/material/Avatar'
 import Badge from '@mui/material/Badge'
 import Box from '@mui/material/Box'
 import Drawer from '@mui/material/Drawer'
@@ -21,15 +20,16 @@ import CustomAvatar from '../atoms/CustomAvatar'
 import kenya1 from '../../images/inherit/Kenya 1.png'
 import { stringToDate } from '../../helper/functions'
 import { TripContext } from '../../contexts/trip'
+import ClearNotificationsButton from '../atoms/ClearNotificationsButton'
 
-const useStyles = makeStyles(theme => ({
+const useStyles = makeStyles({
   notificationImage: {
     width: '60px',
     height: '60px',
     borderRadius: '50px',
   },
   badgeRoot: {},
-}))
+})
 const NotificationArea = ({
   tripId,
   currentNotifications,
@@ -50,7 +50,7 @@ const NotificationArea = ({
   const [currentRedPings, setCurrentRedPings] = useState(0)
   const openNotif = Boolean(anchorElNotif)
 
-  const handleCloseNotif = event => {
+  const handleCloseNotif = () => {
     setAnchorElNotif(null)
   }
 
@@ -413,7 +413,7 @@ const NotificationAreaDrawer = ({
     days,
   } = useContext(TripContext)
 
-  const handleCloseNotif = event => {
+  const handleCloseNotif = () => {
     setAnchorElNotif(null)
     setIsChatOpen('')
   }
@@ -423,7 +423,6 @@ const NotificationAreaDrawer = ({
     if (notification?.startTime || notification?.event?.propositions[0]?.startTime) {
       days.forEach(day => {
         const tempTime = notification.startTime || notification.event.propositions[0].startTime
-        console.log('tempTime', tempTime)
         if (isSameDay(stringToDate(tempTime, 'yyyy-MM-dd HH:mm'), day)) {
           setSelectedDateOnPlanning(day)
         }
@@ -438,10 +437,8 @@ const NotificationAreaDrawer = ({
     // setCurrentEventId(notification.event.id)
     if (notification.event.isSurvey) {
       setCurrentView('survey')
-      console.log('je suis un survey')
     } else {
       setCurrentView('preview')
-      console.log('je suis un preview')
     }
     if (notification.id) {
       setNotificationsToNewStateOnTrip(user, 3, notification.id)
@@ -470,7 +467,7 @@ const NotificationAreaDrawer = ({
         },
       }}
       transformOrigin={{ horizontal: 'right', vertical: 'top' }}
-      anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
+      // anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
     >
       {!matchesXs && (
         <Box
@@ -618,6 +615,9 @@ const NotificationAreaDrawer = ({
             </Box>
           )}
         </Box>
+        {currentNotifications.length > 0 && (
+          <ClearNotificationsButton currentNotifications={currentNotifications} />
+        )}
       </Paper>
     </Drawer>
   )

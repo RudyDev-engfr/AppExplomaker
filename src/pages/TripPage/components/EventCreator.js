@@ -246,6 +246,7 @@ const EventCreator = ({
     setEditMode,
     currentLocation,
     setCurrentLocation,
+    setCurrentActiveTab,
   } = useContext(TripContext)
 
   const tripStartDate = rCTFF(dateRange[0])
@@ -723,11 +724,13 @@ const EventCreator = ({
   }, [location])
 
   const handleReset = () => {
-    setEditMode(false)
+    setCurrentActiveTab('planning')
     setCurrentView('planning')
+    setIsAssistantGuided(false)
+    setEditMode(false)
     setCurrentLocation('')
     setLocation('')
-    setIsAssistantGuided(false)
+    setEventType('')
   }
 
   const handleSubmit = async event => {
@@ -990,15 +993,14 @@ const EventCreator = ({
               })
             }
             setCurrentView('planning')
-
-            setCurrentEvent('')
           }
         })
     }
     history.push(
-      `/tripPage/${tripId}/planning?${isSurvey ? 'survey=' : 'event='}${currentEvent.id}`
+      `/tripPage/${tripId}/planning?${isSurvey ? 'survey=' : 'event='}${currentEvent.id}${
+        isSurvey ? '&proposition=0' : ''
+      }`
     )
-    setEventType('')
     handleReset()
   }
 
@@ -1109,7 +1111,6 @@ const EventCreator = ({
               } else if (isNewProposition) {
                 setIsNewProposition(false)
               }
-              setEventType('')
               setCurrentView('planning')
               handleReset()
             }}

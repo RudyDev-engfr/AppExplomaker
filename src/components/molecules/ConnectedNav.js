@@ -11,17 +11,12 @@ import Tabs from '@mui/material/Tabs'
 import Tab from '@mui/material/Tab'
 import { useMediaQuery } from '@mui/material'
 import ButtonBase from '@mui/material/ButtonBase'
-import IconButton from '@mui/material/IconButton'
-import ListItemIcon from '@mui/material/ListItemIcon'
-import Typography from '@mui/material/Typography'
 import { makeStyles } from '@mui/styles'
 import AccountCircleOutlined from '@mui/icons-material/AccountCircleOutlined'
 import ContactSupportOutlined from '@mui/icons-material/ContactSupportOutlined'
 import FavoriteBorderOutlined from '@mui/icons-material/FavoriteBorderOutlined'
 import LogoutOutlined from '@mui/icons-material/LogoutOutlined'
 import MenuIcon from '@mui/icons-material/Menu'
-import Notifications from '@mui/icons-material/Notifications'
-import Search from '@mui/icons-material/Search'
 import clsx from 'clsx'
 import React, { useContext, useEffect, useState } from 'react'
 import { useHistory, useLocation } from 'react-router-dom'
@@ -139,14 +134,6 @@ const useStyles = makeStyles(theme => ({
     width: '24px',
     height: '24px',
   },
-  iconBtn: {
-    backgroundColor: 'white',
-    color: theme.palette.grey[400],
-    transform: 'rotate(-15deg)',
-    '&:hover': {
-      backgroundColor: 'white',
-    },
-  },
 }))
 
 const ConnectedNav = () => {
@@ -156,26 +143,19 @@ const ConnectedNav = () => {
   const theme = useTheme()
   const matchesXs = useMediaQuery(theme.breakpoints.down('sm'))
 
-  const { auth, database, setNotificationsToNewState } = useContext(FirebaseContext)
-  const { user, setUser, currentUserNotifications } = useContext(SessionContext)
+  const { auth, database } = useContext(FirebaseContext)
+  const { user, currentUserNotifications } = useContext(SessionContext)
+  // eslint-disable-next-line no-unused-vars
   const [currentNotifications, setCurrentNotifications] = useState([])
 
   const [anchorEl, setAnchorEl] = useState(null)
-  const [anchorElNotif, setAnchorElNotif] = useState(null)
   const [refreshNotif, setRefreshNotif] = useState(false)
   const [currentActiveTab, setCurrentActiveTab] = useState('home')
   const [isChatOpen, setIsChatOpen] = useState('')
 
   const open = Boolean(anchorEl)
-  const openNotif = Boolean(anchorElNotif)
   const handleClick = event => {
     setAnchorEl(event.currentTarget)
-  }
-  const handleClickNotif = event => {
-    setAnchorElNotif(event.currentTarget)
-  }
-  const handleCloseNotif = event => {
-    setAnchorElNotif(null)
   }
   const handleClose = () => {
     setAnchorEl(null)
@@ -198,7 +178,6 @@ const ConnectedNav = () => {
       setCurrentNotifications(tempNotif)
       setRefreshNotif(false)
     }
-    console.log('lutilisateur avec ses notifs', user.notifications)
   }, [user, refreshNotif])
 
   useEffect(() => {

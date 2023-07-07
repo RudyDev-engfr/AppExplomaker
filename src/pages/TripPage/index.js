@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useRef, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import { useHistory, useLocation, useParams } from 'react-router-dom'
 import FormControl from '@mui/material/FormControl'
 import IconButton from '@mui/material/IconButton'
@@ -19,14 +19,12 @@ import TextareaAutosize from '@mui/material/TextareaAutosize'
 import Accordion from '@mui/material/Accordion'
 import AccordionSummary from '@mui/material/AccordionSummary'
 import AccordionDetails from '@mui/material/AccordionDetails'
-import ButtonGroup from '@mui/material/ButtonGroup'
 import Checkbox from '@mui/material/Checkbox'
 import { makeStyles, useTheme } from '@mui/styles'
 import Add from '@mui/icons-material/Add'
 import AddAPhoto from '@mui/icons-material/AddAPhoto'
 import Info from '@mui/icons-material/Info'
 import Remove from '@mui/icons-material/Remove'
-import ForumRounded from '@mui/icons-material/ForumRounded'
 import Delete from '@mui/icons-material/Delete'
 import Camera from '@mui/icons-material/Camera'
 import Close from '@mui/icons-material/Close'
@@ -77,11 +75,9 @@ import ava5 from '../../images/avatar/ava5.png'
 import flat from '../../images/flag.png'
 import pencil from '../../images/icons/pencil-btn.svg'
 import arrow from '../../images/icons/arrow-grey.svg'
-import plusCircle from '../../images/icons/plusCircle.svg'
 import TripLogs from './TripLogs'
 import usePrevious from '../../hooks/usePrevious'
 import { TripContext } from '../../contexts/trip'
-import MobileTripPageHeader from '../../components/molecules/MobileTripPageHeader'
 import SocialNavbar from './SocialNavbar'
 import AIChatWindow from '../../components/AI/AIChatWindow'
 import AddCollaboratorsButton from '../../components/atoms/AddCollaboratorsButton'
@@ -182,31 +178,6 @@ const useStyles = makeStyles(theme => ({
     margin: '0 10px',
     [theme.breakpoints.down('sm')]: {
       margin: '5px',
-    },
-  },
-  chatBtn: {
-    [theme.breakpoints.up('md')]: {
-      position: 'fixed',
-      bottom: '20px',
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'center',
-    },
-    [theme.breakpoints.down('sm')]: {
-      position: 'fixed',
-      bottom: '110px',
-      right: '15px',
-      zIndex: '1301',
-    },
-  },
-  chatBtnOpen: {
-    '@media (max-width: 1600px)': {
-      right: '370px',
-    },
-  },
-  chatBtnClose: {
-    '@media (max-width: 1600px)': {
-      right: '20px',
     },
   },
   count: {
@@ -330,25 +301,6 @@ const useStyles = makeStyles(theme => ({
   betweenDates: {
     margin: '0 10px',
   },
-  contributeurTitle: {
-    fontSize: '24px',
-    fontFamily: theme.typography.h1.fontFamily,
-    fontWeight: '500',
-    textAlign: 'center',
-    [theme.breakpoints.down('sm')]: {
-      fontSize: '22px',
-      fontFamily: theme.typography.fontFamily,
-      color: theme.palette.grey[33],
-      fontWeight: '400',
-      margin: '30px 0 10px',
-    },
-  },
-  contributeurDescription: {
-    fontSize: '14px',
-    fontFamily: theme.typography.h1.fontFamily,
-    borderBottom: `thin solid ${theme.palette.grey.df}`,
-    paddingBottom: '20px',
-  },
   ctnContributeurRedButton: {
     alignSelf: 'stretch',
   },
@@ -361,36 +313,6 @@ const useStyles = makeStyles(theme => ({
     fontFamily: theme.typography.fontFamily,
     height: '100%',
     borderRadius: '10px',
-  },
-  contriFormControl: {
-    fontSize: '14px',
-    fontFamily: theme.typography.h1.fontFamily,
-    border: 'none',
-    boxShadow: '0px 1px 3px rgba(0, 0, 0, 0.1)',
-    '&:hover': {
-      border: 'none',
-    },
-    '&:active': {
-      border: 'none',
-    },
-    '&.Mui-focused': {
-      border: 'none',
-    },
-    [theme.breakpoints.down('sm')]: {
-      fontSize: '17px',
-      fontFamily: theme.typography.fontFamily,
-    },
-  },
-  listMenuItem: {
-    fontSize: '14px',
-    fontFamily: theme.typography.h1.fontFamily,
-    [theme.breakpoints.down('sm')]: {
-      fontSize: '17px',
-      fontFamily: theme.typography.fontFamily,
-    },
-  },
-  menuSelect: {
-    borderRadius: '5px',
   },
   gridContributeurs: {
     margin: '20px 0',
@@ -458,14 +380,6 @@ const useStyles = makeStyles(theme => ({
     color: theme.palette.primary.contrastText,
     borderRadius: '50px',
   },
-  travelerRoleOptionOutlined: {
-    color: theme.palette.grey['82'],
-    border: '1px solid #BDBDBD',
-    borderRadius: '10px',
-  },
-  travelerRoleOptionContained: {
-    borderRadius: '10px',
-  },
   accordionDetailsGrid: {
     display: 'grid',
     gridTemplate: 'auto / auto',
@@ -487,13 +401,6 @@ const TravelerRow = ({ traveler, ageOptions, setModalTravelers, index }) => {
   const classes = useStyles()
   const [currentTravelerName, setCurrentTravelerName] = useState(traveler.name)
   const [currentTravelerAge, setCurrentTravelerAge] = useState(traveler.age)
-  const handleChange = (event, target) => {
-    setModalTravelers(prevState => {
-      const tempPrevState = structuredClone(prevState)
-      tempPrevState[index][target] = event.target.value
-      return tempPrevState
-    })
-  }
 
   useEffect(() => {
     if (currentTravelerAge && currentTravelerName) {
@@ -571,7 +478,6 @@ const TripPage = () => {
     currentActiveTab,
     setCurrentActiveTab,
     currentTravelers,
-    updateTravelers,
     canEdit,
     setCanEdit,
   } = useContext(TripContext)
@@ -598,6 +504,7 @@ const TripPage = () => {
   const [generatedAvatars, setGeneratedAvatars] = useState([])
   const [isAdmin, setIsAdmin] = useState(false)
   const [tripSpot, setTripSpot] = useState()
+  // eslint-disable-next-line no-unused-vars
   const [testSpot, setTestSpot] = useState()
   const [allowCreateDateNotif, setAllowCreateDateNotif] = useState(false)
   const previousDateRange = usePrevious(currentDateRange)
@@ -607,13 +514,7 @@ const TripPage = () => {
   }, [])
 
   useEffect(() => {
-    console.log('ça cest lancienne date avant', previousDateRange)
-    console.log('ça cest la bonne date avant', currentDateRange)
     if (previousDateRange !== currentDateRange && allowCreateDateNotif) {
-      console.log('update de la date')
-      console.log('ça cest lancienne date', previousDateRange)
-      console.log('ça cest la bonne date', currentDateRange)
-      console.log('ça cest la date du tripData', rCTFF(tripData?.dateRange[0]))
       createNotificationsOnTrip(
         user,
         tripData,
@@ -626,14 +527,6 @@ const TripPage = () => {
       setAllowCreateDateNotif(false)
     }
   }, [currentDateRange])
-
-  useEffect(() => {
-    console.log('voyageurs de la modal', modalTravelers)
-  }, [modalTravelers])
-
-  useEffect(() => {
-    console.log('les voeux', recommendedWishes)
-  }, [recommendedWishes])
 
   useEffect(() => {
     const currentImages = []
@@ -650,7 +543,6 @@ const TripPage = () => {
     if (currentImages.length > 1) {
       setCarouselImages(currentImages)
     }
-    console.log('tripspot', tripSpot)
   }, [tripSpot])
 
   const travelersValidation = () => {
@@ -781,14 +673,6 @@ const TripPage = () => {
       }
     }
   }, [currentActiveTab])
-
-  // useEffect(() => {
-  //   if (matches1600 && isChatOpen) {
-  //     setIsChatOpen(false)
-  //   } else if (canEdit && !matchesXs && !matches1600) {
-  //     setIsChatOpen(true)
-  //   }
-  // }, [matches1600, matchesXs])
 
   useEffect(() => {
     if (tripData) {

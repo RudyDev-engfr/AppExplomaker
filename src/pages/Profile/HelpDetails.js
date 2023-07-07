@@ -31,15 +31,16 @@ const useStyles = makeStyles(theme => ({
     paddingBottom: '1px',
     marginTop: '80px',
     [theme.breakpoints.down('sm')]: {
-      paddingBottom: '20%',
-      minHeight: 'calc(100vh - 143px)',
+      paddingBottom: '80px',
+      minHeight: 'calc(100vh - 80px)',
+      marginTop: 'unset',
     },
   },
   container: {
     width: '1220px',
     margin: '50px auto',
     [theme.breakpoints.down('sm')]: {
-      width: '100%',
+      width: '100vw',
       margin: '0',
       padding: '0 20px 34px',
     },

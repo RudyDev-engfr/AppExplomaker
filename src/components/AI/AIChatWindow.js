@@ -96,6 +96,8 @@ const AIChatWindow = ({ isChatOpen, setIsChatOpen, chats, tripId }) => {
   for (const key of Object.entries(chats)) {
     chatNames.push(key[0])
   }
+
+  // eslint-disable-next-line no-unused-vars
   const [openChat, setOpenChat] = useState(chatNames[0])
   const [isMounted, setIsMounted] = useState(false)
   const [showEmojiPicker, setShowEmojiPicker] = useState(false)
@@ -304,7 +306,6 @@ const AIChatWindow = ({ isChatOpen, setIsChatOpen, chats, tripId }) => {
                         </IconButton>
                       </InputAdornment>
                     ),
-                    disableUnderline: true,
                     multiline: true,
                     onKeyDown: event => {
                       if (event.key === 'Enter') {
@@ -342,7 +343,7 @@ const AIChatWindow = ({ isChatOpen, setIsChatOpen, chats, tripId }) => {
   )
 }
 
-const ChatBox = ({ messages, dummy, currentMessages, setCurrentMessages }) => (
+const ChatBox = ({ dummy, currentMessages }) => (
   <Box maxHeight="100%" minHeight="100%" overflow="auto">
     {currentMessages.map(message => (
       <ChatMessage key={message.messageId} {...message} />
@@ -363,14 +364,9 @@ const ChatMessage = ({ createdAt, userId, text = '', groupDate, questionType }) 
     setCurrentView,
     setEventType,
     setEditMode,
-    currentLocation,
     setCurrentLocation,
     setIsChatOpen,
   } = useContext(TripContext)
-
-  useEffect(() => {
-    console.log('matchesXs', matchesXs)
-  }, [matchesXs])
 
   const handleEventFromAssistant = () => {
     const placeArray = document.getElementsByTagName('place')
@@ -404,10 +400,6 @@ const ChatMessage = ({ createdAt, userId, text = '', groupDate, questionType }) 
       })
     }
   }
-
-  useEffect(() => {
-    console.log('---- current ----', currentLocation)
-  }, [currentLocation])
 
   useEffect(() => {
     if (text) {
