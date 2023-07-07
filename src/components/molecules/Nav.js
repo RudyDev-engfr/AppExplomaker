@@ -157,7 +157,7 @@ const Nav = () => {
               icon={<img src={home} width="25" alt="" className={classes.tabsMobileImg} />}
               label={
                 <Box component="span" className={classes.icons}>
-                  Accueil
+                  Présentation
                 </Box>
               }
               onClick={() => {
@@ -215,14 +215,16 @@ const Nav = () => {
                     window.location.href = 'https://explomaker.fr'
                   }}
                 >
-                  Accueil
+                  Présentation
                 </Button>
                 <Button
                   disableRipple
                   className={clsx(classes.navLink)}
-                  onClick={() => history.push('/')}
+                  onClick={() => {
+                    window.location.href = 'https://explomaker.fr'
+                  }}
                 >
-                  Séjours
+                  Inspiration
                 </Button>
                 <Button
                   disableRipple

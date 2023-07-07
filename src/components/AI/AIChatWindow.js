@@ -117,7 +117,8 @@ const AIChatWindow = ({ isChatOpen, setIsChatOpen, chats, tripId }) => {
     const { id } = user
     await messagesRef.add({
       text: messageToSend,
-      createdAt: new timestampRef.fromDate(new Date()),
+      createdAt: firestore.FieldValue.serverTimestamp(),
+      userTiming: new timestampRef.fromDate(new Date()),
       userId: id,
       notifications: currentTravelers
         .filter(traveler => traveler.id !== id)

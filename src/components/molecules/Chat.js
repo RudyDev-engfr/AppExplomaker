@@ -16,7 +16,6 @@ import EmojiEmotionsOutlined from '@mui/icons-material/EmojiEmotionsOutlined'
 import Send from '@mui/icons-material/Send'
 import { useCollectionData } from 'react-firebase-hooks/firestore'
 import { differenceInMinutes } from 'date-fns'
-
 import Picker from '@emoji-mart/react'
 
 import { SessionContext } from '../../contexts/session'
@@ -146,7 +145,8 @@ const Chat = ({ isChatOpen, setIsChatOpen, chats, tripId }) => {
     const { id } = user
     await messagesRef.add({
       text: messageToSend,
-      createdAt: new timestampRef.fromDate(new Date()),
+      createdAt: firestore.FieldValue.serverTimestamp(),
+      userTiming: new timestampRef.fromDate(new Date()),
       userId: id,
       notifications: currentTravelers
         .filter(traveler => traveler.id !== id)

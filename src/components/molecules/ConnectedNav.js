@@ -294,10 +294,10 @@ const ConnectedNav = () => {
                 disableRipple
                 className={classes.navLink}
                 onClick={() => {
-                  window.location.href = 'https://explomaker.fr'
+                  window.location.href = 'https://explomaker.fr/inspiration'
                 }}
               >
-                Accueil
+                Inspiration
               </Button>
               <Button disableRipple className={classes.navLink} onClick={() => history.push('/')}>
                 Mes Séjours
@@ -347,7 +347,7 @@ const ConnectedNav = () => {
                     <MenuItem
                       onClick={() => {
                         handleClose()
-                        window.location.href = 'https://www.explomaker.fr/inspiration'
+                        window.location.href = 'https://www.explomaker.fr'
                       }}
                     >
                       <Box
@@ -359,7 +359,7 @@ const ConnectedNav = () => {
                       >
                         <img src={logoGrey} alt="" className={classes.menuItemStyle} />
                       </Box>
-                      Inspiration
+                      Présentation
                     </MenuItem>
                     <MenuItem
                       onClick={() => {

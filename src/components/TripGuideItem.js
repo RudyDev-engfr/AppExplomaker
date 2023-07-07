@@ -83,7 +83,7 @@ const TripGuideItem = ({ currentItem, setCurrentSelectedTripGuideButton, setItem
         <Typography className={classes.titleTypo}>
           {!matchesXs
             ? `Guide de voyage : ${tripData?.destination?.label}`
-            : `${currentItem?.category}`}
+            : `${currentItem?.name}`}
         </Typography>
       </Box>
       {!matchesXs && (
