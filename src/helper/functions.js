@@ -845,9 +845,9 @@ export const buildLogSejour = (tripId, tripData) => {
             singleNotif.url = `/tripPage/${tripId}/planning?survey=${event.id}`
             singleNotif.logs = {
               place:
-                event.propositions[0].location.label ||
-                event.propositions[0].startLocation.label ||
-                event.propositions[0].flights[0].data.airports[0].label,
+                event.propositions[0].location?.label ||
+                event.propositions[0].transports[0].startLocation?.label ||
+                event.propositions[0].flights[0].data.airports[0]?.label,
               date: rCTFF(event.propositions[0].date, 'dd/MM/yyyy'),
               eventName: event.propositions[0].title,
               participatingTravelers: event.propositions[0].participatingTravelers.map(

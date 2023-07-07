@@ -308,7 +308,7 @@ const TripPageNav = ({
             </Box>
           )}
         </Button>
-        {tripData.premium && (
+        {tripData.premium && !tripData.noDestination && (
           <Button
             className={clsx(classes.sidebarButton, {
               [classes.activeTabStyle]: currentActiveTab === 'tripguide',

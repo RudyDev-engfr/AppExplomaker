@@ -33,7 +33,6 @@ const useStyles = makeStyles(theme => ({
   },
 }))
 const DesktopPreview = ({ tripData, generatedAvatars }) => {
-  const state = 'Premium'
   const classes = useStyles()
   const theme = useTheme()
   const { tripId } = useParams()
@@ -46,8 +45,9 @@ const DesktopPreview = ({ tripData, generatedAvatars }) => {
         <Box display="flex" alignItems="center">
           <Box
             sx={{
-              backgroundColor:
-                state === 'Premium' ? theme.palette.primary.main : theme.palette.secondary.main,
+              backgroundColor: tripData.premium
+                ? theme.palette.primary.main
+                : theme.palette.secondary.main,
               color: 'white',
               fontSize: '25px',
               fontWeight: '700',
@@ -59,7 +59,7 @@ const DesktopPreview = ({ tripData, generatedAvatars }) => {
               marginLeft: '10px', // Ajuster la marge à gauche
             }}
           >
-            {state === 'Premium' ? (
+            {tripData.premium ? (
               <>
                 Premium
                 <StarIcon

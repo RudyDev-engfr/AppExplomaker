@@ -75,7 +75,15 @@ const TripLogs = ({ tripData, tripId, canEdit }) => {
   }, [tripData, user, tripId])
 
   return (
-    <Box sx={{ marginBottom: '110px' }}>
+    <Box
+      sx={{
+        marginBottom: '110px',
+        [theme.breakpoints.up('sm')]: {
+          padding: '30px',
+          paddingTop: '50px',
+        },
+      }}
+    >
       {matchesXs && <MobileTripPageHeader />}
       <Paper className={classes.paper}>
         {!matchesXs && <Typography className={classes.title}>Logs du séjour</Typography>}
