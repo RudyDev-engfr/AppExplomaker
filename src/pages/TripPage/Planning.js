@@ -986,6 +986,7 @@ const Planning = ({ tripData, tripId }) => {
                   component={ButtonBase}
                   onClick={() => {
                     setSelectedDateOnPlanning(day)
+                    setNeedMapRefresh(day)
                     setIsNewDatesSectionOpen(false)
                     setCurrentView('planning')
                   }}

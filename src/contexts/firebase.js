@@ -49,6 +49,9 @@ if (window.location.hostname === 'localhost' || window.location.hostname === '10
 }
 
 export const firestore = firebase.firestore()
+// eslint-disable-next-line prefer-destructuring
+export const FieldValue = firebase.firestore.FieldValue
+
 firebase.auth().setPersistence(firebase.auth.Auth.Persistence.LOCAL)
 export const auth = firebase.auth()
 export const storage = firebase.storage()
@@ -620,6 +623,7 @@ const FirebaseContextProvider = ({ children }) => {
         handleUsersGroupInATrip,
         delNotificationsFromAnEventDeleted,
         refreshTripData,
+        FieldValue,
       }}
     >
       {children}

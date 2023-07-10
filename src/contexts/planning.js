@@ -67,10 +67,6 @@ const PlanningContextProvider = ({ children }) => {
   }, [selectedDateOnPlanning])
 
   useEffect(() => {
-    console.log('currentevents avec un s', currentEvents)
-  }, [currentEvents])
-
-  useEffect(() => {
     const tempEvents = { surveys: [], events: [] }
     if (selectedDateOnPlanning) {
       plannedEvents
@@ -253,24 +249,6 @@ const PlanningContextProvider = ({ children }) => {
       .filter(event => !event.needNewDates)
     setCurrentEvents(tempEvents)
   }, [selectedDateOnPlanning, plannedEvents, isNewDatesSectionOpen])
-
-  useEffect(() => {
-    if (currentView === 'chronoFeed' && singleDayPlannedEvents?.length > 1 && needMapRefresh) {
-      const uniqueIds = new Set()
-      setCurrentEvents({
-        surveys: plannedEvents.filter(plannedEvent => {
-          if (plannedEvent.isSurvey) {
-            return true
-          }
-          return false
-        }),
-        events: singleDayPlannedEvents.filter(
-          plannedEvent => !plannedEvent.itsAllDayLong && !plannedEvent.isSurvey
-        ),
-      })
-      setNeedMapRefresh(false)
-    }
-  }, [currentView, singleDayPlannedEvents])
 
   useEffect(() => {
     const tempMarkers = []

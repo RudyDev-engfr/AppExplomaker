@@ -85,7 +85,7 @@ const AIChatWindow = ({ isChatOpen, setIsChatOpen, chats, tripId }) => {
   const theme = useTheme()
   const matchesXs = useMediaQuery(theme.breakpoints.down('sm'))
   const { user } = useContext(SessionContext)
-  const { firestore, timestampRef } = useContext(FirebaseContext)
+  const { firestore, timestampRef, FieldValue } = useContext(FirebaseContext)
   const { hasClicked, currentTravelers, updateHasSeen } = useContext(TripContext)
 
   const dummy = useRef()
@@ -105,7 +105,6 @@ const AIChatWindow = ({ isChatOpen, setIsChatOpen, chats, tripId }) => {
 
   const addEmoji = e => {
     const emoji = e.native
-    setMessageToSend(prev => prev + emoji)
   }
 
   const messagesRef = firestore.collection('trips').doc(tripId).collection('Assistant')
@@ -117,7 +116,7 @@ const AIChatWindow = ({ isChatOpen, setIsChatOpen, chats, tripId }) => {
     const { id } = user
     await messagesRef.add({
       text: messageToSend,
-      createdAt: firestore.FieldValue.serverTimestamp(),
+      createdAt: FieldValue.serverTimestamp(),
       userTiming: new timestampRef.fromDate(new Date()),
       userId: id,
       notifications: currentTravelers
