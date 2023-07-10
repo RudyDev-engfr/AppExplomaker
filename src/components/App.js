@@ -20,7 +20,7 @@ const App = () => {
   const { firestore, database, setLocalUsers, isDictionaryLoaded, timestampRef } =
     useContext(FirebaseContext)
   const { isLoaded, loadError } = useLoadScript({
-    googleMapsApiKey: 'AIzaSyCKC9_XX60E1at2qp_90SU07-d-22pDydM',
+    googleMapsApiKey: 'AIzaSyBJepvl7rY64ocX_24S1FnqYFyEHTRNBFU',
     libraries: mapsLibraries,
   })
   const { initializing, firebaseUser } = useAuth()
@@ -47,8 +47,7 @@ const App = () => {
           tempUser.rangeType = data.rangeType
           tempUser.likes = data.likes
           tempUser.newsletter = data.newsletter
-          tempUser.myTripLetter = data.myTripLetter || false
-          tempUser.myTripLetterFrequency = data.myTripLetterFrequency
+          tempUser.myTripLetter = data.myTripLetter || 'weekly'
           tempUser.notifications = data.notifications || []
           setUser({ ...tempUser })
         }

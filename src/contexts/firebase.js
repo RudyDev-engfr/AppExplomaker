@@ -14,7 +14,7 @@ import google from '../images/signIn/Google.svg'
 export const FirebaseContext = createContext()
 
 const firebaseConfig = {
-  apiKey: 'AIzaSyAgeZlnX0NxeuHRjVylQMGLZOla4zWE9p8',
+  apiKey: 'AIzaSyAMv0fBbPMuXvvi2IvfbFuEd4wm0Wmd8Iw',
   authDomain: 'explomaker-3010b.firebaseapp.com',
   databaseURL: 'https://explomaker-3010b.firebaseio.com',
   projectId: 'explomaker-3010b',
