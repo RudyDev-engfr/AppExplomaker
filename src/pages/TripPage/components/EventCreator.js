@@ -623,6 +623,9 @@ const EventCreator = ({
         ) {
           tempErrors.selectedDateIsNotInInterval = true
         }
+        if (isBefore(selectedEndTime, selectedStartTime)) {
+          tempErrors.selectedEndTimeIsBeforeStartTime = true
+        }
         break
       case EVENT_TYPES[3]:
         let transportsError = false
@@ -694,6 +697,9 @@ const EventCreator = ({
           })
         ) {
           tempErrors.selectedDateIsNotInInterval = true
+        }
+        if (isBefore(selectedEndTime, selectedStartTime)) {
+          tempErrors.selectedEndTimeIsBeforeStartTime = true
         }
         break
     }
