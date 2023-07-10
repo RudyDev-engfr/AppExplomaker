@@ -153,7 +153,7 @@ const Profile = () => {
           </Typography>
           <Box display={matchesXs ? 'column' : 'flex'} gap="10px" margin="20px 0 30px">
             <Typography sx={{ fontWeight: '500', fontSize: '18px' }}>
-              {`${user.firstname} ${user.lastname}`},
+              {`${user.firstname ?? ''} ${user.lastname ?? ''}`},
             </Typography>
             <Typography sx={{ fontSize: '17px' }}>{user.email}</Typography>
           </Box>
