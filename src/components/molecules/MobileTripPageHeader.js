@@ -62,8 +62,6 @@ const MobileTripPageHeader = () => {
         }}
       >
         <Tabs
-          centered
-          fixedTabs
           value={currentActiveTab}
           TabIndicatorProps={{
             sx: {
@@ -72,6 +70,7 @@ const MobileTripPageHeader = () => {
             },
           }}
           variant="scrollable"
+          orientation="horizontal"
         >
           <Tab
             label={

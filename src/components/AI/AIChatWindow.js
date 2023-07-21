@@ -104,6 +104,7 @@ const AIChatWindow = ({ isChatOpen, setIsChatOpen, chats, tripId }) => {
   const [currentMessages, setCurrentMessages] = useState([])
 
   const addEmoji = e => {
+    // eslint-disable-next-line no-unused-vars
     const emoji = e.native
   }
 

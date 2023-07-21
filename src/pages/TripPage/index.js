@@ -81,73 +81,6 @@ import TripGuide from './components/TripGuide'
 import DesktopEditEditorGrid from './components/DesktopEditEditorGrid'
 import MobileEditEditorGrid from './components/MobileEditEditorGrid'
 
-const notifications = [
-  {
-    avatar: ava1,
-    icon: 'icon-compass',
-    message: 'Julien (Explomaker) a proposé 3 options d’Exploration pour lundi 24 août.',
-    createdAt: 'il y a 2h',
-    unread: true,
-  },
-  {
-    avatar: ava2,
-    icon: 'icon-message',
-    message: 'Julien (Explomaker) t’a laissé un message personnel.',
-    createdAt: 'il y a 2h',
-    unread: true,
-  },
-  {
-    avatar: ava3,
-    icon: 'icon-photo',
-    message: 'Julien (Explomaker) a proposé 3 options d’Exploration pour lundi 24 août.',
-    createdAt: 'il y a 2h',
-    unread: true,
-  },
-  {
-    avatar: ava4,
-    icon: 'icon-home',
-    message: 'Julien (Explomaker) a proposé 3 options d’Exploration pour lundi 24 août.',
-    createdAt: 'il y a 2h',
-    unread: true,
-  },
-  {
-    avatar: ava5,
-    icon: 'icon-Restaurant',
-    message: 'Julien (Explomaker) a proposé 3 options d’Exploration pour lundi 24 août.',
-    createdAt: 'il y a 2h',
-  },
-  {
-    avatar: ava1,
-    icon: 'icon-Edit',
-    message: 'Julien (Explomaker) a proposé 3 options d’Exploration pour lundi 24 août.',
-    createdAt: 'il y a 2h',
-  },
-  {
-    avatar: ava1,
-    icon: 'icon-trash',
-    message: 'Julien (Explomaker) a proposé 3 options d’Exploration pour lundi 24 août.',
-    createdAt: 'il y a 2h',
-  },
-  {
-    avatar: ava5,
-    icon: 'icon-Restaurant',
-    message: 'Julien (Explomaker) a proposé 3 options d’Exploration pour lundi 24 août.',
-    createdAt: 'il y a 2h',
-  },
-  {
-    avatar: ava1,
-    icon: 'icon-Edit',
-    message: 'Julien (Explomaker) a proposé 3 options d’Exploration pour lundi 24 août.',
-    createdAt: 'il y a 2h',
-  },
-  {
-    avatar: ava1,
-    icon: 'icon-trash',
-    message: 'Julien (Explomaker) a proposé 3 options d’Exploration pour lundi 24 août.',
-    createdAt: 'il y a 2h',
-  },
-]
-
 const useStyles = makeStyles(theme => ({
   content: {
     minHeight: '100vh',
@@ -942,7 +875,6 @@ const TripPage = () => {
                   <Preview
                     tripData={tripData}
                     setOpenModal={setOpenModal}
-                    dataNotifications={notifications}
                     canEdit={canEdit}
                     carouselImages={carouselImages}
                     tripId={tripId}
@@ -1326,38 +1258,40 @@ const TripPage = () => {
           </Typography>
         </Box>
         {isShowingRemovedContributors
-          ? currentTravelers.map(singleTravelerDetails =>
-              matchesXs ? (
-                <DesktopEditEditorGrid
-                  singleTravelerDetails={singleTravelerDetails}
-                  isAdmin={isAdmin}
-                  updateTrip={updateTrip}
-                />
-              ) : (
+          ? matchesXs
+            ? currentTravelers.map(singleTravelerDetails => (
                 <MobileEditEditorGrid
                   singleTravelerDetails={singleTravelerDetails}
                   isAdmin={isAdmin}
                   updateTrip={updateTrip}
                 />
-              )
-            )
+              ))
+            : currentTravelers.map(singleTravelerDetails => (
+                <DesktopEditEditorGrid
+                  singleTravelerDetails={singleTravelerDetails}
+                  isAdmin={isAdmin}
+                  updateTrip={updateTrip}
+                />
+              ))
+          : matchesXs
+          ? currentTravelers
+              .filter(traveler => traveler.role !== ROLES.Removed)
+              .map(singleTravelerDetails => (
+                <MobileEditEditorGrid
+                  singleTravelerDetails={singleTravelerDetails}
+                  isAdmin={isAdmin}
+                  updateTrip={updateTrip}
+                />
+              ))
           : currentTravelers
               .filter(traveler => traveler.role !== ROLES.Removed)
-              .map(singleTravelerDetails =>
-                matchesXs ? (
-                  <DesktopEditEditorGrid
-                    singleTravelerDetails={singleTravelerDetails}
-                    isAdmin={isAdmin}
-                    updateTrip={updateTrip}
-                  />
-                ) : (
-                  <MobileEditEditorGrid
-                    singleTravelerDetails={singleTravelerDetails}
-                    isAdmin={isAdmin}
-                    updateTrip={updateTrip}
-                  />
-                )
-              )}
+              .map(singleTravelerDetails => (
+                <DesktopEditEditorGrid
+                  singleTravelerDetails={singleTravelerDetails}
+                  isAdmin={isAdmin}
+                  updateTrip={updateTrip}
+                />
+              ))}
         {isAdmin && tripData.travelersDetails.some(traveler => traveler.role === ROLES.Removed) && (
           <FormControlLabel
             label="Montrer les contributeurs retirés"

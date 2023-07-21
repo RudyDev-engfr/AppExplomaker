@@ -427,7 +427,6 @@ const TripPageNav = ({
         <Tabs
           centered
           variant="fullWidth"
-          fixedTabs
           value={0}
           TabIndicatorProps={{ sx: { display: 'none' } }}
         >

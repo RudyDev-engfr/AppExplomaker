@@ -1,29 +1,21 @@
 import React, { useContext, useEffect, useState } from 'react'
 import Box from '@mui/material/Box'
-import { makeStyles, useTheme } from '@mui/styles'
 import IconButton from '@mui/material/IconButton'
 import Typography from '@mui/material/Typography'
-import useMediaQuery from '@mui/material/useMediaQuery'
 
-import { format, isSameDay } from 'date-fns'
+import { format } from 'date-fns'
 import frLocale from 'date-fns/locale/fr'
 import capitalize from 'lodash.capitalize'
 import { ManageSearch } from '@mui/icons-material'
 import { v4 as uuidv4 } from 'uuid'
 
 import { PlanningContext } from '../../../contexts/planning'
-import { dateToString, stringToDate } from '../../../helper/functions'
+import { stringToDate } from '../../../helper/functions'
 import MiniEventCard from '../../../components/atoms/MiniEventCard'
-import { EVENT_TYPES } from '../../../helper/constants'
 import { TripContext } from '../../../contexts/trip'
 
-const useStyles = makeStyles({})
-
 const PlanningFeed = ({ propsClasses, setCurrentView }) => {
-  const classes = useStyles()
-  const theme = useTheme()
   const [eventsByDay, setEventsByDay] = useState([])
-  const matchesXs = useMediaQuery(theme.breakpoints.down('sm'))
 
   const { days, singleDayPlannedEvents, setSelectedDateOnPlanning, setIsNewDatesSectionOpen } =
     useContext(PlanningContext)

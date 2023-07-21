@@ -212,14 +212,6 @@ const useStyles = makeStyles(theme => ({
       backgroundColor: 'white !important',
     },
   },
-  // mobilePaperContent: {
-  //   marginTop: '20px',
-  //   padding: '20px 30px 30px',
-  //   position: 'relative',
-  //   [theme.breakpoints.down('sm')]: {
-  //     display: 'none',
-  //   },
-  // },
   titlePapers: {
     [theme.breakpoints.down('sm')]: {
       fontSize: '22px',
@@ -228,27 +220,15 @@ const useStyles = makeStyles(theme => ({
   },
 }))
 
-const Preview = ({
-  tripData,
-  setOpenModal,
-  dataNotifications,
-  canEdit,
-  carouselImages,
-  tripId,
-}) => {
+const Preview = ({ tripData, setOpenModal, canEdit, carouselImages, tripId }) => {
   const classes = useStyles()
   const theme = useTheme()
   const matchesXs = useMediaQuery(theme.breakpoints.down('sm'))
 
   const { dictionary } = useContext(FirebaseContext)
-  const { user } = useContext(SessionContext)
   const { currentDateRange, currentNotifications } = useContext(TripContext)
 
   const [generatedAvatars, setGeneratedAvatars] = useState([])
-
-  useEffect(() => {
-    console.log('les notifs que je veux afficher', currentNotifications)
-  }, [currentNotifications])
 
   useEffect(() => {
     const tempAvatars = []
