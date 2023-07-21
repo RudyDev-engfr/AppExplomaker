@@ -68,16 +68,16 @@ const MiniEventCard = ({
   const history = useHistory()
   const theme = useTheme()
   const { tripId } = useParams()
-  const { currentEventId, setCurrentEventId, setSurvey, setSelectedDateOnPlanning } =
-    useContext(PlanningContext)
-  const { setCurrentEvent, handleEventCreation } = useContext(TripContext)
+  const { setCurrentEventId, setSelectedDateOnPlanning } = useContext(PlanningContext)
+  const { setCurrentEvent, handleEventCreation, setCurrentEventType } = useContext(TripContext)
 
-  useEffect(() => {
-    console.log('leventtoutseulplanifie', plannedEvent)
-  }, [plannedEvent])
+  // useEffect(() => {
+  //   console.log('leventtoutseulplanifie', plannedEvent)
+  // }, [plannedEvent])
 
   const setEvent = event => {
     setCurrentEvent(event)
+    setCurrentEventType(event.type)
     history.push(`/tripPage/${tripId}/planning?event=${event.id}`)
     setCurrentView('preview')
   }

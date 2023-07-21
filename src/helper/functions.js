@@ -13,7 +13,7 @@ import {
 import frLocale from 'date-fns/locale/fr'
 import parse from 'date-fns/parse'
 import { useEffect, useRef } from 'react'
-import { firestore } from '../contexts/firebase'
+import { FieldValue, firestore } from '../contexts/firebase'
 
 import { EVENT_TYPES } from './constants'
 
@@ -34,12 +34,16 @@ export function rCTFF(arrayOfTimestamps, formatStr) {
 
   tempArrayOfTimestamps.forEach(timestamp => {
     let tempTimestamp
-    if (typeof timestamp !== 'string' && 'toDate' in timestamp) {
+    if (timestamp && typeof timestamp !== 'string' && 'toDate' in timestamp) {
       tempTimestamp = timestamp.toDate()
+    } else if (timestamp instanceof FieldValue && timestamp.isEqual(FieldValue.serverTimestamp())) {
+      tempTimestamp = parseISO(timestamp)
     } else if (typeof timestamp === 'string') {
       tempTimestamp = parseISO(timestamp)
-    } else {
+    } else if (timestamp && 'seconds' in timestamp) {
       tempTimestamp = new Date(timestamp.seconds * 1000)
+    } else {
+      tempTimestamp = null
     }
     timestamps.push(tempTimestamp)
   })

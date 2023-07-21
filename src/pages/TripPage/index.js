@@ -16,9 +16,6 @@ import FormControlLabel from '@mui/material/FormControlLabel'
 import Radio from '@mui/material/Radio'
 import useMediaQuery from '@mui/material/useMediaQuery'
 import TextareaAutosize from '@mui/material/TextareaAutosize'
-import Accordion from '@mui/material/Accordion'
-import AccordionSummary from '@mui/material/AccordionSummary'
-import AccordionDetails from '@mui/material/AccordionDetails'
 import Checkbox from '@mui/material/Checkbox'
 import { makeStyles, useTheme } from '@mui/styles'
 import Add from '@mui/icons-material/Add'
@@ -28,7 +25,6 @@ import Remove from '@mui/icons-material/Remove'
 import Delete from '@mui/icons-material/Delete'
 import Camera from '@mui/icons-material/Camera'
 import Close from '@mui/icons-material/Close'
-import ExpandMore from '@mui/icons-material/ExpandMore'
 
 import FileCopyRoundedIcon from '@mui/icons-material/FileCopyRounded'
 /* import ToggleButton from '@mui/lab/ToggleButton'
@@ -82,6 +78,8 @@ import SocialNavbar from './SocialNavbar'
 import AIChatWindow from '../../components/AI/AIChatWindow'
 import AddCollaboratorsButton from '../../components/atoms/AddCollaboratorsButton'
 import TripGuide from './components/TripGuide'
+import DesktopEditEditorGrid from './components/DesktopEditEditorGrid'
+import MobileEditEditorGrid from './components/MobileEditEditorGrid'
 
 const notifications = [
   {
@@ -301,26 +299,6 @@ const useStyles = makeStyles(theme => ({
   betweenDates: {
     margin: '0 10px',
   },
-  ctnContributeurRedButton: {
-    alignSelf: 'stretch',
-  },
-  contributeurRedButton: {
-    backgroundColor: theme.palette.secondary.ultraLight,
-    color: theme.palette.secondary.main,
-    boxShadow: 'unset',
-    fontSize: '14px',
-    textTransform: 'uppercase',
-    fontFamily: theme.typography.fontFamily,
-    height: '100%',
-    borderRadius: '10px',
-  },
-  gridContributeurs: {
-    margin: '20px 0',
-    display: 'grid',
-    gridTemplate: '1fr / max-content 1fr 130px min-content',
-    gridGap: '10px',
-    alignItems: 'center',
-  },
   modaltitles: {
     fontSize: '24px',
     fontWeight: '500',
@@ -379,21 +357,6 @@ const useStyles = makeStyles(theme => ({
     backgroundColor: theme.palette.primary.main,
     color: theme.palette.primary.contrastText,
     borderRadius: '50px',
-  },
-  accordionDetailsGrid: {
-    display: 'grid',
-    gridTemplate: 'auto / auto',
-    gridAutoRows: '60px',
-    gridGap: '10px',
-    alignItems: 'center',
-  },
-  accordionDetailsGridRow: {
-    width: '100%',
-    height: '100%',
-    '& button': {
-      width: '100%',
-      height: '100%',
-    },
   },
 }))
 
@@ -1362,188 +1325,39 @@ const TripPage = () => {
             Tous les contributeurs peuvent voir et modifier le séjour
           </Typography>
         </Box>
-        {currentTravelers.map(travelerDetails =>
-          matchesXs ? (
-            isAdmin ? (
-              tripData.owner === travelerDetails.id ? (
-                <>
-                  <Box className={classes.gridContributeurs}>
-                    <CustomAvatar peopleIds={[travelerDetails.id]} />
-                    <Box>
-                      <Typography variant="h6">{travelerDetails.firstname}</Typography>
-                      <Typography variant="subtitle2">
-                        {tripData.owner === travelerDetails.id && 'Propriétaire'}
-                      </Typography>
-                    </Box>
-                  </Box>
-                  <Divider />
-                </>
+        {isShowingRemovedContributors
+          ? currentTravelers.map(singleTravelerDetails =>
+              matchesXs ? (
+                <DesktopEditEditorGrid
+                  singleTravelerDetails={singleTravelerDetails}
+                  isAdmin={isAdmin}
+                  updateTrip={updateTrip}
+                />
               ) : (
-                <Accordion key={travelerDetails.id}>
-                  <AccordionSummary expandIcon={<ExpandMore />} sx={{ padding: '0' }}>
-                    <Box marginRight="10px">
-                      <CustomAvatar peopleIds={[travelerDetails.id]} />
-                    </Box>
-                    <Box>
-                      <Typography variant="h6">{travelerDetails.firstname}</Typography>
-                      <Typography variant="subtitle2">
-                        {tripData.owner === travelerDetails.id && 'Propriétaire'}
-                        {travelerDetails.role === ROLES.Removed && 'Retiré'}
-                      </Typography>
-                    </Box>
-                  </AccordionSummary>
-                  <AccordionDetails classes={{ root: classes.accordionDetailsGrid }}>
-                    <Box
-                      className={clsx(
-                        classes.accordionDetailsGridRow,
-                        classes.ctnContributeurRedButton
-                      )}
-                    >
-                      {tripData.owner !== travelerDetails.id &&
-                        (tripData.editors.includes(travelerDetails.id) ? (
-                          <>
-                            <Button
-                              fullWidth
-                              className={classes.contributeurRedButton}
-                              color="secondary"
-                              onClick={() => {
-                                const previousTravelers = [...tripData.travelersDetails]
-                                const tempTravelers = previousTravelers.map(traveler => {
-                                  const tempTraveler = { ...traveler }
-                                  if (tempTraveler.id === travelerDetails.id) {
-                                    tempTraveler.role = ROLES.Removed
-                                  }
-                                  return tempTraveler
-                                })
-                                const tempEditors = tripData.editors.filter(
-                                  editorId => editorId !== travelerDetails.id
-                                )
-                                updateTrip(tripId, {
-                                  editors: tempEditors,
-                                  travelersDetails: tempTravelers,
-                                })
-                              }}
-                            >
-                              Retirer
-                            </Button>
-                          </>
-                        ) : (
-                          <Button
-                            fullWidth
-                            className={clsx(
-                              classes.accordionDetailsGridRow,
-                              classes.ctnContributeurRedButton
-                            )}
-                            color="secondary"
-                            onClick={() => {
-                              const previousTravelers = [...tripData.travelersDetails]
-                              const tempTravelers = previousTravelers.map(traveler => {
-                                const tempTraveler = { ...traveler }
-                                if (tempTraveler.id === travelerDetails.id) {
-                                  tempTraveler.role = ROLES.Write
-                                }
-                                return tempTraveler
-                              })
-                              const tempEditors = [...tripData.editors]
-                              tempEditors.push(travelerDetails.id)
-                              updateTrip(tripId, {
-                                editors: tempEditors,
-                                travelersDetails: tempTravelers,
-                              })
-                            }}
-                          >
-                            Réintégrer
-                          </Button>
-                        ))}
-                    </Box>
-                  </AccordionDetails>
-                </Accordion>
+                <MobileEditEditorGrid
+                  singleTravelerDetails={singleTravelerDetails}
+                  isAdmin={isAdmin}
+                  updateTrip={updateTrip}
+                />
               )
-            ) : (
-              <>
-                <Box className={classes.gridContributeurs}>
-                  <CustomAvatar peopleIds={[travelerDetails.id]} />
-                  <Box>
-                    <Typography variant="h6">{travelerDetails.firstname}</Typography>
-                    <Typography variant="subtitle2">
-                      {tripData.owner === travelerDetails.id && 'Propriétaire'}
-                    </Typography>
-                  </Box>
-                </Box>
-                <Divider />
-              </>
             )
-          ) : (
-            <React.Fragment key={uuidv4()}>
-              <Box className={classes.gridContributeurs}>
-                <CustomAvatar peopleIds={[travelerDetails.id]} />
-                <Box>
-                  <Typography variant="h6">{travelerDetails.firstname}</Typography>
-                  <Typography variant="subtitle2">
-                    {tripData.owner === travelerDetails.id && 'Propriétaire'}
-                    {travelerDetails.role === ROLES.Removed && 'Retiré'}
-                  </Typography>
-                </Box>
-                {isAdmin && (
-                  <Box className={classes.ctnContributeurRedButton}>
-                    {tripData.owner !== travelerDetails.id &&
-                      (tripData.editors.includes(travelerDetails.id) ? (
-                        <Button
-                          fullWidth
-                          className={classes.contributeurRedButton}
-                          color="secondary"
-                          onClick={() => {
-                            const previousTravelers = [...tripData.travelersDetails]
-                            const tempTravelers = previousTravelers.map(traveler => {
-                              const tempTraveler = { ...traveler }
-                              if (tempTraveler.id === travelerDetails.id) {
-                                tempTraveler.role = ROLES.Removed
-                              }
-                              return tempTraveler
-                            })
-                            const tempEditors = tripData.editors.filter(
-                              editorId => editorId !== travelerDetails.id
-                            )
-                            updateTrip(tripId, {
-                              editors: tempEditors,
-                              travelersDetails: tempTravelers,
-                            })
-                          }}
-                        >
-                          Retirer
-                        </Button>
-                      ) : (
-                        <Button
-                          fullWidth
-                          className={classes.contributeurRedButton}
-                          color="secondary"
-                          onClick={() => {
-                            const previousTravelers = [...tripData.travelersDetails]
-                            const tempTravelers = previousTravelers.map(traveler => {
-                              const tempTraveler = { ...traveler }
-                              if (tempTraveler.id === travelerDetails.id) {
-                                tempTraveler.role = ROLES.Write
-                              }
-                              return tempTraveler
-                            })
-                            const tempEditors = [...tripData.editors]
-                            tempEditors.push(travelerDetails.id)
-                            updateTrip(tripId, {
-                              editors: tempEditors,
-                              travelersDetails: tempTravelers,
-                            })
-                          }}
-                        >
-                          Réintégrer
-                        </Button>
-                      ))}
-                  </Box>
-                )}
-              </Box>
-              <Divider />
-            </React.Fragment>
-          )
-        )}
+          : currentTravelers
+              .filter(traveler => traveler.role !== ROLES.Removed)
+              .map(singleTravelerDetails =>
+                matchesXs ? (
+                  <DesktopEditEditorGrid
+                    singleTravelerDetails={singleTravelerDetails}
+                    isAdmin={isAdmin}
+                    updateTrip={updateTrip}
+                  />
+                ) : (
+                  <MobileEditEditorGrid
+                    singleTravelerDetails={singleTravelerDetails}
+                    isAdmin={isAdmin}
+                    updateTrip={updateTrip}
+                  />
+                )
+              )}
         {isAdmin && tripData.travelersDetails.some(traveler => traveler.role === ROLES.Removed) && (
           <FormControlLabel
             label="Montrer les contributeurs retirés"

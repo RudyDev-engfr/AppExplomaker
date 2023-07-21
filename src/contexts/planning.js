@@ -32,7 +32,14 @@ const PlanningContextProvider = ({ children }) => {
     setCurrentEventId,
     getPlaceTown,
     planningMapRef,
+    currentEventType,
+    setCurrentEventType,
+    tripData,
   } = useContext(TripContext)
+
+  // used to handle map
+  const [transportMarkersCoordinates, setTransportMarkersCoordinates] = useState([])
+  const [latLngMarkersArray, setLatLngMarkersArray] = useState([])
   const [currentMarkers, setCurrentMarkers] = useState([])
   const [transportMarkers, setTransportMarkers] = useState({
     transportMarkers: [],
@@ -51,6 +58,7 @@ const PlanningContextProvider = ({ children }) => {
   const [withoutDatesEvents, setWithoutDatesEvents] = useState({ surveys: [], events: [] })
   const [previousEvent, setPreviousEvent] = useState()
   const [selectedPropositionIndex, setSelectedPropositionIndex] = useState()
+  const [needEventsRefresh, setNeedEventsRefresh] = useState(false)
 
   // used for planningFeed && Planning
   const [isNewDatesSectionOpen, setIsNewDatesSectionOpen] = useState(false)
@@ -62,11 +70,98 @@ const PlanningContextProvider = ({ children }) => {
 
   const planningBounds = new window.google.maps.LatLngBounds()
 
+  const setEvent = event => {
+    setCurrentEventType(event.type)
+    setCurrentEvent(event)
+    if (event.isSurvey) {
+      history.push(`/tripPage/${tripId}/planning?survey=${event.id}`)
+    } else {
+      history.push(`/tripPage/${tripId}/planning?event=${event.id}`)
+    }
+    setCurrentView('preview')
+  }
+
+  const setSurvey = survey => {
+    setCurrentEvent(survey)
+    setCurrentEventType(survey.type)
+    history.push(`/tripPage/${tripId}/planning?survey=${survey.id}`)
+    setCurrentView('survey')
+  }
+
   useEffect(() => {
     console.log('ma date sélectionné', selectedDateOnPlanning)
   }, [selectedDateOnPlanning])
 
   useEffect(() => {
+    if (
+      !currentEvents?.events.some(
+        event => event.type === EVENT_TYPES[3] || event.type === EVENT_TYPES[1]
+      ) &&
+      !currentEvents?.surveys.some(
+        event => event.type === EVENT_TYPES[3] || event.type === EVENT_TYPES[1]
+      )
+    ) {
+      setLatLngMarkersArray([])
+      setTransportMarkersCoordinates([])
+    }
+  }, [currentEvents])
+
+  useEffect(() => {
+    console.log('current events avec un s', currentEvents)
+    console.log('events sans dates', withoutDatesEvents)
+    console.log('events par jour', singleDayPlannedEvents)
+    console.log('évents planifiés', plannedEvents)
+  }, [currentEvents, withoutDatesEvents, singleDayPlannedEvents])
+
+  useEffect(() => {
+    if (currentView === 'planning' || currentView === 'chronoFeed') {
+      setCurrentEventId()
+      setCurrentEvent()
+      setPreviousEvent()
+      console.info('==== No event selected ====')
+    } else {
+      console.info('==== Sondage ou évènement sélectionné ====')
+    }
+  }, [currentView])
+
+  useEffect(() => {
+    let unsubscribe
+
+    if (tripId) {
+      unsubscribe = firestore
+        .collection('trips')
+        .doc(tripId)
+        .collection('planning')
+        .onSnapshot(querySnapshot => {
+          const events = []
+          querySnapshot.forEach(doc => {
+            events.push({ ...doc.data(), id: doc.id })
+          })
+          setPlannedEvents(events)
+          console.info('==== évènements du voyage chargés ====')
+        })
+    }
+
+    return () => {
+      if (unsubscribe) {
+        unsubscribe()
+      }
+    }
+  }, [tripId, needEventsRefresh])
+
+  useEffect(() => {
+    const tempWithoutDatesEvents = { surveys: [], events: [] }
+    const filteredWithoutDatesEvents = plannedEvents.filter(
+      plannedEvent => plannedEvent.needNewDates
+    )
+    filteredWithoutDatesEvents.forEach(withoutDateEvent => {
+      if (withoutDateEvent.isSurvey) {
+        tempWithoutDatesEvents.surveys.push(withoutDateEvent)
+      } else {
+        tempWithoutDatesEvents.events.push(withoutDateEvent)
+      }
+    })
+    setWithoutDatesEvents(tempWithoutDatesEvents)
     const tempEvents = { surveys: [], events: [] }
     if (selectedDateOnPlanning) {
       plannedEvents
@@ -74,33 +169,33 @@ const PlanningContextProvider = ({ children }) => {
         .forEach(plannedEvent => {
           if (plannedEvent.type === EVENT_TYPES[0]) {
             if (plannedEvent.isSurvey) {
-              for (
-                let propositionIndex = 0;
-                propositionIndex < plannedEvent.propositions?.length;
-                propositionIndex += 1
+              if (
+                plannedEvent.propositions.some((proposition, propositionIndex) => {
+                  const currentArrivalDateTime = startOfDay(
+                    stringToDate(
+                      plannedEvent.propositions[propositionIndex].startTime,
+                      'yyyy-MM-dd HH:mm'
+                    )
+                  )
+                  const currentDepartureDateTime = startOfDay(
+                    stringToDate(
+                      plannedEvent.propositions[propositionIndex].endTime,
+                      'yyyy-MM-dd HH:mm'
+                    )
+                  )
+                  if (
+                    isAfter(currentDepartureDateTime, currentArrivalDateTime) &&
+                    isWithinInterval(selectedDateOnPlanning, {
+                      start: currentArrivalDateTime,
+                      end: currentDepartureDateTime,
+                    })
+                  ) {
+                    return true
+                  }
+                  return false
+                })
               ) {
-                const currentArrivalDateTime = startOfDay(
-                  stringToDate(
-                    plannedEvent.propositions[propositionIndex].startTime,
-                    'yyyy-MM-dd HH:mm'
-                  )
-                )
-                const currentDepartureDateTime = startOfDay(
-                  stringToDate(
-                    plannedEvent.propositions[propositionIndex].endTime,
-                    'yyyy-MM-dd HH:mm'
-                  )
-                )
-                if (
-                  isAfter(currentDepartureDateTime, currentArrivalDateTime) &&
-                  isWithinInterval(selectedDateOnPlanning, {
-                    start: currentArrivalDateTime,
-                    end: currentDepartureDateTime,
-                  })
-                ) {
-                  tempEvents.surveys.push(plannedEvent)
-                  break
-                }
+                tempEvents.surveys.push(plannedEvent)
               }
             } else {
               const currentArrivalDateTime = startOfDay(
@@ -121,16 +216,34 @@ const PlanningContextProvider = ({ children }) => {
             }
           } else if (plannedEvent.type === EVENT_TYPES[1]) {
             if (plannedEvent.isSurvey) {
-              plannedEvent.propositions.some(proposition => {
-                proposition.flights.some(flight => {
-                  if (isSameDay(selectedDateOnPlanning, rCTFF(flight.date))) {
-                    tempEvents.surveys.push(plannedEvent)
+              if (
+                plannedEvent.propositions.some((proposition, propositionIndex) => {
+                  const currentArrivalDateTime = startOfDay(
+                    stringToDate(
+                      plannedEvent.propositions[propositionIndex].startTime,
+                      'yyyy-MM-dd HH:mm'
+                    )
+                  )
+                  const currentDepartureDateTime = startOfDay(
+                    stringToDate(
+                      plannedEvent.propositions[propositionIndex].endTime,
+                      'yyyy-MM-dd HH:mm'
+                    )
+                  )
+                  if (
+                    isAfter(currentDepartureDateTime, currentArrivalDateTime) &&
+                    isWithinInterval(selectedDateOnPlanning, {
+                      start: currentArrivalDateTime,
+                      end: currentDepartureDateTime,
+                    })
+                  ) {
                     return true
                   }
                   return false
                 })
-                return false
-              })
+              ) {
+                tempEvents.surveys.push(plannedEvent)
+              }
             } else {
               for (
                 let transportIndex = 0;
@@ -165,29 +278,28 @@ const PlanningContextProvider = ({ children }) => {
             }
           } else if (plannedEvent.type === EVENT_TYPES[3]) {
             if (plannedEvent.isSurvey) {
-              plannedEvent.propositions.some(proposition => {
-                proposition.transports.some(transport => {
+              if (
+                plannedEvent.propositions.some(proposition => {
                   if (
-                    isAfter(
-                      stringToDate(transport.endTime, 'yyyy-MM-dd HH:mm'),
-                      stringToDate(transport.startTime, 'yyyy-MM-dd HH:mm')
-                    )
-                      ? eachDayOfInterval({
+                    proposition.transports.some(transport => {
+                      if (
+                        eachDayOfInterval({
                           start: stringToDate(transport.startTime, 'yyyy-MM-dd HH:mm'),
                           end: stringToDate(transport.endTime, 'yyyy-MM-dd HH:mm'),
                         }).some(day => isSameDay(day, selectedDateOnPlanning))
-                      : eachDayOfInterval({
-                          start: stringToDate(transport.endTime, 'yyyy-MM-dd HH:mm'),
-                          end: stringToDate(transport.startTime, 'yyyy-MM-dd HH:mm'),
-                        }).some(day => isSameDay(day, selectedDateOnPlanning))
+                      ) {
+                        return true
+                      }
+                      return false
+                    })
                   ) {
-                    tempEvents.surveys.push(plannedEvent)
                     return true
                   }
                   return false
                 })
-                return false
-              })
+              ) {
+                tempEvents.surveys.push(plannedEvent)
+              }
             } else {
               for (
                 let transportIndex = 0;
@@ -217,11 +329,7 @@ const PlanningContextProvider = ({ children }) => {
                 }
               }
             }
-          } else if (
-            plannedEvent.type === EVENT_TYPES[0] ||
-            plannedEvent.type === EVENT_TYPES[2] ||
-            plannedEvent.type === EVENT_TYPES[4]
-          ) {
+          } else if (plannedEvent.type === EVENT_TYPES[2] || plannedEvent.type === EVENT_TYPES[4]) {
             if (plannedEvent.isSurvey) {
               if (
                 plannedEvent.propositions.some(proposition =>
@@ -248,6 +356,7 @@ const PlanningContextProvider = ({ children }) => {
       .sort((a, b) => getEventStartDate(a) - getEventStartDate(b))
       .filter(event => !event.needNewDates)
     setCurrentEvents(tempEvents)
+    console.log('je suis passé par ici')
   }, [selectedDateOnPlanning, plannedEvents, isNewDatesSectionOpen])
 
   useEffect(() => {
@@ -269,7 +378,7 @@ const PlanningContextProvider = ({ children }) => {
             ) {
               tempWithoutDateSurveyMarkers.push(
                 <CustomMarker
-                  key={proposition.location.value.place_id}
+                  key={`${uuidv4()} - ${proposition.location.value.place_id}`}
                   position={{ lat: proposition.location?.lat, lng: proposition.location?.lng }}
                   viewport={proposition.location.viewport}
                   clickable
@@ -294,7 +403,7 @@ const PlanningContextProvider = ({ children }) => {
               proposition.flights.forEach(currentFlight =>
                 tempWithoutDateSurveyMarkers.push(
                   <CustomMarker
-                    key={currentFlight.data.airports[0].iataCode} // TODO better key
+                    key={`${uuidv4()} - ${currentFlight.data.airports[0].iataCode}`} // TODO better key
                     position={{
                       lat: currentFlight.data.airports[0].geocode.latitude,
                       lng: currentFlight.data.airports[0].geocode.longitude,
@@ -331,7 +440,7 @@ const PlanningContextProvider = ({ children }) => {
                 tempTransportCoordinates.push([{ ...startPos }, { ...endPos }])
                 tempCurrentTransportMarkers.push(
                   <CustomMarker
-                    key={currentTransport.start.value.place_id}
+                    key={`${uuidv4()} - ${currentTransport.start.value.place_id}`}
                     position={{ ...startPos }}
                     clickable
                     onClick={() => {
@@ -350,7 +459,7 @@ const PlanningContextProvider = ({ children }) => {
                     icon={findGoogleMarker(survey.type, survey.id === currentEventId)}
                   />,
                   <CustomMarker
-                    key={currentTransport.end.value.place_id}
+                    key={`${uuidv4()} - ${currentTransport.end.value.place_id}`}
                     position={{ ...endPos }}
                     clickable
                     onClick={() => {
@@ -382,7 +491,7 @@ const PlanningContextProvider = ({ children }) => {
           ) {
             withoutDateEventMarkers.push(
               <CustomMarker
-                key={event.id}
+                key={`${uuidv4()} - ${event.id}`}
                 position={{ lat: event.location.lat, lng: event.location.lng }}
                 clickable
                 onClick={() => {
@@ -410,7 +519,7 @@ const PlanningContextProvider = ({ children }) => {
 
                 withoutDateEventMarkers.push(
                   <CustomMarker
-                    key={event.id}
+                    key={`${uuidv4()} - ${event.id}`}
                     position={{
                       lat: airport.geocode.latitude,
                       lng: airport.geocode.longitude,
@@ -448,7 +557,7 @@ const PlanningContextProvider = ({ children }) => {
               tempTransportCoordinates.push([{ ...startPos }, { ...endPos }])
               tempCurrentTransportMarkers.push(
                 <CustomMarker
-                  key={`${transport.start.value.place_id}-${event.id}`}
+                  key={`${uuidv4()} - ${transport.start.value.place_id} - ${event.id}`}
                   position={{ ...startPos }}
                   clickable
                   onClick={() => {
@@ -461,7 +570,7 @@ const PlanningContextProvider = ({ children }) => {
                   icon={currentIcon}
                 />,
                 <CustomMarker
-                  key={`${transport.end.value.place_id}-${event.id}`}
+                  key={`${uuidv4()} - ${transport.end.value.place_id} - ${event.id}`}
                   position={{ ...endPos }}
                   clickable
                   onClick={() => {
@@ -498,7 +607,7 @@ const PlanningContextProvider = ({ children }) => {
         .map(survey =>
           survey.propositions?.map((proposition, propositionIndex) => (
             <CustomMarker
-              key={proposition.location.value.place_id}
+              key={`${uuidv4()} - ${proposition.location.value.place_id}`}
               position={{ lat: proposition.location?.lat, lng: proposition.location?.lng }}
               clickable
               onClick={() => {
@@ -782,7 +891,7 @@ const PlanningContextProvider = ({ children }) => {
     } else {
       setSingleDayPlannedEvents([])
     }
-  }, [plannedEvents, currentEvents])
+  }, [plannedEvents])
 
   const deleteStopoverOnEventCreator = (flights, flightId, setter) => {
     const tempFlights = structuredClone(flights)
@@ -1090,22 +1199,6 @@ const PlanningContextProvider = ({ children }) => {
     })
   }
 
-  const setEvent = event => {
-    setCurrentEvent(event)
-    if (event.isSurvey) {
-      history.push(`/tripPage/${tripId}/planning?survey=${event.id}`)
-    } else {
-      history.push(`/tripPage/${tripId}/planning?event=${event.id}`)
-    }
-    setCurrentView('preview')
-  }
-
-  const setSurvey = survey => {
-    setCurrentEvent(survey)
-    history.push(`/tripPage/${tripId}/planning?survey=${survey.id}`)
-    setCurrentView('survey')
-  }
-
   return (
     <PlanningContext.Provider
       value={{
@@ -1158,6 +1251,16 @@ const PlanningContextProvider = ({ children }) => {
         setEventType,
         setTypeCreator,
         getPlaceTown,
+        currentEvent,
+        setCurrentEvent,
+        currentEventType,
+        setCurrentEventType,
+        transportMarkersCoordinates,
+        setTransportMarkersCoordinates,
+        latLngMarkersArray,
+        setLatLngMarkersArray,
+        needEventsRefresh,
+        setNeedEventsRefresh,
       }}
     >
       {children}

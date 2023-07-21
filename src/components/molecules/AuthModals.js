@@ -580,7 +580,7 @@ const AuthModals = ({ modalState, modalStateSetter, setCurrentActiveTab }) => {
       .set({
         ...tempUser,
         newsletter: false,
-        myTripLetter: false,
+        myTripLetter: 'weekly',
         updatedAt: new timestampRef.fromDate(new Date()),
       })
     tempUser.isLoggedIn = true

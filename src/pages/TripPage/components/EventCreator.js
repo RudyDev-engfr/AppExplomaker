@@ -232,6 +232,7 @@ const EventCreator = ({
     getPlaceDetails,
     tempEventsMarkers,
     days,
+    setNeedEventsRefresh,
   } = useContext(PlanningContext)
 
   const {
@@ -288,7 +289,6 @@ const EventCreator = ({
   const [openModalIconSlider, setOpenModalIconSlider] = useState(false)
   const [tripData, setTripData] = useState()
   const [advancedMode, setAdvancedMode] = useState(false)
-  const [autoValue, setAutoValue] = useState(null)
 
   const generateParticipatingTravelers = () => {
     const tempTravelers = travelers
@@ -729,14 +729,16 @@ const EventCreator = ({
     console.log('location', location)
   }, [location])
 
-  const handleReset = () => {
+  const handleReset = currentView => {
     setCurrentActiveTab('planning')
-    setCurrentView('planning')
+    setCurrentView(currentView)
     setIsAssistantGuided(false)
     setEditMode(false)
     setCurrentLocation('')
     setLocation('')
     setEventType('')
+    setNeedEventsRefresh(true)
+    console.info('==== Remise à zéro des states du planning effectué')
   }
 
   const handleSubmit = async event => {
@@ -941,7 +943,7 @@ const EventCreator = ({
               2,
               currentEvent
             )
-            setCurrentView('preview')
+            handleReset('preview')
           })
       } else {
         firestore
@@ -955,11 +957,11 @@ const EventCreator = ({
             setEditMode(false)
             setCurrentEvent(tempEvent)
             if (isSurvey) {
-              setCurrentView('survey')
               createNotificationsOnTrip(user, tripData, tripId, 'turnEventIntoSurvey', 2, tempEvent)
+              handleReset('survey')
             } else {
-              setCurrentView('preview')
               createNotificationsOnTrip(user, tripData, tripId, 'eventUpdate', 2, currentEvent)
+              handleReset('preview')
             }
           })
       }
@@ -974,8 +976,8 @@ const EventCreator = ({
         .doc(currentEvent.id)
         .set({ propositions: tempPropositions }, { merge: true })
       setIsNewProposition(false)
-      setCurrentView('survey')
       createNotificationsOnTrip(user, tripData, tripId, 'propositionAdd', 2, currentEvent)
+      handleReset('survey')
     } else {
       firestore
         .collection('trips')
@@ -987,8 +989,8 @@ const EventCreator = ({
           setCurrentEvent(tempEvent)
           if (isSurvey) {
             history.replace(`/tripPage/${tripId}/planning?survey=${docRef.id}`)
-            setCurrentView('survey')
             createNotificationsOnTrip(user, tripData, tripId, 'surveyCreate', 2, tempEvent)
+            handleReset('survey')
           } else {
             createNotificationsOnTrip(user, tripData, tripId, 'eventCreate', 2, tempEvent)
             if (selectedDateFromPlanning === '') {
@@ -998,7 +1000,7 @@ const EventCreator = ({
                 }
               })
             }
-            setCurrentView('planning')
+            handleReset('planning')
           }
         })
     }
@@ -1007,7 +1009,7 @@ const EventCreator = ({
         isSurvey ? '&proposition=0' : ''
       }`
     )
-    handleReset()
+    handleReset('planning')
   }
 
   const fetchFlight = async flightIndex => {
@@ -1117,8 +1119,7 @@ const EventCreator = ({
               } else if (isNewProposition) {
                 setIsNewProposition(false)
               }
-              setCurrentView('planning')
-              handleReset()
+              handleReset('planning')
             }}
             size="large"
           >

@@ -146,7 +146,7 @@ const SecondStep = () => {
             lastname,
             birthdate: new timestampRef.fromDate(currentBirthdate),
             newsletter: newsletter || false,
-            myTripLetter: myTripLetter || false,
+            myTripLetter: myTripLetter || 'weekly',
           })
           .then(async () => {
             await signInWithEmailAndPassword(email, password)

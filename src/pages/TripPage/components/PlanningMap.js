@@ -176,13 +176,15 @@ const PlanningMap = ({ latitude, longitude, zoom = 5, planningMapRef, isDraggabl
     planningBounds,
     needMapRefresh,
     setNeedMapRefresh,
+    transportMarkersCoordinates,
+    setTransportMarkersCoordinates,
+    latLngMarkersArray,
+    setLatLngMarkersArray,
   } = useContext(PlanningContext)
   const [map, setMap] = useState(null)
   const [markersContainer, setMarkersContainer] = useState([])
   const prevMarkersContainer = usePrevious(markersContainer)
-  const [transportMarkersCoordinates, setTransportMarkersCoordinates] = useState([])
   const [center, setCenter] = useState({ lat: 0, lng: 0 })
-  const [latLngMarkersArray, setLatLngMarkersArray] = useState([])
 
   useLayoutEffect(() => {
     const tempCoordinates = []
@@ -302,7 +304,7 @@ const PlanningMap = ({ latitude, longitude, zoom = 5, planningMapRef, isDraggabl
   )
 
   useLayoutEffect(() => {
-    if (latLngMarkersArray.length > 0 && needMapRefresh) {
+    if (latLngMarkersArray?.length > 0 && needMapRefresh) {
       latLngMarkersArray.forEach(bound => planningBounds.extend(bound))
       map.fitBounds(planningBounds, 25)
       setNeedMapRefresh(false)

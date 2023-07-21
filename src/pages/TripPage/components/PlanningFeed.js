@@ -1,4 +1,4 @@
-import React, { useContext, useEffect } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import Box from '@mui/material/Box'
 import { makeStyles, useTheme } from '@mui/styles'
 import IconButton from '@mui/material/IconButton'
@@ -15,17 +15,19 @@ import { PlanningContext } from '../../../contexts/planning'
 import { dateToString, stringToDate } from '../../../helper/functions'
 import MiniEventCard from '../../../components/atoms/MiniEventCard'
 import { EVENT_TYPES } from '../../../helper/constants'
+import { TripContext } from '../../../contexts/trip'
 
 const useStyles = makeStyles({})
 
 const PlanningFeed = ({ propsClasses, setCurrentView }) => {
   const classes = useStyles()
   const theme = useTheme()
-
+  const [eventsByDay, setEventsByDay] = useState([])
   const matchesXs = useMediaQuery(theme.breakpoints.down('sm'))
 
   const { days, singleDayPlannedEvents, setSelectedDateOnPlanning, setIsNewDatesSectionOpen } =
     useContext(PlanningContext)
+  const { currentView } = useContext(TripContext)
 
   function compare(a, b) {
     // Met les itsAllDayLong : true en dernier
@@ -50,12 +52,90 @@ const PlanningFeed = ({ propsClasses, setCurrentView }) => {
   }
 
   useEffect(() => {
-    console.log('la liste des events par jour finale', singleDayPlannedEvents)
-  }, [singleDayPlannedEvents])
+    if (singleDayPlannedEvents?.length >= 1) {
+      const tempEventsByDay = singleDayPlannedEvents.reduce((acc, plannedEvent) => {
+        const dateKey = format(
+          stringToDate(plannedEvent.fakeDate, 'yyyy-MM-dd HH:mm'),
+          'yyyy-MM-dd'
+        )
+        if (!acc[dateKey]) {
+          acc[dateKey] = { propositions: [], events: [] }
+        }
+        if (plannedEvent.isSurvey) {
+          acc[dateKey].propositions.push(plannedEvent)
+        } else {
+          acc[dateKey].events.push(plannedEvent)
+        }
+        return acc
+      }, {})
+
+      Object.keys(eventsByDay).forEach(dateKey => {
+        tempEventsByDay[dateKey].propositions.sort(compare)
+        tempEventsByDay[dateKey].events.sort(compare)
+      })
+
+      setEventsByDay(tempEventsByDay)
+    }
+  }, [singleDayPlannedEvents, currentView])
 
   return (
     <Box className={propsClasses} sx={{ padding: '20px' }}>
       {days?.length >= 1 &&
+        days.map(day => {
+          const dateKey = format(day, 'yyyy-MM-dd')
+          const dayEvents = eventsByDay[dateKey]?.events || []
+          const dayPropositions = eventsByDay[dateKey]?.propositions || []
+          return (
+            <Box key={day} sx={{ marginBottom: '25px' }}>
+              <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                <Typography
+                  sx={{
+                    fontSize: '20px',
+                    fontWeight: 500,
+                    lineHeight: '33px',
+                    marginBottom: '10px',
+                    paddingLeft: '40px',
+                  }}
+                >
+                  {capitalize(format(day, 'EEEE dd MMMM', { locale: frLocale }))}
+                </Typography>
+                <IconButton
+                  onClick={() => {
+                    setSelectedDateOnPlanning(day)
+                    setIsNewDatesSectionOpen(false)
+                    setCurrentView('planning')
+                  }}
+                  variant="contained"
+                  sx={{
+                    width: '25px',
+                    height: '25px',
+                    borderRadius: '10px',
+                  }}
+                >
+                  <ManageSearch />
+                </IconButton>
+              </Box>
+              {dayEvents.map(plannedEvent => (
+                <MiniEventCard
+                  plannedEvent={plannedEvent}
+                  key={`${uuidv4()}-${plannedEvent.title}`}
+                  setCurrentView={setCurrentView}
+                  day={day}
+                />
+              ))}
+              {dayPropositions.map(plannedProposition => (
+                <MiniEventCard
+                  plannedEvent={plannedProposition}
+                  key={plannedProposition.title}
+                  setCurrentView={setCurrentView}
+                  eventId={plannedProposition.id}
+                  day={day}
+                />
+              ))}
+            </Box>
+          )
+        })}
+      {/* {days?.length >= 1 &&
         days.map(day => (
           <Box key={day} sx={{ marginBottom: '25px' }}>
             <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
@@ -86,45 +166,39 @@ const PlanningFeed = ({ propsClasses, setCurrentView }) => {
                 <ManageSearch />
               </IconButton>
             </Box>
-            {singleDayPlannedEvents?.length >= 1 &&
-              singleDayPlannedEvents
-                .filter(
-                  plannedEvent =>
-                    isSameDay(
-                      stringToDate(plannedEvent.fakeDate, 'yyyy-MM-dd HH:mm').getTime(),
-                      stringToDate(dateToString(day), 'yyyy-MM-dd').getTime()
-                    ) && !plannedEvent.isSurvey
+            {singleDayEvents
+              ?.filter(plannedEvent =>
+                isSameDay(
+                  stringToDate(plannedEvent.fakeDate, 'yyyy-MM-dd HH:mm').getTime(),
+                  stringToDate(dateToString(day), 'yyyy-MM-dd').getTime()
                 )
-                .sort(compare)
-                .map(plannedEvent => (
-                  <MiniEventCard
-                    plannedEvent={plannedEvent}
-                    key={`${uuidv4()}-${plannedEvent.title}`}
-                    setCurrentView={setCurrentView}
-                    day={day}
-                  />
-                ))}
-            {singleDayPlannedEvents?.length >= 1 &&
-              singleDayPlannedEvents
-                ?.filter(plannedEvent => plannedEvent?.isSurvey)
-                .filter(plannedProposition =>
-                  isSameDay(
-                    stringToDate(plannedProposition.fakeDate, 'yyyy-MM-dd HH:mm').getTime(),
-                    stringToDate(dateToString(day), 'yyyy-MM-dd').getTime()
-                  )
+              )
+              .map(plannedEvent => (
+                <MiniEventCard
+                  plannedEvent={plannedEvent}
+                  key={`${uuidv4()}-${plannedEvent.title}`}
+                  setCurrentView={setCurrentView}
+                  day={day}
+                />
+              ))}
+            {singleDayPropositions
+              .filter(plannedProposition =>
+                isSameDay(
+                  stringToDate(plannedProposition.fakeDate, 'yyyy-MM-dd HH:mm').getTime(),
+                  stringToDate(dateToString(day), 'yyyy-MM-dd').getTime()
                 )
-                .sort(compare)
-                .map(plannedProposition => (
-                  <MiniEventCard
-                    plannedEvent={plannedProposition}
-                    key={plannedProposition.title}
-                    setCurrentView={setCurrentView}
-                    eventId={plannedProposition.id}
-                    day={day}
-                  />
-                ))}
+              )
+              .map(plannedProposition => (
+                <MiniEventCard
+                  plannedEvent={plannedProposition}
+                  key={plannedProposition.title}
+                  setCurrentView={setCurrentView}
+                  eventId={plannedProposition.id}
+                  day={day}
+                />
+              ))}
           </Box>
-        ))}
+        ))} */}
     </Box>
   )
 }

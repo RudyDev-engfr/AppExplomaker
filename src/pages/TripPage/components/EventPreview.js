@@ -394,12 +394,12 @@ const EventPreview = ({
   ]
 
   useEffect(() => {
-    if (previousEvent?.isSurvey) {
+    if (previousEvent?.isSurvey || !currentEvent.type) {
       setCurrentOptions(surveyOptions)
     } else {
       setCurrentOptions(eventOptions)
     }
-  }, [previousEvent])
+  }, [previousEvent, currentEvent])
 
   return isLoading ? (
     <></>

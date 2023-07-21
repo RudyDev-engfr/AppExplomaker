@@ -126,7 +126,7 @@ const Settings = () => {
   const theme = useTheme()
   const matchesXs = useMediaQuery(theme.breakpoints.down('sm'))
   const { user } = useContext(SessionContext)
-  const [myCurrentTripLetter, setMyCurrentTripLetter] = useState(false)
+  const [myCurrentTripLetter, setMyCurrentTripLetter] = useState(user.myTripLetter)
 
   const handleUpdate = data => {
     firestore
@@ -207,7 +207,7 @@ const Settings = () => {
             <Paper className={classes.paper}>
               <Box display="flex" justifyContent="space-between" alignItems="center">
                 <Typography className={classes.papersTitle}>L’actu de mes voyages</Typography>
-                <Switch checked={user.myTripLetter} target="myTripLetter" />
+                <Switch checked={user.myTripLetter !== 'false'} target="myTripLetter" />
               </Box>
               <Typography className={classes.papersDescription}>
                 Reçois{' '}

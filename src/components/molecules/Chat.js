@@ -369,6 +369,11 @@ const ChatBox = ({ messages, dummy }) => {
       const tempMessages = [...messages]
       messages.forEach(({ createdAt, userId }, index) => {
         if (index > 0) {
+          console.log('les timestamp', [createdAt, messages[index - 1].createdAt])
+          console.log(
+            'diff en minutes',
+            differenceInMinutes(rCTFF(createdAt), rCTFF(messages[index - 1].createdAt))
+          )
           if (
             userId === messages[index - 1].userId &&
             messages[index - 1].createdAt &&

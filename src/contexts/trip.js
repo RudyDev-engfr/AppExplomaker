@@ -182,6 +182,11 @@ const TripContextProvider = ({ children }) => {
   }, [tripId])
 
   useEffect(() => {
+    console.log('vue actuelle', currentView)
+    console.log('currentEvent', currentEvent)
+  }, [currentView, currentEvent])
+
+  useEffect(() => {
     if (
       (tripGuideData === null || typeof tripGuideData === 'undefined') &&
       tripData?.destination?.place_id

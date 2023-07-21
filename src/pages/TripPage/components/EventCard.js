@@ -19,6 +19,7 @@ import CustomAvatar from '../../../components/atoms/CustomAvatar'
 import { EVENT_TYPES } from '../../../helper/constants'
 import { dateToString, rCTFF, stringToDate } from '../../../helper/functions'
 import { PlanningContext } from '../../../contexts/planning'
+import { TripContext } from '../../../contexts/trip'
 
 const useStyles = makeStyles(theme => ({
   cardPlan: {
@@ -72,6 +73,7 @@ const EventCard = ({
   const classes = useStyles()
   const theme = useTheme()
   const { currentEventId, setCurrentEventId } = useContext(PlanningContext)
+  const { setCurrentEventType } = useContext(TripContext)
 
   return (
     <Card
@@ -148,6 +150,7 @@ const EventCard = ({
                     onClick={event => {
                       event.stopPropagation()
                       setCurrentEvent(currentEvent)
+                      setCurrentEventType(currentEvent.type)
                       handleOpenDropdown(event)
                     }}
                   >
