@@ -19,7 +19,7 @@ const TripGuideAlertModal = ({ openState, setterOpenState, currentItem, titre, i
 
   const { firestore } = useContext(FirebaseContext)
   const { user } = useContext(SessionContext)
-  const { tripData } = useContext(TripContext)
+  const { tripData, hasClicked, setHasClicked } = useContext(TripContext)
 
   const [reasons, setReasons] = useState('')
   const [userComment, setUserComment] = useState('')
@@ -31,6 +31,7 @@ const TripGuideAlertModal = ({ openState, setterOpenState, currentItem, titre, i
   const handleClose = () => setterOpenState(false)
 
   const handleSubmit = async (contentTitle, index) => {
+    setHasClicked(true)
     const destinationId = tripData?.destination?.place_id
     const userId = user.id
 
@@ -139,7 +140,12 @@ const TripGuideAlertModal = ({ openState, setterOpenState, currentItem, titre, i
           </FormControl>
         </Box>
         <Box sx={{ display: 'flex', justifyContent: 'center' }}>
-          <Button variant="contained" value="submit" onClick={() => handleSubmit(titre, itemIndex)}>
+          <Button
+            variant="contained"
+            disabled={hasClicked}
+            value="submit"
+            onClick={() => handleSubmit(titre, itemIndex)}
+          >
             Valider
           </Button>
         </Box>

@@ -252,21 +252,29 @@ const TripGuideItem = ({ currentItem, setCurrentSelectedTripGuideButton, setItem
                       right: '15px',
                     }}
                   >
-                    <Button
-                      sx={{
-                        fontSize: '10px',
-                        color: theme.palette.grey['33'],
-                        padding: '0',
-                        textDecoration: 'underline',
-                      }}
-                      onClick={() => {
-                        setAlertModalTitle(titre)
-                        setalertModalIndex(itemIndex)
-                        setOpenAlertModal(true)
-                      }}
-                    >
-                      Signaler ce contenu
-                    </Button>
+                    {!currentItem?.content[itemIndex]?.userReports?.some(
+                      report => report.userId === user.id
+                    ) ? (
+                      <Button
+                        sx={{
+                          fontSize: '10px',
+                          color: theme.palette.grey['33'],
+                          padding: '0',
+                          textDecoration: 'underline',
+                        }}
+                        onClick={() => {
+                          setAlertModalTitle(titre)
+                          setalertModalIndex(itemIndex)
+                          setOpenAlertModal(true)
+                        }}
+                      >
+                        Signaler ce contenu
+                      </Button>
+                    ) : (
+                      <Typography sx={{ fontSize: '10px', color: theme.palette.grey['33'] }}>
+                        Vous avez signalé ce contenu
+                      </Typography>
+                    )}
                   </Box>
                 </AccordionDetails>
               </Accordion>
