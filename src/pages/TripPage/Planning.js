@@ -281,7 +281,7 @@ const useStyles = makeStyles(theme => ({
     height: '100%',
     [theme.breakpoints.down('sm')]: {
       marginBottom: 'none',
-      padding: '15px 0',
+      padding: '0',
       height: 'unset',
     },
   },

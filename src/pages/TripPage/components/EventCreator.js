@@ -305,7 +305,6 @@ const EventCreator = ({
         }
         return false
       })
-
     setParticipatingTravelers(tempTravelers)
   }
 
@@ -1301,7 +1300,15 @@ const EventCreator = ({
                       setSelectedStartTime(event)
                     }}
                     steps={5}
-                    renderInput={params => <TextField {...params} />}
+                    renderInput={params => (
+                      <TextField
+                        {...params}
+                        inputProps={{
+                          ...params.inputProps,
+                          readOnly: true, // Empêche la saisie au clavier
+                        }}
+                      />
+                    )}
                     DialogProps={{ sx: { zIndex: '10000' } }}
                   />
                 </Box>
@@ -1319,7 +1326,15 @@ const EventCreator = ({
                       setSelectedEndTime(event)
                     }}
                     steps={5}
-                    renderInput={params => <TextField {...params} />}
+                    renderInput={params => (
+                      <TextField
+                        {...params}
+                        inputProps={{
+                          ...params.inputProps,
+                          readOnly: true, // Empêche la saisie au clavier
+                        }}
+                      />
+                    )}
                     DialogProps={{ sx: { zIndex: '10000' } }}
                   />
                 </Box>

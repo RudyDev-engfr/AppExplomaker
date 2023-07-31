@@ -206,8 +206,9 @@ const Settings = () => {
             </Paper>
             <Paper className={classes.paper}>
               <Box display="flex" justifyContent="space-between" alignItems="center">
-                <Typography className={classes.papersTitle}>L’actu de mes voyages</Typography>
-                <Switch checked={user.myTripLetter !== 'false'} target="myTripLetter" />
+                <Typography className={classes.papersTitle} sx={{ lineHeight: '38px' }}>
+                  L’actu de mes voyages
+                </Typography>
               </Box>
               <Typography className={classes.papersDescription}>
                 Reçois{' '}
@@ -222,7 +223,9 @@ const Settings = () => {
                     }
                   }}
                 >
-                  {user.myTripLetter === 'daily'
+                  {user.myTripLetter === 'never'
+                    ? 'Jamais'
+                    : user.myTripLetter === 'daily'
                     ? 'quotidiennement'
                     : user.myTripLetter === 'weekly'
                     ? '1 fois par semaine'
@@ -232,6 +235,14 @@ const Settings = () => {
                 </Box>
                 <KeyboardArrowDown className={classes.frequencyIcon} onClick={handleMenuOpen} />
                 <Menu anchorEl={anchorEl} open={Boolean(anchorEl)} onClose={handleMenuClose}>
+                  <MenuItem
+                    onClick={() => {
+                      setMyCurrentTripLetter('never')
+                      handleMenuClose()
+                    }}
+                  >
+                    Jamais
+                  </MenuItem>
                   <MenuItem
                     onClick={() => {
                       setMyCurrentTripLetter('daily')

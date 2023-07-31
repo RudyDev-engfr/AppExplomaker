@@ -194,7 +194,9 @@ const NotificationArea = ({
             >
               {currentNotifications?.length > 0 ? (
                 currentNotifications
-                  ?.slice(0)
+                  ?.filter(notification => notification.state === 2 || notification.state === 1)
+                  .filter((notification, index) => index < 25)
+                  .slice(0)
                   .reverse()
                   .filter(notification => notification.redPings)
                   .map((notification, index) => (
@@ -514,7 +516,17 @@ const NotificationAreaDrawer = ({
         >
           {currentNotifications?.length > 0 ? (
             currentNotifications
-              ?.slice(0)
+              ?.filter((notification, index, array) => {
+                if (array.length > 25 && (notification.state === 2 || notification.state === 1)) {
+                  return true
+                }
+                if (array.length < 25) {
+                  return true
+                }
+                return false
+              })
+              .filter((notification, index) => index < 25)
+              .slice(0)
               .reverse()
               .map((notification, index) => (
                 <Box
