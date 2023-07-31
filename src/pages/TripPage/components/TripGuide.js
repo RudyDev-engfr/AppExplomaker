@@ -67,7 +67,7 @@ const TripGuide = () => {
       const tempData = tripGuideData.find(data => data.model === currentSelectedTripGuideButton)
       setItemData(tempData)
     }
-  }, [currentSelectedTripGuideButton])
+  }, [currentSelectedTripGuideButton, tripGuideData])
 
   if (localItemData !== null) {
     return (

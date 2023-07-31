@@ -1,15 +1,18 @@
-import React from 'react'
+import React, { useState } from 'react'
 import Box from '@mui/material/Box'
 import Paper from '@mui/material/Paper'
 import Button from '@mui/material/Button'
 import Typography from '@mui/material/Typography'
-import { makeStyles } from '@mui/styles'
+import IconButton from '@mui/material/IconButton'
+import BookmarkAddOutlined from '@mui/icons-material/BookmarkAddOutlined'
+import { makeStyles, useTheme } from '@mui/styles'
 import { useHistory } from 'react-router-dom'
 
 import arrow from '../../images/icons/arrow-back.svg'
 
 const useStyles = makeStyles(theme => ({
   papers: {
+    position: 'relative',
     width: '330px',
     height: '115px',
     cursor: 'pointer',
@@ -56,7 +59,10 @@ const useStyles = makeStyles(theme => ({
 
 const TripGuideButton = ({ itemName, model, logo, setCurrentSelectedTripGuideButton }) => {
   const classes = useStyles()
+  const theme = useTheme()
   const history = useHistory()
+
+  const [alertModal, setAlertModal] = useState(false)
 
   const handleClick = () => {
     history.push(`${history.location.pathname}?itemName=${model}`)

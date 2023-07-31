@@ -200,7 +200,8 @@ const TripContextProvider = ({ children }) => {
             const tripGuideDataKeys = Object.keys(tempDoc)
             const tempTripGuideData = tripGuideDataKeys.map(currentKey => tempDoc[currentKey])
             const buildTripGuideData = tempTripGuideData.filter(
-              (v, i, a) => a.findIndex(t => t.category === v.category && t.name === v.name) === i
+              (item, index, array) =>
+                array.findIndex(t => t.category === item.category && t.name === item.name) === index
             )
             setTripGuideData(buildTripGuideData)
           } else {
