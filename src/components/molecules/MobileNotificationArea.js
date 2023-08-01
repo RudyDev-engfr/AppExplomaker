@@ -33,7 +33,8 @@ const MobileNotificationArea = ({
   const theme = useTheme()
 
   const { user } = useContext(SessionContext)
-  const { setNotificationsToNewStateOnTrip } = useContext(FirebaseContext)
+  const { setNotificationsToNewStateOnTrip, setNotificationsToNewState } =
+    useContext(FirebaseContext)
   const { days, setSelectedDateOnPlanning, isChatOpen, setIsChatOpen } = useContext(TripContext)
 
   const [open, setOpen] = useState(false)
@@ -86,6 +87,7 @@ const MobileNotificationArea = ({
         setOpen={setOpen}
         currentNotifications={currentNotifications}
         setNotificationsToNewStateOnTrip={setNotificationsToNewStateOnTrip}
+        setNotificationsToNewState={setNotificationsToNewState}
         user={user}
         days={days}
         setSelectedDateOnPlanning={setSelectedDateOnPlanning}
@@ -101,7 +103,7 @@ export const MobileNotificationModal = ({
   open,
   setOpen,
   currentNotifications,
-  setNotificationsToNewStateOnTrip,
+  setNotificationsToNewState,
   user,
   days,
   setSelectedDateOnPlanning,
@@ -150,7 +152,7 @@ export const MobileNotificationModal = ({
       console.log('je suis un preview')
     }
     if (notification.id) {
-      setNotificationsToNewStateOnTrip(user, 3, notification.id)
+      setNotificationsToNewState(user, 3, notification.id)
     }
     handleClose()
   }
@@ -271,6 +273,19 @@ export const MobileNotificationModal = ({
                     {notification.timer}
                   </Typography>
                 </Box>
+                {notification.state !== 3 && (
+                  <Box
+                    sx={{
+                      position: 'absolute',
+                      right: '20px',
+                      top: '50px',
+                      width: '12px',
+                      height: '12px',
+                      borderRadius: '50px',
+                      backgroundColor: theme.palette.primary.main,
+                    }}
+                  />
+                )}
               </Box>
             ))
         ) : (

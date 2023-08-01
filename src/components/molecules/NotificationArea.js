@@ -48,6 +48,7 @@ const NotificationArea = ({
   const { user } = useContext(SessionContext)
   const [anchorElNotif, setAnchorElNotif] = useState(null)
   const [currentRedPings, setCurrentRedPings] = useState(0)
+  const [filteredNotifications, setFilteredNotifications] = useState([])
   const openNotif = Boolean(anchorElNotif)
 
   const handleCloseNotif = () => {
@@ -68,6 +69,34 @@ const NotificationArea = ({
       setAnchorElNotif(event.currentTarget)
     }
   }
+
+  useEffect(() => {
+    const filterNotifications = () => {
+      const tempFilteredNotifications = currentNotifications?.filter(
+        notification =>
+          notification.state === 2 || notification.state === 1 || notification.state === 3
+      )
+
+      const state1And2Notifications = tempFilteredNotifications.filter(
+        notification => notification.state === 2 || notification.state === 1
+      )
+
+      const state3Notifications = tempFilteredNotifications.filter(
+        notification => notification.state === 3
+      )
+
+      const priorityNotifications = state1And2Notifications.slice(0, 25)
+      const remainingSlots = 25 - priorityNotifications.length
+      const additionalNotifications = state3Notifications.slice(0, remainingSlots)
+
+      const finalNotifications = priorityNotifications.concat(additionalNotifications)
+      setFilteredNotifications(finalNotifications)
+    }
+
+    if (currentNotifications?.length > 0) {
+      filterNotifications()
+    }
+  }, [currentNotifications])
 
   useEffect(() => {
     let tempRedPings = 0
@@ -192,8 +221,8 @@ const NotificationArea = ({
                 maxHeight: '630px',
               }}
             >
-              {currentNotifications?.length > 0 ? (
-                currentNotifications
+              {filteredNotifications?.length > 0 ? (
+                filteredNotifications
                   ?.filter(notification => notification.state === 2 || notification.state === 1)
                   .filter((notification, index) => index < 25)
                   .slice(0)
@@ -403,6 +432,7 @@ const NotificationAreaDrawer = ({
   setSelectedDateOnPlanning,
   isChatOpen,
   setIsChatOpen,
+  setNotificationsToNewState,
 }) => {
   const theme = useTheme()
   const matchesXs = useMediaQuery(theme.breakpoints.down('sm'))
@@ -421,6 +451,7 @@ const NotificationAreaDrawer = ({
   }
 
   const onClickNotif = notification => {
+    setNotificationsToNewState(user, 3, notification.id)
     history.push(notification.url)
     if (notification?.startTime || notification?.event?.propositions[0]?.startTime) {
       days.forEach(day => {
@@ -442,9 +473,9 @@ const NotificationAreaDrawer = ({
     } else {
       setCurrentView('preview')
     }
-    if (notification.id) {
-      setNotificationsToNewStateOnTrip(user, 3, notification.id)
-    }
+    // if (notification.id) {
+    //   setNotificationsToNewStateOnTrip(user, 3, notification.id)
+    // }
   }
 
   return (

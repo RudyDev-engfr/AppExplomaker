@@ -17,6 +17,7 @@ import person from '../../images/icons/person.svg'
 import CustomAvatar from '../../components/atoms/CustomAvatar'
 import { TripContext } from '../../contexts/trip'
 import AddCollaboratorsButton from '../../components/atoms/AddCollaboratorsButton'
+import { ROLES } from '../../helper/constants'
 
 const useStyles = makeStyles(theme => ({
   generalInformationBlock: {
@@ -154,8 +155,17 @@ const DesktopPreview = ({ tripData, generatedAvatars }) => {
             }}
           >
             <Typography className={classes.subtitle} component="h4">
-              {tripData.travelersDetails.filter(traveler => traveler.id).length} contributeur
-              {tripData.travelersDetails.filter(traveler => traveler.id).length > 1 ? 's' : ''}
+              {
+                tripData.travelersDetails.filter(
+                  traveler => traveler.id && traveler.role !== ROLES.Removed
+                ).length
+              }{' '}
+              contributeur
+              {tripData.travelersDetails.filter(
+                traveler => traveler.id && traveler.role !== ROLES.Removed
+              ).length > 1
+                ? 's'
+                : ''}
             </Typography>
           </Button>
         </Box>

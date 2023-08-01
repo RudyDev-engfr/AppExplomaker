@@ -226,7 +226,7 @@ const Preview = ({ tripData, setOpenModal, canEdit, carouselImages, tripId }) =>
   const matchesXs = useMediaQuery(theme.breakpoints.down('sm'))
 
   const { dictionary } = useContext(FirebaseContext)
-  const { currentDateRange, currentNotifications } = useContext(TripContext)
+  const { currentDateRange } = useContext(TripContext)
 
   const [generatedAvatars, setGeneratedAvatars] = useState([])
 
@@ -387,7 +387,17 @@ const Preview = ({ tripData, setOpenModal, canEdit, carouselImages, tripId }) =>
                     }}
                   >
                     <Typography className={classes.subtitle} component="h4">
-                      {tripData.editors.length} contributeur{tripData.editors.length > 1 ? 's' : ''}
+                      {
+                        tripData.travelersDetails.filter(
+                          traveler => traveler.id && traveler.role !== ROLES.Removed
+                        ).length
+                      }{' '}
+                      contributeur
+                      {tripData.travelersDetails.filter(
+                        traveler => traveler.id && traveler.role !== ROLES.Removed
+                      ).length > 1
+                        ? 's'
+                        : ''}
                     </Typography>
                   </Button>
                 </Box>

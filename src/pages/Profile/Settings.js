@@ -234,7 +234,12 @@ const Settings = () => {
                     : user.myTripLetter === 'monthly' && 'mensuellement'}
                 </Box>
                 <KeyboardArrowDown className={classes.frequencyIcon} onClick={handleMenuOpen} />
-                <Menu anchorEl={anchorEl} open={Boolean(anchorEl)} onClose={handleMenuClose}>
+                <Menu
+                  anchorEl={anchorEl}
+                  open={Boolean(anchorEl)}
+                  onClose={handleMenuClose}
+                  disableScrollLock
+                >
                   <MenuItem
                     onClick={() => {
                       setMyCurrentTripLetter('never')

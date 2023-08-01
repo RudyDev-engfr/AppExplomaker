@@ -462,15 +462,21 @@ const FirebaseContextProvider = ({ children }) => {
     const updateData = {}
 
     if (user && tripId) {
-      const tempNotifs =
-        user?.notifications?.filter(notification => notification.tripId === tripId) || []
-      const newStateNotif = tempNotifs.map(singleNotif => {
-        const tempSingleNotif = singleNotif
-        if (tempSingleNotif.state !== state && tempSingleNotif.state < 3) {
-          tempSingleNotif.state = state
+      const newStateNotif = user.notifications.map(singleNotif => {
+        // Check if the tripId of the current notification matches the given tripId
+        if (singleNotif.tripId === tripId) {
+          const tempSingleNotif = singleNotif
+          if (tempSingleNotif.state !== state && tempSingleNotif.state < 3) {
+            tempSingleNotif.state = state
+          }
+          return tempSingleNotif
+          // eslint-disable-next-line no-else-return
+        } else {
+          // If the tripId does not match, return the notification as it is
+          return singleNotif
         }
-        return tempSingleNotif
       })
+
       updateData.notifications = newStateNotif
 
       firestore
