@@ -476,6 +476,7 @@ const Preview = ({ tripData, setOpenModal, canEdit, carouselImages, tripId }) =>
                           ) && <Typography>{travelerAge.label}</Typography>}
                           {tripData.travelersDetails
                             .filter(({ age }) => age === travelerAge.value)
+                            .filter(currentTraveler => currentTraveler.role !== ROLES.Removed)
                             .map(traveler => (
                               <Typography key={uuidv4()} className={classes.infobody}>
                                 {traveler.name}

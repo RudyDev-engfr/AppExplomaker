@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import clsx from 'clsx'
 import { makeStyles } from '@mui/styles'
 import Modal from '@mui/material/Modal'
@@ -9,9 +9,11 @@ import IconButton from '@mui/material/IconButton'
 import Paper from '@mui/material/Paper'
 import Typography from '@mui/material/Typography'
 import { useMediaQuery, useTheme } from '@mui/material'
-import { ArrowBackIos } from '@mui/icons-material'
+import { ArrowBackIos, PersonAddAlt1 } from '@mui/icons-material'
+import { v4 as uuidv4 } from 'uuid'
 
 import cross from '../../images/icons/cross.svg'
+import { TripContext } from '../../contexts/trip'
 
 const useStyles = makeStyles(theme => ({
   modalRoot: {
@@ -135,7 +137,14 @@ export default function SimpleModal({
   const classes = useStyles()
   const theme = useTheme()
   const matchesXs = useMediaQuery(theme.breakpoints.down('sm'))
+  const { modalTravelers, setModalTravelers, nbTravelers } = useContext(TripContext)
   const [isOpen, setIsOpen] = useState(false)
+
+  const initialTraveler = () => ({
+    name: '',
+    age: 'adult',
+    travelerId: uuidv4(),
+  })
 
   const handleClose = () => {
     setIsOpen(false)
@@ -234,10 +243,41 @@ export default function SimpleModal({
               <Box pb="10px">
                 <Divider fullWidth />
               </Box>
-              <Box className={classes.validationBtnContainer}>
-                <Button type="submit" variant="contained" color="primary" disabled={!isValid}>
-                  Enregistrer
-                </Button>
+              <Box
+                sx={{
+                  display: 'flex',
+                  justifyContent: modalName === 'editTravelers' && 'space-between',
+                  alignItems: 'center',
+                  paddingLeft: '20px',
+                }}
+              >
+                {matchesXs && modalName === 'editTravelers' && (
+                  <IconButton
+                    onClick={() => {
+                      if (nbTravelers < 15)
+                        setModalTravelers([...modalTravelers, { ...initialTraveler() }])
+                    }}
+                    sx={{
+                      backgroundColor: theme.palette.primary.main,
+                      width: '70px',
+                      height: '70px',
+                      borderRadius: '50px',
+                      zIndex: 1000,
+                      '&:hover': {
+                        backgroundColor: theme.palette.primary.main,
+                        color: 'white',
+                      },
+                      border: '2px solid white',
+                    }}
+                  >
+                    <PersonAddAlt1 sx={{ color: 'white', fontSize: '41px' }} />
+                  </IconButton>
+                )}
+                <Box className={classes.validationBtnContainer}>
+                  <Button type="submit" variant="contained" color="primary" disabled={!isValid}>
+                    Enregistrer
+                  </Button>
+                </Box>
               </Box>
             </Box>
           )}

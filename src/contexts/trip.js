@@ -61,6 +61,12 @@ const TripContextProvider = ({ children }) => {
   const [currentSelectedTripGuideButton, setCurrentSelectedTripGuideButton] = useState(null)
   const [itemData, setItemData] = useState(null)
 
+  // used to handle EditTravelersModal
+  const [nbTravelers, setNbTravelers] = useState(1)
+
+  // used for preview page
+  const [modalTravelers, setModalTravelers] = useState([])
+
   const setTypeCreator = type => () => {
     setEventType(type)
     setCurrentView('creator')
@@ -364,6 +370,10 @@ const TripContextProvider = ({ children }) => {
         setCurrentSelectedTripGuideButton,
         itemData,
         setItemData,
+        nbTravelers,
+        setNbTravelers,
+        modalTravelers,
+        setModalTravelers,
       }}
     >
       {children}

@@ -302,7 +302,10 @@ export const MobileNotificationModal = ({
           </Box>
         )}
         {currentNotifications.length > 0 && (
-          <ClearNotificationsButton currentNotifications={currentNotifications} />
+          <ClearNotificationsButton
+            currentNotifications={currentNotifications}
+            handleClose={handleClose}
+          />
         )}
       </Paper>
     </Drawer>

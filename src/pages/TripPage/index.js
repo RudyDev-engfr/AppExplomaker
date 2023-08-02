@@ -8,6 +8,7 @@ import TextField from '@mui/material/TextField'
 import Typography from '@mui/material/Typography'
 import Box from '@mui/material/Box'
 import Button from '@mui/material/Button'
+import Input from '@mui/material/Input'
 import Divider from '@mui/material/Divider'
 import Paper from '@mui/material/Paper'
 import Fab from '@mui/material/Fab'
@@ -21,10 +22,11 @@ import { makeStyles, useTheme } from '@mui/styles'
 import Add from '@mui/icons-material/Add'
 import AddAPhoto from '@mui/icons-material/AddAPhoto'
 import Info from '@mui/icons-material/Info'
-import Remove from '@mui/icons-material/Remove'
 import Delete from '@mui/icons-material/Delete'
 import Camera from '@mui/icons-material/Camera'
 import Close from '@mui/icons-material/Close'
+import PersonAddAlt1 from '@mui/icons-material/PersonAddAlt1'
+import PersonRemoveAlt1 from '@mui/icons-material/PersonRemoveAlt1'
 
 import FileCopyRoundedIcon from '@mui/icons-material/FileCopyRounded'
 /* import ToggleButton from '@mui/lab/ToggleButton'
@@ -111,36 +113,23 @@ const useStyles = makeStyles(theme => ({
       margin: '5px',
     },
   },
-  count: {
-    borderRadius: '10px',
-    width: 'fit-content',
-    padding: '.5rem .75rem',
-    [theme.breakpoints.down('sm')]: {
-      border: 'none',
-    },
-  },
-  travelersCount: {
-    [theme.breakpoints.down('sm')]: {
-      display: 'flex',
-      flexDirection: 'column',
-      alignItems: 'center',
-    },
-  },
   gridTravelers: {
     margin: '20px 0',
     display: 'grid',
-    gridTemplate: '1fr / 1fr 200px',
+    gridTemplate: '1fr / 1fr 200px 44px',
     gridGap: '15px',
     alignItems: 'center',
     [theme.breakpoints.down('sm')]: {
-      gridTemplate: '1fr / 1fr 130px',
+      gridTemplate: '1fr 1fr / 1fr 60px',
+      backgroundColor: theme.palette.grey.f7,
+      padding: '15px',
+      borderRadius: '20px',
     },
   },
   travelersCountTitle: {
     fontSize: '24px',
     fontWeight: '500',
     fontFamily: theme.typography.h1.fontFamily,
-    margin: '40px 0 15px',
     [theme.breakpoints.down('sm')]: {
       fontSize: '17px',
       fontFamily: theme.typography.fontFamily,
@@ -150,7 +139,6 @@ const useStyles = makeStyles(theme => ({
   travelerTitleXs: {
     fontSize: '22px',
     fontFamily: theme.typography.fontFamily,
-    margin: '30px 0 40px',
   },
   textFieldTitle: {
     fontSize: '24px',
@@ -291,12 +279,24 @@ const useStyles = makeStyles(theme => ({
     color: theme.palette.primary.contrastText,
     borderRadius: '50px',
   },
+  travelerRowInput: {
+    height: '56px',
+  },
 }))
 
-const TravelerRow = ({ traveler, ageOptions, setModalTravelers, index }) => {
+const TravelerRow = ({
+  traveler,
+  ageOptions,
+  setModalTravelers,
+  index,
+  nbTravelers,
+  modalTravelers,
+}) => {
   const classes = useStyles()
+  const theme = useTheme()
   const [currentTravelerName, setCurrentTravelerName] = useState(traveler.name)
   const [currentTravelerAge, setCurrentTravelerAge] = useState(traveler.age)
+  const [currentTravelerId, setCurrentTravelerId] = useState(traveler.id)
 
   useEffect(() => {
     if (currentTravelerAge && currentTravelerName) {
@@ -304,10 +304,13 @@ const TravelerRow = ({ traveler, ageOptions, setModalTravelers, index }) => {
         const tempPrevState = structuredClone(prevState)
         tempPrevState[index].name = currentTravelerName
         tempPrevState[index].age = currentTravelerAge
+        if (currentTravelerId) {
+          tempPrevState[index].id = currentTravelerId
+        }
         return tempPrevState
       })
     }
-  }, [currentTravelerName, currentTravelerAge])
+  }, [currentTravelerName, currentTravelerAge, currentTravelerId])
 
   return (
     <Box className={classes.gridTravelers}>
@@ -317,6 +320,11 @@ const TravelerRow = ({ traveler, ageOptions, setModalTravelers, index }) => {
         variant="filled"
         value={currentTravelerName}
         onChange={event => setCurrentTravelerName(event.target.value)}
+        InputProps={{
+          readOnly: currentTravelerId,
+          classes: { root: classes.travelerRowInput },
+        }}
+        sx={{ [theme.breakpoints.down('sm')]: { gridColumn: '1 / 3' } }}
       />
       <FormControl fullWidth>
         <Select
@@ -325,6 +333,12 @@ const TravelerRow = ({ traveler, ageOptions, setModalTravelers, index }) => {
           variant="filled"
           value={currentTravelerAge}
           onChange={event => setCurrentTravelerAge(event.target.value)}
+          inputProps={{
+            inputComponent: ({ inputRef, ...other }) => (
+              <Input {...other} sx={{ height: '50px' }} ref={inputRef} />
+            ),
+          }}
+          className={classes.travelerRowInput}
         >
           {ageOptions.map(option => (
             <MenuItem key={uuidv4()} value={option.value}>
@@ -333,15 +347,48 @@ const TravelerRow = ({ traveler, ageOptions, setModalTravelers, index }) => {
           ))}
         </Select>
       </FormControl>
+      {!currentTravelerId && (
+        <IconButton
+          onClick={() => {
+            if (nbTravelers > 1)
+              setModalTravelers(
+                modalTravelers.filter((actualTraveler, currentIndex) => currentIndex !== index)
+              )
+          }}
+          sx={{
+            backgroundColor: theme.palette.secondary.main,
+            width: '44px',
+            height: '44px',
+            borderRadius: '50px',
+            zIndex: 1000,
+            '&:hover': {
+              backgroundColor: theme.palette.secondary.main,
+              color: 'white',
+            },
+            border: '2px solid white',
+            justifySelf: 'center',
+            alignSelf: 'center',
+            [theme.breakpoints.down('sm')]: {
+              gridColumn: '2 / 3',
+              width: '50px',
+              height: '50px',
+            },
+          }}
+        >
+          <PersonRemoveAlt1
+            sx={{
+              fontSize: '26px',
+              color: 'white',
+              [theme.breakpoints.down('sm')]: {
+                fontSize: '29.5px',
+              },
+            }}
+          />
+        </IconButton>
+      )}
     </Box>
   )
 }
-
-const initialTraveler = () => ({
-  name: '',
-  age: 'adult',
-  travelerId: uuidv4(),
-})
 
 const TripPage = () => {
   const theme = useTheme()
@@ -376,14 +423,16 @@ const TripPage = () => {
     currentTravelers,
     canEdit,
     setCanEdit,
+    setNbTravelers,
+    modalTravelers,
+    setModalTravelers,
+    nbTravelers,
   } = useContext(TripContext)
   const [isLoading, setIsLoading] = useState(true)
   const [carouselImages, setCarouselImages] = useState([])
   const [tripTravelers, setTripTravelers] = useState([])
   const [tripWishes, setTripWishes] = useState([])
-  const [nbTravelers, setNbTravelers] = useState(1)
   const [registeredTravelers, setRegisteredTravelers] = useState([])
-  const [modalTravelers, setModalTravelers] = useState([])
   const [title, setTitle] = useState('')
   const [currentDestination, setCurrentDestination] = useState()
   const [currentDateRange, setCurrentDateRange] = useState(['', ''])
@@ -404,6 +453,12 @@ const TripPage = () => {
   const [testSpot, setTestSpot] = useState()
   const [allowCreateDateNotif, setAllowCreateDateNotif] = useState(false)
   const previousDateRange = usePrevious(currentDateRange)
+
+  const initialTraveler = () => ({
+    name: '',
+    age: 'adult',
+    travelerId: uuidv4(),
+  })
 
   useEffect(() => {
     testUniqueSpot(setTestSpot)
@@ -453,7 +508,7 @@ const TripPage = () => {
   }
 
   const checkRoles = doc => {
-    if (!doc.editors.includes(user.id)) {
+    if (!doc.travelersDetails.some(traveler => traveler.id === user.id)) {
       if (!NATURALADMINS.includes(user.id)) {
         history.push('/')
       }
@@ -636,7 +691,7 @@ const TripPage = () => {
   }, [tripData])
 
   useEffect(() => {
-    setModalTravelers(registeredTravelers.filter(traveler => !traveler.isNotTraveler))
+    setModalTravelers(registeredTravelers)
   }, [registeredTravelers, openModal])
 
   useEffect(() => {
@@ -1444,6 +1499,7 @@ const TripPage = () => {
         setOpenModal={setOpenModal}
         isValid={travelersValidation()}
         modalName="editTravelers"
+        title={matchesXs ? 'Les voyageurs' : 'Modification'}
         submitHandler={() =>
           handleUpdate({
             travelersDetails: modalTravelers
@@ -1456,47 +1512,53 @@ const TripPage = () => {
           })
         }
       >
-        <Box className={classes.travelersCount}>
-          {matchesXs && <Typography className={classes.travelerTitleXs}>Les voyageurs</Typography>}
-          <Typography className={classes.travelersCountTitle}>Nombre de voyageurs</Typography>
-          <Paper variant="outlined" className={classes.count}>
-            <Box display="inline-flex" alignItems="center">
-              <IconButton
-                onClick={() => {
-                  if (nbTravelers > 1) setModalTravelers(modalTravelers.slice(0, -1))
-                }}
-                size="large"
-              >
-                <Remove />
-              </IconButton>
-              <Box mx={1}>
-                <Typography variant="h4">{nbTravelers}</Typography>
-              </Box>
+        <Box sx={{ padding: matchesXs && '30px 0' }}>
+          {!matchesXs && (
+            <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+              <Typography className={classes.travelersCountTitle}>Voyageurs</Typography>{' '}
               <IconButton
                 onClick={() => {
                   if (nbTravelers < 15)
                     setModalTravelers([...modalTravelers, { ...initialTraveler() }])
                 }}
-                size="large"
+                sx={{
+                  backgroundColor: theme.palette.primary.main,
+                  width: '44px',
+                  height: '44px',
+                  borderRadius: '50px',
+                  zIndex: 1000,
+                  '&:hover': {
+                    backgroundColor: theme.palette.primary.main,
+                    color: 'white',
+                  },
+                  border: '2px solid white',
+                }}
               >
-                <Add />
+                <PersonAddAlt1 sx={{ color: 'white', fontSize: '26px' }} />
               </IconButton>
             </Box>
-          </Paper>
-        </Box>
-        {!matchesXs && <Typography className={classes.travelersCountTitle}>Voyageurs</Typography>}
-        <Box marginBottom={matchesXs ? '20px' : '89px'}>
-          {modalTravelers
-            .filter(currentTraveler => !currentTraveler.isNotTraveler)
-            .map((currentTraveler, index) => (
-              <TravelerRow
-                key={currentTraveler.travelerId}
-                traveler={currentTraveler}
-                ageOptions={ageOptions}
-                setModalTravelers={setModalTravelers}
-                index={index}
-              />
-            ))}
+          )}
+          <Box marginBottom={matchesXs ? '20px' : '89px'}>
+            {modalTravelers
+              // .filter(currentTraveler => !currentTraveler.isNotTraveler)
+              // .filter(currentTraveler => currentTraveler.role !== ROLES.Removed)
+              .map((currentTraveler, index) => {
+                if (!currentTraveler.isNotTraveler && currentTraveler.role !== ROLES.Removed) {
+                  return (
+                    <TravelerRow
+                      key={currentTraveler.travelerId}
+                      traveler={currentTraveler}
+                      ageOptions={ageOptions}
+                      setModalTravelers={setModalTravelers}
+                      index={index}
+                      nbTravelers={nbTravelers}
+                      modalTravelers={modalTravelers}
+                    />
+                  )
+                }
+                return null
+              })}
+          </Box>
         </Box>
       </Modal>
       <Modal

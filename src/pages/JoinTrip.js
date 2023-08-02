@@ -175,7 +175,7 @@ const JoinTrip = () => {
 
   const updateTraveler = async (userId, isTraveler) => {
     const tempData = { editors: onlyUnique([...tripData.editors, userId]) }
-    let travelerName
+    let searchedTraveler
     if (isTraveler) {
       const tempTravelers = tripData.travelersDetails.map(traveler => {
         const tempTraveler = traveler
@@ -189,13 +189,14 @@ const JoinTrip = () => {
       tempData.travelersDetails = tempTravelers
     } else {
       const tempTravelers = [...tripData.travelersDetails]
-      travelerName = (await getUserById(userId)).firstname
+      searchedTraveler = await getUserById(userId)
       tempTravelers.push({
         id: userId,
         travelerId: uuidv4(),
         role: ROLES.Write,
-        name: travelerName,
-        isNotTraveler: true,
+        name: searchedTraveler.firstname,
+        age: 'adult',
+        isNotTraveler: false,
       })
       tempData.travelersDetails = tempTravelers
     }
@@ -211,7 +212,7 @@ const JoinTrip = () => {
       .collection('messages')
       .add({
         text: `${
-          selectedTraveler !== '' ? selectedTraveler : travelerName
+          selectedTraveler !== '' ? selectedTraveler : searchedTraveler.name
         } vient de rejoindre le voyage, dites lui bonjour 👋`,
         createdAt: new timestampRef.fromDate(new Date()),
         userId,
@@ -330,8 +331,7 @@ const JoinTrip = () => {
             >
               Bienvenue sur “{tripData?.title}”
             </Typography>
-            {tripData.travelersDetails.filter(traveler => typeof traveler.id === 'undefined')
-              .length > 0 ? (
+            {tripData.travelersDetails.some(traveler => !traveler.id) ? (
               <>
                 <Typography
                   variant="h4"

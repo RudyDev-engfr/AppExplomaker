@@ -8,7 +8,7 @@ import Typography from '@mui/material/Typography'
 import { SessionContext } from '../../contexts/session'
 import { FirebaseContext } from '../../contexts/firebase'
 
-const ClearNotificationsButton = ({ currentNotifications }) => {
+const ClearNotificationsButton = ({ currentNotifications, handleClose }) => {
   const theme = useTheme()
   const matchesXs = useMediaQuery(theme.breakpoints.down('sm'))
   const { user } = useContext(SessionContext)
@@ -21,6 +21,7 @@ const ClearNotificationsButton = ({ currentNotifications }) => {
         if (currentNotifications.filter(notification => notification.state !== 3).length > 0) {
           setNotificationsToNewStateOnTrip(user, tripId, 3)
         }
+        handleClose()
       }}
       endIcon={<Check />}
       variant="contained"
@@ -38,4 +39,5 @@ const ClearNotificationsButton = ({ currentNotifications }) => {
     </Button>
   )
 }
+
 export default ClearNotificationsButton
