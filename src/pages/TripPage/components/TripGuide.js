@@ -1,6 +1,10 @@
 import React, { useContext, useEffect, useState } from 'react'
 import Box from '@mui/material/Box'
 import Typography from '@mui/material/Typography'
+import Accordion from '@mui/material/Accordion'
+import AccordionSummary from '@mui/material/AccordionSummary'
+import AccordionDetails from '@mui/material/AccordionDetails'
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore'
 import { makeStyles, useTheme } from '@mui/styles'
 import { useMediaQuery } from '@mui/material'
 
@@ -38,10 +42,13 @@ const useStyles = makeStyles(theme => ({
   },
   tripGuideButtonsContainer: {
     width: '100%',
-    padding: '30px',
-    gridGap: '15px',
     display: 'flex',
     flexWrap: 'wrap',
+    padding: '30px',
+    paddingTop: '50px',
+    [theme.breakpoints.down('sm')]: {
+      paddingTop: 0,
+    },
   },
 }))
 const TripGuide = () => {
@@ -88,43 +95,53 @@ const TripGuide = () => {
         >{`Guide de voyage : ${tripData?.destination?.label}`}</Typography>
       </Box>
       <Box className={classes.tripGuideButtonsContainer}>
-        {tripGuideData
-          ?.filter(data => data?.name && data?.category)
-          .sort((a, b) => {
-            if (a.category < b.category) {
-              return -1
-            }
-            if (a.category > b.category) {
-              return 1
-            }
-            return 0
-          })
-          .reduce((acc, singleData) => {
-            const lastCategory = acc[acc.length - 1]?.category
-            if (lastCategory !== singleData.category) {
-              acc.push({ category: singleData.category })
-            }
-            acc.push(singleData)
-            return acc
-          }, [])
-          .map(item =>
-            item?.name ? (
-              <TripGuideButton
-                key={item.name}
-                itemName={item?.name}
-                logo={item?.logo}
-                currentSelectedTripGuideButton={currentSelectedTripGuideButton}
-                setCurrentSelectedTripGuideButton={setCurrentSelectedTripGuideButton}
-                model={item?.model}
-              />
-            ) : (
-              <Box sx={{ width: '100%', marginTop: '30px', marginBottom: '5px' }}>
-                <Typography sx={{ fontSize: '20px', fontWeight: 500 }} key={item.category}>
-                  {item?.category.replace('_', '')}
+        {tripGuideData?.length > 1 &&
+          Object.entries(
+            tripGuideData
+              ?.filter(data => data?.name && data?.category)
+              ?.sort((a, b) => (a.category < b.category ? -1 : a.category > b.category ? 1 : 0))
+              ?.reduce((acc, singleData) => {
+                if (!acc[singleData.category]) {
+                  acc[singleData.category] = []
+                }
+                acc[singleData.category].push(singleData)
+                return acc
+              }, {})
+          ).map(([category, items]) => (
+            <Accordion
+              key={category}
+              sx={{
+                width: 'calc(100vw - 350px)',
+                // borderRadius: '20px',
+                [theme.breakpoints.down('sm')]: { width: '100vw', padding: 0 },
+              }}
+            >
+              <AccordionSummary
+                expandIcon={<ExpandMoreIcon sx={{}} />}
+                aria-controls="panel-content"
+                id="panel-header"
+              >
+                <Typography sx={{ fontWeight: 600, fontSize: '22px', lineHeight: 1.5 }}>
+                  {category.replace('_', '')}
                 </Typography>
-              </Box>
-            )
-          )}
+              </AccordionSummary>
+              <AccordionDetails>
+                <Box sx={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'space-evenly' }}>
+                  {items.map(item => (
+                    <TripGuideButton
+                      key={item.name}
+                      itemName={item?.name}
+                      logo={item?.logo}
+                      currentSelectedTripGuideButton={currentSelectedTripGuideButton}
+                      setCurrentSelectedTripGuideButton={setCurrentSelectedTripGuideButton}
+                      model={item?.model}
+                      item_picture={item?.item_picture}
+                    />
+                  ))}
+                </Box>
+              </AccordionDetails>
+            </Accordion>
+          ))}
       </Box>
     </Box>
   )

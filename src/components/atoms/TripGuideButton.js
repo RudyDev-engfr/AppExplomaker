@@ -13,13 +13,13 @@ import arrow from '../../images/icons/arrow-back.svg'
 const useStyles = makeStyles(theme => ({
   papers: {
     position: 'relative',
-    width: '330px',
-    height: '115px',
+    width: '240px',
+    // height: '115px',
     cursor: 'pointer',
     padding: '25px 15px',
     textAlign: 'left',
     textTransform: 'unset',
-    color: theme.palette.grey['33'],
+    // color: theme.palette.grey['33'],
     '&:hover': {
       backgroundColor: theme.palette.primary.ultraLight,
     },
@@ -41,6 +41,11 @@ const useStyles = makeStyles(theme => ({
     [theme.breakpoints.down('sm')]: {
       width: 'calc(100vw - 60px)',
     },
+
+    backgroundSize: 'cover',
+    color: 'white',
+    height: '200px',
+    backgroundPosition: 'center',
   },
   papersContent: {
     display: 'flex',
@@ -54,10 +59,16 @@ const useStyles = makeStyles(theme => ({
   iconTypo: { marginRight: '15px', fontSize: '30px' },
   papersTitle: {
     fontWeight: 600,
+    textAlign: 'center',
   },
 }))
 
-const TripGuideButton = ({ itemName, model, logo, setCurrentSelectedTripGuideButton }) => {
+const TripGuideButton = ({
+  itemName,
+  model,
+  setCurrentSelectedTripGuideButton,
+  item_picture: itemPicture,
+}) => {
   const classes = useStyles()
   const theme = useTheme()
   const history = useHistory()
@@ -71,18 +82,26 @@ const TripGuideButton = ({ itemName, model, logo, setCurrentSelectedTripGuideBut
 
   return (
     <Box>
-      <Paper component={Button} className={classes.papers} onClick={handleClick}>
+      <Paper
+        component={Button}
+        className={classes.papers}
+        sx={{
+          background:
+            itemPicture ??
+            'url(https://storage.googleapis.com/explomaker-data-stateless/2018/12/0a1c3c8c-opacifie-photo.jpg)',
+        }}
+        onClick={handleClick}
+      >
         <Box className={classes.papersContent}>
-          <Typography className={classes.iconTypo}>{logo}</Typography>
           <Box className={classes.titleContainer}>
             <Typography className={classes.papersTitle}>{itemName}</Typography>
           </Box>
-          <Box
+          {/* <Box
             component="img"
             sx={{ transform: 'rotate(180deg)', marginLeft: '20px' }}
             src={arrow}
             alt=""
-          />
+          /> */}
         </Box>
       </Paper>
     </Box>
