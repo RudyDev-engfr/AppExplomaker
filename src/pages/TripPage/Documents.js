@@ -11,7 +11,7 @@ import Card from '@mui/material/Card'
 import CardActions from '@mui/material/CardActions'
 import CardContent from '@mui/material/CardContent'
 import IconButton from '@mui/material/IconButton'
-import Modal from '@mui/material/Modal'
+import MuiModal from '@mui/material/Modal'
 import Paper from '@mui/material/Paper'
 import Typography from '@mui/material/Typography'
 
@@ -249,11 +249,11 @@ const Documents = () => {
         handleCloseDropdown={handleCloseDropdown}
         options={['Télécharger', 'Modifier', 'Supprimer']}
       />
-      <Modal open={isFullscreenImageOpen} onClose={() => setIsFullscreenImageOpen(false)}>
+      <MuiModal open={isFullscreenImageOpen} onClose={() => setIsFullscreenImageOpen(false)}>
         <Box className={classes.fullScreenImage}>
           <img src={fullscreenImageUrl} alt="" />
         </Box>
-      </Modal>
+      </MuiModal>
     </>
   )
 }

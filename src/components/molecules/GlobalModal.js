@@ -1,7 +1,7 @@
 import React, { useContext, useEffect, useState } from 'react'
 import clsx from 'clsx'
 import { makeStyles } from '@mui/styles'
-import Modal from '@mui/material/Modal'
+import MuiModal from '@mui/material/Modal'
 import Box from '@mui/material/Box'
 import Button from '@mui/material/Button'
 import Divider from '@mui/material/Divider'
@@ -106,19 +106,9 @@ const useStyles = makeStyles(theme => ({
   noOverflowY: {
     overflowY: 'visible',
   },
-  gradiantBackground: {
-    [theme.breakpoints.up('sm')]: {
-      minWidth: 600,
-      height: '89px',
-      position: 'fixed',
-      bottom: '90px',
-      background:
-        'linear-gradient(180deg, rgba(255, 255, 255, 0) 0%, rgba(255, 255, 255, 0.8) 50%, #FFFFFF 100%)',
-    },
-  },
 }))
 
-export default function SimpleModal({
+export default function GlobalModal({
   openModal,
   setOpenModal,
   title = 'Modification',
@@ -137,14 +127,7 @@ export default function SimpleModal({
   const classes = useStyles()
   const theme = useTheme()
   const matchesXs = useMediaQuery(theme.breakpoints.down('sm'))
-  const { modalTravelers, setModalTravelers, nbTravelers } = useContext(TripContext)
   const [isOpen, setIsOpen] = useState(false)
-
-  const initialTraveler = () => ({
-    name: '',
-    age: 'adult',
-    travelerId: uuidv4(),
-  })
 
   const handleClose = () => {
     setIsOpen(false)
@@ -173,7 +156,7 @@ export default function SimpleModal({
   }, [openModal])
 
   return (
-    <Modal
+    <MuiModal
       classes={{ root: classes.modalRoot }}
       hideBackdrop={matchesXs}
       open={isOpen}
@@ -246,33 +229,10 @@ export default function SimpleModal({
               <Box
                 sx={{
                   display: 'flex',
-                  justifyContent: modalName === 'editTravelers' && 'space-between',
                   alignItems: 'center',
                   paddingLeft: '20px',
                 }}
               >
-                {matchesXs && modalName === 'editTravelers' && (
-                  <IconButton
-                    onClick={() => {
-                      if (nbTravelers < 15)
-                        setModalTravelers([...modalTravelers, { ...initialTraveler() }])
-                    }}
-                    sx={{
-                      backgroundColor: theme.palette.primary.main,
-                      width: '70px',
-                      height: '70px',
-                      borderRadius: '50px',
-                      zIndex: 1000,
-                      '&:hover': {
-                        backgroundColor: theme.palette.primary.main,
-                        color: 'white',
-                      },
-                      border: '2px solid white',
-                    }}
-                  >
-                    <PersonAddAlt1 sx={{ color: 'white', fontSize: '41px' }} />
-                  </IconButton>
-                )}
                 <Box className={classes.validationBtnContainer}>
                   <Button type="submit" variant="contained" color="primary" disabled={!isValid}>
                     Enregistrer
@@ -282,9 +242,6 @@ export default function SimpleModal({
             </Box>
           )}
         </Box>
-        {!matchesXs && (modalName === 'editEditors' || modalName === 'editTravelers') && (
-          <Box className={classes.gradiantBackground} />
-        )}
         {!matchesXs && hasValidation && (
           <Box className={classes.validation}>
             <Box className={classes.validationBtnContainer}>
@@ -301,6 +258,6 @@ export default function SimpleModal({
           </Box>
         )}
       </Paper>
-    </Modal>
+    </MuiModal>
   )
 }

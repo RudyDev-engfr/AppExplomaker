@@ -1,4 +1,5 @@
 import React, { useContext, useEffect } from 'react'
+// import ReactGA from 'react-ga4'
 import { useLoadScript } from '@react-google-maps/api'
 import 'react-toastify/dist/ReactToastify.css'
 import { BrowserRouter } from 'react-router-dom'
@@ -15,6 +16,8 @@ import beta from '../images/beta.svg'
 const mapsLibraries = ['places']
 
 const App = () => {
+  // ReactGA.initialize('G-EN0Q3W3NZX') // remplacez par votre ID de suivi
+  // ReactGA.pageview(window.location.pathname + window.location.search)
   const matchesXs = useMediaQuery('(max-width:600px)')
   const { setUser, user } = useContext(SessionContext)
   const { firestore, database, setLocalUsers, isDictionaryLoaded, timestampRef } =

@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from 'react'
+import React, { useCallback, useContext, useEffect, useState } from 'react'
 import Box from '@mui/material/Box'
 import Typography from '@mui/material/Typography'
 import Accordion from '@mui/material/Accordion'
@@ -47,6 +47,7 @@ const useStyles = makeStyles(theme => ({
     padding: '30px',
     paddingTop: '50px',
     [theme.breakpoints.down('sm')]: {
+      padding: 0,
       paddingTop: 0,
     },
   },
@@ -61,9 +62,18 @@ const TripGuide = () => {
     setCurrentSelectedTripGuideButton,
     itemData,
     setItemData,
+    tripGuideExpanded,
+    setTripGuideExpanded,
   } = useContext(TripContext)
 
   const [localItemData, setLocalItemData] = useState(itemData)
+
+  const handleChange = useCallback(
+    panel => (event, isExpanded) => {
+      setTripGuideExpanded(isExpanded ? panel : '')
+    },
+    []
+  )
 
   useEffect(() => {
     setLocalItemData(itemData)
@@ -108,39 +118,50 @@ const TripGuide = () => {
                 return acc
               }, {})
           ).map(([category, items]) => (
-            <Accordion
-              key={category}
-              sx={{
-                width: 'calc(100vw - 350px)',
-                // borderRadius: '20px',
-                [theme.breakpoints.down('sm')]: { width: '100vw', padding: 0 },
-              }}
-            >
-              <AccordionSummary
-                expandIcon={<ExpandMoreIcon sx={{}} />}
-                aria-controls="panel-content"
-                id="panel-header"
+            <>
+              <Accordion
+                key={category}
+                expanded={tripGuideExpanded === `panel${category}`}
+                onChange={handleChange(`panel${category}`)}
+                sx={{
+                  width: 'calc(100vw - 350px)',
+                  // borderRadius: '20px',
+                  [theme.breakpoints.down('sm')]: { width: '100vw', padding: 0 },
+                }}
               >
-                <Typography sx={{ fontWeight: 600, fontSize: '22px', lineHeight: 1.5 }}>
-                  {category.replace('_', '')}
-                </Typography>
-              </AccordionSummary>
-              <AccordionDetails>
-                <Box sx={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'space-evenly' }}>
-                  {items.map(item => (
-                    <TripGuideButton
-                      key={item.name}
-                      itemName={item?.name}
-                      logo={item?.logo}
-                      currentSelectedTripGuideButton={currentSelectedTripGuideButton}
-                      setCurrentSelectedTripGuideButton={setCurrentSelectedTripGuideButton}
-                      model={item?.model}
-                      item_picture={item?.item_picture}
-                    />
-                  ))}
-                </Box>
-              </AccordionDetails>
-            </Accordion>
+                <AccordionSummary
+                  expandIcon={<ExpandMoreIcon sx={{}} />}
+                  aria-controls="panel-content"
+                  id={`panel${category}`}
+                >
+                  <Typography sx={{ fontWeight: 600, fontSize: '22px', lineHeight: 1.5 }}>
+                    {category.replace('_', '')}
+                  </Typography>
+                </AccordionSummary>
+                <AccordionDetails>
+                  <Box
+                    sx={{
+                      display: 'flex',
+                      flexWrap: 'wrap',
+                      justifyContent: 'flex-start',
+                      gridGap: '15px',
+                    }}
+                  >
+                    {items.map(item => (
+                      <TripGuideButton
+                        key={item.name}
+                        itemName={item?.name}
+                        logo={item?.logo}
+                        currentSelectedTripGuideButton={currentSelectedTripGuideButton}
+                        setCurrentSelectedTripGuideButton={setCurrentSelectedTripGuideButton}
+                        model={item?.model}
+                        item_picture={item?.item_picture}
+                      />
+                    ))}
+                  </Box>
+                </AccordionDetails>
+              </Accordion>
+            </>
           ))}
       </Box>
     </Box>

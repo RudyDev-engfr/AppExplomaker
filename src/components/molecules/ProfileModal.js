@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { makeStyles, useTheme } from '@mui/styles'
-import Modal from '@mui/material/Modal'
+import MuiModal from '@mui/material/Modal'
 import Box from '@mui/material/Box'
 import Divider from '@mui/material/Divider'
 import IconButton from '@mui/material/IconButton'
@@ -94,7 +94,7 @@ export default function ProfileModal({
   }, [openModal])
 
   return (
-    <Modal
+    <MuiModal
       classes={{ root: classes.modalRoot }}
       hideBackdrop={matchesXs}
       open={isOpen}
@@ -141,6 +141,6 @@ export default function ProfileModal({
           </Box>
         </Box>
       </Paper>
-    </Modal>
+    </MuiModal>
   )
 }

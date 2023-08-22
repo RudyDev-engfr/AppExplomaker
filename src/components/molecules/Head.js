@@ -21,7 +21,7 @@ const Head = ({
     <meta property="og:image" content={favicon} />
     {thumbnail && <meta property="og:image" content={thumbnail} />}
     <meta property="og:site_name" content="Explomaker" />
-  </Helmet>
+  </Helmet> 
 )
 
 export default Head

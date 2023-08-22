@@ -6,3 +6,4 @@ emulators.rules
 .github
 public
 README.md
+/src/components/molecules/Head.js

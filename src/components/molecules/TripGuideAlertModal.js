@@ -1,5 +1,5 @@
 import React, { useContext, useState } from 'react'
-import Modal from '@mui/material/Modal'
+import MuiModal from '@mui/material/Modal'
 import Paper from '@mui/material/Paper'
 import Box from '@mui/material/Box'
 import Select from '@mui/material/Select'
@@ -81,7 +81,7 @@ const TripGuideAlertModal = ({ openState, setterOpenState, currentItem, titre, i
   }
 
   return (
-    <Modal
+    <MuiModal
       open={openState}
       onClose={handleClose}
       aria-labelledby="modal-alertModal"
@@ -150,7 +150,7 @@ const TripGuideAlertModal = ({ openState, setterOpenState, currentItem, titre, i
           </Button>
         </Box>
       </Paper>
-    </Modal>
+    </MuiModal>
   )
 }
 export default TripGuideAlertModal

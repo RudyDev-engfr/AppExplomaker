@@ -45,7 +45,6 @@ import Photos from './Photos'
 import Documents from './Documents'
 import Notes from './Notes'
 import Inspiration from './Inspiration' */
-import Modal from '../../components/molecules/Modal'
 import { filterObjectByValue, rCTFF } from '../../helper/functions'
 import { fieldValueRef, FirebaseContext } from '../../contexts/firebase'
 import {
@@ -82,6 +81,7 @@ import AddCollaboratorsButton from '../../components/atoms/AddCollaboratorsButto
 import TripGuide from './components/TripGuide'
 import DesktopEditEditorGrid from './components/DesktopEditEditorGrid'
 import MobileEditEditorGrid from './components/MobileEditEditorGrid'
+import TripPageModal from '../../components/molecules/TripPageModal'
 
 const useStyles = makeStyles(theme => ({
   content: {
@@ -988,7 +988,7 @@ const TripPage = () => {
           </Box>
         </Box>
       </Box>
-      <Modal
+      <TripPageModal
         openModal={openModal}
         setOpenModal={setOpenModal}
         modalName="general"
@@ -1132,8 +1132,8 @@ const TripPage = () => {
             </IconButton>
           </Box>
         </Paper>
-      </Modal>
-      <Modal
+      </TripPageModal>
+      <TripPageModal
         openModal={openModal}
         setOpenModal={setOpenModal}
         modalName="editTitle"
@@ -1170,8 +1170,8 @@ const TripPage = () => {
             </Box>
           </Box>
         )}
-      </Modal>
-      <Modal
+      </TripPageModal>
+      <TripPageModal
         openModal={openModal}
         setOpenModal={setOpenModal}
         modalName="editDestination"
@@ -1243,8 +1243,8 @@ const TripPage = () => {
             </Box>
           )}
         </Box>
-      </Modal>
-      <Modal
+      </TripPageModal>
+      <TripPageModal
         openModal={openModal}
         setOpenModal={setOpenModal}
         modalName="editDate"
@@ -1285,8 +1285,8 @@ const TripPage = () => {
             n&apos;appartiennent pas à la plage de ton voyage devront être replanifiés.
           </Typography>
         </Box>
-      </Modal>
-      <Modal
+      </TripPageModal>
+      <TripPageModal
         openModal={openModal}
         setOpenModal={setOpenModal}
         modalName="editEditors"
@@ -1396,8 +1396,8 @@ const TripPage = () => {
             </Box>
           </>
         )}
-      </Modal>
-      <Modal
+      </TripPageModal>
+      <TripPageModal
         openModal={openModal}
         setOpenModal={setOpenModal}
         modalName="editInfo"
@@ -1459,8 +1459,8 @@ const TripPage = () => {
             </FormControl>
           </Box>
         </Box>
-      </Modal>
-      <Modal
+      </TripPageModal>
+      <TripPageModal
         openModal={openModal}
         setOpenModal={setOpenModal}
         modalName="editDescription"
@@ -1493,8 +1493,8 @@ const TripPage = () => {
             présent ! Destinations, esprit du week-end, qui participe... A vous de jouer !
           </Typography>
         </Box>
-      </Modal>
-      <Modal
+      </TripPageModal>
+      <TripPageModal
         openModal={openModal}
         setOpenModal={setOpenModal}
         isValid={travelersValidation()}
@@ -1560,8 +1560,8 @@ const TripPage = () => {
               })}
           </Box>
         </Box>
-      </Modal>
-      <Modal
+      </TripPageModal>
+      <TripPageModal
         openModal={openModal}
         setOpenModal={setOpenModal}
         modalName="editCurrency"
@@ -1588,8 +1588,8 @@ const TripPage = () => {
             ))}
           </Select>
         </FormControl>
-      </Modal>
-      <Modal openModal={openModal} setOpenModal={setOpenModal} modalName="add-photos">
+      </TripPageModal>
+      <TripPageModal openModal={openModal} setOpenModal={setOpenModal} modalName="add-photos">
         <div>
           <input
             required
@@ -1623,8 +1623,8 @@ const TripPage = () => {
             </div>
           </div>
         </div>
-      </Modal>
-      <Modal
+      </TripPageModal>
+      <TripPageModal
         openModal={openModal}
         setOpenModal={setOpenModal}
         modalName="add-notes"
@@ -1701,8 +1701,8 @@ const TripPage = () => {
           <a href="#d">Créer la note</a>
           <a href="#d">Créer la note</a>
         </div>
-      </Modal>
-      <Modal
+      </TripPageModal>
+      <TripPageModal
         openModal={openModal}
         setOpenModal={setOpenModal}
         modalName="add-docs"
@@ -1841,7 +1841,7 @@ const TripPage = () => {
             </div>
           </div>
         </div>
-      </Modal>
+      </TripPageModal>
       {/* {canEdit && !matchesXs && (
         <Box
           display={matchesXs ? 'block' : 'none'}

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { makeStyles } from '@mui/styles'
-import Modal from '@mui/material/Modal'
+import MuiModal from '@mui/material/Modal'
 import Box from '@mui/material/Box'
 import IconButton from '@mui/material/IconButton'
 import Paper from '@mui/material/Paper'
@@ -98,7 +98,7 @@ const IconModal = ({
           </Box>
         </IconButton>
       </Tooltip>
-      <Modal open={isOpen} onClose={handleClose}>
+      <MuiModal open={isOpen} onClose={handleClose}>
         <Paper
           sx={{
             position: 'absolute',
@@ -299,7 +299,7 @@ const IconModal = ({
               ))}
           </Box>
         </Paper>
-      </Modal>
+      </MuiModal>
     </>
   )
 }

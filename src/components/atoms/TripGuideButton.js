@@ -3,9 +3,8 @@ import Box from '@mui/material/Box'
 import Paper from '@mui/material/Paper'
 import Button from '@mui/material/Button'
 import Typography from '@mui/material/Typography'
-import IconButton from '@mui/material/IconButton'
-import BookmarkAddOutlined from '@mui/icons-material/BookmarkAddOutlined'
 import { makeStyles, useTheme } from '@mui/styles'
+import { useMediaQuery } from '@mui/material'
 import { useHistory } from 'react-router-dom'
 
 import arrow from '../../images/icons/arrow-back.svg'
@@ -39,9 +38,8 @@ const useStyles = makeStyles(theme => ({
       },
     },
     [theme.breakpoints.down('sm')]: {
-      width: 'calc(100vw - 60px)',
+      width: 'calc(100vw - 30px)',
     },
-
     backgroundSize: 'cover',
     color: 'white',
     height: '200px',
@@ -59,7 +57,15 @@ const useStyles = makeStyles(theme => ({
   iconTypo: { marginRight: '15px', fontSize: '30px' },
   papersTitle: {
     fontWeight: 600,
+    fontSize: '20px',
     textAlign: 'center',
+    position: 'absolute',
+    top: '50%',
+    left: '50%',
+    width: 'calc(100% - 20px)',
+    transform: 'translate(-50%, -50%)',
+    textShadow: '2px 2px 4px rgba(0, 0, 0, 0.5), -2px -2px 4px rgba(255, 255, 255, 0.3)',
+    zIndex: 2,
   },
 }))
 
@@ -71,6 +77,7 @@ const TripGuideButton = ({
 }) => {
   const classes = useStyles()
   const theme = useTheme()
+  const matchesXs = useMediaQuery(theme.breakpoints.down('sm'))
   const history = useHistory()
 
   const [alertModal, setAlertModal] = useState(false)
@@ -86,12 +93,28 @@ const TripGuideButton = ({
         component={Button}
         className={classes.papers}
         sx={{
-          background:
-            itemPicture ??
-            'url(https://storage.googleapis.com/explomaker-data-stateless/2018/12/0a1c3c8c-opacifie-photo.jpg)',
+          background: itemPicture
+            ? `url(${encodeURI(itemPicture)})`
+            : 'url(https://storage.googleapis.com/explomaker-data-stateless/2018/12/0a1c3c8c-opacifie-photo.jpg)',
+          position: 'relative',
         }}
         onClick={handleClick}
       >
+        <Box
+          sx={{
+            width: '100%',
+            height: '100%',
+            position: 'absolute',
+            bottom: '0',
+            left: '0',
+            background: 'rgb(31 31 31 / 25%)',
+            borderRadius: '20px',
+            '&:hover': {
+              background: 'unset',
+            },
+            zIndex: 1,
+          }}
+        />
         <Box className={classes.papersContent}>
           <Box className={classes.titleContainer}>
             <Typography className={classes.papersTitle}>{itemName}</Typography>

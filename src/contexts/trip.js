@@ -60,6 +60,7 @@ const TripContextProvider = ({ children }) => {
   const [tripGuideData, setTripGuideData] = useState(null)
   const [currentSelectedTripGuideButton, setCurrentSelectedTripGuideButton] = useState(null)
   const [itemData, setItemData] = useState(null)
+  const [tripGuideExpanded, setTripGuideExpanded] = useState('')
 
   // used to handle EditTravelersModal
   const [nbTravelers, setNbTravelers] = useState(1)
@@ -374,6 +375,8 @@ const TripContextProvider = ({ children }) => {
         setNbTravelers,
         modalTravelers,
         setModalTravelers,
+        tripGuideExpanded,
+        setTripGuideExpanded,
       }}
     >
       {children}

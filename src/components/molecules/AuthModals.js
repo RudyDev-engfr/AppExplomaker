@@ -1,6 +1,6 @@
 import React, { useContext } from 'react'
 import { useHistory } from 'react-router-dom'
-import Modal from '@mui/material/Modal'
+import MuiModal from '@mui/material/Modal'
 import Paper from '@mui/material/Paper'
 import Box from '@mui/material/Box'
 import IconButton from '@mui/material/IconButton'
@@ -126,7 +126,7 @@ const LoginModal = ({
   const matchesXs = useMediaQuery(theme.breakpoints.down('sm'))
 
   return (
-    <Modal
+    <MuiModal
       disableScrollLock
       open={modalState === 'login'}
       onClose={() => {
@@ -269,7 +269,7 @@ const LoginModal = ({
           </Box>
         </Paper>
       )}
-    </Modal>
+    </MuiModal>
   )
 }
 
@@ -288,7 +288,7 @@ const SignUpModal = ({
   const matchesXs = useMediaQuery(theme.breakpoints.down('sm'))
 
   return (
-    <Modal
+    <MuiModal
       disableScrollLock
       open={modalState === 'signup'}
       onClose={() => {
@@ -442,7 +442,7 @@ const SignUpModal = ({
           </Box>
         </Paper>
       )}
-    </Modal>
+    </MuiModal>
   )
 }
 
@@ -457,7 +457,7 @@ export const PasswordResetModal = ({
   const matchesXs = useMediaQuery(theme.breakpoints.down('sm'))
 
   return (
-    <Modal
+    <MuiModal
       disableScrollLock
       open={modalState === 'pwdReset'}
       onClose={() => {
@@ -557,7 +557,7 @@ export const PasswordResetModal = ({
           <PwdReset setOpenModal={modalStateSetter} />
         </Paper>
       )}
-    </Modal>
+    </MuiModal>
   )
 }
 

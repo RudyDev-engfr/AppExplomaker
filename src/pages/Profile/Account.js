@@ -32,12 +32,12 @@ import { arrayShuffle, filterObjectByValue, rCTFF } from '../../helper/functions
 import { emailAuthProvider, FirebaseContext } from '../../contexts/firebase'
 import Footer from '../../components/molecules/Footer'
 import Nav from '../../components/molecules/Nav'
-import Modal from '../../components/molecules/Modal'
 import Camera from '../../components/molecules/Camera'
 import AvatarEditor from '../../components/molecules/AvatarEditor'
 import { PasswordResetModal } from '../../components/molecules/AuthModals'
 import Head from '../../components/molecules/Head'
 import ProfileModal from '../../components/molecules/ProfileModal'
+import GlobalModal from '../../components/molecules/GlobalModal'
 
 const useStyles = makeStyles(theme => ({
   mainContainer: {
@@ -578,7 +578,7 @@ const Account = () => {
             <Button onClick={() => setIsPictureModalOpen(false)}>Annuler</Button>
           </Box>
         </MuiModal>
-        <Modal
+        <GlobalModal
           modalName="infoPerso"
           openModal={openModal}
           setOpenModal={setOpenModal}
@@ -654,8 +654,8 @@ const Account = () => {
           <Button type="submit" fullWidth className={classes.modalBtn}>
             Mettre à jour
           </Button>
-        </Modal>
-        <Modal
+        </GlobalModal>
+        <GlobalModal
           modalName="email"
           openModal={openModal}
           setOpenModal={setOpenModal}
@@ -745,8 +745,8 @@ const Account = () => {
           >
             Mettre à jour
           </Button>
-        </Modal>
-        <Modal
+        </GlobalModal>
+        <GlobalModal
           modalName="password"
           openModal={openModal}
           setOpenModal={setOpenModal}
@@ -863,7 +863,7 @@ const Account = () => {
           >
             Mettre à jour
           </Button>
-        </Modal>
+        </GlobalModal>
         <ProfileModal
           modalName="profilVoyageur"
           openModal={openModal}
@@ -1030,7 +1030,7 @@ const Account = () => {
             Enregistrer
           </Button>
         </ProfileModal>
-        <Modal
+        <GlobalModal
           modalName="camera"
           openModal={openModal}
           setOpenModal={setOpenModal}
@@ -1038,8 +1038,8 @@ const Account = () => {
           title="Cheeeeeese !"
         >
           <Camera setOpenModal={setOpenModal} imageSrc={imageSrc} setImageSrc={setImageSrc} />
-        </Modal>
-        <Modal
+        </GlobalModal>
+        <GlobalModal
           modalName="avatarEditor"
           openModal={openModal}
           setOpenModal={setOpenModal}
@@ -1095,7 +1095,7 @@ const Account = () => {
             setOpenModal={setOpenModal}
             setIsPictureModalOpen={setIsPictureModalOpen}
           />
-        </Modal>
+        </GlobalModal>
       </Box>
       <PasswordResetModal modalState={openModal} modalStateSetter={setOpenModal} isFromAccount />
     </>
