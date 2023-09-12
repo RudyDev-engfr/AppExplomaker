@@ -220,11 +220,22 @@ const useStyles = makeStyles(theme => ({
   },
 }))
 
-const Preview = ({ tripData, setOpenModal, canEdit, carouselImages, tripId, run, setState }) => {
+const Preview = ({
+  tripData,
+  setOpenModal,
+  canEdit,
+  carouselImages,
+  tripId,
+  run,
+  setState,
+  mobileRun,
+  setMobileState,
+}) => {
   const classes = useStyles()
   const theme = useTheme()
   const matchesXs = useMediaQuery(theme.breakpoints.down('sm'))
 
+  const { user } = useContext(SessionContext)
   const { dictionary } = useContext(FirebaseContext)
   const { currentDateRange } = useContext(TripContext)
 
@@ -305,8 +316,11 @@ const Preview = ({ tripData, setOpenModal, canEdit, carouselImages, tripId, run,
                     variant="outlined"
                     sx={{ backgroundColor: 'white', '&:hover': { backgroundColor: 'white' } }}
                     onClick={() => {
-                      if (!run) {
+                      if (!run && !matchesXs) {
                         setState({ run: true })
+                      }
+                      if (!mobileRun && matchesXs) {
+                        setMobileState({ mobileRun: true })
                       }
                     }}
                   >
@@ -414,7 +428,7 @@ const Preview = ({ tripData, setOpenModal, canEdit, carouselImages, tripId, run,
                     </Typography>
                   </Button>
                 </Box>
-                <Box sx={{ paddingRight: '10px' }}>
+                <Box sx={{ paddingRight: '10px' }} className="inviteButton-mobile">
                   <AddCollaboratorsButton tripId={tripId} size="30px" iconSize="20px" />
                 </Box>
               </Box>

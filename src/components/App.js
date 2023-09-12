@@ -52,6 +52,7 @@ const App = () => {
           tempUser.newsletter = data.newsletter
           tempUser.myTripLetter = data.myTripLetter || 'weekly'
           tempUser.notifications = data.notifications || []
+          tempUser.isFirstTrip = data.isFirstTrip
           setUser({ ...tempUser })
         }
       })

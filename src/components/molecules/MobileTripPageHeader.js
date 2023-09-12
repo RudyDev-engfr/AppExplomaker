@@ -101,6 +101,7 @@ const MobileTripPageHeader = () => {
             }
             value="planning"
             onClick={() => setCurrentActiveTab('planning')}
+            className="planningPage-mobile"
           />
           <Tab
             label={
@@ -131,6 +132,7 @@ const MobileTripPageHeader = () => {
             }
             value="tripguide`"
             onClick={() => setCurrentActiveTab('tripguide')}
+            className="guidePage-mobile"
           />
           <Tab
             label={

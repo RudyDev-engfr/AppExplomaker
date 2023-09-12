@@ -500,6 +500,7 @@ const TripPageNav = ({
             }}
             // value="AIChatWindow"
             sx={{ padding: '0', minWidth: '20vw !important', marginRight: '8vw' }}
+            className="assistantButton-mobile"
           />
 
           <Box sx={{ maxHeight: '80px', height: '80px', paddingBottom: '5px' }}>

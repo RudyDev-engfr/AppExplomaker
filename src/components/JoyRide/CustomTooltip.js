@@ -1,9 +1,10 @@
-import React, { useEffect } from 'react'
+import React, { useContext, useEffect } from 'react'
 import Box from '@mui/material/Box'
 import Typography from '@mui/material/Typography'
 import Button from '@mui/material/Button'
 import StarIcon from '@mui/icons-material/Star'
 import { makeStyles, useTheme } from '@mui/styles'
+import { SessionContext } from '../../contexts/session'
 
 const useStyles = makeStyles(theme => ({}))
 const CustomTooltip = ({ stepArrayLength, ...props }) => {
@@ -24,6 +25,8 @@ const CustomTooltip = ({ stepArrayLength, ...props }) => {
   } = props
   const classes = useStyles()
   const theme = useTheme()
+
+  const { user } = useContext(SessionContext)
 
   useEffect(() => {
     console.log('primaryprops', props)
@@ -49,6 +52,10 @@ const CustomTooltip = ({ stepArrayLength, ...props }) => {
         border: 'none',
         padding: '30px',
         borderRadius: '20px',
+        [theme.breakpoints.down('sm')]: {
+          minWidth: 'calc(100vw - 60px)',
+          minHeight: '400px',
+        },
       }}
       {...tooltipProps}
     >
@@ -103,7 +110,7 @@ const CustomTooltip = ({ stepArrayLength, ...props }) => {
           width: 'calc(100% - 60px)',
         }}
       >
-        <Typography>
+        <Typography sx={{ alignSelf: 'center', color: theme.palette.grey['82'], fontWeight: 500 }}>
           {index + 1} / {isLastStep ? index + 1 : size}
         </Typography>
         <Box>
@@ -113,7 +120,7 @@ const CustomTooltip = ({ stepArrayLength, ...props }) => {
               variant="text"
               {...closeProps}
               id={continuous ? 'next' : 'close'}
-              sx={{ borderRadius: '50px', color: 'black' }}
+              sx={{ borderRadius: '50px', color: theme.palette.grey['82'] }}
             >
               Fermer
             </Button>
@@ -124,14 +131,16 @@ const CustomTooltip = ({ stepArrayLength, ...props }) => {
               variant="text"
               {...backProps}
               id={continuous ? 'next' : 'close'}
-              sx={{ borderRadius: '50px', color: 'black' }}
+              sx={{ borderRadius: '50px', color: theme.palette.grey['82'] }}
             >
               Précédent
             </Button>
           )}
 
           <Button
-            onClick={next}
+            onClick={() => {
+              next()
+            }}
             variant="contained"
             {...primaryProps}
             id={continuous ? 'next' : 'close'}
