@@ -220,7 +220,7 @@ const useStyles = makeStyles(theme => ({
   },
 }))
 
-const Preview = ({ tripData, setOpenModal, canEdit, carouselImages, tripId }) => {
+const Preview = ({ tripData, setOpenModal, canEdit, carouselImages, tripId, run, setState }) => {
   const classes = useStyles()
   const theme = useTheme()
   const matchesXs = useMediaQuery(theme.breakpoints.down('sm'))
@@ -300,6 +300,19 @@ const Preview = ({ tripData, setOpenModal, canEdit, carouselImages, tripId }) =>
                   className={classes.sliderCaption}
                   dangerouslySetInnerHTML={{ __html: image.title }}
                 /> */}
+                <Box sx={{ position: 'absolute', top: '15px', right: '230px', zIndex: 100000 }}>
+                  <Button
+                    variant="outlined"
+                    sx={{ backgroundColor: 'white', '&:hover': { backgroundColor: 'white' } }}
+                    onClick={() => {
+                      if (!run) {
+                        setState({ run: true })
+                      }
+                    }}
+                  >
+                    Tutoriel
+                  </Button>
+                </Box>
               </Box>
             ))}
           </Carousel>

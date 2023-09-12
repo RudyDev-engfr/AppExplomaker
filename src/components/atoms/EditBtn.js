@@ -30,7 +30,7 @@ const EditBtn = ({ onClick, top = '24px', right = '20px' }) => {
     <IconButton
       type="button"
       onClick={onClick}
-      className={classes.root}
+      className={`${classes.root} pencil-button-desktop`}
       sx={{ top, right }}
       size="large"
     >

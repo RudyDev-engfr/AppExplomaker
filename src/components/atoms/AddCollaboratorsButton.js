@@ -1,6 +1,6 @@
 import React from 'react'
 import { useTheme } from '@mui/styles'
-import { IconButton } from '@mui/material'
+import { IconButton, useMediaQuery } from '@mui/material'
 import { toast } from 'react-toastify'
 import { PersonAddAlt1 } from '@mui/icons-material'
 
@@ -11,6 +11,8 @@ const AddCollaboratorsButton = ({
   isEditorModal = false,
 }) => {
   const theme = useTheme()
+  const matchesXs = useMediaQuery(theme.breakpoints.down('sm'))
+
   return (
     <IconButton
       onClick={() => {

@@ -169,7 +169,7 @@ const DesktopPreview = ({ tripData, generatedAvatars }) => {
             </Typography>
           </Button>
         </Box>
-        <Box display="flex" alignItems="center" ml="auto">
+        <Box display="flex" alignItems="center" ml="auto" className="inviteButton-desktop">
           <AddCollaboratorsButton tripId={tripId} />
           <CustomAvatar peopleIds={generatedAvatars} isPreview />
         </Box>

@@ -241,7 +241,7 @@ const TripPageNav = ({
         canEdit={canEdit}
         setOpenModal={setOpenModal}
       />
-      <Box display="flex" flexDirection="column">
+      <Box display="flex" flexDirection="column" sx={{ height: 'fit-content' }}>
         <Button
           className={clsx(classes.sidebarButton, {
             [classes.activeTabStyle]: currentActiveTab === 'preview',
@@ -270,63 +270,70 @@ const TripPageNav = ({
         >
           Envies
         </Button>
-        <Button
-          className={clsx(classes.sidebarButton, {
-            [classes.activeTabStyle]: currentActiveTab === 'planning',
-          })}
-          onClick={() => {
-            history.push(`/tripPage/${tripId}/planning`)
-          }}
-          startIcon={
-            <EventNoteIcon
-              color={currentActiveTab === 'planning' ? 'primary' : 'disabled'}
-              className={classes.icons}
-            />
-          }
-          sx={{ position: 'relative' }}
-        >
-          Planning
-          {currentPlanningNotifications.filter(notification => notification.state === 1).length >
-            0 && (
-            <Box
-              sx={{
-                position: 'absolute',
-                backgroundColor: theme.palette.secondary.main,
-                width: '18px',
-                height: '18px',
-                borderRadius: '50px',
-                padding: '5px',
-                right: '25px',
-                zIndex: 1000000,
-                color: 'white',
-                fontSize: '9px',
-                fontWeight: 500,
-                lineHeight: '10.67px',
-              }}
-            >
-              {currentPlanningNotifications.filter(notification => notification.state === 1).length}
-            </Box>
-          )}
-        </Button>
-        {tripData.premium && !tripData.noDestination && (
+        <Box className="planningPage-desktop">
           <Button
             className={clsx(classes.sidebarButton, {
-              [classes.activeTabStyle]: currentActiveTab === 'tripguide',
+              [classes.activeTabStyle]: currentActiveTab === 'planning',
             })}
             onClick={() => {
-              setCurrentActiveTab('tripguide')
-              setCurrentSelectedTripGuideButton(null)
-              setItemData(null)
+              history.push(`/tripPage/${tripId}/planning`)
             }}
             startIcon={
-              <FeedIcon
-                color={currentActiveTab === 'tripguide' ? 'primary' : 'disabled'}
+              <EventNoteIcon
+                color={currentActiveTab === 'planning' ? 'primary' : 'disabled'}
                 className={classes.icons}
               />
             }
+            sx={{ position: 'relative' }}
           >
-            Guide
+            Planning
+            {currentPlanningNotifications.filter(notification => notification.state === 1).length >
+              0 && (
+              <Box
+                sx={{
+                  position: 'absolute',
+                  backgroundColor: theme.palette.secondary.main,
+                  width: '18px',
+                  height: '18px',
+                  borderRadius: '50px',
+                  padding: '5px',
+                  right: '25px',
+                  zIndex: 1000000,
+                  color: 'white',
+                  fontSize: '9px',
+                  fontWeight: 500,
+                  lineHeight: '10.67px',
+                }}
+              >
+                {
+                  currentPlanningNotifications.filter(notification => notification.state === 1)
+                    .length
+                }
+              </Box>
+            )}
           </Button>
+        </Box>
+        {!tripData.noDestination && (
+          <Box className="guidePage-desktop">
+            <Button
+              className={clsx(classes.sidebarButton, {
+                [classes.activeTabStyle]: currentActiveTab === 'tripguide',
+              })}
+              onClick={() => {
+                setCurrentActiveTab('tripguide')
+                setCurrentSelectedTripGuideButton(null)
+                setItemData(null)
+              }}
+              startIcon={
+                <FeedIcon
+                  color={currentActiveTab === 'tripguide' ? 'primary' : 'disabled'}
+                  className={classes.icons}
+                />
+              }
+            >
+              Guide
+            </Button>
+          </Box>
         )}
         {canEdit && (
           <Button

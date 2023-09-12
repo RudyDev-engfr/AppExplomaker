@@ -1,5 +1,6 @@
 import React, { useContext, useEffect, useState } from 'react'
 import { useHistory, useLocation, useParams } from 'react-router-dom'
+import { useMount, useSetState } from 'react-use'
 import FormControl from '@mui/material/FormControl'
 import IconButton from '@mui/material/IconButton'
 import Select from '@mui/material/Select'
@@ -36,6 +37,8 @@ import clsx from 'clsx'
 import { toast } from 'react-toastify'
 import { geocodeByPlaceId, getLatLng } from 'react-google-places-autocomplete'
 import { isWithinInterval } from 'date-fns'
+import ReactJoyride, { STATUS } from 'react-joyride'
+import a11yChecker from 'a11y-checker'
 
 import GooglePlacesAutocomplete from '../../components/atoms/GooglePlacesAutocomplete'
 import TripPageNav from './components/TripPageNav'
@@ -82,6 +85,8 @@ import TripGuide from './components/TripGuide'
 import DesktopEditEditorGrid from './components/DesktopEditEditorGrid'
 import MobileEditEditorGrid from './components/MobileEditEditorGrid'
 import TripPageModal from '../../components/molecules/TripPageModal'
+import logGroup from '../../helper/joyride'
+import CustomTooltip from '../../components/JoyRide/CustomTooltip'
 
 const useStyles = makeStyles(theme => ({
   content: {
@@ -453,6 +458,135 @@ const TripPage = () => {
   const [testSpot, setTestSpot] = useState()
   const [allowCreateDateNotif, setAllowCreateDateNotif] = useState(false)
   const previousDateRange = usePrevious(currentDateRange)
+
+  // init Joyride
+  const [{ run, steps }, setState] = useSetState({
+    run: false,
+    steps: [
+      {
+        content: (
+          <Typography>
+            Suivez ce tutoriel pour découvrir comment préparer votre séjour avec Explomaker
+          </Typography>
+        ),
+        locale: { skip: <strong aria-label="skip">S-K-I-P</strong> },
+        placement: 'center',
+        target: 'body',
+        title: 'Bienvenue sur Explomaker, votre compagnon de voyage ultime !',
+      },
+      {
+        content: (
+          <>
+            <Typography sx={{ marginBottom: '10px' }}>
+              Choissisez rapidement choisir votre destination et les dates qui vous conviennent. En
+              manque d’inspiration ? On vous guide pour choisir.
+            </Typography>
+            <Typography>
+              Cette étape initiale donne le ton à votre voyage. Elle vous permet de visualiser la
+              durée de votre séjour et de commencer à imaginer les activités que vous pourriez y
+              faire.
+            </Typography>
+          </>
+        ),
+        title: 'Définir la date et le lieu du séjour',
+        placement: 'right',
+        target: '.pencil-button-desktop',
+      },
+      {
+        content: (
+          <>
+            <Typography sx={{ marginBottom: '10px' }}>
+              Invitez vos amis, votre famille ou vos collègues à se joindre à votre voyage. Chacun
+              peut apporter ses idées et ses envies et consulter les détails du week-end / voyage.
+            </Typography>
+            <Typography>
+              Voyager en groupe enrichit l&apos;expérience. La collaboration permet de prendre en
+              compte les préférences de chacun et de créer un voyage qui plait à tous.
+            </Typography>
+          </>
+        ),
+        placement: 'left',
+        target: '.inviteButton-desktop',
+        title: 'Inviter les participants',
+      },
+      {
+        content: (
+          <>
+            <Typography sx={{ marginBottom: '10px' }}>
+              Plongez-vous dans un guide riche de votre destination. Explorez les conseils locaux,
+              infos pratiques, points culturels de votre destination, et une variété
+              d&apos;expériences et d&apos;activités à ne pas manquer.
+            </Typography>
+            <Typography>
+              Être bien informé en amont maximise votre expérience et vous prépare à une immersion
+              complète.
+            </Typography>
+          </>
+        ),
+        placement: 'right',
+        target: '.guidePage-desktop',
+        title: 'Consulter le guide du séjour',
+      },
+      {
+        content: (
+          <>
+            <Typography sx={{ marginBottom: '10px' }}>
+              Utilisez l&apos;assistant Explomaker pour obtenir des suggestions d&apos;itinéraires,
+              des informations sur les destinations et des conseils personnalisés.
+            </Typography>
+            <Typography>
+              L&apos;assistant agit comme un expert de voyage, vous guidant à travers les meilleures
+              options pour un séjour mémorable.
+            </Typography>
+          </>
+        ),
+        title: "Solliciter l'assistant de voyage",
+        placement: 'bottom',
+        target: '.assistantButton-desktop',
+      },
+      {
+        content: (
+          <>
+            <Typography sx={{ marginBottom: '10px' }}>
+              Organisez vos activités, réservations et itinéraires dans un planning centralisé.
+            </Typography>
+            <Typography>
+              Un planning bien structuré garantit que vous profiterez au maximum de chaque moment de
+              votre voyage, sans stress ni oublis.
+            </Typography>
+          </>
+        ),
+        placement: 'right',
+        title: 'Créer le planning du voyage',
+        target: '.planningPage-desktop',
+      },
+    ],
+  })
+
+  useMount(() => {
+    a11yChecker()
+  })
+
+  const handleFirstLoad = () => {
+    setState({
+      run: true,
+    })
+  }
+
+  useEffect(() => {
+    handleFirstLoad()
+  }, [])
+
+  const handleJoyrideCallback = data => {
+    const { status, type } = data
+    const finishedStatuses = [STATUS.FINISHED, STATUS.SKIPPED]
+
+    if (finishedStatuses.includes(status)) {
+      setState({ run: false })
+    }
+
+    logGroup(type, data)
+  }
 
   const initialTraveler = () => ({
     name: '',
@@ -881,6 +1015,24 @@ const TripPage = () => {
               : theme.palette.grey.f7,
         }}
       >
+        <ReactJoyride
+          callback={handleJoyrideCallback}
+          continuous
+          hideCloseButton
+          run={run}
+          scrollToFirstStep
+          showProgress
+          showSkipButton
+          steps={steps}
+          tooltipComponent={CustomTooltip}
+          styles={{
+            options: {
+              zIndex: 10000,
+              backgroundColor: '#B3E1DD',
+              arrowColor: '#B3E1DD',
+            },
+          }}
+        />
         <Box
           className={classes.innerContent}
           sx={{
@@ -933,6 +1085,8 @@ const TripPage = () => {
                     canEdit={canEdit}
                     carouselImages={carouselImages}
                     tripId={tripId}
+                    run={run}
+                    setState={setState}
                   />
                 </Box>
               )}

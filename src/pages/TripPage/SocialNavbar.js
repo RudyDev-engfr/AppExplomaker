@@ -103,50 +103,52 @@ const SocialNavbar = () => {
           <MenuIcon />
         </IconButton> */}
         <Box sx={{ display: { xs: 'none', md: 'flex' } }}>
-          <IconButton
-            size="large"
-            color="inherit"
-            onClick={() => {
-              if (isChatOpen === 'AIChat') {
-                setIsChatOpen('')
-              } else {
-                setIsChatOpen('AIChat')
-                updateHasSeen('Assistant')
-              }
-            }}
-            sx={{
-              color: isChatOpen === 'AIChat' ? theme.palette.primary.main : 'white',
-              backgroundColor: isChatOpen === 'AIChat' ? 'white' : theme.palette.primary.main,
-              '&:hover': {
+          <Box className="assistantButton-desktop">
+            <IconButton
+              size="large"
+              color="inherit"
+              onClick={() => {
+                if (isChatOpen === 'AIChat') {
+                  setIsChatOpen('')
+                } else {
+                  setIsChatOpen('AIChat')
+                  updateHasSeen('Assistant')
+                }
+              }}
+              sx={{
                 color: isChatOpen === 'AIChat' ? theme.palette.primary.main : 'white',
                 backgroundColor: isChatOpen === 'AIChat' ? 'white' : theme.palette.primary.main,
-              },
-              width: '42px',
-              height: '42px',
-            }}
-          >
-            <Badge
-              color="secondary"
-              badgeContent={
-                assistantMessages?.length > 0 &&
-                assistantMessages?.filter(message => {
-                  const hasUserSeen = message.notifications?.filter(notification => {
-                    if (notification.userId === user.id && !notification.hasSeen) {
+                '&:hover': {
+                  color: isChatOpen === 'AIChat' ? theme.palette.primary.main : 'white',
+                  backgroundColor: isChatOpen === 'AIChat' ? 'white' : theme.palette.primary.main,
+                },
+                width: '42px',
+                height: '42px',
+              }}
+            >
+              <Badge
+                color="secondary"
+                badgeContent={
+                  assistantMessages?.length > 0 &&
+                  assistantMessages?.filter(message => {
+                    const hasUserSeen = message.notifications?.filter(notification => {
+                      if (notification.userId === user.id && !notification.hasSeen) {
+                        return true
+                      }
+                      return false
+                    })
+                    if (hasUserSeen?.length > 0) {
                       return true
                     }
                     return false
-                  })
-                  if (hasUserSeen?.length > 0) {
-                    return true
-                  }
-                  return false
-                }).length
-              }
-              invisible={assistantMessages?.length < 1}
-            >
-              <ExploreIcon />
-            </Badge>
-          </IconButton>
+                  }).length
+                }
+                invisible={assistantMessages?.length < 1}
+              >
+                <ExploreIcon />
+              </Badge>
+            </IconButton>
+          </Box>
           <IconButton
             onClick={() => {
               if (isChatOpen === 'userChat') {
