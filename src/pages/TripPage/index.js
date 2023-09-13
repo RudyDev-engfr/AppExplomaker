@@ -1247,6 +1247,7 @@ const TripPage = () => {
                     setState={setState}
                     mobileRun={mobileRun}
                     setMobileState={setMobileState}
+                    isAdmin={isAdmin}
                   />
                 </Box>
               )}

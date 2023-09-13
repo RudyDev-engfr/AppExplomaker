@@ -31,6 +31,8 @@ import DesktopPreview from './DesktopPreview'
 import { TripContext } from '../../contexts/trip'
 import MobileTripPageHeader from '../../components/molecules/MobileTripPageHeader'
 import AddCollaboratorsButton from '../../components/atoms/AddCollaboratorsButton'
+import CTABigHeadBand from '../../components/molecules/CTABigHeadBand'
+import CTASmallHeadBand from '../../components/molecules/CTASmallHeadBand'
 
 const useStyles = makeStyles(theme => ({
   slides: {
@@ -218,6 +220,10 @@ const useStyles = makeStyles(theme => ({
       fontWeight: '1000',
     },
   },
+  informationsContainer: {
+    position: 'relative',
+    zIndex: 1,
+  },
 }))
 
 const Preview = ({
@@ -230,10 +236,12 @@ const Preview = ({
   setState,
   mobileRun,
   setMobileState,
+  isAdmin,
 }) => {
   const classes = useStyles()
   const theme = useTheme()
   const matchesXs = useMediaQuery(theme.breakpoints.down('sm'))
+  const matchesXl = useMediaQuery('(min-width: 1800px)')
 
   const { user } = useContext(SessionContext)
   const { dictionary } = useContext(FirebaseContext)
@@ -445,6 +453,21 @@ const Preview = ({
             }}
             className={classes.informationsContainer}
           >
+            <Box
+              sx={{
+                display: 'flex',
+                justifyContent: 'space-between',
+                marginBottom: '15px',
+                [theme.breakpoints.down('sm')]: {
+                  flexDirection: 'column',
+                  gridGap: '15px',
+                },
+              }}
+            >
+              <CTABigHeadBand isOwner={isAdmin} />
+              {matchesXl && <CTASmallHeadBand isInvitation />}
+              <CTASmallHeadBand isInvitation />
+            </Box>
             <Paper className={classes.descriptionPaper}>
               {canEdit && <EditBtn onClick={() => setOpenModal('editDescription')} />}
               <Box display="flex">
