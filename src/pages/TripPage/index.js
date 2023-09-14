@@ -746,16 +746,6 @@ const TripPage = () => {
   }, [currentDateRange])
 
   useEffect(() => {
-    if (user?.firstname && user?.isFirstTrip !== 'no') {
-      handleUserUpdate({ isFirstTrip: 'yes' })
-      console.log('user chargé et premier voyage')
-    }
-    if (user?.firstname && user?.isFirstTrip === 'no') {
-      console.log('User chargé et pas le premier voyage', user)
-    }
-  }, [user])
-
-  useEffect(() => {
     const currentImages = []
     if (tripSpot?.picture_slider) {
       tripSpot.picture_slider.forEach(picture => currentImages.push(picture))

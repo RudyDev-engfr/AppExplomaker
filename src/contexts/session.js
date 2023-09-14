@@ -18,6 +18,29 @@ const SessionContextProvider = ({ children }) => {
     buildNotifications(user).then(notifications => setCurrentUserNotifications(notifications))
   }
 
+  const handleUserUpdate = data => {
+    firestore
+      .collection('users')
+      .doc(user.id)
+      .set(
+        {
+          ...data,
+        },
+        { merge: true }
+      )
+      .then(() => true)
+  }
+
+  useEffect(() => {
+    if (user?.firstname && user?.isFirstTrip !== 'no') {
+      handleUserUpdate({ isFirstTrip: 'yes' })
+      console.log('user chargé et premier voyage')
+    }
+    if (user?.firstname && user?.isFirstTrip === 'no') {
+      console.log('User chargé et pas le premier voyage', user)
+    }
+  }, [user])
+
   useEffect(() => {
     if (user) {
       handleNotifications(user)

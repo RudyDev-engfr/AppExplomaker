@@ -270,6 +270,28 @@ const TripPageNav = ({
         >
           Envies
         </Button>
+        {!tripData.noDestination && (
+          <Box className="guidePage-desktop">
+            <Button
+              className={clsx(classes.sidebarButton, {
+                [classes.activeTabStyle]: currentActiveTab === 'tripguide',
+              })}
+              onClick={() => {
+                setCurrentActiveTab('tripguide')
+                setCurrentSelectedTripGuideButton(null)
+                setItemData(null)
+              }}
+              startIcon={
+                <FeedIcon
+                  color={currentActiveTab === 'tripguide' ? 'primary' : 'disabled'}
+                  className={classes.icons}
+                />
+              }
+            >
+              Guide
+            </Button>
+          </Box>
+        )}
         <Box className="planningPage-desktop">
           <Button
             className={clsx(classes.sidebarButton, {
@@ -313,28 +335,6 @@ const TripPageNav = ({
             )}
           </Button>
         </Box>
-        {!tripData.noDestination && (
-          <Box className="guidePage-desktop">
-            <Button
-              className={clsx(classes.sidebarButton, {
-                [classes.activeTabStyle]: currentActiveTab === 'tripguide',
-              })}
-              onClick={() => {
-                setCurrentActiveTab('tripguide')
-                setCurrentSelectedTripGuideButton(null)
-                setItemData(null)
-              }}
-              startIcon={
-                <FeedIcon
-                  color={currentActiveTab === 'tripguide' ? 'primary' : 'disabled'}
-                  className={classes.icons}
-                />
-              }
-            >
-              Guide
-            </Button>
-          </Box>
-        )}
         {canEdit && (
           <Button
             className={clsx(classes.sidebarButton, {
