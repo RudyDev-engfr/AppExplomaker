@@ -111,6 +111,11 @@ export function arrayShuffle(array) {
   return tempArray
 }
 
+export function openInNewTab(url) {
+  const newWindow = window.open(url, '_blank', 'noopener,noreferrer')
+  if (newWindow) newWindow.opener = null
+}
+
 export function returnFileSize(number) {
   if (number < 1024) {
     return `${number} octets`

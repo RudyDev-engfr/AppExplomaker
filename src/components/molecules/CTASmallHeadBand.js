@@ -50,6 +50,15 @@ const useStyles = makeStyles(theme => ({
     position: 'absolute',
     left: '15px',
     top: '30px',
+    [theme.breakpoints.down('sm')]: {
+      left: '50%',
+      transform: 'translateX(-50%)',
+    },
+    [theme.breakpoints.down('xs')]: {
+      left: '15px',
+      transform: 'none',
+      maxWidth: 'calc(100% - 120px)',
+    },
   },
   // buttonContainer: {
   //   position: 'absolute',
@@ -117,6 +126,10 @@ const CTASmallHeadBand = ({ isInvitation, isAssistant, isGuide }) => {
                 ? 'calc(100% - 120px)'
                 : 'calc(100% - 110px)',
               marginBottom: '20px',
+              [theme.breakpoints.down('sm')]: {
+                width: '100%',
+                maxWidth: '100%',
+              },
             }}
           >
             {isInvitation

@@ -6,8 +6,8 @@ import { makeStyles, useTheme } from '@mui/styles'
 import { useHistory } from 'react-router-dom'
 
 import ownerImage from '../../images/ctaDashboard/ownerCTA.png'
-import enviesImage from '../../images/ctaDashboard/envies.png'
 import { TripContext } from '../../contexts/trip'
+import { openInNewTab } from '../../helper/functions'
 
 const useStyles = makeStyles(theme => ({
   componentContainer: {
@@ -48,6 +48,7 @@ const useStyles = makeStyles(theme => ({
     [theme.breakpoints.down('xs')]: {
       left: '50%',
       transform: 'translateX(-50%)',
+      width: '200px',
     },
   },
   img: {
@@ -102,7 +103,7 @@ const CTABigHeadBand = ({ isOwner }) => {
             marginRight: '20px',
             textDecoration: 'none',
             textTransform: 'none',
-            [theme.breakpoints.down('xs')]: { marginRight: 'unset' },
+            [theme.breakpoints.down('xs')]: { marginRight: 'unset', width: '200px' },
           }}
           onClick={() => {
             if (isOwner) {
@@ -124,7 +125,7 @@ const CTABigHeadBand = ({ isOwner }) => {
             marginTop: '10px',
           }}
           onClick={() => {
-            window.location.href = 'https://www.explomaker.fr/results'
+            openInNewTab('https://www.explomaker.fr/results')
           }}
         >
           Trouver une destination
