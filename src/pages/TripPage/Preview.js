@@ -245,7 +245,7 @@ const Preview = ({
 
   const { user } = useContext(SessionContext)
   const { dictionary } = useContext(FirebaseContext)
-  const { currentDateRange } = useContext(TripContext)
+  const { currentDateRange, currentUserWishes } = useContext(TripContext)
 
   const [generatedAvatars, setGeneratedAvatars] = useState([])
 
@@ -467,8 +467,30 @@ const Preview = ({
                 },
               }}
             >
-              <CTABigHeadBand isOwner={isAdmin} />
-              {matchesXl && <CTASmallHeadBand isInvitation />}
+              {isAdmin ? (
+                !tripData.hasHandledTrip ? (
+                  <CTABigHeadBand isOwner={isAdmin} />
+                ) : (
+                  <>
+                    <CTASmallHeadBand isGuide />
+                    <CTASmallHeadBand isAssistant />
+                  </>
+                )
+              ) : (
+                ''
+              )}
+              {!isAdmin ? (
+                currentUserWishes?.length < 2 ? (
+                  <CTABigHeadBand isOwner={isAdmin} />
+                ) : (
+                  <>
+                    <CTASmallHeadBand isGuide />
+                    <CTASmallHeadBand isAssistant />
+                  </>
+                )
+              ) : (
+                ''
+              )}
               <CTASmallHeadBand isInvitation />
             </Box>
             <Paper className={classes.descriptionPaper}>

@@ -3,11 +3,13 @@ import Box from '@mui/material/Box'
 import Button from '@mui/material/Button'
 import Typography from '@mui/material/Typography'
 import { makeStyles, useTheme } from '@mui/styles'
-import { useHistory } from 'react-router-dom'
+import { useHistory, useParams } from 'react-router-dom'
 
 import ownerImage from '../../images/ctaDashboard/ownerCTA.png'
 import { TripContext } from '../../contexts/trip'
 import { openInNewTab } from '../../helper/functions'
+import { SessionContext } from '../../contexts/session'
+import { FirebaseContext } from '../../contexts/firebase'
 
 const useStyles = makeStyles(theme => ({
   componentContainer: {
@@ -23,6 +25,9 @@ const useStyles = makeStyles(theme => ({
       width: 'calc(100vw - 60px)',
       backgroundColor: '#EFEFEF',
       minHeight: '520px',
+    },
+    '@media (min-width: 1800px)': {
+      width: 'calc(66%)',
     },
   },
   imageContainer: {
@@ -62,8 +67,23 @@ const useStyles = makeStyles(theme => ({
 const CTABigHeadBand = ({ isOwner }) => {
   const classes = useStyles()
   const theme = useTheme()
-  const history = useHistory()
-  const { setCurrentActiveTab } = useContext(TripContext)
+  // const history = useHistory()
+  const { tripId } = useParams()
+  const { firestore } = useContext(FirebaseContext)
+  const { setCurrentActiveTab, setOpenModal } = useContext(TripContext)
+
+  const handleTripUpdate = data => {
+    firestore
+      .collection('trips')
+      .doc(tripId)
+      .set(
+        {
+          ...data,
+        },
+        { merge: true }
+      )
+      .then(() => true)
+  }
 
   return (
     <Box className={classes.componentContainer}>
@@ -107,7 +127,8 @@ const CTABigHeadBand = ({ isOwner }) => {
           }}
           onClick={() => {
             if (isOwner) {
-              history.push('/newtrip/tripFirst')
+              handleTripUpdate({ hasHandledTrip: 'ok' })
+              setOpenModal('general')
             } else {
               setCurrentActiveTab('envies')
             }

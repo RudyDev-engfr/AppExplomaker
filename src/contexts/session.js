@@ -82,6 +82,7 @@ const SessionContextProvider = ({ children }) => {
         setJoinCallback,
         firstname,
         currentUserNotifications,
+        handleUserUpdate,
       }}
     >
       {children}

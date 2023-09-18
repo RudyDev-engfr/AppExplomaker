@@ -24,10 +24,10 @@ const useStyles = makeStyles(theme => ({
       height: '250px',
     },
     '@media (min-width: 1440px) and (max-width: 1800px)': {
-      width: 'calc(100% - 30px - 650px)',
+      width: 'calc(33% - 20px)',
     },
     '@media (min-width: 1800px)': {
-      width: 'calc((100% - 30px - 650px) / 2)',
+      width: 'calc(33% - 20px)',
     },
   },
   invitationImageContainer: {

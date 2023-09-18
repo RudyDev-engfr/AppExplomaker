@@ -18,8 +18,10 @@ const TripContextProvider = ({ children }) => {
   const { getUserById, firestore } = useContext(FirebaseContext)
   const [deleteEventNotifications, setDeleteEventNotifications] = useState(false)
   const [hasClicked, setHasClicked] = useState(false)
+  const [wishes, setWishes] = useState([])
   const [tripData, setTripData] = useState()
   const [canEdit, setCanEdit] = useState(false)
+  const [currentUserWishes, setcurrentUserWishes] = useState()
 
   // use to handle Notifications
   const [currentNotifications, setCurrentNotifications] = useState([])
@@ -67,6 +69,19 @@ const TripContextProvider = ({ children }) => {
 
   // used for preview page
   const [modalTravelers, setModalTravelers] = useState([])
+
+  useEffect(() => {
+    console.log('tempUserWishes', currentUserWishes)
+  }, [currentUserWishes])
+
+  useEffect(() => {
+    if (wishes?.length > 0) {
+      const tempUserWishes = wishes.filter(wish => wish.userId === user.id)
+      if (tempUserWishes.length > 0) {
+        setcurrentUserWishes(tempUserWishes)
+      }
+    }
+  }, [wishes])
 
   const setTypeCreator = type => () => {
     setEventType(type)
@@ -377,6 +392,10 @@ const TripContextProvider = ({ children }) => {
         setModalTravelers,
         tripGuideExpanded,
         setTripGuideExpanded,
+        wishes,
+        setWishes,
+        currentUserWishes,
+        setcurrentUserWishes,
       }}
     >
       {children}

@@ -7,7 +7,10 @@ import { SessionContext } from './session'
 
 export const NewTripContext = createContext()
 
+const CURRENT_VERSION = 1 // mettez à jour cette valeur à chaque modification importante
+
 const initialValues = {
+  version: CURRENT_VERSION,
   destination: '',
   latitude: 46.2276,
   longitude: 2.2137,
@@ -28,7 +31,17 @@ const NewTripContextProvider = ({ children }) => {
   const history = useHistory()
   const { firestore, timestampRef, dictionary, createNotifications } = useContext(FirebaseContext)
   const { user, setUser } = useContext(SessionContext)
-  const [newTrip, setNewTrip] = useState(localNewTrip || { ...initialValues })
+  // Vérifiez si la version du localNewTrip est différente de la version actuelle
+  const isVersionMismatched = !localNewTrip.version || localNewTrip.version !== CURRENT_VERSION
+  // Si la version ne correspond pas, utilisez initialValues, sinon utilisez localNewTrip
+  const initialState = isVersionMismatched ? initialValues : localNewTrip
+  if (isVersionMismatched) {
+    // Mettez à jour le localStorage si nécessaire
+    localStorage.setItem('newTrip', JSON.stringify(initialValues))
+  }
+
+  // Initialisez votre état avec initialState
+  const [newTrip, setNewTrip] = useState(initialState)
   const [currentSpot, setCurrentSpot] = useState()
   const [hasClicked, setHasClicked] = useState(false)
 

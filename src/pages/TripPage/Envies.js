@@ -19,6 +19,7 @@ import { SessionContext } from '../../contexts/session'
 
 import arrowBack from '../../images/icons/arrow-back.svg'
 import MobileTripPageHeader from '../../components/molecules/MobileTripPageHeader'
+import { TripContext } from '../../contexts/trip'
 
 const useStyles = makeStyles(theme => ({
   paper: {
@@ -93,9 +94,9 @@ const Envies = ({ tripId, tripWishes, recommendedWishes, canEdit, tripTravelers 
 
   const { user } = useContext(SessionContext)
   const { firestore, dictionary } = useContext(FirebaseContext)
+  const { wishes, setWishes } = useContext(TripContext)
 
   const [wishesOptions, setWishesOptions] = useState([])
-  const [wishes, setWishes] = useState([])
   const [othersWishes, setOthersWishes] = useState([])
   const [votes, setVotes] = useState([])
 
