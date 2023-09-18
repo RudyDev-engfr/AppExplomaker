@@ -232,11 +232,11 @@ const Preview = ({
   canEdit,
   carouselImages,
   tripId,
+  isAdmin,
   run,
-  setState,
   mobileRun,
   setMobileState,
-  isAdmin,
+  setState,
 }) => {
   const classes = useStyles()
   const theme = useTheme()
@@ -319,22 +319,25 @@ const Preview = ({
                   className={classes.sliderCaption}
                   dangerouslySetInnerHTML={{ __html: image.title }}
                 /> */}
-                <Box sx={{ position: 'absolute', top: '15px', right: '230px', zIndex: 100000 }}>
-                  <Button
-                    variant="outlined"
-                    sx={{ backgroundColor: 'white', '&:hover': { backgroundColor: 'white' } }}
-                    onClick={() => {
-                      if (!run && !matchesXs) {
-                        setState({ run: true })
-                      }
-                      if (!mobileRun && matchesXs) {
-                        setMobileState({ mobileRun: true })
-                      }
-                    }}
-                  >
-                    Tutoriel
-                  </Button>
-                </Box>
+
+                {!matchesXs && (
+                  <Box sx={{ position: 'fixed', top: '15px', right: '195px', zIndex: 999 }}>
+                    <Button
+                      variant="outlined"
+                      sx={{ backgroundColor: 'white', '&:hover': { backgroundColor: 'white' } }}
+                      onClick={() => {
+                        if (!run && !matchesXs) {
+                          setState({ run: true })
+                        }
+                        if (!mobileRun && matchesXs) {
+                          setMobileState({ mobileRun: true })
+                        }
+                      }}
+                    >
+                      Tutoriel
+                    </Button>
+                  </Box>
+                )}
               </Box>
             ))}
           </Carousel>

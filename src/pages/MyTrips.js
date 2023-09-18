@@ -25,6 +25,7 @@ import Head from '../components/molecules/Head'
 import { ROLES } from '../helper/constants'
 
 import kenya1 from '../images/inherit/Kenya 1.png'
+import { NewTripContext } from '../contexts/newTrip'
 /* import tripModalImg from '../images/inherit/tripmodalimg.png' */
 
 const useStyles = makeStyles(theme => ({
@@ -101,6 +102,7 @@ const MyTrips = () => {
   const matchesXs = useMediaQuery(theme.breakpoints.down('sm'))
   const { firestore, getTrendingDestinations } = useContext(FirebaseContext)
   const { user, setNeedRedirectTo } = useContext(SessionContext)
+  const { handleTripCreation } = useContext(NewTripContext)
   const { initializing } = useAuth()
   const [StateOfMyTrip, setStateOfMyTrip] = useState('inexistant')
   const [openModal, setOpenModal] = useState('')
@@ -230,7 +232,8 @@ const MyTrips = () => {
                         color="primary"
                         variant="contained"
                         onClick={() => {
-                          history.push('/newtrip/tripFirst')
+                          // history.push('/newtrip/tripFirst')
+                          handleTripCreation()
                         }}
                       >
                         Créer un séjour
@@ -275,7 +278,8 @@ const MyTrips = () => {
                         color="primary"
                         variant="contained"
                         onClick={() => {
-                          history.push('/newtrip/tripFirst')
+                          // history.push('/newtrip/tripFirst')
+                          handleTripCreation()
                         }}
                       >
                         <AddCircle className={classes.addIcon} />
@@ -336,8 +340,11 @@ const MyTrips = () => {
                   color="primary"
                   variant="contained"
                   onClick={() => {
-                    setOpenModal('login')
-                    setNeedRedirectTo('newTrip')
+                    if (!user?.isLoggedIn) {
+                      setOpenModal('login')
+                    }
+                    // setNeedRedirectTo('newTrip')
+                    handleTripCreation()
                   }}
                 >
                   <AddCircle className={classes.addIcon} />

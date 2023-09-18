@@ -1147,6 +1147,24 @@ const TripPage = () => {
               : theme.palette.grey.f7,
         }}
       >
+        {matchesXs && (
+          <Box sx={{ position: 'fixed', top: '15px', right: '15px', zIndex: 100000 }}>
+            <Button
+              variant="outlined"
+              sx={{ backgroundColor: 'white', '&:hover': { backgroundColor: 'white' } }}
+              onClick={() => {
+                if (!run && !matchesXs) {
+                  setState({ run: true })
+                }
+                if (!mobileRun && matchesXs) {
+                  setMobileState({ mobileRun: true })
+                }
+              }}
+            >
+              Tutoriel
+            </Button>
+          </Box>
+        )}
         {matchesXs ? (
           <ReactJoyride
             callback={handleJoyrideCallback}
