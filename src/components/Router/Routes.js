@@ -26,6 +26,7 @@ import HelpDetails from '../../pages/Profile/HelpDetails'
 import TripContextProvider from '../../contexts/trip'
 import TripGuide from '../../pages/TripPage/components/TripGuide'
 import TripGuideItem from '../TripGuideItem'
+import CreateTrip from '../CreateTrip'
 
 const Routes = () => {
   const history = useHistory()
@@ -79,6 +80,9 @@ const Routes = () => {
       </PrivateRoute>
       <PrivateRoute path="/newtrip/tripRecap">
         <TripRecap />
+      </PrivateRoute>
+      <PrivateRoute path="/createtrip">
+        <CreateTrip />
       </PrivateRoute>
       <PrivateRoute path="/tripPage/:tripId">
         <TripContextProvider>

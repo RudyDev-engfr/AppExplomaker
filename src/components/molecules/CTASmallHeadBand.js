@@ -57,7 +57,7 @@ const useStyles = makeStyles(theme => ({
     [theme.breakpoints.down('xs')]: {
       left: '15px',
       transform: 'none',
-      maxWidth: 'calc(100% - 120px)',
+      maxWidth: '100%',
     },
   },
   // buttonContainer: {
@@ -117,27 +117,35 @@ const CTASmallHeadBand = ({ isInvitation, isAssistant, isGuide }) => {
               ? 'Guide du séjour'
               : isAssistant && "Interroge l'Assistant"}
           </Typography>
-          <Typography
+          <Box
             sx={{
-              fontSize: '14px',
-              maxWidth: isGuide
-                ? 'calc(100% - 100px)'
-                : isInvitation
-                ? 'calc(100% - 120px)'
-                : 'calc(100% - 110px)',
-              marginBottom: '20px',
-              [theme.breakpoints.down('sm')]: {
-                width: '100%',
-                maxWidth: '100%',
+              [theme.breakpoints.down('xs')]: {
+                maxWidth: 'calc(100% - 120px)',
               },
             }}
           >
-            {isInvitation
-              ? 'Invitez vos proches à planifier avec vous. Cliquez pour partager'
-              : isGuide
-              ? "Découvre le guide exclusif du voyage pour t'inspirer sur la destination"
-              : isAssistant && "Besoin d'aide? Ouvrez. Planifiez et explorez en un clic"}
-          </Typography>
+            <Typography
+              sx={{
+                fontSize: '14px',
+                maxWidth: isGuide
+                  ? 'calc(100% - 100px)'
+                  : isInvitation
+                  ? 'calc(100% - 120px)'
+                  : 'calc(100% - 110px)',
+                marginBottom: '20px',
+                [theme.breakpoints.down('sm')]: {
+                  width: '100%',
+                  maxWidth: '100%',
+                },
+              }}
+            >
+              {isInvitation
+                ? 'Invitez vos proches à planifier avec vous. Cliquez pour partager'
+                : isGuide
+                ? "Découvre le guide exclusif du voyage pour t'inspirer sur la destination"
+                : isAssistant && "Besoin d'aide? Ouvrez. Planifiez et explorez en un clic"}
+            </Typography>
+          </Box>
         </Box>
         <Box className={classes.buttonContainer}>
           <Button

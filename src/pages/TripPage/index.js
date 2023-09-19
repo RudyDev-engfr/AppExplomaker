@@ -1148,7 +1148,7 @@ const TripPage = () => {
         }}
       >
         {matchesXs && (
-          <Box sx={{ position: 'fixed', top: '15px', right: '15px', zIndex: 100000 }}>
+          <Box sx={{ position: 'fixed', top: '15px', right: '15px', zIndex: 999 }}>
             <Button
               variant="outlined"
               sx={{ backgroundColor: 'white', '&:hover': { backgroundColor: 'white' } }}

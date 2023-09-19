@@ -7,7 +7,7 @@ import { SessionContext } from './session'
 
 export const NewTripContext = createContext()
 
-const CURRENT_VERSION = 1 // mettez à jour cette valeur à chaque modification importante
+const CURRENT_VERSION = 2 // mettez à jour cette valeur à chaque modification importante
 
 const initialValues = {
   version: CURRENT_VERSION,
@@ -32,7 +32,7 @@ const NewTripContextProvider = ({ children }) => {
   const { firestore, timestampRef, dictionary, createNotifications } = useContext(FirebaseContext)
   const { user, setUser } = useContext(SessionContext)
   // Vérifiez si la version du localNewTrip est différente de la version actuelle
-  const isVersionMismatched = !localNewTrip.version || localNewTrip.version !== CURRENT_VERSION
+  const isVersionMismatched = !localNewTrip?.version || localNewTrip?.version !== CURRENT_VERSION
   // Si la version ne correspond pas, utilisez initialValues, sinon utilisez localNewTrip
   const initialState = isVersionMismatched ? initialValues : localNewTrip
   if (isVersionMismatched) {

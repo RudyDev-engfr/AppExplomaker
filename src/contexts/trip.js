@@ -21,7 +21,7 @@ const TripContextProvider = ({ children }) => {
   const [wishes, setWishes] = useState([])
   const [tripData, setTripData] = useState()
   const [canEdit, setCanEdit] = useState(false)
-  const [currentUserWishes, setcurrentUserWishes] = useState()
+  const [currentUserWishes, setCurrentUserWishes] = useState([])
 
   // use to handle Notifications
   const [currentNotifications, setCurrentNotifications] = useState([])
@@ -76,9 +76,11 @@ const TripContextProvider = ({ children }) => {
 
   useEffect(() => {
     if (wishes?.length > 0) {
-      const tempUserWishes = wishes.filter(wish => wish.userId === user.id)
+      const tempUserWishes = wishes?.filter(wish => wish.userId === user.id)
       if (tempUserWishes.length > 0) {
-        setcurrentUserWishes(tempUserWishes)
+        setCurrentUserWishes(tempUserWishes)
+      } else {
+        setCurrentUserWishes([])
       }
     }
   }, [wishes])
@@ -395,7 +397,7 @@ const TripContextProvider = ({ children }) => {
         wishes,
         setWishes,
         currentUserWishes,
-        setcurrentUserWishes,
+        setCurrentUserWishes,
       }}
     >
       {children}

@@ -233,7 +233,7 @@ const MyTrips = () => {
                         variant="contained"
                         onClick={() => {
                           // history.push('/newtrip/tripFirst')
-                          handleTripCreation()
+                          history.push('/createtrip')
                         }}
                       >
                         Créer un séjour
@@ -279,7 +279,7 @@ const MyTrips = () => {
                         variant="contained"
                         onClick={() => {
                           // history.push('/newtrip/tripFirst')
-                          handleTripCreation()
+                          history.push('/createtrip')
                         }}
                       >
                         <AddCircle className={classes.addIcon} />
@@ -344,7 +344,7 @@ const MyTrips = () => {
                       setOpenModal('login')
                     }
                     // setNeedRedirectTo('newTrip')
-                    handleTripCreation()
+                    history.push('/createtrip')
                   }}
                 >
                   <AddCircle className={classes.addIcon} />
