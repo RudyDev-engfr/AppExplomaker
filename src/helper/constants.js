@@ -22,4 +22,8 @@ export const EVENT_TYPES = ['accommodation', 'flight', 'explore', 'transport', '
 
 export const ROLES = { Write: 'Write', Removed: 'Removed', Admin: 'Admin' }
 
-export const NATURALADMINS = ['IaOmRF2xqkh7vpdxXDJ7R0dj9NI2', 'e2jozx02tfTGBD05AZyOf2UEtcO2']
+export const NATURALADMINS = [
+  'IaOmRF2xqkh7vpdxXDJ7R0dj9NI2',
+  'e2jozx02tfTGBD05AZyOf2UEtcO2',
+  'HKaLPwWPReaPZUbYnopy7THlrxA2',
+]

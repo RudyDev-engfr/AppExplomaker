@@ -93,22 +93,6 @@ const MobileTripPageHeader = () => {
                 sx={{
                   color: 'white',
                   textTransform: 'none',
-                  fontWeight: currentActiveTab === 'planning' && 700,
-                }}
-              >
-                Planning
-              </Typography>
-            }
-            value="planning"
-            onClick={() => setCurrentActiveTab('planning')}
-            className="planningPage-mobile"
-          />
-          <Tab
-            label={
-              <Typography
-                sx={{
-                  color: 'white',
-                  textTransform: 'none',
                   fontWeight: currentActiveTab === 'envies' && 700,
                 }}
               >
@@ -133,6 +117,22 @@ const MobileTripPageHeader = () => {
             value="tripguide`"
             onClick={() => setCurrentActiveTab('tripguide')}
             className="guidePage-mobile"
+          />
+          <Tab
+            label={
+              <Typography
+                sx={{
+                  color: 'white',
+                  textTransform: 'none',
+                  fontWeight: currentActiveTab === 'planning' && 700,
+                }}
+              >
+                Planning
+              </Typography>
+            }
+            value="planning"
+            onClick={() => setCurrentActiveTab('planning')}
+            className="planningPage-mobile"
           />
           <Tab
             label={

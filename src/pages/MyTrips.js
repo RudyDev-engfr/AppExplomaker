@@ -102,7 +102,6 @@ const MyTrips = () => {
   const matchesXs = useMediaQuery(theme.breakpoints.down('sm'))
   const { firestore, getTrendingDestinations } = useContext(FirebaseContext)
   const { user, setNeedRedirectTo } = useContext(SessionContext)
-  const { handleTripCreation } = useContext(NewTripContext)
   const { initializing } = useAuth()
   const [StateOfMyTrip, setStateOfMyTrip] = useState('inexistant')
   const [openModal, setOpenModal] = useState('')

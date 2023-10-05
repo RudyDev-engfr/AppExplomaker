@@ -6,7 +6,7 @@ import AccordionSummary from '@mui/material/AccordionSummary'
 import AccordionDetails from '@mui/material/AccordionDetails'
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore'
 import { makeStyles, useTheme } from '@mui/styles'
-import { useMediaQuery } from '@mui/material'
+import { Button, useMediaQuery } from '@mui/material'
 
 import TripGuideButton from '../../../components/atoms/TripGuideButton'
 import { TripContext } from '../../../contexts/trip'
@@ -16,6 +16,7 @@ import MobileTripPageHeader from '../../../components/molecules/MobileTripPageHe
 const useStyles = makeStyles(theme => ({
   mainContainer: {
     width: 'calc(100vw - 350px)',
+    position: 'relative',
     [theme.breakpoints.down('sm')]: {
       width: '100vw',
       paddingBottom: '90px',
@@ -27,7 +28,8 @@ const useStyles = makeStyles(theme => ({
     paddingLeft: '30px',
     paddingTop: '50px',
     [theme.breakpoints.down('sm')]: {
-      height: 'unset',
+      height: '200px',
+      width: '100vw',
     },
   },
   titleTypo: {
@@ -56,7 +58,7 @@ const TripGuide = () => {
   const classes = useStyles()
   const theme = useTheme()
   const matchesXs = useMediaQuery(theme.breakpoints.down('sm'))
-  const { tripData, tripGuideData } = useContext(TripContext)
+  const { tripData, tripGuideData, setOpenModal } = useContext(TripContext)
   const {
     currentSelectedTripGuideButton,
     setCurrentSelectedTripGuideButton,
@@ -100,10 +102,40 @@ const TripGuide = () => {
     <Box className={classes.mainContainer}>
       {matchesXs && <MobileTripPageHeader />}
       <Box className={classes.titleContainer}>
-        <Typography
-          className={classes.titleTypo}
-        >{`Guide de voyage : ${tripData?.destination?.label}`}</Typography>
+        <Typography className={classes.titleTypo}>
+          {tripData?.destination?.label && `Guide de voyage : ${tripData?.destination?.label}`}
+        </Typography>
       </Box>
+      {!tripData?.destination?.label && (
+        <Box
+          sx={{
+            position: 'absolute',
+            left: '50%',
+            top: '50%',
+            transform: 'translate(-50%, -50%)',
+            [theme.breakpoints.down('xs')]: {
+              left: 'unset',
+              top: 'unset',
+              transform: 'none',
+              padding: '0 30px',
+              display: 'flex',
+              flexDirection: 'column',
+              justifyContent: 'center',
+            },
+          }}
+        >
+          <Typography sx={{ [theme.breakpoints.down('xs')]: { textAlign: 'center' } }}>
+            Une destination doit être renseignée dans le séjour.
+          </Typography>
+          <Button
+            variant="text"
+            onClick={() => setOpenModal('editDestination')}
+            sx={{ textTransform: 'none', textDecoration: 'outlined' }}
+          >
+            Choisir une destination
+          </Button>
+        </Box>
+      )}
       <Box className={classes.tripGuideButtonsContainer}>
         {tripGuideData?.length > 1 &&
           Object.entries(

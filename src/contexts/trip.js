@@ -165,17 +165,18 @@ const TripContextProvider = ({ children }) => {
 
     collection.forEach(doc => {
       const data = doc.data()
-      const tempNotifications = data.notifications
+      const tempNotifications = data.notifications || null
       let needsUpdate = false
 
-      // eslint-disable-next-line no-plusplus
-      for (let i = 0; i < tempNotifications?.length; i++) {
-        if (tempNotifications[i].userId === user.id && !tempNotifications[i].hasSeen) {
-          tempNotifications[i].hasSeen = true
-          needsUpdate = true
+      if (tempNotifications !== null) {
+        // eslint-disable-next-line no-plusplus
+        for (let i = 0; i < tempNotifications?.length; i++) {
+          if (tempNotifications[i].userId === user.id && !tempNotifications[i].hasSeen) {
+            tempNotifications[i].hasSeen = true
+            needsUpdate = true
+          }
         }
       }
-
       if (needsUpdate) {
         const docRef = firestore
           .collection('trips')

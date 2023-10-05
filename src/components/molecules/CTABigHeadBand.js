@@ -54,6 +54,9 @@ const useStyles = makeStyles(theme => ({
       left: '50%',
       transform: 'translateX(-50%)',
       width: '200px',
+      display: 'flex',
+      flexDirection: 'column',
+      alignItems: 'center',
     },
   },
   img: {
@@ -110,7 +113,7 @@ const CTABigHeadBand = ({ isOwner }) => {
           sx={{ fontSize: '14px', [theme.breakpoints.down('sm')]: { textAlign: 'center' } }}
         >
           {isOwner
-            ? 'Votre voyage commence maintenant. Indiquez-nous les premiers détails : destination, date, participants'
+            ? 'Votre voyage commence maintenant. Renseignez les premiers détails : destination, date, participants'
             : 'Tu as une idée de ce que tu veux vivre lors de ce séjour ? Partage tes envies ici, discutez-en tous ensemble et laissez Explomaker personnaliser votre expérience'}
         </Typography>
       </Box>
@@ -142,7 +145,7 @@ const CTABigHeadBand = ({ isOwner }) => {
             textDecoration: 'none',
             textTransform: 'none',
             color: 'black',
-            fontWeight: 400,
+            fontWeight: 600,
             marginTop: '10px',
           }}
           onClick={() => {

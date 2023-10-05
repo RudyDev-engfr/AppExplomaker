@@ -11,6 +11,7 @@ function CreateTrip() {
   const { user } = useContext(SessionContext)
   const location = useLocation()
   const { handleTripCreation } = useContext(NewTripContext)
+
   useEffect(() => {
     handleTripCreation()
   }, [location])
