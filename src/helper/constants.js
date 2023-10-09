@@ -25,5 +25,5 @@ export const ROLES = { Write: 'Write', Removed: 'Removed', Admin: 'Admin' }
 export const NATURALADMINS = [
   'IaOmRF2xqkh7vpdxXDJ7R0dj9NI2',
   'e2jozx02tfTGBD05AZyOf2UEtcO2',
-  'HKaLPwWPReaPZUbYnopy7THlrxA2',
+  'VK0TN3JqdNSiAU039WNoilgeREq2',
 ]
