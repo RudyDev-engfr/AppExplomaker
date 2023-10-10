@@ -354,15 +354,30 @@ const ConnectedNav = () => {
             <Box>
               <Button
                 disableRipple
-                className={classes.navLink}
+                className={clsx(classes.navLink)}
                 onClick={() => {
-                  window.location.href = 'https://www.explomaker.fr/inspiration'
+                  window.location.href = 'https://www.explomaker.fr'
+                }}
+              >
+                Exploration
+              </Button>
+              <Button
+                disableRipple
+                className={clsx(classes.navLink)}
+                onClick={() => {
+                  window.location.href = 'https://www.explomaker.fr'
                 }}
               >
                 Inspiration
               </Button>
-              <Button disableRipple className={classes.navLink} onClick={() => history.push('/')}>
-                Mes Séjours
+              <Button
+                disableRipple
+                className={clsx(classes.navLink)}
+                onClick={() => {
+                  window.location.href = 'https://www.explomaker.fr'
+                }}
+              >
+                Séjours
               </Button>
             </Box>
             <Box position="relative" display="flex">

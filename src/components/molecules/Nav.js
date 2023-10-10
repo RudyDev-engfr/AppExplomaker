@@ -271,7 +271,7 @@ const Nav = () => {
                 <img src={logoFull} className={classes.logoFull} alt="" />
               </ButtonBase>
               <Box className={classes.headerInnerRight}>
-                <Button
+                {/* <Button
                   disableRipple
                   className={clsx(classes.navLink)}
                   onClick={() => {
@@ -279,29 +279,47 @@ const Nav = () => {
                   }}
                 >
                   Présentation
+                </Button> */}
+                <Button
+                  disableRipple
+                  className={clsx(classes.navLink)}
+                  onClick={() => {
+                    window.location.href = 'https://www.explomaker.fr'
+                  }}
+                >
+                  Exploration
                 </Button>
                 <Button
                   disableRipple
                   className={clsx(classes.navLink)}
                   onClick={() => {
-                    window.location.href = 'https://explomaker.fr'
+                    window.location.href = 'https://www.explomaker.fr'
                   }}
                 >
                   Inspiration
                 </Button>
                 <Button
                   disableRipple
+                  className={clsx(classes.navLink)}
+                  onClick={() => {
+                    window.location.href = 'https://www.explomaker.fr'
+                  }}
+                >
+                  Séjours
+                </Button>
+                {/* <Button
+                  disableRipple
                   className={clsx(classes.navLink, classes.colorPrimaryMain)}
                   onClick={() => setIsLoginModalOpen('login')}
                 >
                   Connexion
-                </Button>
+                </Button> */}
                 <Button
                   disableElevation
                   className={classes.createAccountBtn}
-                  onClick={() => setIsLoginModalOpen('signup')}
+                  onClick={() => setIsLoginModalOpen('login')}
                 >
-                  Créer mon compte
+                  Connexion
                 </Button>
               </Box>
             </Box>
