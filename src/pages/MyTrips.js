@@ -341,9 +341,10 @@ const MyTrips = () => {
                   onClick={() => {
                     if (!user?.isLoggedIn) {
                       setOpenModal('login')
+                    } else {
+                      history.push('/createtrip')
                     }
                     // setNeedRedirectTo('newTrip')
-                    history.push('/createtrip')
                   }}
                 >
                   <AddCircle className={classes.addIcon} />

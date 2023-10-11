@@ -159,7 +159,7 @@ const ConnectedNav = () => {
 
   const [anchorEl, setAnchorEl] = useState(null)
   const [refreshNotif, setRefreshNotif] = useState(false)
-  const [currentMobileNavTab, setCurrentMobileNavTab] = useState(0)
+  const [currentMobileNavTab, setCurrentMobileNavTab] = useState(3)
   const [isChatOpen, setIsChatOpen] = useState('')
 
   const open = Boolean(anchorEl)
@@ -200,29 +200,23 @@ const ConnectedNav = () => {
     }
     switch (pathname) {
       case '/':
-        setCurrentMobileNavTab('home')
+        setCurrentMobileNavTab(3)
         break
       case '/profile':
       case '/account':
       case '/settings':
       case '/help':
-        setCurrentMobileNavTab('profile')
+        setCurrentMobileNavTab(4)
         break
       default:
-        setCurrentMobileNavTab('home')
+        setCurrentMobileNavTab(3)
     }
   }, [location])
 
   return matchesXs ? (
     <Paper variant="outlined" square className={classes.xsNav}>
-      <Tabs
-        centered
-        fullWidth
-        className={classes.tabs}
-        value={currentMobileNavTab}
-        onChange={handleChange}
-      >
-        <Link passHref href="/" className={classes.muiLink}>
+      <Tabs centered className={classes.tabs} value={currentMobileNavTab} onChange={handleChange}>
+        <Link passHref href="https://www.explomaker.fr" className={classes.muiLink}>
           <Tab
             icon={
               <img
@@ -236,7 +230,7 @@ const ConnectedNav = () => {
             }
             label={
               <Box component="span" className={classes.icons}>
-                Home
+                Présentation
               </Box>
             }
             sx={{
@@ -248,12 +242,12 @@ const ConnectedNav = () => {
             onClick={() => setCurrentMobileNavTab(0)}
           />
         </Link>
-        <Link passHref href="/inspiration" className={classes.muiLink}>
+        <Link passHref href="https://www.explomaker.fr/inspiration" className={classes.muiLink}>
           <Tab
             icon={<img src={inspi} alt="Inspiration_logo" className={classes.img} />}
             label={
               <Box component="span" className={classes.icons}>
-                Inspi
+                Inspiration
               </Box>
             }
             sx={{
@@ -265,7 +259,12 @@ const ConnectedNav = () => {
             onClick={() => setCurrentMobileNavTab(1)}
           />
         </Link>
-        <Link passHref href="/exploration" rel="nofollow" className={classes.muiLink}>
+        <Link
+          passHref
+          href="www.explomaker.fr/exploration"
+          rel="nofollow"
+          className={classes.muiLink}
+        >
           <Tab
             icon={<TravelExplore sx={{ fontSize: '33px' }} />}
             label={
@@ -282,7 +281,7 @@ const ConnectedNav = () => {
             onClick={() => setCurrentMobileNavTab(2)}
           />
         </Link>
-        <Link passHref href="https://app.explomaker.fr" className={classes.muiLink}>
+        <Link passHref href="/" className={classes.muiLink}>
           <Tab
             icon={
               <img
@@ -308,7 +307,7 @@ const ConnectedNav = () => {
             onClick={() => setCurrentMobileNavTab(3)}
           />
         </Link>
-        <Link passHref href="https://app.explomaker.fr/profile" className={classes.muiLink}>
+        <Link passHref href="/profile" className={classes.muiLink}>
           <Tab
             icon={
               <img

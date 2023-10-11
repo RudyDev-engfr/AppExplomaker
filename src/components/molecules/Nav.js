@@ -162,7 +162,7 @@ const Nav = () => {
         <ConnectedNav />
       ) : matchesXs ? (
         <Paper variant="outlined" square className={classes.xsNav}>
-          <Tabs centered variant="fullWidth" className={classes.tabs} value={currentMobileNavTab}>
+          <Tabs centered className={classes.tabs} value={currentMobileNavTab}>
             <Tab
               icon={<img src={home} alt="" className={classes.tabsMobileImg} />}
               label={
@@ -185,7 +185,7 @@ const Nav = () => {
               icon={<img src={inspi} alt="Inspiration_logo" className={classes.img} />}
               label={
                 <Box component="span" className={classes.icons}>
-                  Inspi
+                  Inspiration
                 </Box>
               }
               sx={{
@@ -265,7 +265,7 @@ const Nav = () => {
                 disableRipple
                 disableTouchRipple
                 onClick={() => {
-                  window.location.href = 'https://explomaker.fr'
+                  window.location.href = 'https://www.explomaker.fr'
                 }}
               >
                 <img src={logoFull} className={classes.logoFull} alt="" />
@@ -284,7 +284,7 @@ const Nav = () => {
                   disableRipple
                   className={clsx(classes.navLink)}
                   onClick={() => {
-                    window.location.href = 'https://www.explomaker.fr'
+                    window.location.href = 'https://www.explomaker.fr/exploration'
                   }}
                 >
                   Exploration
@@ -293,7 +293,7 @@ const Nav = () => {
                   disableRipple
                   className={clsx(classes.navLink)}
                   onClick={() => {
-                    window.location.href = 'https://www.explomaker.fr'
+                    window.location.href = 'https://www.explomaker.fr/inspiration'
                   }}
                 >
                   Inspiration
@@ -302,7 +302,7 @@ const Nav = () => {
                   disableRipple
                   className={clsx(classes.navLink)}
                   onClick={() => {
-                    window.location.href = 'https://www.explomaker.fr'
+                    history.push('/')
                   }}
                 >
                   Séjours
