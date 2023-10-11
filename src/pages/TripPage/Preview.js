@@ -272,7 +272,7 @@ const Preview = ({
       case 'solo':
         return 'Seul'
       default:
-        return 'Entre amis'
+        return '-'
     }
   }
 
@@ -528,7 +528,9 @@ const Preview = ({
                         ? 'Faible'
                         : tripData.budget === 'medium'
                         ? 'Moyen'
-                        : 'Élevé'}
+                        : tripData.budget === 'high'
+                        ? 'Élevé'
+                        : '-'}
                     </Typography>
                   </Box>
                 </Box>
