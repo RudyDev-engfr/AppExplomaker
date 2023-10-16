@@ -8,8 +8,7 @@ import { SessionContext } from './session'
 export const TripContext = createContext()
 
 const TripContextProvider = ({ children }) => {
-  // const { delNotificationsFromAnEventDeleted, refreshTripData, createNotificationsOnTrip } =
-  //   useContext(FirebaseContext)
+  const { database } = useContext(FirebaseContext)
   // const { user } = useContext(SessionContext)
   // const { tripId } = useParams()
   const { tripId } = useParams()
@@ -74,11 +73,34 @@ const TripContextProvider = ({ children }) => {
     console.log('tempUserWishes', currentUserWishes)
   }, [currentUserWishes])
 
+  // useEffect(() => {
+  //   if (wishes?.length > 0) {
+  //     const tempUserWishes = wishes?.filter(wish => wish.userId === user.id)
+  //     if (tempUserWishes.length > 0) {
+  //       setCurrentUserWishes(tempUserWishes)
+  //     } else {
+  //       setCurrentUserWishes([])
+  //     }
+  //   }
+  // }, [wishes])
+
   useEffect(() => {
     if (wishes?.length > 0) {
       const tempUserWishes = wishes?.filter(wish => wish.userId === user.id)
+
       if (tempUserWishes.length > 0) {
-        setCurrentUserWishes(tempUserWishes)
+        const promises = tempUserWishes.map(wish =>
+          database.ref(`dictionary/meta_name_envies_sport/${wish.value}`).once('value')
+        )
+
+        Promise.all(promises).then(snapshots => {
+          const names = snapshots.map(snapshot => snapshot.val().name)
+          const updatedWishes = tempUserWishes.map((wish, index) => ({
+            ...wish,
+            value: names[index],
+          }))
+          setCurrentUserWishes(updatedWishes)
+        })
       } else {
         setCurrentUserWishes([])
       }

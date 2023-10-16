@@ -1,10 +1,9 @@
-import React, { useState } from 'react'
+import React from 'react'
 import Box from '@mui/material/Box'
 import Paper from '@mui/material/Paper'
 import Button from '@mui/material/Button'
 import Typography from '@mui/material/Typography'
-import { makeStyles, useTheme } from '@mui/styles'
-import { useMediaQuery } from '@mui/material'
+import { makeStyles } from '@mui/styles'
 import { useHistory } from 'react-router-dom'
 
 import arrow from '../../images/icons/arrow-back.svg'
@@ -76,15 +75,11 @@ const TripGuideButton = ({
   item_picture: itemPicture,
 }) => {
   const classes = useStyles()
-  const theme = useTheme()
-  const matchesXs = useMediaQuery(theme.breakpoints.down('sm'))
   const history = useHistory()
 
-  const [alertModal, setAlertModal] = useState(false)
-
   const handleClick = () => {
-    history.push(`${history.location.pathname}?itemName=${model}`)
     setCurrentSelectedTripGuideButton(model)
+    history.push(`${history.location.pathname}?itemName=${model}`)
   }
 
   return (

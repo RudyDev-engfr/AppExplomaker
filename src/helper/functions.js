@@ -58,6 +58,40 @@ export function rCTFF(arrayOfTimestamps, formatStr) {
   return timestamps
 }
 
+export function buildExplorationURL(context, wishes) {
+  const tempContext = context
+  const tempWishes = wishes || []
+  let urlContext = null
+  let urlWishes = null
+  // eslint-disable-next-line default-case
+  switch (tempContext) {
+    case 'lovers':
+      urlContext = '❤%EF%B8%8F%20En%20amoureux'
+      break
+    case 'friends':
+      urlContext = '😎%20Entre%20amis'
+      break
+    case 'family':
+      urlContext = '🤗%20En%20famille'
+      break
+    case 'solo':
+      urlContext = '🎒%20En%20solo'
+      break
+  }
+  if (tempWishes.length > 0) {
+    urlWishes = tempWishes
+      ?.map(
+        (currentWish, index) =>
+          `&SearchFront%5BrefinementList%5D%5Benvies%5D%5B5D=${encodeURI(currentWish?.label)}`
+      )
+      .join('')
+  }
+  if (urlContext !== null && urlWishes !== null) {
+    return `https://www.explomaker.fr/exploration?SearchFront%5BrefinementList%5D%5Btype_de_sejour%5D%5B0%5D=${urlContext}${urlWishes}`
+  }
+  return 'https://www.explomaker.fr/exploration'
+}
+
 export function dateToString(date, displayFormat = 'yyyy-MM-dd') {
   const tempDate = date
   return format(tempDate, displayFormat, { locale: frLocale })

@@ -17,6 +17,7 @@ import RadioGroup from '@mui/material/RadioGroup'
 import FormControlLabel from '@mui/material/FormControlLabel'
 import Radio from '@mui/material/Radio'
 import useMediaQuery from '@mui/material/useMediaQuery'
+import Link from '@mui/material/Link'
 import TextareaAutosize from '@mui/material/TextareaAutosize'
 import Checkbox from '@mui/material/Checkbox'
 import { makeStyles, useTheme } from '@mui/styles'
@@ -48,7 +49,7 @@ import Photos from './Photos'
 import Documents from './Documents'
 import Notes from './Notes'
 import Inspiration from './Inspiration' */
-import { filterObjectByValue, rCTFF } from '../../helper/functions'
+import { buildExplorationURL, filterObjectByValue, rCTFF } from '../../helper/functions'
 import { fieldValueRef, FirebaseContext } from '../../contexts/firebase'
 import {
   BUDGET_OPTIONS,
@@ -432,6 +433,8 @@ const TripPage = () => {
     modalTravelers,
     setModalTravelers,
     nbTravelers,
+    currentSelectedTripGuideButton,
+    currentUserWishes,
   } = useContext(TripContext)
   const [isLoading, setIsLoading] = useState(true)
   const [carouselImages, setCarouselImages] = useState([])
@@ -1287,7 +1290,9 @@ const TripPage = () => {
               {currentActiveTab === 'triplogs' && (
                 <TripLogs tripData={tripData} tripId={tripId} canEdit={canEdit} />
               )}
-              {currentActiveTab === 'tripguide' && <TripGuide />}
+              {currentActiveTab === 'tripguide' && currentSelectedTripGuideButton === null && (
+                <TripGuide />
+              )}
               {/* {currentActiveTab === 'photos' && <Photos tripId={tripId} />} */}
               {/* {currentActiveTab === 'documents' && <Documents />}
             {currentActiveTab === 'notes' && <Notes />}
@@ -1544,7 +1549,10 @@ const TripPage = () => {
             </Box>
             <Typography>
               Pour la destination, tu peux rechercher un continent, un pays, une région, une ville,
-              un lieu&nbsp;...
+              un lieu&nbsp;...{' '}
+              <Link href={buildExplorationURL(tripData?.context, currentUserWishes)}>
+                <Typography>Consulte notre guide de destinations selon vos envies</Typography>
+              </Link>
             </Typography>
           </Box>
           {matchesXs ? (

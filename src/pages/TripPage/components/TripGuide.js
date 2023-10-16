@@ -6,6 +6,7 @@ import AccordionSummary from '@mui/material/AccordionSummary'
 import AccordionDetails from '@mui/material/AccordionDetails'
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore'
 import { makeStyles, useTheme } from '@mui/styles'
+import { useHistory, useLocation } from 'react-router-dom'
 import { Button, useMediaQuery } from '@mui/material'
 
 import TripGuideButton from '../../../components/atoms/TripGuideButton'
@@ -57,6 +58,8 @@ const useStyles = makeStyles(theme => ({
 const TripGuide = () => {
   const classes = useStyles()
   const theme = useTheme()
+  const location = useLocation()
+  const history = useHistory()
   const matchesXs = useMediaQuery(theme.breakpoints.down('sm'))
   const { tripData, tripGuideData, setOpenModal } = useContext(TripContext)
   const {
@@ -78,11 +81,34 @@ const TripGuide = () => {
   )
 
   useEffect(() => {
+    console.log('itemData', itemData)
     setLocalItemData(itemData)
   }, [itemData])
 
   useEffect(() => {
-    if (currentSelectedTripGuideButton !== null) {
+    if (location) {
+      const params = new URLSearchParams(location.search)
+      const itemName = params.get('itemName')
+      if (itemName && tripGuideData !== null) {
+        const tempData = tripGuideData.find(data => data.model === itemName)
+        setCurrentSelectedTripGuideButton(itemName)
+        setItemData(tempData)
+      }
+    }
+  }, [location])
+
+  useEffect(() => {
+    console.log('currentSelectedbutton', currentSelectedTripGuideButton)
+    if (currentSelectedTripGuideButton !== null && localItemData !== null) {
+      history.replace(`/tripguide?blabla&itemName=${currentSelectedTripGuideButton}`)
+      const tempData = tripGuideData.find(data => data.model === currentSelectedTripGuideButton)
+      setItemData(tempData)
+    }
+  }, [currentSelectedTripGuideButton])
+
+  useEffect(() => {
+    console.log('tripGuideData', tripGuideData)
+    if (currentSelectedTripGuideButton !== null && tripGuideData !== null) {
       const tempData = tripGuideData.find(data => data.model === currentSelectedTripGuideButton)
       setItemData(tempData)
     }
@@ -149,11 +175,11 @@ const TripGuide = () => {
                 acc[singleData.category].push(singleData)
                 return acc
               }, {})
-          ).map(([category, items]) => (
+          ).map(([category, items], index) => (
             <>
               <Accordion
                 key={category}
-                expanded={tripGuideExpanded === `panel${category}`}
+                expanded={tripGuideExpanded === `panel${category}` || index === 0}
                 onChange={handleChange(`panel${category}`)}
                 sx={{
                   width: 'calc(100vw - 350px)',
@@ -183,8 +209,6 @@ const TripGuide = () => {
                       <TripGuideButton
                         key={item.name}
                         itemName={item?.name}
-                        logo={item?.logo}
-                        currentSelectedTripGuideButton={currentSelectedTripGuideButton}
                         setCurrentSelectedTripGuideButton={setCurrentSelectedTripGuideButton}
                         model={item?.model}
                         item_picture={item?.item_picture}
