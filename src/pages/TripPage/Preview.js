@@ -263,13 +263,13 @@ const Preview = ({
 
   const displayTripContext = context => {
     switch (context) {
-      case '😎 Entre amis':
+      case 'friends':
         return 'Entre amis'
-      case 'En amoureux':
+      case 'lovers':
         return '❤️ En amoureux'
-      case '🤗 En famille':
+      case 'family':
         return 'En famille'
-      case '🎒 En solo':
+      case 'solo':
         return 'Seul'
       default:
         return '-'
@@ -517,7 +517,9 @@ const Preview = ({
                   </Box>
                   <Box m="15px 0">
                     <Typography className={classes.infotitle}>Contexte</Typography>
-                    <Typography className={classes.infobody}>{tripData.context}</Typography>
+                    <Typography className={classes.infobody}>
+                      {displayTripContext(tripData?.context)}
+                    </Typography>
                   </Box>
                   <Box m="15px 0">
                     <Typography className={classes.infotitle}>Budget</Typography>
