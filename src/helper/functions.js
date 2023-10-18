@@ -89,6 +89,9 @@ export function buildExplorationURL(context, wishes) {
   if (urlContext !== null && urlWishes !== null) {
     return `https://www.explomaker.fr/exploration?SearchFront%5BrefinementList%5D%5Btype_de_sejour%5D%5B0%5D=${urlContext}${urlWishes}`
   }
+  if (urlContext !== null) {
+    return `https://www.explomaker.fr/exploration?SearchFront%5BrefinementList%5D%5Btype_de_sejour%5D%5B0%5D=${urlContext}`
+  }
   return 'https://www.explomaker.fr/exploration'
 }
 

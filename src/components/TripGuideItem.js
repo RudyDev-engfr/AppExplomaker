@@ -60,7 +60,7 @@ const useStyles = makeStyles(theme => ({
 const TripGuideItem = ({ currentItem, setCurrentSelectedTripGuideButton, setItemData }) => {
   const classes = useStyles()
   const theme = useTheme()
-  const { tripId } = useParams()
+  const { tripId, itemName } = useParams()
   const history = useHistory()
   const matchesXs = useMediaQuery(theme.breakpoints.down('sm'))
   const { tripData } = useContext(TripContext)

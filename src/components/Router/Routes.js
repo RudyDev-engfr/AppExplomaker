@@ -86,7 +86,11 @@ const Routes = () => {
       </PrivateRoute>
       <PrivateRoute path="/tripPage/:tripId">
         <TripContextProvider>
-          <TripPage />
+          <TripPage>
+            <TripGuide>
+              <TripGuideItem path="/tripPage/:tripId/tripguide?itemName=:itemName" />
+            </TripGuide>
+          </TripPage>
         </TripContextProvider>
       </PrivateRoute>
       <PrivateRoute path="/profile">
