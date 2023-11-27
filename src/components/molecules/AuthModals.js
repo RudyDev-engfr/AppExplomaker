@@ -36,7 +36,7 @@ const useStyles = makeStyles(theme => ({
     [theme.breakpoints.down('sm')]: {
       width: '100vw',
       position: 'relative',
-      top: '70vh',
+      top: '34vh',
       left: 'unset',
       transform: 'unset',
       borderRadius: '20px 20px 0 0',

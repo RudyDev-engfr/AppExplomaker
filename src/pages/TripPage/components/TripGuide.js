@@ -89,10 +89,12 @@ const TripGuide = () => {
     if (location) {
       const params = new URLSearchParams(location.search)
       const itemName = params.get('itemName')
+      console.log('itemName', itemName)
       if (itemName && tripGuideData !== null) {
         const tempData = tripGuideData.find(data => data.model === itemName)
         setCurrentSelectedTripGuideButton(itemName)
         setItemData(tempData)
+        console.log('done')
       }
     }
   }, [location])
