@@ -2,6 +2,9 @@ import React, { useContext, useEffect, useState } from 'react'
 import Box from '@mui/material/Box'
 import IconButton from '@mui/material/IconButton'
 import Typography from '@mui/material/Typography'
+import { makeStyles, useTheme } from '@mui/styles'
+import { Fab, useMediaQuery } from '@mui/material'
+import AddIcon from '@mui/icons-material/Add'
 
 import { format } from 'date-fns'
 import frLocale from 'date-fns/locale/fr'
@@ -14,12 +17,30 @@ import { stringToDate } from '../../../helper/functions'
 import MiniEventCard from '../../../components/atoms/MiniEventCard'
 import { TripContext } from '../../../contexts/trip'
 
-const PlanningFeed = ({ propsClasses, setCurrentView }) => {
+const useStyles = makeStyles(theme => ({
+  FabClass: {
+    position: 'absolute',
+    top: '15px',
+    right: '25px',
+    [theme.breakpoints.down('sm')]: {
+      position: 'fixed',
+      top: 'unset',
+      right: '50%',
+      bottom: '120px',
+      transform: 'translateX(50%)',
+    },
+  },
+}))
+
+const PlanningFeed = ({ propsClasses, setCurrentView, currentDateRange }) => {
+  const classes = useStyles()
+  const theme = useTheme()
+  const matchesXs = useMediaQuery(theme.breakpoints.down('sm'))
   const [eventsByDay, setEventsByDay] = useState([])
 
   const { days, singleDayPlannedEvents, setSelectedDateOnPlanning, setIsNewDatesSectionOpen } =
     useContext(PlanningContext)
-  const { currentView } = useContext(TripContext)
+  const { currentView, canEdit } = useContext(TripContext)
 
   function compare(a, b) {
     // Met les itsAllDayLong : true en dernier
@@ -72,6 +93,11 @@ const PlanningFeed = ({ propsClasses, setCurrentView }) => {
 
   return (
     <Box className={propsClasses} sx={{ padding: '20px' }}>
+      {canEdit && !matchesXs && typeof currentDateRange[0] !== 'undefined' && (
+        <Fab className={classes.FabClass} color="primary" onClick={() => setCurrentView('add')}>
+          <AddIcon fontSize="large" />
+        </Fab>
+      )}
       {days?.length >= 1 &&
         days.map(day => {
           const dateKey = format(day, 'yyyy-MM-dd')

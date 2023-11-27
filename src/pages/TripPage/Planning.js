@@ -197,6 +197,8 @@ const useStyles = makeStyles(theme => ({
     placeItems: 'center',
     backgroundColor: theme.palette.grey.f7,
     zIndex: '1000',
+    position: 'relative',
+    paddingTop: '80px',
     [theme.breakpoints.down('sm')]: {
       // gridRowStart: 'mapArea',
       // gridRowEnd: 'previewArea',
@@ -521,7 +523,11 @@ const Planning = ({ tripData, tripId }) => {
     <>
       <Box className={classes.boxPlanning}>
         {currentView === 'chronoFeed' && (
-          <PlanningFeed propsClasses={classes.chronoFeed} setCurrentView={setCurrentView} />
+          <PlanningFeed
+            propsClasses={classes.chronoFeed}
+            setCurrentView={setCurrentView}
+            currentDateRange={currentDateRange}
+          />
         )}
         {canEdit && currentView === 'add' && (
           <EventAdd setEventType={setEventType} setCurrentView={setCurrentView} />
