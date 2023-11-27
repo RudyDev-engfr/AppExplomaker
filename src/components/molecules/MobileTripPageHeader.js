@@ -25,7 +25,7 @@ const useStyles = makeStyles(theme => ({
 const MobileTripPageHeader = () => {
   const { currentActiveTab, setCurrentActiveTab, setOpenModal } = useContext(TripContext)
   const classes = useStyles()
-  const { tripData } = useContext(TripContext)
+  const { tripData, currentDateRange } = useContext(TripContext)
 
   return (
     <Box className={classes.mainHeaderContainer}>
@@ -118,22 +118,24 @@ const MobileTripPageHeader = () => {
             onClick={() => setCurrentActiveTab('tripguide')}
             className="guidePage-mobile"
           />
-          <Tab
-            label={
-              <Typography
-                sx={{
-                  color: 'white',
-                  textTransform: 'none',
-                  fontWeight: currentActiveTab === 'planning' && 700,
-                }}
-              >
-                Planning
-              </Typography>
-            }
-            value="planning"
-            onClick={() => setCurrentActiveTab('planning')}
-            className="planningPage-mobile"
-          />
+          {currentDateRange[0] && (
+            <Tab
+              label={
+                <Typography
+                  sx={{
+                    color: 'white',
+                    textTransform: 'none',
+                    fontWeight: currentActiveTab === 'planning' && 700,
+                  }}
+                >
+                  Planning
+                </Typography>
+              }
+              value="planning"
+              onClick={() => setCurrentActiveTab('planning')}
+              className="planningPage-mobile"
+            />
+          )}
           <Tab
             label={
               <Typography

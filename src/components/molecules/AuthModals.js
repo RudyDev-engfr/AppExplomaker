@@ -43,6 +43,22 @@ const useStyles = makeStyles(theme => ({
       paddingBottom: '24px',
     },
   },
+  littlePaper: {
+    position: 'absolute',
+    top: '50%',
+    left: '50%',
+    transform: 'translate(-50%, -50%)',
+    width: 600,
+    [theme.breakpoints.down('sm')]: {
+      width: '100vw',
+      position: 'relative',
+      top: '34vh',
+      left: 'unset',
+      transform: 'unset',
+      borderRadius: '20px 20px 0 0',
+      paddingBottom: '24px',
+    },
+  },
   paperFromAccount: {
     [theme.breakpoints.down('sm')]: {
       height: '100vh',
@@ -326,7 +342,7 @@ const SignUpModal = ({
               ))}
             </Carousel>
           </Box>
-          <Paper className={classes.paper}>
+          <Paper className={classes.littlePaper}>
             <Box display="flex" justifyContent="center" paddingTop="10px" paddingBottom="40px">
               <img src={lineMobile} alt="" />
             </Box>

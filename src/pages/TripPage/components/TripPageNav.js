@@ -292,49 +292,51 @@ const TripPageNav = ({
             </Button>
           </Box>
         )}
-        <Box className="planningPage-desktop">
-          <Button
-            className={clsx(classes.sidebarButton, {
-              [classes.activeTabStyle]: currentActiveTab === 'planning',
-            })}
-            onClick={() => {
-              history.push(`/tripPage/${tripId}/planning`)
-            }}
-            startIcon={
-              <EventNoteIcon
-                color={currentActiveTab === 'planning' ? 'primary' : 'disabled'}
-                className={classes.icons}
-              />
-            }
-            sx={{ position: 'relative' }}
-          >
-            Planning
-            {currentPlanningNotifications.filter(notification => notification.state === 1).length >
-              0 && (
-              <Box
-                sx={{
-                  position: 'absolute',
-                  backgroundColor: theme.palette.secondary.main,
-                  width: '18px',
-                  height: '18px',
-                  borderRadius: '50px',
-                  padding: '5px',
-                  right: '25px',
-                  zIndex: 1000000,
-                  color: 'white',
-                  fontSize: '9px',
-                  fontWeight: 500,
-                  lineHeight: '10.67px',
-                }}
-              >
-                {
-                  currentPlanningNotifications.filter(notification => notification.state === 1)
-                    .length
-                }
-              </Box>
-            )}
-          </Button>
-        </Box>
+        {currentDateRange[0] && (
+          <Box className="planningPage-desktop">
+            <Button
+              className={clsx(classes.sidebarButton, {
+                [classes.activeTabStyle]: currentActiveTab === 'planning',
+              })}
+              onClick={() => {
+                history.push(`/tripPage/${tripId}/planning`)
+              }}
+              startIcon={
+                <EventNoteIcon
+                  color={currentActiveTab === 'planning' ? 'primary' : 'disabled'}
+                  className={classes.icons}
+                />
+              }
+              sx={{ position: 'relative' }}
+            >
+              Planning
+              {currentPlanningNotifications.filter(notification => notification.state === 1)
+                .length > 0 && (
+                <Box
+                  sx={{
+                    position: 'absolute',
+                    backgroundColor: theme.palette.secondary.main,
+                    width: '18px',
+                    height: '18px',
+                    borderRadius: '50px',
+                    padding: '5px',
+                    right: '25px',
+                    zIndex: 1000000,
+                    color: 'white',
+                    fontSize: '9px',
+                    fontWeight: 500,
+                    lineHeight: '10.67px',
+                  }}
+                >
+                  {
+                    currentPlanningNotifications.filter(notification => notification.state === 1)
+                      .length
+                  }
+                </Box>
+              )}
+            </Button>
+          </Box>
+        )}
         {canEdit && (
           <Button
             className={clsx(classes.sidebarButton, {
