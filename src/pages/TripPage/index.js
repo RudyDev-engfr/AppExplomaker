@@ -1290,9 +1290,7 @@ const TripPage = () => {
               {currentActiveTab === 'triplogs' && (
                 <TripLogs tripData={tripData} tripId={tripId} canEdit={canEdit} />
               )}
-              {currentActiveTab === 'tripguide' && currentSelectedTripGuideButton === null && (
-                <TripGuide />
-              )}
+              {currentActiveTab === 'tripguide' && <TripGuide />}
               {/* {currentActiveTab === 'photos' && <Photos tripId={tripId} />} */}
               {/* {currentActiveTab === 'documents' && <Documents />}
             {currentActiveTab === 'notes' && <Notes />}

@@ -57,13 +57,13 @@ const useStyles = makeStyles(theme => ({
     },
   },
 }))
-const TripGuideItem = ({ currentItem, setCurrentSelectedTripGuideButton, setItemData }) => {
+const TripGuideItem = ({ currentItem, setItemData }) => {
   const classes = useStyles()
   const theme = useTheme()
   const { tripId, itemName } = useParams()
   const history = useHistory()
   const matchesXs = useMediaQuery(theme.breakpoints.down('sm'))
-  const { tripData } = useContext(TripContext)
+  const { tripData, setCurrentSelectedTripGuideButton } = useContext(TripContext)
   const { user } = useContext(SessionContext)
   const { firestore, FieldValue } = useContext(FirebaseContext)
 

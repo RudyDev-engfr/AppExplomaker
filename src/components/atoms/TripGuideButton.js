@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import Box from '@mui/material/Box'
 import Paper from '@mui/material/Paper'
 import Button from '@mui/material/Button'
@@ -7,6 +7,7 @@ import { makeStyles } from '@mui/styles'
 import { useHistory } from 'react-router-dom'
 
 import arrow from '../../images/icons/arrow-back.svg'
+import { TripContext } from '../../contexts/trip'
 
 const useStyles = makeStyles(theme => ({
   papers: {
@@ -68,19 +69,28 @@ const useStyles = makeStyles(theme => ({
   },
 }))
 
-const TripGuideButton = ({
-  itemName,
-  model,
-  setCurrentSelectedTripGuideButton,
-  item_picture: itemPicture,
-}) => {
+const TripGuideButton = ({ itemName, model, item_picture: itemPicture }) => {
   const classes = useStyles()
   const history = useHistory()
+  const [thisButton, setThisButton] = useState()
+  const { currentSelectedTripGuideButton, setCurrentSelectedTripGuideButton } =
+    useContext(TripContext)
 
   const handleClick = () => {
     setCurrentSelectedTripGuideButton(model)
-    history.push(`${history.location.pathname}?itemName=${model}`)
+    setThisButton(model)
+    console.log('je clique sur un bouton', model)
+    console.log('jemaj le button', currentSelectedTripGuideButton)
+    // history.push(`${history.location.pathname}?itemName=${model}`)
   }
+
+  useEffect(() => {
+    console.log('this button', thisButton)
+  }, [thisButton])
+
+  useEffect(() => {
+    console.log('jemaj le button', currentSelectedTripGuideButton)
+  }, [currentSelectedTripGuideButton])
 
   return (
     <Box>

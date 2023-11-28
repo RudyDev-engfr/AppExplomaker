@@ -37,6 +37,7 @@ const useStyles = makeStyles(theme => ({
       width: '100vw',
       position: 'relative',
       top: '34vh',
+      minHeight: '66vh',
       left: 'unset',
       transform: 'unset',
       borderRadius: '20px 20px 0 0',
@@ -52,7 +53,8 @@ const useStyles = makeStyles(theme => ({
     [theme.breakpoints.down('sm')]: {
       width: '100vw',
       position: 'relative',
-      top: '34vh',
+      top: '50vh',
+      minHeight: '50vh',
       left: 'unset',
       transform: 'unset',
       borderRadius: '20px 20px 0 0',
@@ -80,6 +82,7 @@ const useStyles = makeStyles(theme => ({
   carouselImg: {
     width: '100vw',
     height: 'auto',
+    maxHeight: '60vh',
   },
   carouselDescriptionBox: {
     backgroundColor: theme.palette.primary.ultraLight,
@@ -168,7 +171,7 @@ const LoginModal = ({
               showDots={false}
               responsive={{
                 mobile: {
-                  breakpoint: { max: 464, min: 0 },
+                  breakpoint: { max: 960, min: 0 },
                   items: 1,
                 },
               }}
@@ -328,7 +331,7 @@ const SignUpModal = ({
               showDots={false}
               responsive={{
                 mobile: {
-                  breakpoint: { max: 464, min: 0 },
+                  breakpoint: { max: 960, min: 0 },
                   items: 1,
                 },
               }}
@@ -498,7 +501,7 @@ export const PasswordResetModal = ({
               showDots={false}
               responsive={{
                 mobile: {
-                  breakpoint: { max: 640, min: 0 },
+                  breakpoint: { max: 960, min: 0 },
                   items: 1,
                 },
               }}

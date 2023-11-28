@@ -61,14 +61,17 @@ const TripGuide = () => {
   const location = useLocation()
   const history = useHistory()
   const matchesXs = useMediaQuery(theme.breakpoints.down('sm'))
-  const { tripData, tripGuideData, setOpenModal } = useContext(TripContext)
   const {
+    tripData,
+    tripGuideData,
+    setOpenModal,
     currentSelectedTripGuideButton,
-    setCurrentSelectedTripGuideButton,
     itemData,
     setItemData,
     tripGuideExpanded,
     setTripGuideExpanded,
+    tripGuideFavoriteItems,
+    setTripGuideFavoriteItems,
   } = useContext(TripContext)
 
   const [localItemData, setLocalItemData] = useState(itemData)
@@ -81,49 +84,28 @@ const TripGuide = () => {
   )
 
   useEffect(() => {
-    console.log('itemData', itemData)
-    setLocalItemData(itemData)
-  }, [itemData])
-
-  useEffect(() => {
-    if (location) {
-      const params = new URLSearchParams(location.search)
-      const itemName = params.get('itemName')
-      console.log('itemName', itemName)
-      if (itemName && tripGuideData !== null) {
-        const tempData = tripGuideData.find(data => data.model === itemName)
-        setCurrentSelectedTripGuideButton(itemName)
-        setItemData(tempData)
-        console.log('done')
-      }
-    }
-  }, [location])
-
-  useEffect(() => {
-    console.log('currentSelectedbutton', currentSelectedTripGuideButton)
-    if (currentSelectedTripGuideButton !== null && localItemData !== null) {
-      history.replace(`/tripguide?blabla&itemName=${currentSelectedTripGuideButton}`)
-      const tempData = tripGuideData.find(data => data.model === currentSelectedTripGuideButton)
-      setItemData(tempData)
-    }
-  }, [currentSelectedTripGuideButton])
-
-  useEffect(() => {
     console.log('tripGuideData', tripGuideData)
+    console.log('currentSelectedTRipGuideB', currentSelectedTripGuideButton)
     if (currentSelectedTripGuideButton !== null && tripGuideData !== null) {
-      const tempData = tripGuideData.find(data => data.model === currentSelectedTripGuideButton)
+      const tempData = tripGuideData.find(data => {
+        console.log('data', data.model)
+        return data.model === currentSelectedTripGuideButton
+      })
       setItemData(tempData)
     }
   }, [currentSelectedTripGuideButton, tripGuideData])
 
+  useEffect(() => {
+    console.log('itemData', itemData)
+    setLocalItemData(itemData)
+  }, [itemData, tripGuideData])
+
+  useEffect(() => {
+    console.log('montremoilebutton', currentSelectedTripGuideButton)
+  }, [currentSelectedTripGuideButton])
+
   if (localItemData !== null) {
-    return (
-      <TripGuideItem
-        currentItem={itemData}
-        setCurrentSelectedTripGuideButton={setCurrentSelectedTripGuideButton}
-        setItemData={setItemData}
-      />
-    )
+    return <TripGuideItem currentItem={itemData} setItemData={setItemData} />
   }
 
   return (
@@ -211,7 +193,6 @@ const TripGuide = () => {
                       <TripGuideButton
                         key={item.name}
                         itemName={item?.name}
-                        setCurrentSelectedTripGuideButton={setCurrentSelectedTripGuideButton}
                         model={item?.model}
                         item_picture={item?.item_picture}
                       />

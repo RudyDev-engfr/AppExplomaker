@@ -62,7 +62,7 @@ const TripContextProvider = ({ children }) => {
   const [currentSelectedTripGuideButton, setCurrentSelectedTripGuideButton] = useState(null)
   const [itemData, setItemData] = useState(null)
   const [tripGuideExpanded, setTripGuideExpanded] = useState('')
-  const [tripGuideFavoriteItems, settripGuideFavoriteItems] = useState([])
+  const [tripGuideFavoriteItems, setTripGuideFavoriteItems] = useState([])
 
   // used to handle EditTravelersModal
   const [nbTravelers, setNbTravelers] = useState(1)
@@ -408,8 +408,6 @@ const TripContextProvider = ({ children }) => {
         setCurrentLocation,
         tripGuideData,
         setTripGuideData,
-        currentSelectedTripGuideButton,
-        setCurrentSelectedTripGuideButton,
         itemData,
         setItemData,
         nbTravelers,
@@ -422,6 +420,10 @@ const TripContextProvider = ({ children }) => {
         setWishes,
         currentUserWishes,
         setCurrentUserWishes,
+        tripGuideFavoriteItems,
+        setTripGuideFavoriteItems,
+        currentSelectedTripGuideButton,
+        setCurrentSelectedTripGuideButton,
       }}
     >
       {children}
