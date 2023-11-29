@@ -70,13 +70,13 @@ const TripGuideItem = ({ currentItem, setItemData }) => {
   const [openAlertModal, setOpenAlertModal] = useState(false)
   const [expanded, setExpanded] = useState('')
   const [alertModalTitle, setAlertModalTitle] = useState('')
-  const [alertModalIndex, setalertModalIndex] = useState()
+  const [alertModalIndex, setAlertModalIndex] = useState()
 
   const handleChange = panel => (event, isExpanded) => {
     setExpanded(isExpanded ? panel : '')
   }
 
-  const handleGuideLike = async (event, contentTitle, index) => {
+  const handleGuideLike = async (event, index) => {
     event.stopPropagation()
     const destinationId = tripData?.destination?.place_id
     const userId = user.id
@@ -123,21 +123,6 @@ const TripGuideItem = ({ currentItem, setItemData }) => {
     } catch (error) {
       console.error('Error updating document:', error)
     }
-
-    // const tempGuideLikes = user?.guideLikes || []
-    // const currentItemTitle = `${contentTitle}___${currentItem.id}`
-    // const finalGuideLikesArray = { guideLikes: [] }
-    // if (tempGuideLikes.includes(currentItemTitle)) {
-    //   finalGuideLikesArray.guideLikes = tempGuideLikes.filter(title => title !== currentItemTitle)
-    // } else {
-    //   tempGuideLikes.push(currentItemTitle)
-    //   finalGuideLikesArray.guideLikes = tempGuideLikes
-    // }
-
-    // firestore
-    //   .collection('users')
-    //   .doc(user.id)
-    //   .set({ ...finalGuideLikesArray }, { merge: true })
   }
 
   return (
@@ -228,7 +213,7 @@ const TripGuideItem = ({ currentItem, setItemData }) => {
                   >
                     <IconButton
                       sx={{ padding: '0', width: '40px', height: '40px', borderRadius: '50px' }}
-                      onClick={event => handleGuideLike(event, titre, itemIndex)}
+                      onClick={event => handleGuideLike(event, itemIndex)}
                     >
                       {currentItem?.content[itemIndex]?.userLikes?.includes(user.id) ? (
                         <Favorite sx={{ color: theme.palette.secondary.main, fontSize: '25px' }} />
@@ -264,7 +249,7 @@ const TripGuideItem = ({ currentItem, setItemData }) => {
                         }}
                         onClick={() => {
                           setAlertModalTitle(titre)
-                          setalertModalIndex(itemIndex)
+                          setAlertModalIndex(itemIndex)
                           setOpenAlertModal(true)
                         }}
                       >

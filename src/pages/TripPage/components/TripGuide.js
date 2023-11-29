@@ -8,11 +8,13 @@ import ExpandMoreIcon from '@mui/icons-material/ExpandMore'
 import { makeStyles, useTheme } from '@mui/styles'
 import { useHistory, useLocation } from 'react-router-dom'
 import { Button, useMediaQuery } from '@mui/material'
+import { Favorite } from '@mui/icons-material'
 
 import TripGuideButton from '../../../components/atoms/TripGuideButton'
 import { TripContext } from '../../../contexts/trip'
 import TripGuideItem from '../../../components/TripGuideItem'
 import MobileTripPageHeader from '../../../components/molecules/MobileTripPageHeader'
+import TripGuideFavorites from '../../../components/molecules/TripGuideFavorites'
 
 const useStyles = makeStyles(theme => ({
   mainContainer: {
@@ -96,6 +98,28 @@ const TripGuide = () => {
   }, [currentSelectedTripGuideButton, tripGuideData])
 
   useEffect(() => {
+    const travelersGroup = tripData.travelersDetails
+      ?.filter(traveler => traveler?.id)
+      ?.map(traveler => traveler.id)
+    console.log('groupe de voyage', travelersGroup)
+    const tempFavoritesData = tripGuideData?.map(data => data?.content)
+    console.log('tempfavoritesdata', tempFavoritesData)
+    const tempFavoriteDataFiltered = tempFavoritesData
+      ?.filter(contentArray => contentArray?.length) // Filtrer pour s'assurer que le contenu n'est pas vide
+      .flatMap(contentArray =>
+        contentArray.filter(content =>
+          content?.userLikes?.some(userLike => travelersGroup.includes(userLike))
+        )
+      )
+    console.log('tempFavoritesDataFiltered', tempFavoriteDataFiltered)
+    setTripGuideFavoriteItems(tempFavoriteDataFiltered)
+  }, [tripGuideData])
+
+  useEffect(() => {
+    console.log('favoris des gens', tripGuideFavoriteItems)
+  }, [tripGuideFavoriteItems])
+
+  useEffect(() => {
     console.log('itemData', itemData)
     setLocalItemData(itemData)
   }, [itemData, tripGuideData])
@@ -146,6 +170,30 @@ const TripGuide = () => {
           </Button>
         </Box>
       )}
+      {tripGuideFavoriteItems?.length > 0 && (
+        <Accordion
+          expanded
+          sx={{
+            width: 'calc(100vw - 350px)',
+            // borderRadius: '20px',
+            [theme.breakpoints.down('sm')]: { width: '100vw', padding: 0 },
+          }}
+        >
+          <AccordionSummary
+            expandIcon={<ExpandMoreIcon sx={{}} />}
+            aria-controls="panel-content"
+            id="panel-0"
+          >
+            <Box sx={{ display: 'flex', alignItems: 'center' }}>
+              <Favorite sx={{ color: theme.palette.primary.main, marginRight: '15px' }} />
+              <Typography sx={{ fontWeight: 600, fontSize: '22px', lineHeight: 1.5 }}>
+                Favoris
+              </Typography>
+            </Box>
+          </AccordionSummary>
+          <TripGuideFavorites currentFavorites={tripGuideFavoriteItems} />
+        </Accordion>
+      )}
       <Box className={classes.tripGuideButtonsContainer}>
         {tripGuideData?.length > 1 &&
           Object.entries(
@@ -163,7 +211,7 @@ const TripGuide = () => {
             <>
               <Accordion
                 key={category}
-                expanded={tripGuideExpanded === `panel${category}` || index === 0}
+                expanded={tripGuideExpanded === `panel${category}`}
                 onChange={handleChange(`panel${category}`)}
                 sx={{
                   width: 'calc(100vw - 350px)',
