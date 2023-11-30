@@ -162,7 +162,7 @@ const TripGuideItem = ({ currentItem, setItemData }) => {
                   history.push(`/tripPage/${tripId}/tripguide`)
                 }}
               >
-                {currentItem?.category}
+                {currentItem?.category.replace('_', '')}
               </Button>
               <Button className={classes.breadcrumbsBtn}>{currentItem?.name}</Button>
             </Breadcrumbs>
