@@ -248,6 +248,8 @@ const EventCreator = ({
     currentLocation,
     setCurrentLocation,
     setCurrentActiveTab,
+    tripData,
+    setTripData,
   } = useContext(TripContext)
 
   const tripStartDate = rCTFF(dateRange[0])
@@ -280,14 +282,13 @@ const EventCreator = ({
   const [endTimeError, setEndTimeError] = useState(false)
   const [description, setDescription] = useState('')
   const [price, setPrice] = useState(0)
-  const [currency, setCurrency] = useState(CURRENCIES[0].value)
+  const [currency, setCurrency] = useState(tripData?.currency)
   const [totalPriceMode, setTotalPriceMode] = useState(priceOption[0].value)
   const [participatingTravelers, setParticipatingTravelers] = useState([])
   const [isSurvey, setIsSurvey] = useState(false)
   const [selectedIcon, setSelectedIcon] = useState('main')
   const [isPropositionInEdition, setIsPropositionInEdition] = useState(false)
   const [openModalIconSlider, setOpenModalIconSlider] = useState(false)
-  const [tripData, setTripData] = useState()
   const [advancedMode, setAdvancedMode] = useState(false)
 
   const generateParticipatingTravelers = () => {
@@ -1553,6 +1554,7 @@ const EventCreator = ({
                     <Select
                       variant="filled"
                       value={currency}
+                      defaultValue={tripData?.currency}
                       onChange={event => setCurrency(event.target.value)}
                       sx={{
                         minWidth: '150px',
